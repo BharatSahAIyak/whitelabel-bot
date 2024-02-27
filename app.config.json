@@ -1,0 +1,21 @@
+{
+  "component": {
+    "navbar": {
+      "allowOverride": true,
+      "brandName": "Bot Name",
+      "rightLogo": "12e96ba8-9d8f-4b4a-a115-5cc5985ba365.pdf",
+      "leftLogo": "5cbf2947-164c-41c9-abe3-bf2101664721.pdf",
+      "centerLogo": "954cdfaa-5d41-47f2-98f8-1e2244733ff2.png"
+    }
+  },
+  "theme": {
+    "primaryColor": {
+      "allowOverride": true,
+      "value": "#ce2c2c"
+    },
+    "secondaryColor": {
+      "allowOverride": true,
+      "value": "#a4f410"
+    }
+  }
+}
