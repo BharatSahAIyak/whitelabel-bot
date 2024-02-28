@@ -23,6 +23,7 @@ import Image from 'next/image';
 import Loader from '../loader';
 import Draggable from 'react-draggable'
 import { recordUserLocation } from '../../utils/location';
+import { useConfig } from '../../hooks/useConfig';
 
 const ChatUiWindow: React.FC = () => {
   const t = useLocalization();
@@ -236,13 +237,18 @@ const ChatUiWindow: React.FC = () => {
     }
   };
 
+  const secondaryColorConfig = useConfig('theme','secondaryColor');
+  const secondaryColor = useMemo(() => {
+    return secondaryColorConfig?.value;
+  }, [secondaryColorConfig]);
+
   if (context?.isDown) {
     return <DownTimePage />;
   } else
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <Chat
-          btnColor="var(--secondary)"
+          btnColor={secondaryColor}
           background="var(--bg-color)"
           disableSend={context?.isMsgReceiving}
           //@ts-ignore

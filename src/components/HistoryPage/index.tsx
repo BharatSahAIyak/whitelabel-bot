@@ -1,5 +1,5 @@
 import styles from './index.module.css';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Spinner } from '@chakra-ui/react';
 import leftArrow from '../../assets/icons/leftArrow.svg';
 import rightArrow from '../../assets/icons/rightArrow.svg';
@@ -13,6 +13,7 @@ import axios from 'axios';
 import _ from 'underscore';
 import { toast } from 'react-hot-toast';
 import { AppContext } from '../../context';
+import { useConfig } from '../../hooks/useConfig';
 
 const HistoryPage: NextPage = () => {
   const [conversations, setConversations] = useState([]);
@@ -133,13 +134,18 @@ const HistoryPage: NextPage = () => {
     }
   };
 
+  const secondaryColorConfig = useConfig('theme','secondaryColor');
+  const secondaryColor = useMemo(() => {
+    return secondaryColorConfig?.value;
+  }, [secondaryColorConfig]);
+
   if (!flags?.show_chat_history_page?.enabled) {
     return <ComingSoonPage />;
   } else
     return (
       <>
         <div className={styles.main}>
-          <div className={styles.title}>{t('label.chats')}</div>
+          <div className={styles.title} style={{color: secondaryColor}}>{t('label.chats')}</div>
           <div className={styles.chatList}>
             {gettingHistory ? (
               <div

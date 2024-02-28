@@ -32,17 +32,17 @@ function SafeHydrate({ children }: { children: ReactElement }) {
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const { isAuthenticated, login } = useLogin();
-  const [launch, setLaunch] = useState(true);
+  // const [launch, setLaunch] = useState(true);
   const [cookie] = useCookies();
   const [flagsmithState, setflagsmithState] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const deferredPromptRef = useRef<any>(null);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLaunch(false);
-    }, 2500);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setLaunch(false);
+  //   }, 2500);
+  // }, []);
 
   useEffect(() => {
     const getFlagSmithState = async () => {
@@ -121,8 +121,11 @@ const App = ({ Component, pageProps }: AppProps) => {
     }
   };
   
-  if (launch || !flagsmithState) {
-    return <LaunchPage />;
+  if (
+    // launch || 
+    !flagsmithState) {
+    // return <LaunchPage />;
+    return <></>;
   } else {
     return (
       <ChakraProvider>

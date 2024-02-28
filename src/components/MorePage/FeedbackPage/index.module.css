@@ -8,7 +8,6 @@
   font-family: 'Mulish-Bold';
   font-size: 4.5vh;
   font-weight: 700;
-  color: var(--secondary);
 }
 
 .rating {
@@ -41,7 +40,6 @@
   padding: 10px ;
   border: none ;
   border-radius: 40px !important;
-  background-color: var(--secondary) !important;
 }
 
 .stars {
@@ -68,7 +66,6 @@
 
 .review textarea {
   padding: 5px;
-  border: 2px solid var(--secondary);
 }
 
 .review h1{
@@ -92,7 +89,6 @@
   padding: 10px ;
   border: none ;
   border-radius: 40px !important;
-  background-color: var(--secondary) !important;
 }
 
 .review textarea {

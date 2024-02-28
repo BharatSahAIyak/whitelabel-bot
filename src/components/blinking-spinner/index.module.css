@@ -7,7 +7,6 @@
   display: inline-block;
   height: 15px;
   width: 1px;
-  background-color: var(--secondary);
   /* border-radius: 50%; */
   animation: blink .5s infinite;
 }

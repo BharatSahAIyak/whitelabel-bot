@@ -3,12 +3,20 @@ import styles from './index.module.css';
 import Image from 'next/image';
 import { useLocalization } from '../../hooks';
 import { useFlags } from 'flagsmith/react';
-import callIcon from '../../assets/icons/call-icon.svg';
+import CallIcon from '../../assets/icons/call-icon';
 import router from 'next/router';
+import { useConfig } from '../../hooks/useConfig';
+import { useMemo } from 'react';
 
 function DownTimePage() {
   const t = useLocalization();
   const flags = useFlags(['dialer_number']);
+
+  const secondaryColorConfig = useConfig('theme','secondaryColor');
+  const secondaryColor = useMemo(() => {
+    return secondaryColorConfig?.value;
+  }, [secondaryColorConfig]);
+  
   return (
     <div className={styles.container}>
       <div className={styles.title}>{t('message.down_time_title')}</div>
@@ -24,7 +32,7 @@ function DownTimePage() {
           href={`tel:${flags.dialer_number.value}`}
           className={styles.footerTitle}>
           <div className={styles.callIconBox}>
-            <Image src={callIcon} alt="callIcon" layout="responsive" />
+            <CallIcon color={secondaryColor} />
           </div>
           <p style={{ textDecoration: 'underline' }}>
             {t('label.call_bot')}

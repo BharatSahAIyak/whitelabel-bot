@@ -1,7 +1,6 @@
 .sideMenu {
   height: 100%;
   width: 100%;
-  background-color: var(--tertiary);
   color: white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding-top: 60px;
@@ -29,8 +28,8 @@
 }
 
 .active {
-  background: var(--secondary);
-  color: white;
+  background: var(--primary);
+  color: var(--font);
   width: 60px;
   height: 30px;
   outline: none;
