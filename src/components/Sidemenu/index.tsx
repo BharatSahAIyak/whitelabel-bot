@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styles from './index.module.css';
 import {
   Drawer,
   DrawerOverlay,
   DrawerContent,
   useDisclosure,
+  background,
 } from '@chakra-ui/react';
 import HamburgerIcon from '../../assets/icons/hamburger';
 import Image from 'next/image';
@@ -21,6 +22,7 @@ import { AppContext } from '../../context';
 import { useCookies } from 'react-cookie';
 import router from 'next/router';
 import toast from 'react-hot-toast';
+import { useConfig } from '../../hooks/useConfig';
 
 export const Sidemenu = () => {
   const t = useLocalization();
@@ -62,16 +64,21 @@ export const Sidemenu = () => {
     if (typeof window !== 'undefined') window.location.reload();
   }
 
+  const secondaryColorConfig = useConfig('theme','secondaryColor');
+  const secondaryColor = useMemo(() => {
+    return secondaryColorConfig?.value;
+  }, [secondaryColorConfig]);
+
   return (
     <>
       <div onClick={onOpen} style={{ cursor: 'pointer' }}>
-        <HamburgerIcon color="var(--secondary)" />
+        <HamburgerIcon color={secondaryColor} />
       </div>
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         {/* @ts-ignore */}
         <DrawerContent>
-          <div className={styles.sideMenu}>
+          <div className={styles.sideMenu} style={{background: secondaryColor}}>
             <div className={styles.closeButton}>
               <Image
                 src={leftArrowIcon}
@@ -94,7 +101,7 @@ export const Sidemenu = () => {
                   id="hindi"
                   className={!isEngActive ? styles.active : styles.btn}
                   style={{ borderRadius: '0px 10px 10px 0px' }}
-                  onClick={toggleLanguage('lang2')}>
+                  onClick={toggleLanguage('en')}>
                   Lang2
                 </button>
               </div>

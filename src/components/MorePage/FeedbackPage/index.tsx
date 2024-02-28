@@ -15,6 +15,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { AppContext } from '../../../context';
 import { useLocalization } from '../../../hooks';
+import { useConfig } from '../../../hooks/useConfig';
 
 const FeedbackPage: React.FC = () => {
   const t = useLocalization();
@@ -87,13 +88,18 @@ const FeedbackPage: React.FC = () => {
     [ratingSubmitted, reviewSubmitError, reviewSubmitted, submitError]
   );
 
+  const secondaryColorConfig = useConfig('theme','secondaryColor');
+  const secondaryColor = useMemo(() => {
+    return secondaryColorConfig?.value;
+  }, [secondaryColorConfig]);
+
   if (!flags?.show_feedback_page?.enabled) {
     return <ComingSoonPage />;
   } else
     return (
       <>
         <div className={styles.main}>
-          <div className={styles.title}>{feedback}</div>
+          <div className={styles.title} style={{color: secondaryColor}}>{feedback}</div>
           <div className={styles.rating}>
             <h1>{ratingLabel}</h1>
             <div className={styles.stars}>
@@ -125,7 +131,7 @@ const FeedbackPage: React.FC = () => {
               })}
             </div>
             <p>{t('message.rating_description')}</p>
-            <button onClick={() => submitReview(rating)}>
+            <button onClick={() => submitReview(rating)} style={{backgroundColor: secondaryColor}}>
               {t('label.submit_review')}
             </button>
           </div>
@@ -138,9 +144,10 @@ const FeedbackPage: React.FC = () => {
               id="experience-feedback"
               cols={35}
               rows={5}
-              placeholder={t("message.review_description")}></textarea>
+              placeholder={t("message.review_description")}
+              style={{border: `2px solid ${secondaryColor}`}}></textarea>
 
-            <button onClick={() => submitReview(review)}>
+            <button onClick={() => submitReview(review)} style={{backgroundColor: secondaryColor}}>
               {t("label.submit_review")}
             </button>
           </div>

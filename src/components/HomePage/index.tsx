@@ -24,6 +24,7 @@ import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
 import { useFlags } from 'flagsmith/react';
 import DownTimePage from '../down-time-page';
 import { recordUserLocation } from '../../utils/location';
+import { useConfig } from '../../hooks/useConfig';
 
 const HomePage: NextPage = () => {
   const context = useContext(AppContext);
@@ -339,13 +340,18 @@ const HomePage: NextPage = () => {
     };
   }, [handleKeyDown]);
 
+  const secondaryColorConfig = useConfig('theme','secondaryColor');
+  const secondaryColor = useMemo(() => {
+    return secondaryColorConfig?.value;
+  }, [secondaryColorConfig]);
+
   if (context?.isDown) {
     return <DownTimePage />;
   } else
     return (
       <>
         <div className={styles.main} onClick={handleDocumentClick}>
-          <div className={styles.title}>{t('label.ask_me')}</div>
+          <div className={styles.title} style={{color: secondaryColor}}>{t('label.ask_me')}</div>
           <div className={styles.voiceRecorder} ref={voiceRecorderRef}>
             <RenderVoiceRecorder setInputMsg={setInputMsg} tapToSpeak={true} />
           </div>

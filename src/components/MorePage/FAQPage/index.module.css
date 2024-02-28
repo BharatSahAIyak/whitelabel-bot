@@ -35,7 +35,6 @@
   font-family: 'Mulish-Bold';
   font-size: 4.2vh;
   font-weight: 700;
-  color: var(--secondary);
   margin-bottom: 1vh;
 }
 
@@ -62,7 +61,6 @@
   width: fit-content;
   padding: 1vh;
   border: none;
-  background-color: var(--secondary) !important;
 }
 
 .dialerBox {
@@ -94,5 +92,4 @@
   font-family: 'Mulish-Bold';
   font-size: 4.2vh;
   font-weight: 700;
-  color: var(--secondary);
 }

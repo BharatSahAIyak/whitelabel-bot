@@ -1,7 +1,6 @@
 .main {
   padding: 5px;
   height: 100%;
-  color: var(--secondary);
 }
 
 .disconnected {

@@ -26,19 +26,22 @@ const isObject = (item:any) => {
   return (item && typeof item === 'object' && !Array.isArray(item));
 };
 
-const fetchOverrideConfig = () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        theme:{
-          "primaryColor": {
-            "allowOverride": true,
-            "value": "#fffff"
-          },
-        }
-      });
-    }, 100); // Simulate a 1 second network delay
-  });
+const fetchOverrideConfig = async () => {
+  try{
+    const config = {
+      method: 'get',
+      url: process.env.NEXT_PUBLIC_CONFIG_BASE_URL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+    const res = await axios.request(config);
+    console.log("config:", res);
+    return res?.data;
+  }catch(err){
+    console.error(err);
+  }
+  return {};
 };
 
 const mergeConfiguration =async ()=>{

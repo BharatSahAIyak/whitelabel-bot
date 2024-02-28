@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from './styles.module.css';
+import { useConfig } from '../../hooks/useConfig';
 
 function FeaturePopup() {
   const [popupData, setPopupData] = useState<any>(null);
@@ -82,8 +83,13 @@ function FeaturePopup() {
     return null;
   }
 
+  const config = useConfig('theme','primaryColor');
+  const primaryColor = useMemo(() => {
+    return config?.value;
+  }, [config]);
+
   return (
-    <div className={styles.popup} style={{backgroundColor: 'var(--primary)'}}>
+    <div className={styles.popup} style={{backgroundColor: primaryColor}}>
       <h2>{popupData.title}</h2>
       <p>{popupData.description}</p>
       <button onClick={handleClose}>Close</button>

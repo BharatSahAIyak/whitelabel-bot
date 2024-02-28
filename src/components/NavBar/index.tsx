@@ -57,7 +57,11 @@ function NavBar() {
   console.log("hola2:",{config})
   const botName = useMemo(() => {
     return config?.brandName;
-  }, []);
+  }, [config]);
+  const secondaryColorConfig = useConfig('theme','secondaryColor');
+  const secondaryColor = useMemo(() => {
+    return secondaryColorConfig?.value;
+  }, [secondaryColorConfig]);
 
   if (router.pathname === '/chat' && !context?.isDown) {
     return (
@@ -73,7 +77,7 @@ function NavBar() {
               flexDirection: 'column',
               alignItems: 'center',
             }}>
-            <PlusIcon color="var(--secondary)" />
+            <PlusIcon color={secondaryColor} />
             <p style={{ color: 'var(--font)', fontSize: '12px' }}>
               {t('label.new_chat')}
             </p>
@@ -124,7 +128,7 @@ function NavBar() {
                 onClick={() => {
                   router.push('/');
                 }}>
-                <HomeIcon color="var(--secondary)" />
+                <HomeIcon color={secondaryColor} />
               </div>
             ) : null}
           </div>
@@ -141,7 +145,7 @@ function NavBar() {
               id="hindi"
               className={!isEngActive ? styles.active : styles.btn}
               style={{ borderRadius: '0px 10px 10px 0px' }}
-              onClick={toggleLanguage('lang2')}>
+              onClick={toggleLanguage('en')}>
               Lang2
             </button>
           </div>

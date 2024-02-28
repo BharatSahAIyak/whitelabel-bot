@@ -16,6 +16,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
@@ -48,6 +49,7 @@ import {
 } from '@material-ui/core';
 import { useIntl } from 'react-intl';
 import BlinkingSpinner from '../blinking-spinner/index';
+import { useConfig } from '../../hooks/useConfig';
 
 const getToastMessage = (t: any, reaction: number): string => {
   if (reaction === 1) return t('toast.reaction_like');
@@ -61,6 +63,15 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
   const [reaction, setReaction] = useState(message?.content?.data?.reaction);
   const [audioFetched, setAudioFetched] = useState(false);
   const [ttsLoader, setTtsLoader] = useState(false);
+
+  const primaryColorConfig = useConfig('theme','primaryColor');
+  const primaryColor = useMemo(() => {
+    return primaryColorConfig?.value;
+  }, [primaryColorConfig]);
+  const secondaryColorConfig = useConfig('theme','secondaryColor');
+  const secondaryColor = useMemo(() => {
+    return secondaryColorConfig?.value;
+  }, [secondaryColorConfig]);
 
   useEffect(() => {
     setReaction(message?.content?.data?.reaction);
@@ -170,14 +181,14 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
                       ? 'white'
                       : optionDisabled
                       ? 'var(--font)'
-                      : 'var(--secondary)',
+                      : secondaryColor,
                 }}>
                 <div>{choice}</div>
                 <div style={{ marginLeft: 'auto' }}>
                   <RightIcon
                     width="30px"
                     color={
-                      optionDisabled ? 'var(--font)' : 'var(--secondary)'
+                      optionDisabled ? 'var(--font)' : secondaryColor
                     }
                   />
                 </div>
@@ -305,7 +316,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
             maxWidth: '90vw',
           }}>
           <Bubble type="text" style={{
-            background: content?.data?.position === 'right' ? 'var(--secondary)' : 'white'
+            background: content?.data?.position === 'right' ? secondaryColor : 'white'
           }}>
             <span
               className="onHover"
@@ -362,7 +373,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
             </div>
           </Bubble>
           {content?.data?.btns ? (
-            <div className={styles.offlineBtns}>
+            <div className={styles.offlineBtns} style={{border: `2px solid ${secondaryColor}`}}>
               <button onClick={() => window?.location?.reload()}>
                 {t('label.refresh')}
               </button>
@@ -391,11 +402,13 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
                             pointerEvents: 'none',
                             filter: 'grayscale(100%)',
                             opacity: '0.5',
+                            border: `1px solid ${secondaryColor}`
                           }
-                        : {
+                          : {
                             pointerEvents: 'auto',
                             opacity: '1',
                             filter: 'grayscale(0%)',
+                            border: `1px solid ${secondaryColor}`
                           }
                     }>
                     {context?.clickedAudioUrl === content?.data?.audio_url ? (
@@ -430,7 +443,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
                   </div>
                 </div>
                 <div className={styles.msgFeedback}>
-                  <div className={styles.msgFeedbackIcons}>
+                  <div className={styles.msgFeedbackIcons} style={{border: `1px solid ${secondaryColor}`}}>
                     <div
                       style={{
                         display: 'flex',
@@ -447,7 +460,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
                       <MsgThumbsUp
                         fill={reaction === 1}
                         width="20px"
-                        color="var(--secondary)"
+                        color={secondaryColor}
                       />
                       <p
                         style={{ fontSize: '11px', fontFamily: 'Mulish-bold' }}>
@@ -458,7 +471,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
                       style={{
                         height: '32px',
                         width: '1px',
-                        backgroundColor: 'var(--secondary)',
+                        backgroundColor: secondaryColor,
                         margin: '6px 0',
                       }}></div>
 
@@ -477,7 +490,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
                       <MsgThumbsDown
                         fill={reaction === -1}
                         width="20px"
-                        color="var(--primary)"
+                        color={primaryColor}
                       />
                       <p
                         style={{ fontSize: '11px', fontFamily: 'Mulish-bold' }}>
@@ -620,10 +633,10 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
             maxWidth: '90vw',
           }}>
           <Bubble type="text" style={{
-            background: content?.data?.position === 'right' ? 'var(--secondary)' : 'white'
+            background: content?.data?.position === 'right' ? secondaryColor : 'white'
           }}>
             <div className={styles.tableContainer}>
-              <div className={styles.tableHeader}>
+              <div className={styles.tableHeader} style={{color: secondaryColor}}>
                 <div>
                   <b>{t('table.header_date')}</b>
                 </div>

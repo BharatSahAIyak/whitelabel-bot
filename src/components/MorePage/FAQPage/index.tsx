@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './index.module.css';
 import {
   Accordion,
@@ -7,12 +7,13 @@ import {
   AccordionPanel,
   AccordionIcon,
 } from '@chakra-ui/react';
-import callIcon from '../../../assets/icons/call-icon.svg';
+import CallIcon from '../../../assets/icons/call-icon';
 import Image from 'next/image';
 import { useFlags } from 'flagsmith/react';
 import ComingSoonPage from '../../coming-soon-page';
 import axios from 'axios';
 import { useLocalization } from '../../../hooks';
+import { useConfig } from '../../../hooks/useConfig';
 
 const FAQPage: React.FC = () => {
   const t = useLocalization();
@@ -93,13 +94,18 @@ const FAQPage: React.FC = () => {
     [flags]
   );
 
+  const secondaryColorConfig = useConfig('theme','secondaryColor');
+  const secondaryColor = useMemo(() => {
+    return secondaryColorConfig?.value;
+  }, [secondaryColorConfig]);
+
   if (!flags?.show_faq_page?.enabled) {
     return <ComingSoonPage />;
   } else
     return (
       <>
         <div className={styles.main}>
-          <div className={styles.title}>{t('label.faqs')}</div>
+          <div className={styles.title} style={{color: secondaryColor}}>{t('label.faqs')}</div>
           {/* @ts-ignore */}
           {/* <Accordion allowMultiple>
             {faqData.map((faq, idx) => (
@@ -127,7 +133,7 @@ const FAQPage: React.FC = () => {
               <div className={styles.manualButtons}>
                 <button
                   onClick={downloadPDFHandler}
-                  className={styles.submitButton}>
+                  className={styles.submitButton} style={{background: secondaryColor}}>
                   {t('label.manual')}
                 </button>
               </div>
@@ -139,9 +145,9 @@ const FAQPage: React.FC = () => {
                 </div>
                 <a
                   href={`tel:${flags.dialer_number.value}`}
-                  className={styles.footerTitle}>
+                  className={styles.footerTitle} style={{color: secondaryColor}}>
                   <div className={styles.callIconBox}>
-                    <Image src={callIcon} alt="callIcon" layout="responsive" />
+                    <CallIcon color={secondaryColor} />
                   </div>
                   {t('label.dial')} {flags.dialer_number.value}
                 </a>
