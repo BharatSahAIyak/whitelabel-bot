@@ -54,7 +54,7 @@ function NavBar() {
 
 
   const config = useConfig('component','navbar');
-  console.log("hola2:",{config})
+  // console.log("hola2:",{config})
   const botName = useMemo(() => {
     return config?.brandName;
   }, [config]);
@@ -90,19 +90,19 @@ function NavBar() {
             justifyContent: 'space-between',
           }}>
           <img
-            src="https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
+            src={config?.leftLogo}
             alt=""
             width={60}
             height={60}
           />
           <img
-            src="https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
+            src={config?.centerLogo}
             alt=""
             width={60}
             height={60}
           />
           <img
-            src="https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
+            src={config?.rightLogo}
             alt=""
             width={60}
             height={60}
@@ -164,19 +164,19 @@ function NavBar() {
             justifyContent: 'space-between',
           }}>
           <img
-            src="https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
+            src={config?.leftLogo}
             alt=""
             width={60}
             height={60}
           />
           <img
-            src="https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
+            src={config?.centerLogo}
             alt=""
             width={60}
             height={60}
           />
           <img
-            src="https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
+            src={config?.rightLogo}
             alt=""
             width={60}
             height={60}

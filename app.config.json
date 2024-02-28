@@ -3,9 +3,9 @@
     "navbar": {
       "allowOverride": true,
       "brandName": "Bot",
-      "rightLogo": "12e96ba8-9d8f-4b4a-a115-5cc5985ba365.pdf",
-      "leftLogo": "5cbf2947-164c-41c9-abe3-bf2101664721.pdf",
-      "centerLogo": "954cdfaa-5d41-47f2-98f8-1e2244733ff2.png"
+      "rightLogo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
+      "leftLogo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
+      "centerLogo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
     }
   },
   "theme": {
