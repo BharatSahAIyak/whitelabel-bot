@@ -137,6 +137,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
             <ListItem
               key={`${index}_${choice?.key}`}
               className={`${styles.onHover} ${styles.listItem}`}
+              //@ts-ignore
               style={
                 optionDisabled
                   ? {
