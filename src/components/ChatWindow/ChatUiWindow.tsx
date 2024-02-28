@@ -245,6 +245,7 @@ const ChatUiWindow: React.FC = () => {
           btnColor="var(--secondary)"
           background="var(--bg-color)"
           disableSend={context?.isMsgReceiving}
+          //@ts-ignore
           translation={t}
           showTransliteration={!(localStorage.getItem('locale') === 'en')}
           //@ts-ignore
@@ -253,6 +254,7 @@ const ChatUiWindow: React.FC = () => {
           //@ts-ignore
           renderMessageContent={(props): ReactElement => (
             <ChatMessageItem
+            //@ts-ignore
               key={props}
               message={props}
               onSend={handleSend}
