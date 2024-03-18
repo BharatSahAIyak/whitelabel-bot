@@ -300,13 +300,43 @@ const ContextProvider: FC<{
             return updatedMessages;
           });
           if (msg?.content?.title?.endsWith('<end/>')) {
-            // syncChatHistory(
-            //   msg?.messageId,
-            //   msg?.content?.title.replace('<end/>', '')
-            // );
             setLastMsgId(msg?.messageId);
             setEndTime(Date.now());
             setIsMsgReceiving(false);
+            try{
+              const telemetryApi = process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+              axios.post(telemetryApi, {
+                data: {
+                  generator: 'pwa',
+                  version: '1.0',
+                  timestamp: new Date(),
+                  actorId: localStorage.getItem('userID') || '',
+                  actorType: 'user',
+                  env: 'prod',
+                  eventId: 'E037',
+                  event: 'messageQuery',
+                  subEvent: 'messageSent',
+                  // @ts-ignore
+                  os: window.navigator?.userAgentData?.platform || window.navigator.platform,
+                  browser: window.navigator.userAgent,
+                  ip: sessionStorage.getItem('ip') || '',
+                  // @ts-ignore
+                  deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
+                  eventData: {
+                    botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+                    userId: localStorage.getItem('userID') || '',
+                    phoneNumber: localStorage.getItem('phoneNumber') || '',
+                    conversationId: sessionStorage.getItem('conversationId') || '',
+                    messageId: msg?.messageId,
+                    text: messages[messages.length - 1]?.text,
+                    createdAt: new Date(),
+                    timeTaken: endTime - startTime
+                  }
+                }
+              })
+            }catch(err){
+              console.error(err)
+            }
           }
           setLoading(false);
         }
@@ -384,7 +414,7 @@ const ContextProvider: FC<{
 
   //@ts-ignore
   const sendMessage = useCallback(
-    (text: string, media: any, isVisibile = true): void => {
+    async (text: string, media: any, isVisibile = true) => {
       if (!sessionStorage.getItem('conversationId')) {
         const cId = uuidv4();
         console.log('convId', cId);
@@ -421,6 +451,40 @@ const ContextProvider: FC<{
           botId: process.env.NEXT_PUBLIC_BOT_ID || ''
         }
       });
+      const messageId = uuidv4();
+      try{
+        const telemetryApi = process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+        axios.post(telemetryApi, {
+          data: {
+            generator: 'pwa',
+            version: '1.0',
+            timestamp: new Date(),
+            actorId: localStorage.getItem('userID') || '',
+            actorType: 'user',
+            env: 'prod',
+            eventId: 'E036',
+            event: 'messageQuery',
+            subEvent: 'messageSent',
+            // @ts-ignore
+            os: window.navigator?.userAgentData?.platform || window.navigator.platform,
+            browser: window.navigator.userAgent,
+            ip: sessionStorage.getItem('ip') || '',
+            // @ts-ignore
+            deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
+            eventData: {
+              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+              userId: localStorage.getItem('userID') || '',
+              phoneNumber: localStorage.getItem('phoneNumber') || '',
+              conversationId: sessionStorage.getItem('conversationId') || '',
+              messageId: messageId,
+              text: text,
+              createdAt: new Date()
+            }
+          }
+        })
+      }catch(err){
+        console.error(err)
+      }
       setStartTime(Date.now());
       if (isVisibile)
         if (media) {
@@ -441,7 +505,7 @@ const ContextProvider: FC<{
               payload: { text },
               time: Date.now(),
               disabled: true,
-              messageId: uuidv4(),
+              messageId: messageId,
               repliedTimestamp: Date.now(),
             },
           ]);
