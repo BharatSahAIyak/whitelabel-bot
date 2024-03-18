@@ -75,7 +75,7 @@ const ContextProvider: FC<{
     mergeConfigurations().then(setConfig);
   }, []);
 
-  console.log("hola:",{config})
+  console.log("config:",{config})
 
 
   const downloadChat = useMemo(() => {
@@ -222,7 +222,7 @@ const ContextProvider: FC<{
   }, []);
 
   useEffect(() => {
-    if (localStorage.getItem('userID') && localStorage.getItem('auth')) {
+    // if (localStorage.getItem('userID') && localStorage.getItem('auth')) {
       setNewSocket(
         new UCI(
           URL,
@@ -230,7 +230,7 @@ const ContextProvider: FC<{
             transportOptions: {
               polling: {
                 extraHeaders: {
-                  Authorization: `Bearer ${localStorage.getItem('auth')}`,
+                  // Authorization: `Bearer ${localStorage.getItem('auth')}`,
                   channel: 'akai',
                 },
               },
@@ -245,7 +245,7 @@ const ContextProvider: FC<{
           onMessageReceived
         )
       );
-    }
+    // }
     function cleanup() {
       if (newSocket)
         newSocket.onDisconnect(() => {
@@ -253,8 +253,7 @@ const ContextProvider: FC<{
         });
     }
     return cleanup;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localStorage.getItem('userID'), localStorage.getItem('auth')]);
+  }, []);
 
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
@@ -394,11 +393,11 @@ const ContextProvider: FC<{
           return cId;
         });
       } else sessionStorage.setItem('conversationId', conversationId || '');
-      if (!localStorage.getItem('userID')) {
-        removeCookie('access_token', { path: '/' });
-        location?.reload();
-        return;
-      }
+      // if (!localStorage.getItem('userID')) {
+      //   removeCookie('access_token', { path: '/' });
+      //   location?.reload();
+      //   return;
+      // }
       // console.log('mssgs:', messages)
       setLoading(true);
       setIsMsgReceiving(true);
@@ -419,6 +418,7 @@ const ContextProvider: FC<{
           asrId: sessionStorage.getItem('asrId'),
           userId: localStorage.getItem('userID'),
           conversationId: sessionStorage.getItem('conversationId'),
+          botId: process.env.NEXT_PUBLIC_BOT_ID || ''
         }
       });
       setStartTime(Date.now());

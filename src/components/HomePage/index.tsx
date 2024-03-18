@@ -62,7 +62,7 @@ const HomePage: NextPage = () => {
   };
 
   useEffect(() => {
-    if (inputMsg.length > 0 && !(localStorage.getItem('locale') === 'en')) {
+    if (inputMsg.length > 0 && (localStorage.getItem('locale') === 'or')) {
       if (suggestionClicked) {
         setSuggestionClicked(false);
         return;

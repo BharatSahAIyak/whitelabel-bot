@@ -253,7 +253,7 @@ const ChatUiWindow: React.FC = () => {
           disableSend={context?.isMsgReceiving}
           //@ts-ignore
           translation={t}
-          showTransliteration={!(localStorage.getItem('locale') === 'en')}
+          showTransliteration={(localStorage.getItem('locale') === 'or')}
           //@ts-ignore
           messages={msgToRender}
           voiceToText={RenderVoiceRecorder}
