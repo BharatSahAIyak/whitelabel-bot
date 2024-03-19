@@ -258,17 +258,21 @@ const ContextProvider: FC<{
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
       console.log('updatemsgstate:', msg);
-      if (msg?.content?.title) {
+      if (
+        msg?.payload?.text &&
+        msg?.messageId?.Id &&
+        msg?.messageId?.channelMessageId
+      ) {
         if (
           sessionStorage.getItem('conversationId') ===
-          msg?.content?.conversationId
+          msg.messageId.channelMessageId
         ) {
-          const word = msg.content.title;
+          const word = msg.payload.text;
 
           setMessages((prev: any) => {
             const updatedMessages = [...prev];
             const existingMsgIndex = updatedMessages.findIndex(
-              (m: any) => m.messageId === msg.messageId
+              (m: any) => m.messageId === msg.messageId.Id
             );
             console.log('existingMsgIndex', existingMsgIndex);
 
@@ -284,14 +288,17 @@ const ContextProvider: FC<{
               const newMsg = {
                 text: word.replace('<end/>', '') + ' ',
                 isEnd: word.endsWith('<end/>') ? true : false,
-                choices: msg?.content?.choices,
+                choices: msg?.payload?.buttonChoices,
                 position: 'left',
                 reaction: 0,
-                messageId: msg?.messageId,
-                conversationId: msg?.content?.conversationId,
+                messageId: msg?.messageId.Id,
+                conversationId: msg.messageId.channelMessageId,
                 sentTimestamp: Date.now(),
-                btns: msg?.content?.btns,
-                audio_url: msg?.content?.audio_url,
+                // btns: msg?.payload?.buttonChoices,
+                // audio_url: msg?.content?.audio_url,
+                // metaData: msg.payload?.metaData
+                //     ? JSON.parse(msg.payload?.metaData)
+                //     : null,
                 ...media,
               };
 
@@ -299,13 +306,13 @@ const ContextProvider: FC<{
             }
             return updatedMessages;
           });
-          if (msg?.content?.title?.endsWith('<end/>')) {
-            setLastMsgId(msg?.messageId);
+          setIsMsgReceiving(false);
+          if (msg.payload.text.endsWith('<end/>')) {
+            setLastMsgId(msg?.messageId.Id);
             setEndTime(Date.now());
-            setIsMsgReceiving(false);
             try{
               const telemetryApi = process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
-              axios.post(telemetryApi, {
+              axios.post('/', {
                 data: {
                   generator: 'pwa',
                   version: '1.0',
@@ -349,41 +356,49 @@ const ContextProvider: FC<{
 
   const onMessageReceived = useCallback(
     async (msg: any) => {
-      if (!msg?.content?.id) msg.content.id = '';
-      if (msg.content.msg_type.toUpperCase() === 'IMAGE') {
+      // if (!msg?.content?.id) msg.content.id = '';
+      if (msg.messageType.toUpperCase() === 'IMAGE') {
         if (
           // msg.content.timeTaken + 1000 < timer2 &&
           isOnline
         ) {
           await updateMsgState({
             msg: msg,
-            media: { imageUrl: msg?.content?.media_url },
+            media: { imageUrls: msg?.content?.media_url },
           });
         }
-      } else if (msg.content.msg_type.toUpperCase() === 'AUDIO') {
+      } else if (msg.messageType.toUpperCase() === 'AUDIO') {
         updateMsgState({
           msg,
           media: { audioUrl: msg?.content?.media_url },
         });
-      } else if (msg.content.msg_type.toUpperCase() === 'VIDEO') {
+      } else if (msg.messageType.toUpperCase() === 'HSM') {
+        updateMsgState({
+          msg,
+          media: { audioUrl: msg?.content?.media_url },
+        });
+      } else if (msg.messageType.toUpperCase() === 'VIDEO') {
         updateMsgState({
           msg,
           media: { videoUrl: msg?.content?.media_url },
         });
       } else if (
-        msg.content.msg_type.toUpperCase() === 'DOCUMENT' ||
-        msg.content.msg_type.toUpperCase() === 'FILE'
+        msg.messageType.toUpperCase() === 'DOCUMENT' ||
+        msg.messageType.toUpperCase() === 'FILE'
       ) {
         updateMsgState({
           msg,
           media: { fileUrl: msg?.content?.media_url },
         });
-      } else if (msg.content.msg_type.toUpperCase() === 'TEXT') {
+      } else if (msg.messageType.toUpperCase() === 'TEXT') {
         if (
           // msg.content.timeTaken + 1000 < timer2 &&
           isOnline
         ) {
-          await updateMsgState({ msg: msg, media: null });
+          await updateMsgState({
+            msg: msg,
+            media: null
+          });
         }
       }
     },
@@ -454,7 +469,7 @@ const ContextProvider: FC<{
       const messageId = uuidv4();
       try{
         const telemetryApi = process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
-        axios.post(telemetryApi, {
+        axios.post('/', {
           data: {
             generator: 'pwa',
             version: '1.0',
