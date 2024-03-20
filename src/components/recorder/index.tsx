@@ -136,7 +136,7 @@ const startRecording = () => {
 
       // Append the WAV file to the FormData object
       formData.append('file', blob, 'audio.wav');
-      formData.append('phoneNumber', localStorage.getItem('phoneNumber'));
+      formData.append('phoneNumber', phoneNumber);
 
       // Send the WAV data to the API
       const resp = await fetch(apiEndpoint + '/aitools/asr', {
