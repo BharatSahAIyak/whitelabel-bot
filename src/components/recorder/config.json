@@ -1,0 +1,26 @@
+{
+  "theme": {
+    "primaryColor": {
+      "value": "#ffa500",
+      "allowOverride": true
+    },
+    "secondaryColor": {
+      "value": "#1E232C",
+      "allowOverride": true
+    }
+  },
+  "component": {
+    "allowOverride": false,
+    "startIcon": "https://amakrushai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FstartIcon.9d6fe969.png&w=1920&q=75",
+    "stopIcon": "/src/components/recorder/assets/stop.gif",
+    "errorIcon": "/src/components/recorder/assets/error.gif",
+    "processingIcon": "/src/components/recorder/assets/process.gif",
+    "voiceMinDecibels":-35,
+    "delayBetweenDialogs": 2500,
+    "dialogMaxLength":60000,
+    "isRecording":false,
+    "recorderLabel": "Tap to speak",
+    "recorderErrorMessage": "Your question was not recognised. Pls try speaking more clearly.",
+    "waitMessage": "Please wait while we process your request..."
+  }
+}

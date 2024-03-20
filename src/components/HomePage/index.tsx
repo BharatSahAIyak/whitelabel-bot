@@ -20,7 +20,8 @@ import router from 'next/router';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
-import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
+// import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
+import VoiceRecorder from '../recorder';
 import { useFlags } from 'flagsmith/react';
 import DownTimePage from '../down-time-page';
 import { recordUserLocation } from '../../utils/location';
@@ -353,7 +354,8 @@ const HomePage: NextPage = () => {
         <div className={styles.main} onClick={handleDocumentClick}>
           <div className={styles.title} style={{color: secondaryColor}}>{t('label.ask_me')}</div>
           <div className={styles.voiceRecorder} ref={voiceRecorderRef}>
-            <RenderVoiceRecorder setInputMsg={setInputMsg} tapToSpeak={true} />
+            {/* <RenderVoiceRecorder setInputMsg={setInputMsg} tapToSpeak={true} /> */}
+            <VoiceRecorder setInputMsg={setInputMsg} tapToSpeak={true} />
           </div>
           <div
             className={
