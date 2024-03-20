@@ -3,6 +3,7 @@ import React from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useLocalization } from '../hooks';
+import OtpPage from '../pageComponents/otp-page';
 
 
 const OTP: NextPage = () => {
@@ -12,7 +13,8 @@ const OTP: NextPage = () => {
       <Head>
       <title>{t("label.title")}</title>
       </Head>
-      <OTPpage />
+      {/* <OTPpage /> */}
+      <OtpPage />
     </React.Fragment>
   );
 };

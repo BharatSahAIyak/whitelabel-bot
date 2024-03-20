@@ -1,0 +1,21 @@
+{
+  "theme": {
+    "primaryColor": {
+      "value": "#ffa500",
+      "allowOverride": true
+    },
+    "secondaryColor": {
+        "value": "#1E232C",
+        "allowOverride": true
+      }
+  },
+  
+  "component": {
+    "allowOverride": false,
+    "showLogo": false,
+    "showSplitedView": true,
+    "otpLength":4,
+    "logo":"https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
+    "title": "OTP Verification"
+  }
+}
