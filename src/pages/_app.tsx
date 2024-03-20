@@ -20,7 +20,7 @@ import { FullPageLoader } from '../components/fullpage-loader';
 const LaunchPage = dynamic(() => import('../components/LaunchPage'), {
   ssr: false,
 });
-const NavBar = dynamic(() => import('../components/Navbar'), {
+const NavBar = dynamic(() => import('../components/NavBar'), {
   ssr: false,
 });
 function SafeHydrate({ children }: { children: ReactElement }) {
