@@ -126,7 +126,7 @@ const startRecording = () => {
       toast.success(`${config.component.waitMessage}`)
 
       // Define the API endpoint
-      const apiEndpoint = process.env.NEXT_PUBLIC_BFF_API_URL;
+      const apiEndpoint = process.env.NEXT_PUBLIC_AI_TOOLS_API_URLz;
 
       const phoneNumber = localStorage.getItem('phoneNumber');
       //check if phone number exists
@@ -139,7 +139,7 @@ const startRecording = () => {
       formData.append('phoneNumber', phoneNumber);
 
       // Send the WAV data to the API
-      const resp = await fetch(apiEndpoint + '/aitools/asr', {
+      const resp = await fetch(apiEndpoint + '/speech-to-text', {
         method: 'POST',
         body: formData,
       });
