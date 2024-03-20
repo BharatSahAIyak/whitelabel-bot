@@ -76,7 +76,7 @@ const ContextProvider: FC<{
     mergeConfigurations().then(setConfig);
   }, []);
 
-  console.log("hola:",{config})
+  console.log("config:",{config})
 
 
   const downloadChat = useMemo(() => {
@@ -223,7 +223,7 @@ const ContextProvider: FC<{
   }, []);
 
   useEffect(() => {
-    if (localStorage.getItem('userID') && localStorage.getItem('auth')) {
+    // if (localStorage.getItem('userID') && localStorage.getItem('auth')) {
       setNewSocket(
         new UCI(
           URL,
@@ -231,7 +231,7 @@ const ContextProvider: FC<{
             transportOptions: {
               polling: {
                 extraHeaders: {
-                  Authorization: `Bearer ${localStorage.getItem('auth')}`,
+                  // Authorization: `Bearer ${localStorage.getItem('auth')}`,
                   channel: 'akai',
                 },
               },
@@ -246,7 +246,7 @@ const ContextProvider: FC<{
           onMessageReceived
         )
       );
-    }
+    // }
     function cleanup() {
       if (newSocket)
         newSocket.onDisconnect(() => {
@@ -254,23 +254,26 @@ const ContextProvider: FC<{
         });
     }
     return cleanup;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localStorage.getItem('userID'), localStorage.getItem('auth')]);
+  }, []);
 
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
       console.log('updatemsgstate:', msg);
-      if (msg?.content?.title) {
+      if (
+        msg?.payload?.text &&
+        msg?.messageId?.Id &&
+        msg?.messageId?.channelMessageId
+      ) {
         if (
           sessionStorage.getItem('conversationId') ===
-          msg?.content?.conversationId
+          msg.messageId.channelMessageId
         ) {
-          const word = msg.content.title;
+          const word = msg.payload.text;
 
           setMessages((prev: any) => {
             const updatedMessages = [...prev];
             const existingMsgIndex = updatedMessages.findIndex(
-              (m: any) => m.messageId === msg.messageId
+              (m: any) => m.messageId === msg.messageId.Id
             );
             console.log('existingMsgIndex', existingMsgIndex);
 
@@ -286,14 +289,17 @@ const ContextProvider: FC<{
               const newMsg = {
                 text: word.replace('<end/>', '') + ' ',
                 isEnd: word.endsWith('<end/>') ? true : false,
-                choices: msg?.content?.choices,
+                choices: msg?.payload?.buttonChoices,
                 position: 'left',
                 reaction: 0,
-                messageId: msg?.messageId,
-                conversationId: msg?.content?.conversationId,
+                messageId: msg?.messageId.Id,
+                conversationId: msg.messageId.channelMessageId,
                 sentTimestamp: Date.now(),
-                btns: msg?.content?.btns,
-                audio_url: msg?.content?.audio_url,
+                // btns: msg?.payload?.buttonChoices,
+                // audio_url: msg?.content?.audio_url,
+                // metaData: msg.payload?.metaData
+                //     ? JSON.parse(msg.payload?.metaData)
+                //     : null,
                 ...media,
               };
 
@@ -301,14 +307,44 @@ const ContextProvider: FC<{
             }
             return updatedMessages;
           });
-          if (msg?.content?.title?.endsWith('<end/>')) {
-            // syncChatHistory(
-            //   msg?.messageId,
-            //   msg?.content?.title.replace('<end/>', '')
-            // );
-            setLastMsgId(msg?.messageId);
+          setIsMsgReceiving(false);
+          if (msg.payload.text.endsWith('<end/>')) {
+            setLastMsgId(msg?.messageId.Id);
             setEndTime(Date.now());
-            setIsMsgReceiving(false);
+            try{
+              const telemetryApi = process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+              axios.post('/', {
+                data: {
+                  generator: 'pwa',
+                  version: '1.0',
+                  timestamp: new Date(),
+                  actorId: localStorage.getItem('userID') || '',
+                  actorType: 'user',
+                  env: 'prod',
+                  eventId: 'E037',
+                  event: 'messageQuery',
+                  subEvent: 'messageSent',
+                  // @ts-ignore
+                  os: window.navigator?.userAgentData?.platform || window.navigator.platform,
+                  browser: window.navigator.userAgent,
+                  ip: sessionStorage.getItem('ip') || '',
+                  // @ts-ignore
+                  deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
+                  eventData: {
+                    botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+                    userId: localStorage.getItem('userID') || '',
+                    phoneNumber: localStorage.getItem('phoneNumber') || '',
+                    conversationId: sessionStorage.getItem('conversationId') || '',
+                    messageId: msg?.messageId,
+                    text: messages[messages.length - 1]?.text,
+                    createdAt: new Date(),
+                    timeTaken: endTime - startTime
+                  }
+                }
+              })
+            }catch(err){
+              console.error(err)
+            }
           }
           setLoading(false);
         }
@@ -321,41 +357,49 @@ const ContextProvider: FC<{
 
   const onMessageReceived = useCallback(
     async (msg: any) => {
-      if (!msg?.content?.id) msg.content.id = '';
-      if (msg.content.msg_type.toUpperCase() === 'IMAGE') {
+      // if (!msg?.content?.id) msg.content.id = '';
+      if (msg.messageType.toUpperCase() === 'IMAGE') {
         if (
           // msg.content.timeTaken + 1000 < timer2 &&
           isOnline
         ) {
           await updateMsgState({
             msg: msg,
-            media: { imageUrl: msg?.content?.media_url },
+            media: { imageUrls: msg?.content?.media_url },
           });
         }
-      } else if (msg.content.msg_type.toUpperCase() === 'AUDIO') {
+      } else if (msg.messageType.toUpperCase() === 'AUDIO') {
         updateMsgState({
           msg,
           media: { audioUrl: msg?.content?.media_url },
         });
-      } else if (msg.content.msg_type.toUpperCase() === 'VIDEO') {
+      } else if (msg.messageType.toUpperCase() === 'HSM') {
+        updateMsgState({
+          msg,
+          media: { audioUrl: msg?.content?.media_url },
+        });
+      } else if (msg.messageType.toUpperCase() === 'VIDEO') {
         updateMsgState({
           msg,
           media: { videoUrl: msg?.content?.media_url },
         });
       } else if (
-        msg.content.msg_type.toUpperCase() === 'DOCUMENT' ||
-        msg.content.msg_type.toUpperCase() === 'FILE'
+        msg.messageType.toUpperCase() === 'DOCUMENT' ||
+        msg.messageType.toUpperCase() === 'FILE'
       ) {
         updateMsgState({
           msg,
           media: { fileUrl: msg?.content?.media_url },
         });
-      } else if (msg.content.msg_type.toUpperCase() === 'TEXT') {
+      } else if (msg.messageType.toUpperCase() === 'TEXT') {
         if (
           // msg.content.timeTaken + 1000 < timer2 &&
           isOnline
         ) {
-          await updateMsgState({ msg: msg, media: null });
+          await updateMsgState({
+            msg: msg,
+            media: null
+          });
         }
       }
     },
@@ -386,7 +430,7 @@ const ContextProvider: FC<{
 
   //@ts-ignore
   const sendMessage = useCallback(
-    (text: string, media: any, isVisibile = true): void => {
+    async (text: string, media: any, isVisibile = true) => {
       if (!sessionStorage.getItem('conversationId')) {
         const cId = uuidv4();
         console.log('convId', cId);
@@ -395,11 +439,11 @@ const ContextProvider: FC<{
           return cId;
         });
       } else sessionStorage.setItem('conversationId', conversationId || '');
-      if (!localStorage.getItem('userID')) {
-        removeCookie('access_token', { path: '/' });
-        location?.reload();
-        return;
-      }
+      // if (!localStorage.getItem('userID')) {
+      //   removeCookie('access_token', { path: '/' });
+      //   location?.reload();
+      //   return;
+      // }
       // console.log('mssgs:', messages)
       setLoading(true);
       setIsMsgReceiving(true);
@@ -420,8 +464,43 @@ const ContextProvider: FC<{
           asrId: sessionStorage.getItem('asrId'),
           userId: localStorage.getItem('userID'),
           conversationId: sessionStorage.getItem('conversationId'),
+          botId: process.env.NEXT_PUBLIC_BOT_ID || ''
         }
       });
+      const messageId = uuidv4();
+      try{
+        const telemetryApi = process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+        axios.post('/', {
+          data: {
+            generator: 'pwa',
+            version: '1.0',
+            timestamp: new Date(),
+            actorId: localStorage.getItem('userID') || '',
+            actorType: 'user',
+            env: 'prod',
+            eventId: 'E036',
+            event: 'messageQuery',
+            subEvent: 'messageSent',
+            // @ts-ignore
+            os: window.navigator?.userAgentData?.platform || window.navigator.platform,
+            browser: window.navigator.userAgent,
+            ip: sessionStorage.getItem('ip') || '',
+            // @ts-ignore
+            deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
+            eventData: {
+              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+              userId: localStorage.getItem('userID') || '',
+              phoneNumber: localStorage.getItem('phoneNumber') || '',
+              conversationId: sessionStorage.getItem('conversationId') || '',
+              messageId: messageId,
+              text: text,
+              createdAt: new Date()
+            }
+          }
+        })
+      }catch(err){
+        console.error(err)
+      }
       setStartTime(Date.now());
       if (isVisibile)
         if (media) {
@@ -442,7 +521,7 @@ const ContextProvider: FC<{
               payload: { text },
               time: Date.now(),
               disabled: true,
-              messageId: uuidv4(),
+              messageId: messageId,
               repliedTimestamp: Date.now(),
             },
           ]);

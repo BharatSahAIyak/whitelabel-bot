@@ -39,31 +39,31 @@ const App = ({ Component, pageProps }: AppProps) => {
 
 
 
-  const handleLoginRedirect = useCallback(() => {
-    if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
-      // already logged in then send to home
-      if (cookie['access_token'] && localStorage.getItem('userID')) {
-        router.push('/');
-      }
-    } else {
-      // not logged in then send to login page
-      if (!cookie['access_token'] || !localStorage.getItem('userID')) {
-        localStorage.clear();
-        sessionStorage.clear();
-        router.push('/login');
-      }
-    }
-  }, [cookie, router]);
+  // const handleLoginRedirect = useCallback(() => {
+  //   if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
+  //     // already logged in then send to home
+  //     if (cookie['access_token'] && localStorage.getItem('userID')) {
+  //       router.push('/');
+  //     }
+  //   } else {
+  //     // not logged in then send to login page
+  //     if (!cookie['access_token'] || !localStorage.getItem('userID')) {
+  //       localStorage.clear();
+  //       sessionStorage.clear();
+  //       router.push('/login');
+  //     }
+  //   }
+  // }, [cookie, router]);
 
-  useEffect(() => {
-    handleLoginRedirect();
-  }, [handleLoginRedirect]);
+  // useEffect(() => {
+  //   handleLoginRedirect();
+  // }, [handleLoginRedirect]);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      login();
-    }
-  }, [isAuthenticated, login]);
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     login();
+  //   }
+  // }, [isAuthenticated, login]);
 
   if (process.env.NODE_ENV === 'production') {
     globalThis.console.log = () => { };
