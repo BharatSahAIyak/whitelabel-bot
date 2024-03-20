@@ -42,7 +42,7 @@ const loadState = () => {
   return undefined;
 };
 
-const saveState = (state) => {
+const saveState = (state:any) => {
   if (typeof window !== 'undefined') {
     try {
       const serializedState = JSON.stringify(state);
