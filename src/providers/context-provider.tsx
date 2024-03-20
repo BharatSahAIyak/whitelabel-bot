@@ -433,7 +433,7 @@ export const ContextProvider: FC<{
       setConversationId,
       newSocket,
     //  isDown,
-     // fetchIsDown,
+       fetchIsDown,
       showDialerPopup,
       setShowDialerPopup,
       currentQuery,
