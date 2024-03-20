@@ -10,7 +10,7 @@ import React, {
 import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
 import ChatMessageItem from '../chat-message-item';
-import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
+import VoiceRecorder from '../recorder';
 import toast from 'react-hot-toast';
 import DownTimePage from '../down-time-page';
 
@@ -104,7 +104,7 @@ const ChatUiWindow: React.FC = () => {
           showTransliteration={!(localStorage.getItem('locale') === 'en')}
           //@ts-ignore
           messages={messagesToRender}
-          voiceToText={RenderVoiceRecorder}
+          voiceToText={VoiceRecorder}
           //@ts-ignore
           renderMessageContent={(props): ReactElement => (
             <ChatMessageItem
