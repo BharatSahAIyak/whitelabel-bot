@@ -32,14 +32,14 @@ const Navbar: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen); // Toggle sidebar state
+    setSidebarOpen(!isSidebarOpen);  
   };
 
   return (
     <>
       <AppBar position="static" sx={{ background: theme.primary.dark }}>
-        <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}> {/* Changed style */}
-          <div style={{ display: 'flex', alignItems: 'center' }}> {/* Changed style */}
+        <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>  
+          <div style={{ display: 'flex', alignItems: 'center' }}>  
             {showHamburgerMenu && (
               <IconButton
                 size="large"
@@ -53,7 +53,7 @@ const Navbar: React.FC = () => {
               </IconButton>
             )}
             {showHomeIcon && (
-              <div style={{ display: 'flex', alignItems: 'center' }}> {/* Changed style */}
+              <div style={{ display: 'flex', alignItems: 'center' }}>  
                 <IconButton
                   color="primary"
                   size="large"
