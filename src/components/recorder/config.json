@@ -11,7 +11,7 @@
   },
   "component": {
     "allowOverride": false,
-    "startIcon": "https://amakrushai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FstartIcon.9d6fe969.png&w=1920&q=75",
+    "startIcon": "/src/components/recorder/assets/stop.gif",
     "stopIcon": "/src/components/recorder/assets/stop.gif",
     "errorIcon": "/src/components/recorder/assets/error.gif",
     "processingIcon": "/src/components/recorder/assets/process.gif",

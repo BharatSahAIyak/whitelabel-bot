@@ -128,6 +128,9 @@ const startRecording = () => {
       // Define the API endpoint
       const apiEndpoint = process.env.NEXT_PUBLIC_BFF_API_URL;
 
+      const phoneNumber = localStorage.getItem('phoneNumber');
+      //check if phone number exists
+      if (phoneNumber !== null) {
       // Create a FormData object
       const formData = new FormData();
 
@@ -161,6 +164,10 @@ const startRecording = () => {
         }, 2500);
       }
       setRecorderStatus('idle');
+    } else {
+      // Handle the case where phone number is null
+      console.error('Phone number is null.');
+    }
     } catch (error) {
       console.error(error);
       setRecorderStatus('error');
