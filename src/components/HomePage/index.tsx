@@ -22,9 +22,9 @@ import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
 import { useFlags } from 'flagsmith/react';
-import DownTimePage from '../down-time-page';
 import { recordUserLocation } from '../../utils/location';
 import { useConfig } from '../../hooks/useConfig';
+import DowntimePage from '../../pageComponents/downtime-page';
 
 const HomePage: NextPage = () => {
   const context = useContext(AppContext);
@@ -346,7 +346,7 @@ const HomePage: NextPage = () => {
   }, [secondaryColorConfig]);
 
   if (context?.isDown) {
-    return <DownTimePage />;
+    return <DowntimePage />;
   } else
     return (
       <>
