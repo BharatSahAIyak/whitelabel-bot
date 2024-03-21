@@ -12,13 +12,13 @@ import { useLocalization } from '../../hooks';
 import ChatMessageItem from '../chat-message-item';
 import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
 import toast from 'react-hot-toast';
-import DownTimePage from '../down-time-page';
 
 import { useConfig } from '../../hooks/useConfig';
 import { useSelector } from 'react-redux';
 import { selectIsDown, selectIsMessageReceiving, selectMessagesToRender } from '../../store/slices/messageSlice';
 
 import ShareButtons from '../share-buttons';
+import DowntimePage from '../../pageComponents/downtime-page';
 
 const ChatUiWindow: React.FC = () => {
   const t = useLocalization();
@@ -91,7 +91,7 @@ const ChatUiWindow: React.FC = () => {
   }, [secondaryColorConfig]);
 
   if (isDown) {
-    return <DownTimePage />;
+    return <DowntimePage />;
   } else
     return (
       <div style={{ height: '100%', width: '100%' }}>

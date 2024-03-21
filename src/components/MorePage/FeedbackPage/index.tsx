@@ -9,13 +9,13 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import ComingSoonPage from '../../coming-soon-page';
 import { useFlags } from 'flagsmith/react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { AppContext } from '../../../context';
 import { useLocalization } from '../../../hooks';
 import { useConfig } from '../../../hooks/useConfig';
+import ComingSoonPage from '../../../pageComponents/coming-soon-page';
 
 const FeedbackPage: React.FC = () => {
   const t = useLocalization();
