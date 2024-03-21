@@ -58,7 +58,7 @@ const App = ({ Component, pageProps }: AppProps) => {
     };
     getFlagSmithState();
     localStorage.setItem('userID', uuidv4())
-    localStorage.setItem('phoneNumber', uuidv4())
+    localStorage.setItem('phoneNumber', '9999999999')
   }, []);
 
   // const handleLoginRedirect = useCallback(() => {
