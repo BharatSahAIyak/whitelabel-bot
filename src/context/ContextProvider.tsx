@@ -310,11 +310,6 @@ const ContextProvider: FC<{
           if (msg.payload.text.endsWith('<end/>')) {
             setLastMsgId(msg?.messageId.Id);
             setEndTime(Date.now());
-            // try {
-            //   postTelemetry();
-            // } catch (err) {
-            //   console.error(err);
-            // }
           }
           setLoading(false);
         }
@@ -484,44 +479,7 @@ const ContextProvider: FC<{
         },
       });
       const messageId = uuidv4();
-      try {
-        const telemetryApi =
-          process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
-        await axios.post(telemetryApi, [
-          {
-            generator: 'pwa',
-            version: '1.0',
-            timestamp: new Date().getTime(),
-            actorId: localStorage.getItem('userID') || '',
-            actorType: 'user',
-            env: 'prod',
-            eventId: 'E036',
-            event: 'messageQuery',
-            subEvent: 'messageSent',
-            os:
-              // @ts-ignore
-              window.navigator?.userAgentData?.platform ||
-              window.navigator.platform,
-            browser: window.navigator.userAgent,
-            ip: sessionStorage.getItem('ip') || '',
-            // @ts-ignore
-            deviceType: window.navigator?.userAgentData?.mobile
-              ? 'mobile'
-              : 'desktop',
-            eventData: {
-              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-              userId: localStorage.getItem('userID') || '',
-              phoneNumber: localStorage.getItem('phoneNumber') || '',
-              conversationId: sessionStorage.getItem('conversationId') || '',
-              messageId: messageId,
-              text: text,
-              createdAt: new Date().getTime(),
-            },
-          },
-        ]);
-      } catch (err) {
-        console.error(err);
-      }
+      
       setStartTime(Date.now());
       if (isVisibile)
         if (media) {
@@ -547,6 +505,44 @@ const ContextProvider: FC<{
             },
           ]);
           sessionStorage.removeItem('asrId');
+        }
+        try {
+          const telemetryApi =
+            process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+          await axios.post(telemetryApi, [
+            {
+              generator: 'pwa',
+              version: '1.0',
+              timestamp: new Date().getTime(),
+              actorId: localStorage.getItem('userID') || '',
+              actorType: 'user',
+              env: 'prod',
+              eventId: 'E036',
+              event: 'messageQuery',
+              subEvent: 'messageSent',
+              os:
+                // @ts-ignore
+                window.navigator?.userAgentData?.platform ||
+                window.navigator.platform,
+              browser: window.navigator.userAgent,
+              ip: sessionStorage.getItem('ip') || '',
+              // @ts-ignore
+              deviceType: window.navigator?.userAgentData?.mobile
+                ? 'mobile'
+                : 'desktop',
+              eventData: {
+                botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+                userId: localStorage.getItem('userID') || '',
+                phoneNumber: localStorage.getItem('phoneNumber') || '',
+                conversationId: sessionStorage.getItem('conversationId') || '',
+                messageId: messageId,
+                text: text,
+                createdAt: new Date().getTime(),
+              },
+            },
+          ]);
+        } catch (err) {
+          console.error(err);
         }
     },
     [conversationId, newSocket, removeCookie]
