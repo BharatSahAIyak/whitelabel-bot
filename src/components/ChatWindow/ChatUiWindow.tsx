@@ -254,6 +254,13 @@ const ChatUiWindow: React.FC = () => {
           //@ts-ignore
           translation={t}
           showTransliteration={(localStorage.getItem('locale') === 'or')}
+          transliterationConfig={{
+            transliterationApi: 'https://ai-tools-proxy.staging.bhasai.samagra.io/transliterate',
+            transliterationInputLanguage: 'en',
+            transliterationOutputLanguage: 'hi',
+            transliterationProvider: 'bhashini',
+            transliterationSuggestions: 5
+          }}
           //@ts-ignore
           messages={msgToRender}
           voiceToText={RenderVoiceRecorder}

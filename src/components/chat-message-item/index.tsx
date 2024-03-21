@@ -167,7 +167,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
                     console.log('clearing chat');
                     context?.setMessages([]);
                   }
-                  context?.sendMessage(choice);
+                  context?.sendMessage(choice?.text);
                   setOptionDisabled(true);
                 }
               }}>
@@ -183,7 +183,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
                       ? 'var(--font)'
                       : secondaryColor,
                 }}>
-                <div>{choice}</div>
+                <div>{choice?.text}</div>
                 <div style={{ marginLeft: 'auto' }}>
                   <RightIcon
                     width="30px"
@@ -327,10 +327,14 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
                   content?.data?.position === 'right' ? 'white' : 'var(--font)',
               }}>
               {content.text}{' '}
-              {content?.data?.position === 'right'
+              {/* {content?.data?.position === 'right'
                 ? null
-                : !content?.data?.isEnd && <BlinkingSpinner />}
+                : !content?.data?.isEnd && <BlinkingSpinner />} */}
             </span>
+            {getLists({
+              choices:
+                content?.data?.payload?.buttonChoices ?? content?.data?.choices,
+            })}
             <div
               style={{
                 display: 'flex',
@@ -397,14 +401,20 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
                     className={styles.msgSpeaker}
                     onClick={!ttsLoader ? downloadAudio : () => {}}
                     style={
-                      !content?.data?.isEnd
-                        ? {
-                            pointerEvents: 'none',
-                            filter: 'grayscale(100%)',
-                            opacity: '0.5',
-                            border: `1px solid ${secondaryColor}`
-                          }
-                          : {
+                      // !content?.data?.isEnd
+                      //   ? {
+                      //       pointerEvents: 'none',
+                      //       filter: 'grayscale(100%)',
+                      //       opacity: '0.5',
+                      //       border: `1px solid ${secondaryColor}`
+                      //     }
+                      //     : {
+                      //       pointerEvents: 'auto',
+                      //       opacity: '1',
+                      //       filter: 'grayscale(0%)',
+                      //       border: `1px solid ${secondaryColor}`
+                      //     }
+                          {
                             pointerEvents: 'auto',
                             opacity: '1',
                             filter: 'grayscale(0%)',
@@ -611,7 +621,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({ message, onSend }) => {
           <Bubble type="text" className={styles.textBubble}>
             <div style={{ display: 'flex' }}>
               <span className={styles.optionsText}>
-                {content?.data?.payload?.text}
+                {content?.data?.text}
               </span>
             </div>
             {getLists({

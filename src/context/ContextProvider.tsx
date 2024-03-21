@@ -57,7 +57,7 @@ const ContextProvider: FC<{
   });
   const [isDown, setIsDown] = useState(false);
   const [showDialerPopup, setShowDialerPopup] = useState(false);
-  const [currentQuery, setCurrentQuery] = useState("");
+  const [currentQuery, setCurrentQuery] = useState('');
   // const [isConnected, setIsConnected] = useState(newSocket?.connected || false);
   const [cookie, setCookie, removeCookie] = useCookies();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -67,7 +67,8 @@ const ContextProvider: FC<{
   const [startTime, setStartTime] = useState(Date.now());
   const [endTime, setEndTime] = useState(Date.now());
   const [lastMsgId, setLastMsgId] = useState('');
-   const [config, setConfig] = useState(null);
+  const [lastMsg, setLastMsg] = useState('');
+  const [config, setConfig] = useState(null);
 
   // const configs = useMergeConfigurations();
   // console.log("hola:",{configs})
@@ -75,8 +76,7 @@ const ContextProvider: FC<{
     mergeConfigurations().then(setConfig);
   }, []);
 
-  console.log("config:",{config})
-
+  console.log('config:', { config });
 
   const downloadChat = useMemo(() => {
     return (e: string) => {
@@ -157,7 +157,7 @@ const ContextProvider: FC<{
         .get(
           `${process.env.NEXT_PUBLIC_BFF_API_URL}/incrementaudioused/${content?.data?.messageId}`
         )
-        .then((res) => { })
+        .then((res) => {})
         .catch((err) => {
           console.log(err);
         });
@@ -223,28 +223,28 @@ const ContextProvider: FC<{
 
   useEffect(() => {
     // if (localStorage.getItem('userID') && localStorage.getItem('auth')) {
-      setNewSocket(
-        new UCI(
-          URL,
-          {
-            transportOptions: {
-              polling: {
-                extraHeaders: {
-                  // Authorization: `Bearer ${localStorage.getItem('auth')}`,
-                  channel: 'akai',
-                },
+    setNewSocket(
+      new UCI(
+        URL,
+        {
+          transportOptions: {
+            polling: {
+              extraHeaders: {
+                // Authorization: `Bearer ${localStorage.getItem('auth')}`,
+                channel: 'akai',
               },
             },
-            query: {
-              deviceId: localStorage.getItem('userID'),
-            },
-            autoConnect: false,
-            transports: ['polling', 'websocket'],
-            upgrade: true,
           },
-          onMessageReceived
-        )
-      );
+          query: {
+            deviceId: localStorage.getItem('userID'),
+          },
+          autoConnect: false,
+          transports: ['polling', 'websocket'],
+          upgrade: true,
+        },
+        onMessageReceived
+      )
+    );
     // }
     function cleanup() {
       if (newSocket)
@@ -258,17 +258,21 @@ const ContextProvider: FC<{
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
       console.log('updatemsgstate:', msg);
-      if (msg?.content?.title) {
+      if (
+        msg?.payload?.text &&
+        msg?.messageId?.Id &&
+        msg?.messageId?.channelMessageId
+      ) {
         if (
           sessionStorage.getItem('conversationId') ===
-          msg?.content?.conversationId
+          msg.messageId.channelMessageId
         ) {
-          const word = msg.content.title;
+          const word = msg.payload.text;
 
           setMessages((prev: any) => {
             const updatedMessages = [...prev];
             const existingMsgIndex = updatedMessages.findIndex(
-              (m: any) => m.messageId === msg.messageId
+              (m: any) => m.messageId === msg.messageId.Id
             );
             console.log('existingMsgIndex', existingMsgIndex);
 
@@ -284,14 +288,17 @@ const ContextProvider: FC<{
               const newMsg = {
                 text: word.replace('<end/>', '') + ' ',
                 isEnd: word.endsWith('<end/>') ? true : false,
-                choices: msg?.content?.choices,
+                choices: msg?.payload?.buttonChoices,
                 position: 'left',
                 reaction: 0,
-                messageId: msg?.messageId,
-                conversationId: msg?.content?.conversationId,
+                messageId: msg?.messageId.Id,
+                conversationId: msg.messageId.channelMessageId,
                 sentTimestamp: Date.now(),
-                btns: msg?.content?.btns,
-                audio_url: msg?.content?.audio_url,
+                // btns: msg?.payload?.buttonChoices,
+                // audio_url: msg?.content?.audio_url,
+                // metaData: msg.payload?.metaData
+                //     ? JSON.parse(msg.payload?.metaData)
+                //     : null,
                 ...media,
               };
 
@@ -299,44 +306,15 @@ const ContextProvider: FC<{
             }
             return updatedMessages;
           });
-          if (msg?.content?.title?.endsWith('<end/>')) {
-            setLastMsgId(msg?.messageId);
+          setIsMsgReceiving(false);
+          if (msg.payload.text.endsWith('<end/>')) {
+            setLastMsgId(msg?.messageId.Id);
             setEndTime(Date.now());
-            setIsMsgReceiving(false);
-            try{
-              const telemetryApi = process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
-              axios.post(telemetryApi, {
-                data: {
-                  generator: 'pwa',
-                  version: '1.0',
-                  timestamp: new Date(),
-                  actorId: localStorage.getItem('userID') || '',
-                  actorType: 'user',
-                  env: 'prod',
-                  eventId: 'E037',
-                  event: 'messageQuery',
-                  subEvent: 'messageSent',
-                  // @ts-ignore
-                  os: window.navigator?.userAgentData?.platform || window.navigator.platform,
-                  browser: window.navigator.userAgent,
-                  ip: sessionStorage.getItem('ip') || '',
-                  // @ts-ignore
-                  deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
-                  eventData: {
-                    botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-                    userId: localStorage.getItem('userID') || '',
-                    phoneNumber: localStorage.getItem('phoneNumber') || '',
-                    conversationId: sessionStorage.getItem('conversationId') || '',
-                    messageId: msg?.messageId,
-                    text: messages[messages.length - 1]?.text,
-                    createdAt: new Date(),
-                    timeTaken: endTime - startTime
-                  }
-                }
-              })
-            }catch(err){
-              console.error(err)
-            }
+            // try {
+            //   postTelemetry();
+            // } catch (err) {
+            //   console.error(err);
+            // }
           }
           setLoading(false);
         }
@@ -345,45 +323,99 @@ const ContextProvider: FC<{
     []
   );
 
+  const telemetryApi =
+    process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+  useEffect(() => {
+    const postTelemetry = async () => {
+      console.log('MESSAGE:', messages[messages.length - 1]);
+      try {
+        await axios.post(telemetryApi, [
+          {
+            generator: 'pwa',
+            version: '1.0',
+            timestamp: new Date().getTime(),
+            actorId: localStorage.getItem('userID') || '',
+            actorType: 'user',
+            env: 'prod',
+            eventId: 'E037',
+            event: 'messageQuery',
+            subEvent: 'messageReceived',
+            os:
+              // @ts-ignore
+              window.navigator?.userAgentData?.platform ||
+              window.navigator.platform,
+            browser: window.navigator.userAgent,
+            ip: sessionStorage.getItem('ip') || '',
+            // @ts-ignore
+            deviceType: window.navigator?.userAgentData?.mobile
+              ? 'mobile'
+              : 'desktop',
+            eventData: {
+              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+              userId: localStorage.getItem('userID') || '',
+              phoneNumber: localStorage.getItem('phoneNumber') || '',
+              conversationId: sessionStorage.getItem('conversationId') || '',
+              messageId: messages[messages.length - 1]?.messageId,
+              text: messages[messages.length - 1]?.text,
+              createdAt: new Date().getTime(),
+              timeTaken: endTime - startTime,
+            },
+          },
+        ]);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    postTelemetry();
+  }, [endTime]);
+
   console.log('erty:', { conversationId });
 
   const onMessageReceived = useCallback(
     async (msg: any) => {
-      if (!msg?.content?.id) msg.content.id = '';
-      if (msg.content.msg_type.toUpperCase() === 'IMAGE') {
+      // if (!msg?.content?.id) msg.content.id = '';
+      if (msg.messageType.toUpperCase() === 'IMAGE') {
         if (
           // msg.content.timeTaken + 1000 < timer2 &&
           isOnline
         ) {
           await updateMsgState({
             msg: msg,
-            media: { imageUrl: msg?.content?.media_url },
+            media: { imageUrls: msg?.content?.media_url },
           });
         }
-      } else if (msg.content.msg_type.toUpperCase() === 'AUDIO') {
+      } else if (msg.messageType.toUpperCase() === 'AUDIO') {
         updateMsgState({
           msg,
           media: { audioUrl: msg?.content?.media_url },
         });
-      } else if (msg.content.msg_type.toUpperCase() === 'VIDEO') {
+      } else if (msg.messageType.toUpperCase() === 'HSM') {
+        updateMsgState({
+          msg,
+          media: { audioUrl: msg?.content?.media_url },
+        });
+      } else if (msg.messageType.toUpperCase() === 'VIDEO') {
         updateMsgState({
           msg,
           media: { videoUrl: msg?.content?.media_url },
         });
       } else if (
-        msg.content.msg_type.toUpperCase() === 'DOCUMENT' ||
-        msg.content.msg_type.toUpperCase() === 'FILE'
+        msg.messageType.toUpperCase() === 'DOCUMENT' ||
+        msg.messageType.toUpperCase() === 'FILE'
       ) {
         updateMsgState({
           msg,
           media: { fileUrl: msg?.content?.media_url },
         });
-      } else if (msg.content.msg_type.toUpperCase() === 'TEXT') {
+      } else if (msg.messageType.toUpperCase() === 'TEXT') {
         if (
           // msg.content.timeTaken + 1000 < timer2 &&
           isOnline
         ) {
-          await updateMsgState({ msg: msg, media: null });
+          await updateMsgState({
+            msg: msg,
+            media: null,
+          });
         }
       }
     },
@@ -448,29 +480,34 @@ const ContextProvider: FC<{
           asrId: sessionStorage.getItem('asrId'),
           userId: localStorage.getItem('userID'),
           conversationId: sessionStorage.getItem('conversationId'),
-          botId: process.env.NEXT_PUBLIC_BOT_ID || ''
-        }
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        },
       });
       const messageId = uuidv4();
-      try{
-        const telemetryApi = process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
-        axios.post(telemetryApi, {
-          data: {
+      try {
+        const telemetryApi =
+          process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+        await axios.post(telemetryApi, [
+          {
             generator: 'pwa',
             version: '1.0',
-            timestamp: new Date(),
+            timestamp: new Date().getTime(),
             actorId: localStorage.getItem('userID') || '',
             actorType: 'user',
             env: 'prod',
             eventId: 'E036',
             event: 'messageQuery',
             subEvent: 'messageSent',
-            // @ts-ignore
-            os: window.navigator?.userAgentData?.platform || window.navigator.platform,
+            os:
+              // @ts-ignore
+              window.navigator?.userAgentData?.platform ||
+              window.navigator.platform,
             browser: window.navigator.userAgent,
             ip: sessionStorage.getItem('ip') || '',
             // @ts-ignore
-            deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
+            deviceType: window.navigator?.userAgentData?.mobile
+              ? 'mobile'
+              : 'desktop',
             eventData: {
               botId: process.env.NEXT_PUBLIC_BOT_ID || '',
               userId: localStorage.getItem('userID') || '',
@@ -478,12 +515,12 @@ const ContextProvider: FC<{
               conversationId: sessionStorage.getItem('conversationId') || '',
               messageId: messageId,
               text: text,
-              createdAt: new Date()
-            }
-          }
-        })
-      }catch(err){
-        console.error(err)
+              createdAt: new Date().getTime(),
+            },
+          },
+        ]);
+      } catch (err) {
+        console.error(err);
       }
       setStartTime(Date.now());
       if (isVisibile)
@@ -595,7 +632,8 @@ const ContextProvider: FC<{
           console.log('log:', loading);
           try {
             const chatHistory = await axios.get(
-              `${process.env.NEXT_PUBLIC_BFF_API_URL
+              `${
+                process.env.NEXT_PUBLIC_BFF_API_URL
               }/user/chathistory/${sessionStorage.getItem('conversationId')}`,
               {
                 headers: {
@@ -695,7 +733,7 @@ const ContextProvider: FC<{
       downloadChat,
       audioPlaying,
       setAudioPlaying,
-      config
+      config,
     }),
     [
       locale,
@@ -722,7 +760,7 @@ const ContextProvider: FC<{
       downloadChat,
       audioPlaying,
       setAudioPlaying,
-      config
+      config,
     ]
   );
   if (!config) return <div>Loading configuration...</div>;

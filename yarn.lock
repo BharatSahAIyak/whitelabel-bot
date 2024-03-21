@@ -2904,10 +2904,10 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.7.2.tgz#2d4260033e199b3032a08b41348ac10de21c47e9"
   integrity sha512-RbhOOTCNoCrbfkRyoXODZp75MlpiHMgbE5MEBZAnnnLyQNgrigEj4p0lzsMDyc1zVsJDLrivB58tgg3emX0eEA==
 
-"@samagra-x/chatui@1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@samagra-x/chatui/-/chatui-1.0.2.tgz#1ad14f81561efa80ff39b3adcf431361e05e8002"
-  integrity sha512-RttBs4ek+Mmttru4WapZ7Hi4VumCzM5VdCNElWu2fo1ckpsT4x2OTDxUPHaNfx2r9FQRXhe4RCBgdpKhZCKLmA==
+"@samagra-x/chatui@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@samagra-x/chatui/-/chatui-1.0.3.tgz#43c6fef3edb06b7d8bef48fcd29dc556d6bcf61b"
+  integrity sha512-+wB2nsFGEhFF7vqH/8XOUdTzL0LtUia4xvBo/DbzHxuvgDXaThtSKou5bzz38eACI3jioXCq9g+RHoiMoEgggA==
   dependencies:
     "@babel/runtime" "^7.18.3"
     "@babel/runtime-corejs3" "^7.18.3"
