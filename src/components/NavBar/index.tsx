@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 import { Sidemenu } from '../Sidemenu';
 import { recordUserLocation } from '../../utils/location';
 import { useConfig } from '../../hooks/useConfig';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
 function NavBar() {
   const flags = useFlags(['show_download_button', 'show_share_button']);
@@ -54,14 +55,13 @@ function NavBar() {
 
 
   const config = useConfig('component','navbar');
-  // console.log("hola2:",{config})
   const botName = useMemo(() => {
     return config?.brandName;
   }, [config]);
-  const secondaryColorConfig = useConfig('theme','secondaryColor');
-  const secondaryColor = useMemo(() => {
-    return secondaryColorConfig?.value;
-  }, [secondaryColorConfig]);
+
+
+  const theme = useColorPalates();
+  console.log("bhula:",{theme})
 
   if (router.pathname === '/chat' && !context?.isDown) {
     return (
@@ -78,7 +78,7 @@ function NavBar() {
               flexDirection: 'column',
               alignItems: 'center',
             }}>
-            <PlusIcon color={secondaryColor} />
+            <PlusIcon color={theme?.primary?.main} />
             <p style={{ color: 'var(--font)', fontSize: '12px' }}>
               {t('label.new_chat')}
             </p>
@@ -129,7 +129,7 @@ function NavBar() {
                 onClick={() => {
                   router.push('/');
                 }}>
-                <HomeIcon color={secondaryColor} />
+                <HomeIcon color={theme?.primary?.main} />
               </div>
             ) : null}
           </div>

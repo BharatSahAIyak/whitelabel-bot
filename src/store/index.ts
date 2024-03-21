@@ -17,12 +17,12 @@ export const store = () => {
 
   const _store = configureStore({
     reducer: rootReducer,
-    preloadedState: preloadedState,
+    // preloadedState: preloadedState,
   });
 
-  _store.subscribe(() => {
-    saveState(_store.getState());
-  });
+  // _store.subscribe(() => {
+  //   saveState(_store.getState());
+  // });
 
   return _store;
 };

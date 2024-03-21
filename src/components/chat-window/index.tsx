@@ -14,21 +14,20 @@ import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
 import toast from 'react-hot-toast';
 import { useConfig } from '../../hooks/useConfig';
 import { useSelector } from 'react-redux';
-import { selectIsDown, selectIsMessageReceiving, selectMessagesToRender } from '../../store/slices/messageSlice';
+import { selectIsDown, selectIsMessageReceiving, selectMessages, selectMessagesToRender } from '../../store/slices/messageSlice';
 
 import ShareButtons from '../share-buttons';
 import DowntimePage from '../../pageComponents/downtime-page';
 import config from './config.json';
+import { FullPageLoader } from '../fullpage-loader';
 
 const ChatUiWindow: React.FC = () => {
   const t = useLocalization();
   const context = useContext(AppContext);
   const isDown = useSelector(selectIsDown);
   const isMsgReceiving = useSelector(selectIsMessageReceiving);
-  const temp = useSelector((arg) => {
-    console.log("log temp:", arg);
-    return arg;
-  })
+
+ 
   
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -86,8 +85,11 @@ const ChatUiWindow: React.FC = () => {
     [context, t]
   );
 
-  const messagesToRender = useSelector(selectMessagesToRender);
-  console.log({messagesToRender, isMsgReceiving})
+  // const messagesToRender = useSelector(selectMessagesToRender);
+  const messagesToRender = useSelector(selectMessagesToRender(isMsgReceiving));
+  const messages =useSelector(selectMessages);
+  console.log({messagesToRender, isMsgReceiving,messages});
+ 
   // const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
 
   // const secondaryColorConfig = useConfig('theme', 'secondaryColor');

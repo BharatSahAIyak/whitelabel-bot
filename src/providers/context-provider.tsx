@@ -81,7 +81,7 @@ export const ContextProvider: FC<{
     mergeConfigurations().then(setConfig);
   }, []);
 
-  console.log("hola:",{config})
+
 
 
   const downloadChat = useMemo(() => {
@@ -271,6 +271,7 @@ export const ContextProvider: FC<{
       //@ts-ignore
       dispatch(onMessageReceivedAction({message,isOnline})).then(res=>{
         console.log("hola ram msgReceived",{res})
+        // dispatch(setIsMsgReceiving(false))
       })
     },
     [isOnline,onMessageReceivedAction]

@@ -3,7 +3,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 // Create an async thunk for fetching user data
 export const sendMessageAction = createAsyncThunk('message/sendMessage', async (messageData, thunkAPI) => {
-	try {
+	console.log("chakshu sendMsg:", messageData);
+  try {
     //TODO: Add proper types
 	//@ts-ignore
         messageData?.socket?.sendMessage({

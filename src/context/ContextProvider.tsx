@@ -76,7 +76,7 @@ const ContextProvider: FC<{
     mergeConfigurations().then(setConfig);
   }, []);
 
-  console.log("config:",{config})
+  
 
 
   const downloadChat = useMemo(() => {
