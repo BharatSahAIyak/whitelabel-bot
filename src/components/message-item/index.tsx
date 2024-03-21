@@ -1,6 +1,6 @@
 import {
   Bubble,
-  Image as Image,
+  Image as Img,
   ScrollView,
   List,
   ListItem,
@@ -8,6 +8,7 @@ import {
   Typing,
 } from '@samagra-x/chatui';
 import { FC, ReactElement, useCallback, useEffect, useState } from 'react';
+import Image from 'next/image'
 import { toast } from 'react-hot-toast';
 import styles from './index.module.css';
 import RightIcon from './assets/right';
@@ -58,6 +59,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
               e.preventDefault();
               if (optionDisabled) {
                 toast.error(`Cannot answer again`);
+              }else{
+                // TODO: send choice?.text as message and set options disabled
               }
             }}>
             <div
@@ -71,7 +74,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                     ? config.theme.primaryColor.value
                     : config.theme.secondaryColor.value,
               }}>
-              <div>{choice}</div>
+              <div>{choice?.text}</div>
               <div style={{ marginLeft: 'auto' }}>
                 <RightIcon
                   width="30px"
@@ -153,6 +156,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                 && <BlinkingSpinner />
               } */}
             </span>
+            {getLists({
+              choices:
+                content?.data?.payload?.buttonChoices ?? content?.data?.choices,
+            })}
             <div
               style={{
                 display: 'flex',
@@ -303,7 +310,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
           )}
           <Bubble type="image">
             <div style={{ padding: '7px' }}>
-              <Image src={url} width="299" height="200" alt="image" lazy fluid />
+              <Img src={url} width="299" height="200" alt="image" lazy fluid />
               <div
                 style={{
                   display: 'flex',
