@@ -331,10 +331,7 @@ export const ContextProvider: FC<{
     }
     timer = setTimeout(() => {
       if (loading) {
-        toast(() => <span>{t('message.taking_longer')}</span>, {
-          // @ts-ignore
-          icon: <Spinner />,
-        });
+        toast.loading(t('message.taking_longer'), {duration: 2500});
       }
       secondTimer = setTimeout(async () => {
         fetchIsDown();

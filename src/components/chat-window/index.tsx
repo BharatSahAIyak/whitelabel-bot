@@ -9,22 +9,26 @@ import React, {
 } from 'react';
 import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
-import ChatMessageItem from '../chat-message-item';
+import MessageItem from '../message-item';
 import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
 import toast from 'react-hot-toast';
-
 import { useConfig } from '../../hooks/useConfig';
 import { useSelector } from 'react-redux';
 import { selectIsDown, selectIsMessageReceiving, selectMessagesToRender } from '../../store/slices/messageSlice';
 
 import ShareButtons from '../share-buttons';
 import DowntimePage from '../../pageComponents/downtime-page';
+import config from './config.json';
 
 const ChatUiWindow: React.FC = () => {
   const t = useLocalization();
   const context = useContext(AppContext);
   const isDown = useSelector(selectIsDown);
   const isMsgReceiving = useSelector(selectIsMessageReceiving);
+  const temp = useSelector((arg) => {
+    console.log("log temp:", arg);
+    return arg;
+  })
   
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -83,12 +87,15 @@ const ChatUiWindow: React.FC = () => {
   );
 
   const messagesToRender = useSelector(selectMessagesToRender);
-  const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
+  console.log({messagesToRender, isMsgReceiving})
+  // const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
 
-  const secondaryColorConfig = useConfig('theme', 'secondaryColor');
-  const secondaryColor = useMemo(() => {
-    return secondaryColorConfig?.value;
-  }, [secondaryColorConfig]);
+  // const secondaryColorConfig = useConfig('theme', 'secondaryColor');
+  // const secondaryColor = useMemo(() => {
+  //   return secondaryColorConfig?.value;
+  // }, [secondaryColorConfig]);
+
+  const placeholder = useMemo(() => config?.component?.placeholder ?? "Ask Your Question", [config]);
 
   if (isDown) {
     return <DowntimePage />;
@@ -96,29 +103,34 @@ const ChatUiWindow: React.FC = () => {
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <Chat
-          btnColor={secondaryColor}
+          btnColor={config.theme.secondaryColor.value}
           background="var(--bg-color)"
           disableSend={isMsgReceiving}
           //@ts-ignore
           translation={t}
-          showTransliteration={!(localStorage.getItem('locale') === 'en')}
+          showTransliteration={config.component.allowTransliteration}
+        transliterationConfig={{
+          transliterationApi: config.component.transliterationApi,
+          transliterationInputLanguage: config.component.transliterationInputLanguage,
+          transliterationOutputLanguage: config.component.transliterationOutputLanguage,
+          transliterationProvider: config.component.transliterationProvider,
+          transliterationSuggestions: config.component.transliterationSuggestions
+        }}
           //@ts-ignore
           messages={messagesToRender}
           voiceToText={RenderVoiceRecorder}
           //@ts-ignore
           renderMessageContent={(props): ReactElement => (
-            <ChatMessageItem
-              //@ts-ignore
-              key={props}
+            <MessageItem
               message={props}
-              onSend={handleSend}
+              config={config}
             />
           )}
           onSend={handleSend}
           locale="en-US"
           placeholder={placeholder}
         />
-        <ShareButtons />
+        <ShareButtons config={config} />
       </div>
     );
 };

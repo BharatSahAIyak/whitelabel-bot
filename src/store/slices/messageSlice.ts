@@ -67,16 +67,20 @@ function checkIsServerDownFulfilled(state: any, { payload, meta }: any): void {
 }
 function messageReceivedFulfilled(state: any, { payload, meta }: any): void {
   const { message, media } = payload;
-  if (message?.content?.title) {
+  if (
+    message?.payload?.text &&
+    message?.messageId?.Id &&
+    message?.messageId?.channelMessageId
+  ) {
     if (
       sessionStorage.getItem('conversationId') ===
-      message?.content?.conversationId
+      message.messageId.channelMessageId
     ) {
-      const word = message.content.title;
+      const word = message.payload.text;
       const prev = [...state.messages];
       const updatedMessages = [...prev];
       const existingMsgIndex = updatedMessages.findIndex(
-        (m: any) => m.messageId === message.messageId
+        (m: any) => m.messageId === message.messageId.Id
       );
 
       if (existingMsgIndex !== -1) {
@@ -91,14 +95,17 @@ function messageReceivedFulfilled(state: any, { payload, meta }: any): void {
         const newMsg = {
           text: word.replace('<end/>', '') + ' ',
           isEnd: word.endsWith('<end/>') ? true : false,
-          choices: message?.content?.choices,
+          choices: message?.payload?.buttonChoices,
           position: 'left',
           reaction: 0,
-          messageId: message?.messageId,
-          conversationId: message?.content?.conversationId,
+          messageId: message?.messageId.Id,
+          conversationId: message.messageId.channelMessageId,
           sentTimestamp: Date.now(),
-          btns: message?.content?.btns,
-          audio_url: message?.content?.audio_url,
+          // btns: msg?.payload?.buttonChoices,
+          // audio_url: msg?.content?.audio_url,
+          // metaData: msg.payload?.metaData
+          //     ? JSON.parse(msg.payload?.metaData)
+          //     : null,
           ...media,
         };
         updatedMessages.push(newMsg);
@@ -115,8 +122,8 @@ function messageReceivedFulfilled(state: any, { payload, meta }: any): void {
 
         state.lastMsgId = message?.messageId;
         state.endTime = Date.now()
-        state.isMessageReceiving = false;
       }
+      state.isMessageReceiving = false;
       state.isFetching = false;
     }
   }
@@ -164,7 +171,6 @@ export const selectEndTime = (state: any): boolean => state.messageSlice.endTime
 export const selectLastMsgId = (state: any): boolean => state.messageSlice.lastMsgId;
 export const selectIsDown = (state: any): boolean => state.messageSlice.isDown;
 export const selectMessagesToRender = (state: any): any => {
-  console.log("hola ram", { state })
   const normalizedMsgs = normalizeMsgs(state.messageSlice.messages);
   const isMessageReceiving = state.messageSlice.isMessageReceiving;
   return isMessageReceiving

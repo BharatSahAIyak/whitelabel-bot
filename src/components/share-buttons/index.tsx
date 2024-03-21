@@ -9,7 +9,8 @@ import { downloadChat } from '../../store/actions/messages/download-chats';
 import { toast } from 'react-hot-toast';
 import { AppContext } from '../../context';
 import axios from 'axios';
-const ShareButtons = () => {
+import { CircularProgress, Divider } from '@mui/material';
+const ShareButtons = ({config}: any) => {
     const t = useLocalization();
     const context = useContext(AppContext);
     const [shareLoader, setShareLoader] = useState(false);
@@ -96,93 +97,104 @@ const ShareButtons = () => {
         }
     };
     return (
-        <Draggable axis="y">
-            <div
-                style={{
-                    position: 'absolute',
-                    right: 0,
-                    top: '40%',
-                    background: 'white',
-                    padding: '5px',
-                    borderRadius: '5px 0 0 5px',
-                    boxShadow: 'rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px'
-                }}>
-                <div onClick={() => downloadShareHandler('share')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    {/* Share */}
-                    {shareLoader ? (
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                width: '24px',
-                                height: '24px',
-                            }}>
-                            <Loader />
-                        </div>
-                    ) : (
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}>
-                            <Image src={shareIcon} alt="" width={22} height={22} />{' '}
-                        </div>
-                    )}
-                    <p style={{ fontSize: '10px', margin: 0, color: 'var(--font)', fontFamily: 'Mulish-bold' }}>
-                        {t('label.share')}
-                    </p>
-                </div>
+        // <Draggable axis="y">
+        <>
+        {(config.component.allowDownloadChat || config.component.allowShareChat) && <div
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: '40%',
+              background: 'white',
+              padding: '5px',
+              borderRadius: '5px 0 0 5px',
+              boxShadow:
+                'rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px',
+            }}>
+            {config.component.allowShareChat && <div
+              onClick={() => downloadShareHandler('share')}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}>
+              {/* Share */}
+              {shareLoader ? (
                 <div
-                    style={{
-                        borderBottom: '1px solid var(--font)',
-                        margin: '5px 0',
-                    }}></div>
-                <div onClick={() => downloadShareHandler('download')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    {/* Download */}
-                    {downloadLoader ? (
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                width: '24px',
-                                height: '24px',
-                            }}>
-                            <Loader />
-                        </div>
-                    ) : (
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}>
-                            <Image src={downloadIcon} alt="" width={24} height={24} />
-                        </div>
-                    )}
-                    <p style={{ fontSize: '10px', margin: 0, color: 'var(--font)', fontFamily: 'Mulish-bold' }}>
-                        {t('label.download')}
-                    </p>
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '24px',
+                    height: '24px',
+                  }}>
+                  <CircularProgress size="20px" />
                 </div>
-                {/* <div onClick={() => downloadShareHandler('share')}>
- 
-        <Image src={shareIcon} alt="" width={24} height={24} />
-      </div>
-      <div
-        style={{
-          borderBottom: '1px solid var(--secondary)',
-          margin: '5px 0',
-        }}></div>
-      <div onClick={() => downloadShareHandler('download')}>
-        
-        <Image src={downloadIcon} alt="" width={24} height={24} />
-      </div> */}
-            </div>
-        </Draggable>
+              ) : (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Image src={shareIcon} alt="" width={22} height={22} />{' '}
+                </div>
+              )}
+              <p
+                style={{
+                  fontSize: '10px',
+                  margin: 0,
+                  // color: config.theme.primaryColor.value,
+                  fontFamily: 'Mulish-bold',
+                }}>
+                {config.component.shareChatText}
+              </p>
+            </div>}
+            {/* Only render divider when both share and download allowed */}
+            {config.component.allowDownloadChat && config.component.allowShareChat && <Divider />}
+            {config.component.allowDownloadChat && <div
+              onClick={() => downloadShareHandler('download')}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}>
+              {/* Download */}
+              {downloadLoader ? (
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '24px',
+                    height: '24px',
+                  }}>
+                  <CircularProgress size="20px" />
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Image src={downloadIcon} alt="" width={24} height={24} />
+                </div>
+              )}
+              <p
+                style={{
+                  fontSize: '10px',
+                  margin: 0,
+                  // color: config.theme.primaryColor.value,
+                  fontFamily: 'Mulish-bold',
+                }}>
+                {config.component.downloadChatText}
+              </p>
+            </div>}
+          </div>}
+          </>
+        // </Draggable>
     )
 }
 

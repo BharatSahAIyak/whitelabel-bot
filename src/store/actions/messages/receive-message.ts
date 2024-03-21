@@ -7,7 +7,7 @@ export const onMessageReceivedAction = createAsyncThunk(
         try {
 
             if (
-                messageData?.message?.content.msg_type.toUpperCase() ===
+                messageData?.message?.messageType.toUpperCase() ===
                 "IMAGE"
             ) {
                 if (
@@ -17,47 +17,46 @@ export const onMessageReceivedAction = createAsyncThunk(
 
                     return {
                         message: messageData?.message,
-                        media: { imageUrl: messageData?.message?.content?.media_url },
+                        media: { imageUrl: messageData?.message?.media_url },
                     };
                 }
             } else if (
-                messageData?.message?.content.msg_type.toUpperCase() ===
+                messageData?.message?.messageType.toUpperCase() ===
                 "AUDIO"
             ) {
 
                 return {
                     message: messageData?.message,
-                    media: { audioUrl: messageData?.message?.content?.media_url },
+                    media: { audioUrl: messageData?.message?.media_url },
                 };
             } else if (
-                messageData?.message?.content.msg_type.toUpperCase() ===
+                messageData?.message?.messageType.toUpperCase() ===
                 "VIDEO"
             ) {
 
                 return {
                     message: messageData?.message,
-                    media: { videoUrl: messageData?.message?.content?.media_url },
+                    media: { videoUrl: messageData?.message?.media_url },
                 };
             } else if (
-                messageData?.message?.content.msg_type.toUpperCase() ===
+                messageData?.message?.messageType.toUpperCase() ===
                 "DOCUMENT" ||
-                messageData?.message?.content.msg_type.toUpperCase() ===
+                messageData?.message?.messageType.toUpperCase() ===
                 "FILE"
             ) {
 
                 return {
                     message: messageData?.message,
-                    media: { fileUrl: messageData?.message?.content?.media_url },
+                    media: { fileUrl: messageData?.message?.media_url },
                 };
             } else if (
-                messageData?.message?.content.msg_type.toUpperCase() ===
+                messageData?.message?.messageType.toUpperCase() ===
                 "TEXT"
             ) {
                 if (
                     // messageData?.message.content.timeTaken + 1000 < timer2 &&
                     messageData?.isOnline
                 ) {
-                    console.log("hola ram: 5")
                     return { message: messageData?.message, media: null };
                 }
             }

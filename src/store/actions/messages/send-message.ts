@@ -22,6 +22,7 @@ export const sendMessageAction = createAsyncThunk('message/sendMessage', async (
               asrId: sessionStorage.getItem('asrId'),
               userId: localStorage.getItem('userID'),
               conversationId: sessionStorage.getItem('conversationId'),
+              botId: process.env.NEXT_PUBLIC_BOT_ID || ''
             }
           });
 

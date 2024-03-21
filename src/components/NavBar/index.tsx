@@ -70,7 +70,8 @@ function NavBar() {
           style={{ width: '120px', display: 'flex', alignItems: 'flex-start' }}>
           <Sidemenu />
           <div
-            onClick={newChatHandler}
+            onClick={null}
+            // onClick={newChatHandler}
             style={{
               paddingLeft: '15px',
               display: 'flex',
