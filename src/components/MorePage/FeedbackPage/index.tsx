@@ -1,159 +1,155 @@
-import starIcon from '../../../assets/icons/star.svg';
-import starOutlineIcon from '../../../assets/icons/star-outline.svg';
-import Image from 'next/image';
-import styles from './index.module.css';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { useFlags } from 'flagsmith/react';
-import axios from 'axios';
-import toast from 'react-hot-toast';
-import { AppContext } from '../../../context';
-import { useLocalization } from '../../../hooks';
-import { useConfig } from '../../../hooks/useConfig';
-import ComingSoonPage from '../../../pageComponents/coming-soon-page';
+import React, { useState } from "react";
+import styles from "./index.module.css";
+import Typography from "@mui/material/Typography";
+import { Box } from "@mui/material";
+import Rating from "@mui/material/Rating";
+import Button from "@mui/material/Button";
+import config from "./config.json";
+import { toast } from "react-hot-toast";
 
 const FeedbackPage: React.FC = () => {
-  const t = useLocalization();
-  const context = useContext(AppContext);
-  const [rating, setRating] = useState(1);
-  const [review, setReview] = useState('');
-  const flags = useFlags(['show_feedback_page']);
+  const [star, setStar] = useState(1);
+  const [review, setReview] = useState("");
 
-  const [submitError, ratingSubmitted, reviewSubmitted, reviewSubmitError] =
-    useMemo(
-      () => [
-        t('error.fail_to_submit'),
-        t('message.rating_submitted'),
-        t('message.review_submitted'),
-        t('error.fail_to_submit_review'),
-      ],
-      [t]
-    );
-  const [feedback, ratingLabel] = useMemo(
-    () => [t('label.feedback'), t('message.rating')],
-    [t]
-  );
+  const handleFeedback = () => {
+    const rateBox = config.component.ratingBox;
+    const reviewContainer = config.component.reviewBox;
 
-  const submitReview = useCallback(
-    (r: number | string) => {
-      if (typeof r === 'number') {
-        axios
-          .post(
-            `${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback`,
-            {
-              rating: r,
-              phoneNumber: localStorage.getItem('phoneNumber'),
-            },
-            {
-              headers: {
-                authorization: `Bearer ${localStorage.getItem('auth')}`,
-              },
-            }
-          )
-          .then((response) => {
-            toast.success(ratingSubmitted);
-          })
-          .catch((error) => {
-            toast.error(submitError);
-            console.error(error);
-          });
-      } else if (typeof r === 'string') {
-        axios
-          .post(
-            `${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback`,
-            {
-              review: r,
-              phoneNumber: localStorage.getItem('phoneNumber'),
-            },
-            {
-              headers: {
-                authorization: `Bearer ${localStorage.getItem('auth')}`,
-              },
-            }
-          )
-          .then((response) => {
-            toast.success(reviewSubmitted);
-          })
-          .catch((error) => {
-            toast.error(reviewSubmitError);
-            console.error(error);
-          });
-      }
-    },
-    [ratingSubmitted, reviewSubmitError, reviewSubmitted, submitError]
-  );
+    const sendReviewSuccess = () => {
+      setTimeout(() => {
+        toast.success(`Review sent successfully`);
+        setReview("");
+      }, 2000);
+    };
 
-  const secondaryColorConfig = useConfig('theme','secondaryColor');
-  const secondaryColor = useMemo(() => {
-    return secondaryColorConfig?.value;
-  }, [secondaryColorConfig]);
+    const sendReviewError = () => {
+      toast.error(`Please provide valid review`);
+    };
 
-  if (!flags?.show_feedback_page?.enabled) {
-    return <ComingSoonPage />;
-  } else
-    return (
-      <>
-        <div className={styles.main}>
-          <div className={styles.title} style={{color: secondaryColor}}>{feedback}</div>
-          <div className={styles.rating}>
-            <h1>{ratingLabel}</h1>
-            <div className={styles.stars}>
-              {Array.from({ length: 5 }, (_, index) => {
-                if (index + 1 <= rating) {
-                  return (
-                    <div
-                      onClick={() => setRating(index + 1)}
-                      key={index}
-                      className={styles.star}>
-                      <Image src={starIcon} alt="starIcon" width={50} height={50} />
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div
-                      onClick={() => setRating(index + 1)}
-                      key={index}
-                      className={styles.star}>
-                      <Image
-                        src={starOutlineIcon}
-                        alt="starOutlineIcon"
-                        width={50}
-                        height={50}
-                      />
-                    </div>
-                  );
-                }
-              })}
-            </div>
-            <p>{t('message.rating_description')}</p>
-            <button onClick={() => submitReview(rating)} style={{backgroundColor: secondaryColor}}>
-              {t('label.submit_review')}
-            </button>
-          </div>
-          <div className={styles.review}>
-            <h1>{t('message.review')}</h1>
+    if (rateBox && reviewContainer) {
+      star === 0 ? sendReviewError() : sendReviewSuccess();
+    } else if (rateBox && !reviewContainer) {
+      star === 0 ? sendReviewError() : sendReviewSuccess();
+    } else if (!rateBox && reviewContainer) {
+      review === "" ? sendReviewError() : sendReviewSuccess();
+    }
+  };
+
+  return (
+    <div className={styles.container}>
+      <Box className={styles.main}>
+        <Box>
+        <Typography
+          sx={{
+            fontSize: "5vh",
+            fontWeight: "bold"
+          }}
+        >
+          {config.component.Title}
+        </Typography>
+        </Box>
+
+        {config.component.ratingBox === true && (
+          <Box className={styles.section}>
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                fontSize: "3vh",
+              }}
+            >
+              {config.component.ratingBoxTitle}
+            </Typography>
+
+            <Rating
+              data-testid="ratingComponent"
+              name="simple-controlled"
+              value={star}
+              max={config.component.ratingMaxStars}
+              // @ts-ignore
+              onChange={(event, newValue) => {
+                setStar(() => {
+                  return newValue === null ? 1 : newValue;
+                });
+              }}
+              defaultValue={1}
+              sx={{
+                fontSize: "6vh",
+              }}
+            />
+            <Typography
+              sx={{
+                textAlign: "center",
+                fontSize: "2vh",
+              }}
+            >
+              {config.component.ratingStarDescription}
+            </Typography>
+            <Button
+              id="ratingBtn"
+              variant="contained"
+              data-testid="ratingBtn"
+              sx={{
+                mt: 2,
+                backgroundColor: `${config.theme.primaryColor.value}`,
+                fontWeight: "bold",
+                borderRadius: "10rem",
+                fontSize: "1.5vh",
+                p: 1.5,
+                "&:hover": {
+                  backgroundColor: `${config.theme.secondaryColor.value}`,
+                },
+              }}
+              onClick={handleFeedback}
+            >
+              {config.component.ratingButtonText}
+            </Button>
+          </Box>
+        )}
+
+        {config.component.reviewBox === true && (
+          <Box className={styles.section}>
+            <Typography
+              sx={{
+                m: "1rem",
+                fontWeight: "bold",
+                fontSize: "3vh",
+              }}
+            >
+              {config.component.reviewBoxTitle}
+            </Typography>
             <textarea
+              placeholder={config.component.reviewPlaceholder}
               value={review}
-              onChange={(e) => setReview(e.target.value)}
-              name="experience-feedback"
-              id="experience-feedback"
-              cols={35}
-              rows={5}
-              placeholder={t("message.review_description")}
-              style={{border: `2px solid ${secondaryColor}`}}></textarea>
+              className={styles.textBlock}
+              onChange={(e) => {
+                setReview(e.target.value);
+              }}
+            />
 
-            <button onClick={() => submitReview(review)} style={{backgroundColor: secondaryColor}}>
-              {t("label.submit_review")}
-            </button>
-          </div>
-        </div>
-      </>
-    );
+            <Button
+              id="reviewBtn"
+              variant="contained"
+              data-testid="reviewBtn"
+              sx={{
+                mt: 2,
+                backgroundColor: `${config.theme.primaryColor.value}`,
+                fontWeight: "bold",
+                borderRadius: "10rem",
+                fontSize: "1.5vh",
+                p: 1.5,
+                "&:hover": {
+                  backgroundColor: `${config.theme.secondaryColor.value}`,
+                },
+              }}
+              onClick={handleFeedback}
+            >
+              {config.component.reviewButtonText}
+            </Button>
+          </Box>
+        )}
+      </Box>
+    </div>
+  );
 };
 
 export default FeedbackPage;
