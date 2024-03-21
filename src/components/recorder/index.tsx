@@ -126,7 +126,7 @@ const startRecording = () => {
       toast.success(`${config.component.waitMessage}`)
 
       // Define the API endpoint
-      const apiEndpoint = process.env.NEXT_PUBLIC_AI_TOOLS_API_URLz;
+      const apiEndpoint = process.env.NEXT_PUBLIC_AI_TOOLS_API_URL;
 
       const phoneNumber = localStorage.getItem('phoneNumber');
       //check if phone number exists
