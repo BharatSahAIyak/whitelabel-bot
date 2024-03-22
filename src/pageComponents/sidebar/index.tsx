@@ -16,7 +16,7 @@ import FeedbackIcon from "@mui/icons-material/Feedback";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useConfig } from "../../hooks/useConfig";
 import { useColorPalates } from "../../providers/theme-provider/hooks";
-
+import router from "next/router";
 export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean, onToggle: () => void }) => {
 //   const [config, setConfig] = useState<{
 //     showLangSwitcher: boolean;
@@ -99,12 +99,14 @@ const theme =useColorPalates();
 
               {config.links.map((link, index) => (
                 <div key={index}>
-                  <ListItem disablePadding sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                  <ListItem disablePadding sx={{ paddingTop: "10px", paddingBottom: "10px" }} onClick={()=>{{
+ router.push(`/${link.route}`);
+                  }}}>
                     <ListItemButton>
                       <ListItemIcon>
                         {getIconComponent(link.icon)}
                       </ListItemIcon>
-                      <ListItemText primary={link.label} />
+                      <ListItemText primary={`${link.label}`} />
                       <ChevronRightIcon />
                     </ListItemButton>
                   </ListItem>

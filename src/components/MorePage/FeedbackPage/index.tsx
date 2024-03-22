@@ -11,8 +11,8 @@ import { useConfig } from "../../../hooks/useConfig";
 const FeedbackPage: React.FC = () => {
   const [star, setStar] = useState(1);
   const [review, setReview] = useState("");
-const theme =useColorPalates();
-const config =useConfig('component','feedbackPage');
+  const theme = useColorPalates();
+  const config = useConfig('component', 'feedbackPage');
   const handleFeedback = () => {
     const rateBox = config?.component.ratingBox;
     const reviewContainer = config?.component.reviewBox;
@@ -41,18 +41,18 @@ const config =useConfig('component','feedbackPage');
     <div className={styles.container}>
       <Box className={styles.main}>
         <Box>
-        <Typography
-          sx={{
-            fontSize: "5vh",
-            fontWeight: "bold",
-            color:theme.primary.main
-          }}
-        >
-          {config?.component.Title}
-        </Typography>
+          <Typography
+            sx={{
+              fontSize: "5vh",
+              fontWeight: "bold",
+              color: theme.primary.main
+            }}
+          >
+            {config?.component.Title}
+          </Typography>
         </Box>
 
-        {config?.component.ratingBox === true && (
+        {config?.ratingBox === true && (
           <Box className={styles.section}>
             <Typography
               sx={{
@@ -125,7 +125,7 @@ const config =useConfig('component','feedbackPage');
               value={review}
               className={styles.textBlock}
               style={{
-                border:`2px solid ${theme.primary.main}`
+                border: `2px solid ${theme.primary.main}`
               }}
               onChange={(e) => {
                 setReview(e.target.value);

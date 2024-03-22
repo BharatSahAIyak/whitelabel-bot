@@ -51,17 +51,17 @@
         {
           "label": "FAQ Page",
           "icon": "HelpIcon",
-          "route": ""
+          "route": "faq"
         },
         {
           "label": "Chat Page",
           "icon": "HistoryIcon",
-          "route": ""
+          "route": "chat"
         },
         {
           "label": "Feedback",
           "icon": "FeedbackIcon",
-          "route": ""
+          "route": "feedback"
         }
       ],
       "showLogoutButton": true,
