@@ -1,31 +1,32 @@
 import axios from 'axios';
 //@ts-ignore
 import Chat from '@samagra-x/chatui';
-import React, {
-  ReactElement,
-  useCallback,
-  useContext,
-  useMemo,
-} from 'react';
+import React, { ReactElement, useCallback, useContext, useMemo } from 'react';
 import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
-import ChatMessageItem from '../chat-message-item';
 import VoiceRecorder from '../recorder';
+import MessageItem from '../message-item';
 import toast from 'react-hot-toast';
-import DownTimePage from '../down-time-page';
-
 import { useConfig } from '../../hooks/useConfig';
 import { useSelector } from 'react-redux';
-import { selectIsDown, selectIsMessageReceiving, selectMessagesToRender } from '../../store/slices/messageSlice';
+import {
+  selectIsDown,
+  selectIsMessageReceiving,
+  selectMessages,
+  selectMessagesToRender,
+} from '../../store/slices/messageSlice';
 
 import ShareButtons from '../share-buttons';
+import DowntimePage from '../../pageComponents/downtime-page';
+import config from './config.json';
+import { FullPageLoader } from '../fullpage-loader';
 
 const ChatUiWindow: React.FC = () => {
   const t = useLocalization();
   const context = useContext(AppContext);
   const isDown = useSelector(selectIsDown);
   const isMsgReceiving = useSelector(selectIsMessageReceiving);
-  
+
   // useEffect(() => {
   //   const fetchData = async () => {
   //     try {
@@ -67,8 +68,6 @@ const ChatUiWindow: React.FC = () => {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [context?.setMessages, context?.fetchIsDown, context?.isDown]);
 
-
-
   const handleSend = useCallback(
     async (type: string, msg: any) => {
       if (msg.length === 0) {
@@ -82,43 +81,57 @@ const ChatUiWindow: React.FC = () => {
     [context, t]
   );
 
-  const messagesToRender = useSelector(selectMessagesToRender);
-  const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
+  // const messagesToRender = useSelector(selectMessagesToRender);
+  const messagesToRender = useSelector(selectMessagesToRender(isMsgReceiving));
+  const messages = useSelector(selectMessages);
+  console.log({ messagesToRender, isMsgReceiving, messages });
 
-  const secondaryColorConfig = useConfig('theme', 'secondaryColor');
-  const secondaryColor = useMemo(() => {
-    return secondaryColorConfig?.value;
-  }, [secondaryColorConfig]);
+  // const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
+
+  // const secondaryColorConfig = useConfig('theme', 'secondaryColor');
+  // const secondaryColor = useMemo(() => {
+  //   return secondaryColorConfig?.value;
+  // }, [secondaryColorConfig]);
+
+  const placeholder = useMemo(
+    () => config?.component?.placeholder ?? 'Ask Your Question',
+    [config]
+  );
 
   if (isDown) {
-    return <DownTimePage />;
+    return <DowntimePage />;
   } else
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <Chat
-          btnColor={secondaryColor}
+          btnColor={config.theme.secondaryColor.value}
           background="var(--bg-color)"
           disableSend={isMsgReceiving}
           //@ts-ignore
           translation={t}
-          showTransliteration={!(localStorage.getItem('locale') === 'en')}
+          showTransliteration={config.component.allowTransliteration}
+          transliterationConfig={{
+            transliterationApi: config.component.transliterationApi,
+            transliterationInputLanguage:
+              config.component.transliterationInputLanguage,
+            transliterationOutputLanguage:
+              config.component.transliterationOutputLanguage,
+            transliterationProvider: config.component.transliterationProvider,
+            transliterationSuggestions:
+              config.component.transliterationSuggestions,
+          }}
           //@ts-ignore
           messages={messagesToRender}
           voiceToText={VoiceRecorder}
           //@ts-ignore
           renderMessageContent={(props): ReactElement => (
-            <ChatMessageItem
-              //@ts-ignore
-              key={props}
-              message={props}
-              onSend={handleSend}
-            />
+            <MessageItem message={props} config={config} />
           )}
           onSend={handleSend}
           locale="en-US"
           placeholder={placeholder}
         />
-        <ShareButtons />
+        <ShareButtons config={config} />
       </div>
     );
 };

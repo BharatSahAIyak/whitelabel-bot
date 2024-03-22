@@ -10,10 +10,10 @@ import {
 import CallIcon from '../../../assets/icons/call-icon';
 import Image from 'next/image';
 import { useFlags } from 'flagsmith/react';
-import ComingSoonPage from '../../coming-soon-page';
 import axios from 'axios';
 import { useLocalization } from '../../../hooks';
 import { useConfig } from '../../../hooks/useConfig';
+import ComingSoonPage from '../../../pageComponents/coming-soon-page';
 
 const FAQPage: React.FC = () => {
   const t = useLocalization();

@@ -67,59 +67,75 @@ function checkIsServerDownFulfilled(state: any, { payload, meta }: any): void {
 }
 function messageReceivedFulfilled(state: any, { payload, meta }: any): void {
   const { message, media } = payload;
-  if (message?.content?.title) {
+  // const prev = [...state.messages];
+  const updatedMessages = [...cloneDeep(state.messages)];
+  console.log("log:",{message,media,state:cloneDeep(state)})
+  if (
+    message?.payload?.text &&
+    message?.messageId?.Id &&
+    message?.messageId?.channelMessageId
+  ) {
     if (
       sessionStorage.getItem('conversationId') ===
-      message?.content?.conversationId
+      message.messageId.channelMessageId
     ) {
-      const word = message.content.title;
-      const prev = [...state.messages];
-      const updatedMessages = [...prev];
+      console.log("log: if 1")
+      const word = message.payload.text;
+      // const prev = [...state.messages];
+      // const updatedMessages = [...prev];
       const existingMsgIndex = updatedMessages.findIndex(
-        (m: any) => m.messageId === message.messageId
+        (m: any) => m.messageId === message.messageId.Id
       );
 
       if (existingMsgIndex !== -1) {
+        console.log("log: if 2")
         // Update the existing message with the new word
         if (word.endsWith('<end/>')) {
+          console.log("log: if 3")
           updatedMessages[existingMsgIndex].isEnd = true;
         }
+        console.log("log: else 2")
         updatedMessages[existingMsgIndex].text +=
           word.replace('<end/>', '') + ' ';
       } else {
+        console.log("log: else 3")
         // If the message doesn't exist, create a new one
         const newMsg = {
           text: word.replace('<end/>', '') + ' ',
           isEnd: word.endsWith('<end/>') ? true : false,
-          choices: message?.content?.choices,
+          choices: message?.payload?.buttonChoices,
           position: 'left',
           reaction: 0,
-          messageId: message?.messageId,
-          conversationId: message?.content?.conversationId,
+          messageId: message?.messageId.Id,
+          conversationId: message.messageId.channelMessageId,
           sentTimestamp: Date.now(),
-          btns: message?.content?.btns,
-          audio_url: message?.content?.audio_url,
+          // btns: msg?.payload?.buttonChoices,
+          // audio_url: msg?.content?.audio_url,
+          // metaData: msg.payload?.metaData
+          //     ? JSON.parse(msg.payload?.metaData)
+          //     : null,
           ...media,
         };
-        updatedMessages.push(newMsg);
+        console.log("log:" ,newMsg);
+       // updatedMessages.push(newMsg);
+       state.messages =[...state.messages,newMsg]
+        console.log("log:" ,cloneDeep( updatedMessages));
       }
 
-      state.messages = updatedMessages;
-
+     
 
       if (message?.content?.title?.endsWith('<end/>')) {
-        // syncChatHistory(
-        //   msg?.messageId,
-        //   msg?.content?.title.replace('<end/>', '')
-        // );
-
         state.lastMsgId = message?.messageId;
         state.endTime = Date.now()
-        state.isMessageReceiving = false;
       }
+      state.isMessageReceiving = false;
       state.isFetching = false;
     }
   }
+  // state.messages = updatedMessages;
+
+  state.isMessageReceiving = false;
+  state.isFetching = false;
   return state;
 }
 const messageSlice = createSlice({
@@ -163,10 +179,23 @@ export const selectStartTime = (state: any): boolean => state.messageSlice.start
 export const selectEndTime = (state: any): boolean => state.messageSlice.endTime;
 export const selectLastMsgId = (state: any): boolean => state.messageSlice.lastMsgId;
 export const selectIsDown = (state: any): boolean => state.messageSlice.isDown;
-export const selectMessagesToRender = (state: any): any => {
-  console.log("hola ram", { state })
+// export const selectMessagesToRender = (state: any): any => {
+//   const normalizedMsgs = normalizeMsgs(state.messageSlice.messages);
+//   const isMessageReceiving = state.messageSlice.isMessageReceiving;
+//   return isMessageReceiving
+//     ? [
+//       ...normalizedMsgs,
+//       {
+//         type: 'loader',
+//         position: 'left',
+//         botUuid: '1',
+//       },
+//     ]
+//     : normalizedMsgs;
+// }
+
+export const selectMessagesToRender = (isMessageReceiving: boolean)=>(state:any)  => {
   const normalizedMsgs = normalizeMsgs(state.messageSlice.messages);
-  const isMessageReceiving = state.messageSlice.isMessageReceiving;
   return isMessageReceiving
     ? [
       ...normalizedMsgs,

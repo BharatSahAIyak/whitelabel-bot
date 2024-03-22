@@ -6,6 +6,14 @@
       "rightLogo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
       "leftLogo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
       "centerLogo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
+    },
+    "otpPage": {
+      "allowOverride": false,
+      "showLogo": false,
+      "showSplitedView": true,
+      "otpLength":4,
+      "logo":"https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
+      "title": "OTP Verification"
     }
   },
   "theme": {

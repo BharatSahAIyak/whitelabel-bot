@@ -81,7 +81,7 @@ export const ContextProvider: FC<{
     mergeConfigurations().then(setConfig);
   }, []);
 
-  console.log("hola:",{config})
+
 
 
   const downloadChat = useMemo(() => {
@@ -271,6 +271,7 @@ export const ContextProvider: FC<{
       //@ts-ignore
       dispatch(onMessageReceivedAction({message,isOnline})).then(res=>{
         console.log("hola ram msgReceived",{res})
+        // dispatch(setIsMsgReceiving(false))
       })
     },
     [isOnline,onMessageReceivedAction]
@@ -331,10 +332,7 @@ export const ContextProvider: FC<{
     }
     timer = setTimeout(() => {
       if (loading) {
-        toast(() => <span>{t('message.taking_longer')}</span>, {
-          // @ts-ignore
-          icon: <Spinner />,
-        });
+        toast.loading(t('message.taking_longer'), {duration: 2500});
       }
       secondTimer = setTimeout(async () => {
         fetchIsDown();

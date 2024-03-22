@@ -18,7 +18,7 @@ const style = {
 
 export const InstallModal: React.FC = () => {
 
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(localStorage.getItem("installPwa") !== "true" ?? false);
     const deferredPromptRef = React.useRef<any>(null);
 
     React.useEffect(() => {
@@ -50,7 +50,7 @@ export const InstallModal: React.FC = () => {
                 }
             });
         }
-        setOpen(true);
+        setOpen(false);
     }, []);
 
     const handleClose = React.useCallback(() => {
