@@ -138,7 +138,7 @@ const startRecording = () => {
       // Append the WAV file to the FormData object
       formData.append('file', blob, 'audio.wav');
       formData.append('phoneNumber', phoneNumber);
-
+      formData.append('language','hi');
       // Send the WAV data to the API
       const resp = await fetch(apiEndpoint + '/speech-to-text', {
         method: 'POST',
