@@ -1,18 +1,78 @@
 {
   "component": {
     "navbar": {
-      "allowOverride": true,
       "brandName": "Bot",
-      "rightLogo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
-      "leftLogo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
-      "centerLogo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
+      "showHamburgerMenu": true,
+      "showHomeIcon": true,
+      "leftHomeIcon": {
+        "id": "logo4",
+        "src": "https://www.amakrushi.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=64&q=75 "
+      },
+      "logos": {
+        "showCenterLogos": true,
+        "centerLogoIcons": [
+          {
+            "id": "logo1",
+            "src": " https://www.amakrushi.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=64&q=75"
+          }
+        ],
+        "showRightLogos": true,
+        "rightLogoIcons": [
+          {
+            "id": "logo2",
+            "src": "https://www.amakrushi.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=64&q=75"
+          },
+          {
+            "id": "logo3",
+            "src": "https://www.amakrushi.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=64&q=75"
+          },
+          {
+            "id": "logo5",
+            "src": "https://www.amakrushi.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=64&q=75"
+          }
+        ]
+      }
+    },
+    "sidebar": {
+      "showLangSwitcher": true,
+      "languages": [
+        {
+          "code": "en",
+          "label": "ENG"
+        },
+        {
+          "code": "or",
+          "label": "ଓଡ଼ିଆ"
+        }
+      ],
+      "showProfileIcon": true,
+      "profileText": "Welcome, User",
+      "links": [
+        {
+          "label": "FAQ Page",
+          "icon": "HelpIcon",
+          "route": ""
+        },
+        {
+          "label": "Chat Page",
+          "icon": "HistoryIcon",
+          "route": ""
+        },
+        {
+          "label": "Feedback",
+          "icon": "FeedbackIcon",
+          "route": ""
+        }
+      ],
+      "showLogoutButton": true,
+      "logoutButtonLabel": "Logout"
     },
     "otpPage": {
       "allowOverride": false,
       "showLogo": false,
       "showSplitedView": true,
-      "otpLength":4,
-      "logo":"https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
+      "otpLength": 4,
+      "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
       "title": "OTP Verification"
     }
   },

@@ -70,8 +70,7 @@ const mergeConfiguration = async () => {
 
   const mergedConfig =await deepMerge({} ,localConfig,overrideConfig);
 
- // const mergedConfig = await merge(localConfig, overrideConfig);
-  console.log("chula:", { overrideConfig ,mergedConfig})
+ console.log("chula:",{mergedConfig})
   return mergedConfig
 }
 export default mergeConfiguration 

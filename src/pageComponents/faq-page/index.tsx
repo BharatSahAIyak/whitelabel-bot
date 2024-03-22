@@ -19,6 +19,8 @@ const FAQPage: React.FC = () => {
     'show_pdf_buttons',
     'manual_pdf_link',
   ]);
+
+  
   const downloadPDFHandler=useCallback(()=>{
     // console.log(config.component.userManualText ?? "User Manual")
     const link: any = flags?.[`manual_pdf_link`]?.value;

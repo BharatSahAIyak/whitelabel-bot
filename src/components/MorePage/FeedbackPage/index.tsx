@@ -6,11 +6,12 @@ import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
 import config from "./config.json";
 import { toast } from "react-hot-toast";
+import { useColorPalates } from "../../../providers/theme-provider/hooks";
 
 const FeedbackPage: React.FC = () => {
   const [star, setStar] = useState(1);
   const [review, setReview] = useState("");
-
+const theme =useColorPalates();
   const handleFeedback = () => {
     const rateBox = config.component.ratingBox;
     const reviewContainer = config.component.reviewBox;
@@ -42,7 +43,8 @@ const FeedbackPage: React.FC = () => {
         <Typography
           sx={{
             fontSize: "5vh",
-            fontWeight: "bold"
+            fontWeight: "bold",
+            color:theme.primary.main
           }}
         >
           {config.component.Title}
@@ -90,13 +92,13 @@ const FeedbackPage: React.FC = () => {
               data-testid="ratingBtn"
               sx={{
                 mt: 2,
-                backgroundColor: `${config.theme.primaryColor.value}`,
+                backgroundColor: `${theme.primary.main}`,
                 fontWeight: "bold",
                 borderRadius: "10rem",
                 fontSize: "1.5vh",
                 p: 1.5,
                 "&:hover": {
-                  backgroundColor: `${config.theme.secondaryColor.value}`,
+                  backgroundColor: `${theme.primary.dark}`,
                 },
               }}
               onClick={handleFeedback}
@@ -121,6 +123,9 @@ const FeedbackPage: React.FC = () => {
               placeholder={config.component.reviewPlaceholder}
               value={review}
               className={styles.textBlock}
+              style={{
+                border:`2px solid ${theme.primary.main}`
+              }}
               onChange={(e) => {
                 setReview(e.target.value);
               }}
@@ -132,13 +137,13 @@ const FeedbackPage: React.FC = () => {
               data-testid="reviewBtn"
               sx={{
                 mt: 2,
-                backgroundColor: `${config.theme.primaryColor.value}`,
+                backgroundColor: `${theme.primary.main}`,
                 fontWeight: "bold",
                 borderRadius: "10rem",
                 fontSize: "1.5vh",
                 p: 1.5,
                 "&:hover": {
-                  backgroundColor: `${config.theme.secondaryColor.value}`,
+                  backgroundColor: `${theme.primary.dark}`,
                 },
               }}
               onClick={handleFeedback}

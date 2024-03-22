@@ -83,15 +83,10 @@ const ChatUiWindow: React.FC = () => {
 
   // const messagesToRender = useSelector(selectMessagesToRender);
   const messagesToRender = useSelector(selectMessagesToRender(isMsgReceiving));
-  const messages = useSelector(selectMessages);
-  console.log({ messagesToRender, isMsgReceiving, messages });
 
-  // const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
 
-  // const secondaryColorConfig = useConfig('theme', 'secondaryColor');
-  // const secondaryColor = useMemo(() => {
-  //   return secondaryColorConfig?.value;
-  // }, [secondaryColorConfig]);
+
+
 
   const placeholder = useMemo(
     () => config?.component?.placeholder ?? 'Ask Your Question',
