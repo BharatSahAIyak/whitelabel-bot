@@ -26,7 +26,8 @@ const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({
   };
 
   const modifyPaletes = useCallback((palette: Color) => {
-    setTheme((prevTheme) => createTheme({ ...prevTheme, palette: { ...prevTheme.palette, primary: { ...palette } } }))
+    //@ts-ignore
+    setTheme((prevTheme) => createTheme({ ...prevTheme, palette: { ...prevTheme?.palette, primary: { ...palette } } }))
   }, [])
 
   useEffect(()=>{

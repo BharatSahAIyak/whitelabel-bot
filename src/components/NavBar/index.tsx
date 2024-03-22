@@ -61,7 +61,7 @@ function NavBar() {
 
 
   const theme = useColorPalates();
-  console.log("bhula:",{theme})
+ 
 
   if (router.pathname === '/chat' && !context?.isDown) {
     return (

@@ -1,8 +1,8 @@
 import React from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import HistoryPage from '../components/HistoryPage';
 import { useLocalization } from '../hooks';
+import HistoryPage from '../pageComponents/history-page';
 
 const History: NextPage = () => {
  const t=useLocalization();

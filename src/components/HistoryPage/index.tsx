@@ -23,9 +23,7 @@ const HistoryPage: NextPage = () => {
   const context = useContext(AppContext);
 
   useEffect(() => {
-
     setGettingHistory(true);
-
     axios
       .get(`${process.env.NEXT_PUBLIC_BFF_API_URL}/user/conversations/all`, {
         headers: {
