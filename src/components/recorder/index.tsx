@@ -7,7 +7,7 @@ import stop from '../../assets/icons/stop.gif';
 import processing from '../../assets/icons/process.gif';
 import error from '../../assets/icons/error.gif';
 import start from '../../assets/icons/startIcon.png';
-
+import { useConfig } from '../../hooks/useConfig'
 interface VoiceRecorder {
   setInputMsg: (msg: string) => void
   tapToSpeak: boolean
@@ -19,14 +19,15 @@ const VoiceRecorder: React.FC<VoiceRecorder> = ({
   tapToSpeak,
   includeDiv = false,
 }) => {
+  const config = useConfig('component', 'voiceRecorder')
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null)
   const [isErrorClicked, setIsErrorClicked] = useState(false)
   const [recorderStatus, setRecorderStatus] = useState('idle')
 
-  const voiceMinDecibels: number = config.component.voiceMinDecibels
-  const delayBetweenDialogs: number = config.component.delayBetweenDialogs
-  const dialogMaxLength: number = config.component.dialogMaxLength
-  const [isRecording,setIsRecording] = useState(config.component.isRecording)
+  const voiceMinDecibels: number = config?.voiceMinDecibels
+  const delayBetweenDialogs: number = config?.delayBetweenDialogs
+  const dialogMaxLength: number = config?.dialogMaxLength
+  const [isRecording,setIsRecording] = useState(config?.isRecording)
 
 const startRecording = () => {
   if (!isRecording) {
@@ -123,7 +124,7 @@ const startRecording = () => {
     try {
       setRecorderStatus('processing');
       console.log('base', blob);
-      toast.success(`${config.component.waitMessage}`)
+      toast.success(`${config?.waitMessage}`)
 
       // Define the API endpoint
       const apiEndpoint = process.env.NEXT_PUBLIC_AI_TOOLS_API_URL;
@@ -151,7 +152,7 @@ const startRecording = () => {
         setInputMsg(rsp_data.text);
         sessionStorage.setItem('asrId', rsp_data.id);
       } else {
-        toast.error(`${config.component.recorderErrorMessage}`)
+        toast.error(`${config?.recorderErrorMessage}`)
         // Set isErrorClicked to true when an error occurs
         setIsErrorClicked(false);
 
@@ -171,7 +172,7 @@ const startRecording = () => {
     } catch (error) {
       console.error(error);
       setRecorderStatus('error');
-      toast.error(`${config.component.recorderErrorMessage}`)
+      toast.error(`${config?.recorderErrorMessage}`)
       // Set isErrorClicked to true when an error occurs
       setIsErrorClicked(false);
 
@@ -238,7 +239,7 @@ const startRecording = () => {
                 />
                 {tapToSpeak ? (
                   <p style={{ color: 'black', fontSize: '14px', marginTop: '4px' }}>
-                    {config.component.recorderLabel}
+                    {config?.recorderLabel}
                   </p>
                 ) : (
                   <></>
