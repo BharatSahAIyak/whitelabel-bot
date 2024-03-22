@@ -64,57 +64,12 @@ const HomePage: NextPage = () => {
   };
 
   useEffect(() => {
-    if (inputMsg.length > 0 && (localStorage.getItem('locale') === 'or')) {
+    if (inputMsg.length > 0) {
       if (suggestionClicked) {
         setSuggestionClicked(false);
         return;
       }
-      if (!sessionStorage.getItem('computeFetched')) {
-        sessionStorage.setItem('computeFetched', 'true');
-        let data = JSON.stringify({
-          pipelineTasks: [
-            {
-              taskType: 'transliteration',
-              config: {
-                language: {
-                  sourceLanguage: 'en',
-                  targetLanguage: 'or',
-                },
-              },
-            },
-          ],
-          pipelineRequestConfig: {
-            pipelineId: '64392f96daac500b55c543cd',
-          },
-        });
 
-        let config = {
-          method: 'post',
-          maxBodyLength: Infinity,
-          url: 'https://meity-auth.ulcacontrib.org/ulca/apis/v0/model/getModelsPipeline',
-          headers: {
-            ulcaApiKey: '13900b794f-49de-4b42-8ee5-6e0289fe8833',
-            userID: '737078729ae04552822e4e7e3093575c',
-            'Content-Type': 'application/json',
-          },
-          data: data,
-        };
-
-        axios
-          .request(config)
-          .then((response) => {
-            setTransliterationConfig({
-              serviceId:
-                response?.data?.pipelineResponseConfig?.[0]?.config?.[0]
-                  ?.serviceId,
-              auth: response?.data?.pipelineInferenceAPIEndPoint
-                ?.inferenceApiKey?.value,
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
       setSuggestions([]);
 
       const words = inputMsg.split(' ');
@@ -126,41 +81,18 @@ const HomePage: NextPage = () => {
 
       if (!wordUnderCursor) return;
       let data = JSON.stringify({
-        pipelineTasks: [
-          {
-            taskType: 'transliteration',
-            config: {
-              language: {
-                sourceLanguage: 'en',
-                targetLanguage: 'or',
-              },
-              serviceId:
-                transliterationconfig?.serviceId ||
-                'ai4bharat/indicxlit--cpu-fsv2',
-              isSentence: false,
-              numSuggestions: 3,
-            },
-          },
-        ],
-        inputData: {
-          input: [
-            {
-              source: wordUnderCursor,
-            },
-          ],
-        },
+        "inputLanguage": "en",
+        "outputLanguage": "or",
+        "input": wordUnderCursor,
+        "provider": "bhashini",
+        "numSuggestions": 3
       });
 
       let config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'https://dhruva-api.bhashini.gov.in/services/inference/pipeline',
+        url: `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/transliterate`,
         headers: {
-          Accept: ' */*',
-          'User-Agent': ' Thunder Client (https://www.thunderclient.com)',
-          Authorization:
-            transliterationconfig?.auth ||
-            'L6zgUQ59QzincUafIoc1pZ8m54-UfxRdDKTNb0bVUDjm6z6HbXi6Nv7zxIJ-UyQN',
           'Content-Type': 'application/json',
         },
         data: data,
@@ -170,7 +102,7 @@ const HomePage: NextPage = () => {
         .request(config)
         .then((res: any) => {
           // console.log("hurray", res?.data?.output?.[0]?.target);
-          setSuggestions(res?.data?.pipelineResponse?.[0]?.output?.[0]?.target);
+          setSuggestions(res?.data?.suggestions);
         })
         .catch((err) => {
           console.log(err);
