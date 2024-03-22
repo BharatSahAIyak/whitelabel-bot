@@ -69,7 +69,7 @@ function messageReceivedFulfilled(state: any, { payload, meta }: any): void {
   const { message, media } = payload;
   // const prev = [...state.messages];
   const updatedMessages = [...cloneDeep(state.messages)];
-  console.log("chakshu chutiya:",{message,media,state:cloneDeep(state)})
+  console.log("log:",{message,media,state:cloneDeep(state)})
   if (
     message?.payload?.text &&
     message?.messageId?.Id &&
@@ -79,7 +79,7 @@ function messageReceivedFulfilled(state: any, { payload, meta }: any): void {
       sessionStorage.getItem('conversationId') ===
       message.messageId.channelMessageId
     ) {
-      console.log("chakshu chutiya: if 1")
+      console.log("log: if 1")
       const word = message.payload.text;
       // const prev = [...state.messages];
       // const updatedMessages = [...prev];
@@ -88,17 +88,17 @@ function messageReceivedFulfilled(state: any, { payload, meta }: any): void {
       );
 
       if (existingMsgIndex !== -1) {
-        console.log("chakshu chutiya: if 2")
+        console.log("log: if 2")
         // Update the existing message with the new word
         if (word.endsWith('<end/>')) {
-          console.log("chakshu chutiya: if 3")
+          console.log("log: if 3")
           updatedMessages[existingMsgIndex].isEnd = true;
         }
-        console.log("chakshu chutiya: else 2")
+        console.log("log: else 2")
         updatedMessages[existingMsgIndex].text +=
           word.replace('<end/>', '') + ' ';
       } else {
-        console.log("chakshu chutiya: else 3")
+        console.log("log: else 3")
         // If the message doesn't exist, create a new one
         const newMsg = {
           text: word.replace('<end/>', '') + ' ',
@@ -116,10 +116,10 @@ function messageReceivedFulfilled(state: any, { payload, meta }: any): void {
           //     : null,
           ...media,
         };
-        console.log("chakshu:" ,newMsg);
+        console.log("log:" ,newMsg);
        // updatedMessages.push(newMsg);
        state.messages =[...state.messages,newMsg]
-        console.log("chakshu:" ,cloneDeep( updatedMessages));
+        console.log("log:" ,cloneDeep( updatedMessages));
       }
 
      

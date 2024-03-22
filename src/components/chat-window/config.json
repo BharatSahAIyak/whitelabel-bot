@@ -21,7 +21,7 @@
       "shareChatText": "Share",
       "allowDownloadChat": true,
       "downloadChatText": "Download",
-      "allowTransliteration": true,
+      "allowTransliteration": false,
       "transliterationApi": "",
       "transliterationInputLanguage": "",
       "transliterationOutputLanguage": "",
