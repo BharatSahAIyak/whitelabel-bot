@@ -9,8 +9,6 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
-import shareIcon from '../../assets/icons/shareHistory.svg';
-import downloadIcon from '../../assets/icons/downloadHistory.svg';
 import { useFlags } from 'flagsmith/react';
 import { formatDate } from '../../utils/formatDate';
 import { recordUserLocation } from '../../utils/location';

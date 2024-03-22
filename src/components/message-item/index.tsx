@@ -7,20 +7,35 @@ import {
   FileCard,
   Typing,
 } from '@samagra-x/chatui';
-import { FC, ReactElement, useCallback, useEffect, useState } from 'react';
-import Image from 'next/image'
+import {
+  FC,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import Image from 'next/image';
 import { toast } from 'react-hot-toast';
 import styles from './index.module.css';
 import RightIcon from './assets/right';
 import SpeakerIcon from './assets/speaker.svg';
 import MsgThumbsUp from './assets/msg-thumbs-up';
 import MsgThumbsDown from './assets/msg-thumbs-down';
-import {MessageItemPropType} from './index.d';
+import { MessageItemPropType } from './index.d';
 const jsonToTable = require('json-to-table');
 import moment from 'moment';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 // import BlinkingSpinner from '../blinking-spinner/index';
 
 const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
+  const theme = useColorPalates();
+  const secondaryColor = useMemo(() => {
+    return theme?.primary?.main;
+  }, [theme?.primary?.main]);
+  const contrastText = useMemo(() => {
+    return theme?.primary?.contrastText;
+  }, [theme?.primary?.contrastText]);
   const [reaction, setReaction] = useState(message?.content?.data?.reaction);
   // @ts-ignore
   const [optionDisabled, setOptionDisabled] = useState(
@@ -59,7 +74,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
               e.preventDefault();
               if (optionDisabled) {
                 toast.error(`Cannot answer again`);
-              }else{
+              } else {
                 // TODO: send choice?.text as message and set options disabled
               }
             }}>
@@ -69,20 +84,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                 alignItems: 'center',
                 color:
                   content?.data?.position === 'right'
-                    ? config.theme.secondaryColor.value
+                    ? secondaryColor
                     : optionDisabled
-                    ? config.theme.primaryColor.value
-                    : config.theme.secondaryColor.value,
+                    ? contrastText
+                    : secondaryColor,
               }}>
               <div>{choice?.text}</div>
               <div style={{ marginLeft: 'auto' }}>
                 <RightIcon
                   width="30px"
-                  color={
-                    optionDisabled
-                      ? config.theme.primaryColor.value
-                      : config.theme.secondaryColor.value
-                  }
+                  color={optionDisabled ? contrastText : secondaryColor}
                 />
               </div>
             </div>
@@ -94,7 +105,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
 
   const { content, type } = message;
 
-  console.log("here", content)
+  console.log('here', content);
 
   const handleAudio = useCallback((url: any) => {
     // console.log(url)
@@ -126,18 +137,24 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
             style={
               content?.data?.position === 'right'
                 ? {
-                    borderColor: `${config.theme.secondaryColor.value} transparent transparent transparent`,
+                    borderColor: `${secondaryColor} transparent transparent transparent`,
                   }
                 : {
-                    borderColor: `${config.theme.primaryColor.value} transparent transparent transparent`,
+                    borderColor: `${contrastText} transparent transparent transparent`,
                   }
             }></div>
           <Bubble
             type="text"
             style={
               content?.data?.position === 'right'
-                ? { background: config.theme.secondaryColor.value, boxShadow: '0 3px 8px rgba(0,0,0,.24)' }
-                : { background: config.theme.primaryColor.value, boxShadow: '0 3px 8px rgba(0,0,0,.24)' }
+                ? {
+                    background: secondaryColor,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                  }
+                : {
+                    background: contrastText,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                  }
             }>
             <span
               style={{
@@ -145,8 +162,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                 fontSize: '1rem',
                 color:
                   content?.data?.position === 'right'
-                    ? config.theme.primaryColor.value
-                    : config.theme.secondaryColor.value,
+                    ? contrastText
+                    : secondaryColor,
               }}>
               {content?.text}{' '}
               {/* {
@@ -169,8 +186,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                 style={{
                   color:
                     content?.data?.position === 'right'
-                      ? config.theme.primaryColor.value
-                      : config.theme.secondaryColor.value,
+                      ? contrastText
+                      : secondaryColor,
                   fontSize: '10px',
                 }}>
                 {moment(
@@ -185,7 +202,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
               <button
                 onClick={() => window?.location?.reload()}
                 style={{
-                  border: `2px solid ${config.theme.secondaryColor.value}`,
+                  border: `2px solid ${secondaryColor}`,
                 }}>
                 Refresh
               </button>
@@ -199,97 +216,105 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                   top: '-10px',
                   justifyContent: 'space-between',
                 }}>
-                {config.component.allowTextToSpeech && <div style={{ display: 'flex' }}>
-                  <div
-                    className={styles.msgSpeaker}
-                    onClick={handleAudio}
-                    style={
-                      !content?.data?.isEnd
-                        ? {
-                            pointerEvents: 'none',
-                            filter: 'grayscale(100%)',
-                            opacity: '0.5',
-                            border: `1px solid ${config.theme.secondaryColor.value}`,
-                          }
-                        : {
-                            pointerEvents: 'auto',
-                            opacity: '1',
-                            filter: 'grayscale(0%)',
-                            border: `1px solid ${config.theme.secondaryColor.value}`,
-                          }
-                    }>
-                    <Image src={SpeakerIcon} width={15} height={15} alt="" />
+                {config.component.allowTextToSpeech && (
+                  <div style={{ display: 'flex' }}>
+                    <div
+                      className={styles.msgSpeaker}
+                      onClick={handleAudio}
+                      style={
+                        // !content?.data?.isEnd
+                        //   ? {
+                        //       pointerEvents: 'none',
+                        //       filter: 'grayscale(100%)',
+                        //       opacity: '0.5',
+                        //       border: `1px solid ${secondaryColor}`,
+                        //     }
+                        //   :
+                        {
+                          pointerEvents: 'auto',
+                          opacity: '1',
+                          filter: 'grayscale(0%)',
+                          border: `1px solid ${secondaryColor}`,
+                        }
+                      }>
+                      <Image src={SpeakerIcon} width={15} height={15} alt="" />
 
-                    <p
+                      <p
+                        style={{
+                          fontSize: '11px',
+                          // color: contrastText,
+                          fontFamily: 'Mulish-bold',
+                          display: 'flex',
+                          alignItems: 'flex-end',
+                          marginRight: '1px',
+                          padding: '0 5px',
+                        }}>
+                        {config.component.textToSpeechLabel}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {config.component.allowFeedback && (
+                  <div className={styles.msgFeedback}>
+                    <div
+                      className={styles.msgFeedbackIcons}
                       style={{
-                        fontSize: '11px',
-                        // color: config.theme.primaryColor.value,
-                        fontFamily: 'Mulish-bold',
-                        display: 'flex',
-                        alignItems: 'flex-end',
-                        marginRight: '1px',
-                        padding: '0 5px',
+                        border: `1px solid ${secondaryColor}`,
                       }}>
-                      {config.component.textToSpeechLabel}
-                    </p>
-                  </div>
-                </div>}
-                {config.component.allowFeedback && <div className={styles.msgFeedback}>
-                  <div
-                    className={styles.msgFeedbackIcons}
-                    style={{
-                      border: `1px solid ${config.theme.secondaryColor.value}`,
-                    }}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        flexDirection: 'column',
-                        paddingRight: '6px',
-                      }}
-                      onClick={() =>
-                        feedbackHandler({
-                          like: 1,
-                          msgId: content?.data?.messageId,
-                        })
-                      }>
-                      <MsgThumbsUp
-                        fill={reaction === 1}
-                        width="20px"
-                      />
-                      <p
-                        style={{ fontSize: '11px', fontFamily: 'Mulish-bold' }}>
-                        {config.component.positiveFeedbackText}
-                      </p>
-                    </div>
-                    <div
-                      style={{
-                        height: '32px',
-                        width: '1px',
-                        backgroundColor: config.theme.secondaryColor.value,
-                        margin: '6px 0',
-                      }}></div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          flexDirection: 'column',
+                          paddingRight: '6px',
+                        }}
+                        onClick={() =>
+                          feedbackHandler({
+                            like: 1,
+                            msgId: content?.data?.messageId,
+                          })
+                        }>
+                        <MsgThumbsUp fill={reaction === 1} width="20px" />
+                        <p
+                          style={{
+                            fontSize: '11px',
+                            fontFamily: 'Mulish-bold',
+                          }}>
+                          {config.component.positiveFeedbackText}
+                        </p>
+                      </div>
+                      <div
+                        style={{
+                          height: '32px',
+                          width: '1px',
+                          backgroundColor: secondaryColor,
+                          margin: '6px 0',
+                        }}></div>
 
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        flexDirection: 'column',
-                      }}
-                      onClick={() =>
-                        feedbackHandler({
-                          like: -1,
-                          msgId: content?.data?.messageId,
-                        })
-                      }>
-                      <MsgThumbsDown fill={reaction === -1} width="20px" />
-                      <p
-                        style={{ fontSize: '11px', fontFamily: 'Mulish-bold' }}>
-                        {config.component.negativeFeedbackText}
-                      </p>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          flexDirection: 'column',
+                        }}
+                        onClick={() =>
+                          feedbackHandler({
+                            like: -1,
+                            msgId: content?.data?.messageId,
+                          })
+                        }>
+                        <MsgThumbsDown fill={reaction === -1} width="20px" />
+                        <p
+                          style={{
+                            fontSize: '11px',
+                            fontFamily: 'Mulish-bold',
+                          }}>
+                          {config.component.negativeFeedbackText}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>}
+                )}
               </div>
             )
           )}
@@ -319,7 +344,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                 }}>
                 <span
                   style={{
-                    color: config.theme.primaryColor.value,
+                    color: contrastText,
                     fontSize: '10px',
                   }}>
                   {moment(
@@ -357,7 +382,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                 }}>
                 <span
                   style={{
-                    color: config.theme.primaryColor.value,
+                    color: contrastText,
                     fontSize: '10px',
                   }}>
                   {moment(
@@ -394,7 +419,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                 }}>
                 <span
                   style={{
-                    color: config.theme.primaryColor.value,
+                    color: contrastText,
                     fontSize: '10px',
                   }}>
                   {moment(
@@ -451,8 +476,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                 fontSize: '1rem',
                 color:
                   content?.data?.position === 'right'
-                    ? config.theme.secondaryColor.value
-                    : config.theme.primaryColor.value,
+                    ? secondaryColor
+                    : contrastText,
               }}>
               {`\n` +
                 JSON.parse(content?.text)?.generalAdvice +

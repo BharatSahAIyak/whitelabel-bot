@@ -81,7 +81,7 @@ export const Sidemenu = () => {
         <DrawerContent>
           <div
             className={styles.sideMenu}
-            style={{ background: secondaryColor, maxWidth: "25vw" }}
+            style={{ background: secondaryColor }}
           >
             <div className={styles.closeButton}>
               <Image

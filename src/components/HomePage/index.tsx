@@ -25,9 +25,11 @@ import { useFlags } from 'flagsmith/react';
 import { recordUserLocation } from '../../utils/location';
 import { useConfig } from '../../hooks/useConfig';
 import DowntimePage from '../../pageComponents/downtime-page';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
 const HomePage: NextPage = () => {
   const context = useContext(AppContext);
+  const theme = useColorPalates();
   const t = useLocalization();
   const inputRef = useRef(null);
   const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
@@ -340,10 +342,9 @@ const HomePage: NextPage = () => {
     };
   }, [handleKeyDown]);
 
-  const secondaryColorConfig = useConfig('theme','secondaryColor');
   const secondaryColor = useMemo(() => {
-    return secondaryColorConfig?.value;
-  }, [secondaryColorConfig]);
+    return theme?.primary?.main;
+  }, [theme?.primary?.main]);
 
   if (context?.isDown) {
     return <DowntimePage />;
