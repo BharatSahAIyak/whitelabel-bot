@@ -18,10 +18,15 @@ import {
 
 import ShareButtons from '../share-buttons';
 import DowntimePage from '../../pageComponents/downtime-page';
-import config from './config.json';
 import { FullPageLoader } from '../fullpage-loader';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
 const ChatUiWindow: React.FC = () => {
+  const config = useConfig('component', 'chatUI');
+  const theme = useColorPalates();
+  const secondaryColor = useMemo(() => {
+    return theme?.primary?.light;
+  }, [theme?.primary?.light]);
   const t = useLocalization();
   const context = useContext(AppContext);
   const isDown = useSelector(selectIsDown);
@@ -104,34 +109,34 @@ const ChatUiWindow: React.FC = () => {
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <Chat
-          btnColor={config.theme.secondaryColor.value}
+          btnColor={secondaryColor || 'black'}
           background="var(--bg-color)"
           disableSend={isMsgReceiving}
           //@ts-ignore
           translation={t}
-          showTransliteration={config.component.allowTransliteration}
+          showTransliteration={config?.allowTransliteration}
           transliterationConfig={{
-            transliterationApi: config.component.transliterationApi,
+            transliterationApi: config?.transliterationApi+'/transliterate',
             transliterationInputLanguage:
-              config.component.transliterationInputLanguage,
+              config?.transliterationInputLanguage,
             transliterationOutputLanguage:
-              config.component.transliterationOutputLanguage,
-            transliterationProvider: config.component.transliterationProvider,
+              config?.transliterationOutputLanguage,
+            transliterationProvider: config?.transliterationProvider,
             transliterationSuggestions:
-              config.component.transliterationSuggestions,
+              config?.transliterationSuggestions,
           }}
           //@ts-ignore
           messages={messagesToRender}
           voiceToText={RenderVoiceRecorder}
           //@ts-ignore
           renderMessageContent={(props): ReactElement => (
-            <MessageItem message={props} config={config} />
+            <MessageItem message={props} />
           )}
           onSend={handleSend}
           locale="en-US"
           placeholder={placeholder}
         />
-        <ShareButtons config={config} />
+        <ShareButtons />
       </div>
     );
 };

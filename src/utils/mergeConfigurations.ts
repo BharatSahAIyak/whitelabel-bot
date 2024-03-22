@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import localConfig from '../../app.config.json';
+import localConfig from '../../app.config?.json';
 import axios from 'axios';
 import { merge } from 'lodash'
 

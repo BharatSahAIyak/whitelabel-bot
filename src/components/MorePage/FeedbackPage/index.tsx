@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
-import config from "./config.json";
+import config from "./config?.json";
 import { toast } from "react-hot-toast";
 
 const FeedbackPage: React.FC = () => {
@@ -12,8 +12,8 @@ const FeedbackPage: React.FC = () => {
   const [review, setReview] = useState("");
 
   const handleFeedback = () => {
-    const rateBox = config.component.ratingBox;
-    const reviewContainer = config.component.reviewBox;
+    const rateBox = config?.component.ratingBox;
+    const reviewContainer = config?.component.reviewBox;
 
     const sendReviewSuccess = () => {
       setTimeout(() => {
@@ -45,11 +45,11 @@ const FeedbackPage: React.FC = () => {
             fontWeight: "bold"
           }}
         >
-          {config.component.Title}
+          {config?.component.Title}
         </Typography>
         </Box>
 
-        {config.component.ratingBox === true && (
+        {config?.component.ratingBox === true && (
           <Box className={styles.section}>
             <Typography
               sx={{
@@ -57,14 +57,14 @@ const FeedbackPage: React.FC = () => {
                 fontSize: "3vh",
               }}
             >
-              {config.component.ratingBoxTitle}
+              {config?.component.ratingBoxTitle}
             </Typography>
 
             <Rating
               data-testid="ratingComponent"
               name="simple-controlled"
               value={star}
-              max={config.component.ratingMaxStars}
+              max={config?.component.ratingMaxStars}
               // @ts-ignore
               onChange={(event, newValue) => {
                 setStar(() => {
@@ -82,7 +82,7 @@ const FeedbackPage: React.FC = () => {
                 fontSize: "2vh",
               }}
             >
-              {config.component.ratingStarDescription}
+              {config?.component.ratingStarDescription}
             </Typography>
             <Button
               id="ratingBtn"
@@ -90,23 +90,23 @@ const FeedbackPage: React.FC = () => {
               data-testid="ratingBtn"
               sx={{
                 mt: 2,
-                backgroundColor: `${config.theme.primaryColor.value}`,
+                backgroundColor: `${config?.theme.primaryColor.value}`,
                 fontWeight: "bold",
                 borderRadius: "10rem",
                 fontSize: "1.5vh",
                 p: 1.5,
                 "&:hover": {
-                  backgroundColor: `${config.theme.secondaryColor.value}`,
+                  backgroundColor: `${config?.theme.secondaryColor.value}`,
                 },
               }}
               onClick={handleFeedback}
             >
-              {config.component.ratingButtonText}
+              {config?.component.ratingButtonText}
             </Button>
           </Box>
         )}
 
-        {config.component.reviewBox === true && (
+        {config?.component.reviewBox === true && (
           <Box className={styles.section}>
             <Typography
               sx={{
@@ -115,10 +115,10 @@ const FeedbackPage: React.FC = () => {
                 fontSize: "3vh",
               }}
             >
-              {config.component.reviewBoxTitle}
+              {config?.component.reviewBoxTitle}
             </Typography>
             <textarea
-              placeholder={config.component.reviewPlaceholder}
+              placeholder={config?.component.reviewPlaceholder}
               value={review}
               className={styles.textBlock}
               onChange={(e) => {
@@ -132,18 +132,18 @@ const FeedbackPage: React.FC = () => {
               data-testid="reviewBtn"
               sx={{
                 mt: 2,
-                backgroundColor: `${config.theme.primaryColor.value}`,
+                backgroundColor: `${config?.theme.primaryColor.value}`,
                 fontWeight: "bold",
                 borderRadius: "10rem",
                 fontSize: "1.5vh",
                 p: 1.5,
                 "&:hover": {
-                  backgroundColor: `${config.theme.secondaryColor.value}`,
+                  backgroundColor: `${config?.theme.secondaryColor.value}`,
                 },
               }}
               onClick={handleFeedback}
             >
-              {config.component.reviewButtonText}
+              {config?.component.reviewButtonText}
             </Button>
           </Box>
         )}

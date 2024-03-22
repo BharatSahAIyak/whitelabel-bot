@@ -26,16 +26,20 @@ import { MessageItemPropType } from './index.d';
 const jsonToTable = require('json-to-table');
 import moment from 'moment';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
+import { useConfig } from '../../hooks/useConfig';
 // import BlinkingSpinner from '../blinking-spinner/index';
 
-const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
+const MessageItem: FC<MessageItemPropType> = ({ message }) => {
+  const config = useConfig('component', 'chatUI');
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
-    return theme?.primary?.main;
-  }, [theme?.primary?.main]);
+    return theme?.primary?.light;
+  }, [theme?.primary?.light]);
+
   const contrastText = useMemo(() => {
     return theme?.primary?.contrastText;
   }, [theme?.primary?.contrastText]);
+
   const [reaction, setReaction] = useState(message?.content?.data?.reaction);
   // @ts-ignore
   const [optionDisabled, setOptionDisabled] = useState(
@@ -216,7 +220,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                   top: '-10px',
                   justifyContent: 'space-between',
                 }}>
-                {config.component.allowTextToSpeech && (
+                {config?.allowTextToSpeech && (
                   <div style={{ display: 'flex' }}>
                     <div
                       className={styles.msgSpeaker}
@@ -249,12 +253,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                           marginRight: '1px',
                           padding: '0 5px',
                         }}>
-                        {config.component.textToSpeechLabel}
+                        {config?.textToSpeechLabel}
                       </p>
                     </div>
                   </div>
                 )}
-                {config.component.allowFeedback && (
+                {config?.allowFeedback && (
                   <div className={styles.msgFeedback}>
                     <div
                       className={styles.msgFeedbackIcons}
@@ -280,7 +284,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                             fontSize: '11px',
                             fontFamily: 'Mulish-bold',
                           }}>
-                          {config.component.positiveFeedbackText}
+                          {config?.positiveFeedbackText}
                         </p>
                       </div>
                       <div
@@ -309,7 +313,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message, config }) => {
                             fontSize: '11px',
                             fontFamily: 'Mulish-bold',
                           }}>
-                          {config.component.negativeFeedbackText}
+                          {config?.negativeFeedbackText}
                         </p>
                       </div>
                     </div>

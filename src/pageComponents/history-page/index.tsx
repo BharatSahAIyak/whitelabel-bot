@@ -7,7 +7,7 @@ import { IconButton } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import moment from "moment";
 import _ from 'underscore';
-import { component } from "./config.json";
+import { component } from "./config?.json";
 import { ChatItem, HistoryItem } from "./index.d";
 import { map } from "lodash";
 import { useColorPalates } from "../../providers/theme-provider/hooks";

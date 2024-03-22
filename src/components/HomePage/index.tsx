@@ -135,7 +135,7 @@ const HomePage: NextPage = () => {
                 targetLanguage: 'or',
               },
               serviceId:
-                transliterationConfig.serviceId ||
+                transliterationconfig?.serviceId ||
                 'ai4bharat/indicxlit--cpu-fsv2',
               isSentence: false,
               numSuggestions: 3,
@@ -159,7 +159,7 @@ const HomePage: NextPage = () => {
           Accept: ' */*',
           'User-Agent': ' Thunder Client (https://www.thunderclient.com)',
           Authorization:
-            transliterationConfig.auth ||
+            transliterationconfig?.auth ||
             'L6zgUQ59QzincUafIoc1pZ8m54-UfxRdDKTNb0bVUDjm6z6HbXi6Nv7zxIJ-UyQN',
           'Content-Type': 'application/json',
         },
