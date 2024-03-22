@@ -7,7 +7,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-hot-toast";
 import { useColorPalates } from "../../providers/theme-provider/hooks";
 import { OTPInput } from "../../components/otp-input";
-import config from "./config.json";
+import config from "./config?.json";
 import { useLocalization } from "../../hooks";
 import { useRouter } from "next/router";
 import jwt_decode from "jwt-decode";
@@ -155,7 +155,7 @@ const OtpPage: React.FC = () => {
                   mb: 4,
                   p: 1,
 
-                  // background: config.theme.secondaryColor.value,
+                  // background: config?.theme.secondaryColor.value,
                   background: theme.primary.main,
                   borderRadius: "10px",
                   width: "50%",

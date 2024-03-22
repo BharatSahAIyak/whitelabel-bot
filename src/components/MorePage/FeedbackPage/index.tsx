@@ -4,17 +4,18 @@ import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
-import config from "./config.json";
 import { toast } from "react-hot-toast";
 import { useColorPalates } from "../../../providers/theme-provider/hooks";
+import { useConfig } from "../../../hooks/useConfig";
 
 const FeedbackPage: React.FC = () => {
   const [star, setStar] = useState(1);
   const [review, setReview] = useState("");
 const theme =useColorPalates();
+const config =useConfig('component','feedbackPage');
   const handleFeedback = () => {
-    const rateBox = config.component.ratingBox;
-    const reviewContainer = config.component.reviewBox;
+    const rateBox = config?.component.ratingBox;
+    const reviewContainer = config?.component.reviewBox;
 
     const sendReviewSuccess = () => {
       setTimeout(() => {
@@ -47,11 +48,11 @@ const theme =useColorPalates();
             color:theme.primary.main
           }}
         >
-          {config.component.Title}
+          {config?.component.Title}
         </Typography>
         </Box>
 
-        {config.component.ratingBox === true && (
+        {config?.component.ratingBox === true && (
           <Box className={styles.section}>
             <Typography
               sx={{
@@ -59,14 +60,14 @@ const theme =useColorPalates();
                 fontSize: "3vh",
               }}
             >
-              {config.component.ratingBoxTitle}
+              {config?.component.ratingBoxTitle}
             </Typography>
 
             <Rating
               data-testid="ratingComponent"
               name="simple-controlled"
               value={star}
-              max={config.component.ratingMaxStars}
+              max={config?.component.ratingMaxStars}
               // @ts-ignore
               onChange={(event, newValue) => {
                 setStar(() => {
@@ -84,7 +85,7 @@ const theme =useColorPalates();
                 fontSize: "2vh",
               }}
             >
-              {config.component.ratingStarDescription}
+              {config?.component.ratingStarDescription}
             </Typography>
             <Button
               id="ratingBtn"
@@ -103,12 +104,12 @@ const theme =useColorPalates();
               }}
               onClick={handleFeedback}
             >
-              {config.component.ratingButtonText}
+              {config?.component.ratingButtonText}
             </Button>
           </Box>
         )}
 
-        {config.component.reviewBox === true && (
+        {config?.component.reviewBox === true && (
           <Box className={styles.section}>
             <Typography
               sx={{
@@ -117,10 +118,10 @@ const theme =useColorPalates();
                 fontSize: "3vh",
               }}
             >
-              {config.component.reviewBoxTitle}
+              {config?.component.reviewBoxTitle}
             </Typography>
             <textarea
-              placeholder={config.component.reviewPlaceholder}
+              placeholder={config?.component.reviewPlaceholder}
               value={review}
               className={styles.textBlock}
               style={{
@@ -148,7 +149,7 @@ const theme =useColorPalates();
               }}
               onClick={handleFeedback}
             >
-              {config.component.reviewButtonText}
+              {config?.component.reviewButtonText}
             </Button>
           </Box>
         )}

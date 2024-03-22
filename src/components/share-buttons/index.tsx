@@ -1,16 +1,24 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import Image from 'next/image';
 import Loader from '../loader';
 import Draggable from 'react-draggable'
 import { useLocalization } from '../../hooks';
-import shareIcon from '../../assets/icons/share.svg';
-import downloadIcon from '../../assets/icons/download.svg';
+import ShareIcon from '../../assets/icons/share';
+import DownloadIcon from '../../assets/icons/download';
 import { downloadChat } from '../../store/actions/messages/download-chats';
 import { toast } from 'react-hot-toast';
 import { AppContext } from '../../context';
 import axios from 'axios';
 import { CircularProgress, Divider } from '@mui/material';
-const ShareButtons = ({config}: any) => {
+import { useColorPalates } from '../../providers/theme-provider/hooks';
+import { useConfig } from '../../hooks/useConfig';
+const ShareButtons = () => {
+  const config = useConfig('component', 'chatUI');
+  const theme = useColorPalates();
+  const secondaryColor = useMemo(() => {
+    return theme?.primary?.light;
+  }, [theme?.primary?.light]);
+  
     const t = useLocalization();
     const context = useContext(AppContext);
     const [shareLoader, setShareLoader] = useState(false);
@@ -99,7 +107,7 @@ const ShareButtons = ({config}: any) => {
     return (
         // <Draggable axis="y">
         <>
-        {(config.component.allowDownloadChat || config.component.allowShareChat) && <div
+        {(config?.allowDownloadChat || config?.allowShareChat) && <div
             style={{
               position: 'absolute',
               right: 0,
@@ -110,7 +118,7 @@ const ShareButtons = ({config}: any) => {
               boxShadow:
                 'rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px',
             }}>
-            {config.component.allowShareChat && <div
+            {config?.allowShareChat && <div
               onClick={() => downloadShareHandler('share')}
               style={{
                 display: 'flex',
@@ -137,22 +145,22 @@ const ShareButtons = ({config}: any) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}>
-                  <Image src={shareIcon} alt="" width={22} height={22} />{' '}
+                  <ShareIcon color={secondaryColor} />
                 </div>
               )}
               <p
                 style={{
                   fontSize: '10px',
                   margin: 0,
-                  // color: config.theme.primaryColor.value,
+                  // color: config?.theme.primaryColor.value,
                   fontFamily: 'Mulish-bold',
                 }}>
-                {config.component.shareChatText}
+                {config?.shareChatText}
               </p>
             </div>}
             {/* Only render divider when both share and download allowed */}
-            {config.component.allowDownloadChat && config.component.allowShareChat && <Divider />}
-            {config.component.allowDownloadChat && <div
+            {config?.allowDownloadChat && config?.allowShareChat && <Divider />}
+            {config?.allowDownloadChat && <div
               onClick={() => downloadShareHandler('download')}
               style={{
                 display: 'flex',
@@ -179,17 +187,17 @@ const ShareButtons = ({config}: any) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}>
-                  <Image src={downloadIcon} alt="" width={24} height={24} />
+                  <DownloadIcon color={secondaryColor} />
                 </div>
               )}
               <p
                 style={{
                   fontSize: '10px',
                   margin: 0,
-                  // color: config.theme.primaryColor.value,
+                  // color: config?.theme.primaryColor.value,
                   fontFamily: 'Mulish-bold',
                 }}>
-                {config.component.downloadChatText}
+                {config?.downloadChatText}
               </p>
             </div>}
           </div>}
