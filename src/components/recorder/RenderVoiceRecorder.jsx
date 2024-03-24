@@ -125,17 +125,18 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
       // audioElement.play();
 
       // Define the API endpoint
-      const apiEndpoint = process.env.NEXT_PUBLIC_BFF_API_URL;
+      const apiEndpoint = process.env.NEXT_PUBLIC_AI_TOOLS_API + '/speech-to-text';
 
       // Create a FormData object
       const formData = new FormData();
 
       // Append the WAV file to the FormData object
       formData.append('file', blob, 'audio.wav');
-      formData.append('phoneNumber', localStorage.getItem('phoneNumber'));
+      // formData.append('phoneNumber', localStorage.getItem('phoneNumber'));
+      formData.append('language', 'en');
 
       // Send the WAV data to the API
-      const resp = await fetch(apiEndpoint + '/aitools/asr', {
+      const resp = await fetch(apiEndpoint, {
         method: 'POST',
         body: formData,
       });

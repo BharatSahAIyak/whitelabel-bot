@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import _logo from "./assets/logo.png";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-hot-toast";
-import config from "./config?.json";
+import config from "./config.json";
 import { useColorPalates } from "../../providers/theme-provider/hooks";
 import { useLocalization } from "../../hooks";
 import { useRouter } from "next/router";

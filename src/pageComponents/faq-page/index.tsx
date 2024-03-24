@@ -3,7 +3,7 @@ import styles from './index.module.css';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import config from './config?.json';
+import config from './config.json';
 import CallRoundedIcon from '@mui/icons-material/Call';
 import { Avatar } from '@mui/material';
 import { useColorPalates } from '../../providers/theme-provider/hooks';

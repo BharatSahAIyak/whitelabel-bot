@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import styles from './index.module.css';
 import { Avatar, Box, Button, Typography} from '@mui/material';
 import CallRoundedIcon from '@mui/icons-material/Call';
-import config from './config?.json';
+import config from './config.json';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useFlags } from 'flagsmith/react';
 
