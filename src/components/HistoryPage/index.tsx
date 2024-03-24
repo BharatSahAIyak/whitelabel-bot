@@ -1,6 +1,5 @@
 import styles from './index.module.css';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Spinner } from '@chakra-ui/react';
 import leftArrow from '../../assets/icons/leftArrow.svg';
 import rightArrow from '../../assets/icons/rightArrow.svg';
 import Image from 'next/image';
@@ -154,7 +153,7 @@ const HistoryPage: NextPage = () => {
                   height: '50vh',
                 }}>
                 {/* @ts-ignore */}
-                <Spinner size="xl" />
+                <CircularProgress />
               </div>
             ) : conversations.length > 0 ? (
               conversations.map((conv: any) => {

@@ -11,6 +11,7 @@ import {
   FC,
   ReactElement,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
@@ -27,10 +28,14 @@ const jsonToTable = require('json-to-table');
 import moment from 'moment';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
+import { useLocalization } from '../../hooks';
+import { AppContext } from '../../context';
 // import BlinkingSpinner from '../blinking-spinner/index';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
+  const context = useContext(AppContext);
+  const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
     return theme?.primary?.light;
@@ -66,46 +71,64 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     [reaction]
   );
 
-  const getLists = useCallback(({ choices }: { choices: any }) => {
-    return (
-      <List className={`${styles.list}`}>
-        {choices?.map((choice: any, index: string) => (
-          // {_.map(choices ?? [], (choice, index) => (
-          <ListItem
-            key={`${index}_${choice?.key}`}
-            className={`${styles.onHover} ${styles.listItem}`}
-            onClick={(e: any): void => {
-              e.preventDefault();
-              if (optionDisabled) {
-                toast.error(`Cannot answer again`);
-              } else {
-                // TODO: send choice?.text as message and set options disabled
+  const getLists = useCallback(
+    ({ choices }: { choices: any }) => {
+      console.log('qwer12:', { choices, optionDisabled });
+      return (
+        <List className={`${styles.list}`}>
+          {choices?.map((choice: any, index: string) => (
+            // {_.map(choices ?? [], (choice, index) => (
+            <ListItem
+              key={`${index}_${choice?.key}`}
+              className={`${styles.onHover} ${styles.listItem}`}
+              //@ts-ignore
+              style={
+                optionDisabled
+                  ? {
+                      background: 'var(--lightgrey)',
+                      color: 'var(--font)',
+                      boxShadow: 'none',
+                    }
+                  : {cursor: 'pointer'}
               }
-            }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                color:
-                  content?.data?.position === 'right'
-                    ? secondaryColor
-                    : optionDisabled
-                    ? contrastText
-                    : secondaryColor,
+              onClick={(e: any): void => {
+                e.preventDefault();
+                if (optionDisabled) {
+                  toast.error(`${t('message.cannot_answer_again')}`);
+                } else {
+                  context?.sendMessage(choice?.text);
+                  setOptionDisabled(true);
+                }
               }}>
-              <div>{choice?.text}</div>
-              <div style={{ marginLeft: 'auto' }}>
-                <RightIcon
-                  width="30px"
-                  color={optionDisabled ? contrastText : secondaryColor}
-                />
+              <div
+                className="onHover"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  color:
+                    content?.data?.position === 'right'
+                      ? 'white'
+                      : optionDisabled
+                      ? 'var(--font)'
+                      : secondaryColor,
+                }}>
+                <div>{choice?.text}</div>
+                <div style={{ marginLeft: 'auto' }}>
+                  <RightIcon
+                    width="30px"
+                    color={
+                      optionDisabled ? 'var(--font)' : secondaryColor
+                    }
+                  />
+                </div>
               </div>
-            </div>
-          </ListItem>
-        ))}
-      </List>
-    );
-  }, []);
+            </ListItem>
+          ))}
+        </List>
+      );
+    },
+    [context, t]
+  );
 
   const { content, type } = message;
 

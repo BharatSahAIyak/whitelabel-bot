@@ -1,12 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './index.module.css';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-} from '@chakra-ui/react';
 import CallIcon from '../../../assets/icons/call-icon';
 import Image from 'next/image';
 import { useFlags } from 'flagsmith/react';

@@ -35,24 +35,24 @@
 //     [context]
 //   );
 
-//   const newChatHandler = useCallback(() => {
-//     if (context?.isMsgReceiving) {
-//       toast.error(`${t('error.wait_new_chat')}`);
-//       return;
-//     }
+  // const newChatHandler = useCallback(() => {
+  //   if (context?.isMsgReceiving) {
+  //     toast.error(`${t('error.wait_new_chat')}`);
+  //     return;
+  //   }
 
-//     recordUserLocation();
+  //   recordUserLocation();
 
-//     const newConversationId = uuidv4();
-//     sessionStorage.setItem('conversationId', newConversationId);
-//     if (context?.audioElement) context?.audioElement.pause();
-//     if (context?.setAudioPlaying) context?.setAudioPlaying(false);
-//     context?.setConversationId(newConversationId);
-//     context?.setMessages([]);
-//     context?.setIsMsgReceiving(false);
-//     context?.setLoading(false);
-//     router.push('/');
-//   }, [context, t]);
+  //   const newConversationId = uuidv4();
+  //   sessionStorage.setItem('conversationId', newConversationId);
+  //   if (context?.audioElement) context?.audioElement.pause();
+  //   if (context?.setAudioPlaying) context?.setAudioPlaying(false);
+  //   context?.setConversationId(newConversationId);
+  //   context?.setMessages([]);
+  //   context?.setIsMsgReceiving(false);
+  //   context?.setLoading(false);
+  //   router.push('/');
+  // }, [context, t]);
 
 
 
@@ -190,24 +190,28 @@
 
 // export default NavBar;
 
-import React, { useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import Typography from '@mui/material/Typography';
-// import { Sidebar } from '../sidebar/index';
-
 import { useColorPalates } from '../../providers/theme-provider/hooks';  
 import { useConfig } from '../../hooks/useConfig';
 import Sidebar from '../../pageComponents/sidebar';
-
+import router from 'next/router'
+import { recordUserLocation } from '../../utils/location';
+import {v4 as uuidv4} from 'uuid'
+import { AppContext } from '../../context';
+import { useLocalization } from '../../hooks';
+import toast from 'react-hot-toast';
 
 const Navbar: React.FC = () => {
     const config = useConfig('component','navbar');
+    const context = useContext(AppContext);
+    const t = useLocalization();
   const theme = useColorPalates();
-  console.log("chulab:",{config})
   const {
     brandName,
     showHamburgerMenu,
@@ -227,6 +231,25 @@ const Navbar: React.FC = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);  
   };
+
+    const newChatHandler = useCallback(() => {
+    if (context?.isMsgReceiving) {
+      toast.error(`${t('error.wait_new_chat')}`);
+      return;
+    }
+
+    recordUserLocation();
+
+    const newConversationId = uuidv4();
+    sessionStorage.setItem('conversationId', newConversationId);
+    if (context?.audioElement) context?.audioElement.pause();
+    if (context?.setAudioPlaying) context?.setAudioPlaying(false);
+    context?.setConversationId(newConversationId);
+    context?.setMessages([]);
+    context?.setIsMsgReceiving(false);
+    context?.setLoading(false);
+    router.push('/');
+  }, [context, t]);
 
   return (
     <>
@@ -253,6 +276,7 @@ const Navbar: React.FC = () => {
                   edge="start"
                   aria-label="home"
                   style={{ fontSize: '2rem', height: '48px' }}
+                  onClick={newChatHandler}
                 >
                   <HomeIcon />
                 </IconButton>

@@ -6,8 +6,6 @@ import { useContext } from "react";
 import { AppContext } from "../context";
 import styles from "../components/dialer-popup/index.module.css";
 import DialerPopUp from "../components/dialer-popup";
-import { useSelector } from "react-redux";
-import { selectIsMessageReceiving } from "../store/slices/messageSlice";
 
 const ChatUi = dynamic(() => import("../components/chat-window"), {
   ssr: false,

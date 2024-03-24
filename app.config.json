@@ -49,14 +49,14 @@
       "profileText": "Welcome, User",
       "links": [
         {
-          "label": "FAQ Page",
-          "icon": "HelpIcon",
-          "route": "faq"
+          "label": "History Page",
+          "icon": "HistoryIcon",
+          "route": "history"
         },
         {
-          "label": "Chat Page",
-          "icon": "HistoryIcon",
-          "route": "chat"
+          "label": "FAQs",
+          "icon": "HelpIcon",
+          "route": "faq"
         },
         {
           "label": "Feedback",

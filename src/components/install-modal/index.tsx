@@ -55,6 +55,7 @@ export const InstallModal: React.FC = () => {
 
     const handleClose = React.useCallback(() => {
         setOpen(false);
+        localStorage.setItem("installPwa", "true");
     }, []);
 
     return (

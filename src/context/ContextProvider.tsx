@@ -14,14 +14,12 @@ import { IntlProvider } from 'react-intl';
 import { useLocalization } from '../hooks';
 import toast from 'react-hot-toast';
 import flagsmith from 'flagsmith/isomorphic';
-import { Button, Spinner } from '@chakra-ui/react';
 import axios from 'axios';
 import { useFlags } from 'flagsmith/react';
 import { useCookies } from 'react-cookie';
 import { UCI } from 'socket-package';
 
 import mergeConfigurations from '../utils/mergeConfigurations';
-import { FullPageLoader } from '../components/fullpage-loader';
 
 function loadMessages(locale: string) {
   switch (locale) {
@@ -58,7 +56,7 @@ const ContextProvider: FC<{
   });
   const [isDown, setIsDown] = useState(false);
   const [showDialerPopup, setShowDialerPopup] = useState(false);
-  const [currentQuery, setCurrentQuery] = useState("");
+  const [currentQuery, setCurrentQuery] = useState('');
   // const [isConnected, setIsConnected] = useState(newSocket?.connected || false);
   const [cookie, setCookie, removeCookie] = useCookies();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -68,7 +66,8 @@ const ContextProvider: FC<{
   const [startTime, setStartTime] = useState(Date.now());
   const [endTime, setEndTime] = useState(Date.now());
   const [lastMsgId, setLastMsgId] = useState('');
-   const [config, setConfig] = useState(null);
+  const [lastMsg, setLastMsg] = useState('');
+  const [config, setConfig] = useState(null);
 
   // const configs = useMergeConfigurations();
   // console.log("hola:",{configs})
@@ -76,8 +75,7 @@ const ContextProvider: FC<{
     mergeConfigurations().then(setConfig);
   }, []);
 
-  
-
+  console.log('config:', { config });
 
   const downloadChat = useMemo(() => {
     return (e: string) => {
@@ -90,7 +88,6 @@ const ContextProvider: FC<{
     };
   }, []);
 
-  
   const shareChat = useMemo(() => {
     return (e: string) => {
       try {
@@ -159,7 +156,7 @@ const ContextProvider: FC<{
         .get(
           `${process.env.NEXT_PUBLIC_BFF_API_URL}/incrementaudioused/${content?.data?.messageId}`
         )
-        .then((res) => { })
+        .then((res) => {})
         .catch((err) => {
           console.log(err);
         });
@@ -224,30 +221,30 @@ const ContextProvider: FC<{
   }, []);
 
   useEffect(() => {
-    if (localStorage.getItem('userID') && localStorage.getItem('auth')) {
-      setNewSocket(
-        new UCI(
-          URL,
-          {
-            transportOptions: {
-              polling: {
-                extraHeaders: {
-                  Authorization: `Bearer ${localStorage.getItem('auth')}`,
-                  channel: 'akai',
-                },
+    // if (localStorage.getItem('userID') && localStorage.getItem('auth')) {
+    setNewSocket(
+      new UCI(
+        URL,
+        {
+          transportOptions: {
+            polling: {
+              extraHeaders: {
+                // Authorization: `Bearer ${localStorage.getItem('auth')}`,
+                channel: 'akai',
               },
             },
-            query: {
-              deviceId: localStorage.getItem('userID'),
-            },
-            autoConnect: false,
-            transports: ['polling', 'websocket'],
-            upgrade: true,
           },
-          onMessageReceived
-        )
-      );
-    }
+          query: {
+            deviceId: localStorage.getItem('userID'),
+          },
+          autoConnect: false,
+          transports: ['polling', 'websocket'],
+          upgrade: true,
+        },
+        onMessageReceived
+      )
+    );
+    // }
     function cleanup() {
       if (newSocket)
         newSocket.onDisconnect(() => {
@@ -411,7 +408,7 @@ const ContextProvider: FC<{
         ) {
           await updateMsgState({
             msg: msg,
-            media: null
+            media: null,
           });
         }
       }
@@ -477,8 +474,8 @@ const ContextProvider: FC<{
           asrId: sessionStorage.getItem('asrId'),
           userId: localStorage.getItem('userID'),
           conversationId: sessionStorage.getItem('conversationId'),
-          botId: process.env.NEXT_PUBLIC_BOT_ID || ''
-        }
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        },
       });
       const messageId = uuidv4();
       
@@ -508,25 +505,30 @@ const ContextProvider: FC<{
           ]);
           sessionStorage.removeItem('asrId');
         }
-        try{
-          const telemetryApi = process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
-          axios.post(telemetryApi, {
-            data: {
+        try {
+          const telemetryApi =
+            process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+          await axios.post(telemetryApi, [
+            {
               generator: 'pwa',
               version: '1.0',
-              timestamp: new Date(),
+              timestamp: new Date().getTime(),
               actorId: localStorage.getItem('userID') || '',
               actorType: 'user',
               env: 'prod',
               eventId: 'E036',
               event: 'messageQuery',
               subEvent: 'messageSent',
-              // @ts-ignore
-              os: window.navigator?.userAgentData?.platform || window.navigator.platform,
+              os:
+                // @ts-ignore
+                window.navigator?.userAgentData?.platform ||
+                window.navigator.platform,
               browser: window.navigator.userAgent,
               ip: sessionStorage.getItem('ip') || '',
               // @ts-ignore
-              deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
+              deviceType: window.navigator?.userAgentData?.mobile
+                ? 'mobile'
+                : 'desktop',
               eventData: {
                 botId: process.env.NEXT_PUBLIC_BOT_ID || '',
                 userId: localStorage.getItem('userID') || '',
@@ -534,12 +536,12 @@ const ContextProvider: FC<{
                 conversationId: sessionStorage.getItem('conversationId') || '',
                 messageId: messageId,
                 text: text,
-                createdAt: new Date()
-              }
-            }
-          })
-        }catch(err){
-          console.error(err)
+                createdAt: new Date().getTime(),
+              },
+            },
+          ]);
+        } catch (err) {
+          console.error(err);
         }
     },
     [conversationId, newSocket, removeCookie]
@@ -613,7 +615,7 @@ const ContextProvider: FC<{
     }
     timer = setTimeout(() => {
       if (loading) {
-        toast.loading(t('message.taking_longer'), {duration: 2500});
+        toast.loading('message.taking_longer', {duration: 3000});
       }
       secondTimer = setTimeout(async () => {
         fetchIsDown();
@@ -622,7 +624,8 @@ const ContextProvider: FC<{
           console.log('log:', loading);
           try {
             const chatHistory = await axios.get(
-              `${process.env.NEXT_PUBLIC_BFF_API_URL
+              `${
+                process.env.NEXT_PUBLIC_BFF_API_URL
               }/user/chathistory/${sessionStorage.getItem('conversationId')}`,
               {
                 headers: {
@@ -722,7 +725,7 @@ const ContextProvider: FC<{
       downloadChat,
       audioPlaying,
       setAudioPlaying,
-      config
+      config,
     }),
     [
       locale,
@@ -749,10 +752,10 @@ const ContextProvider: FC<{
       downloadChat,
       audioPlaying,
       setAudioPlaying,
-      config
+      config,
     ]
   );
-  if (!config) return <FullPageLoader loading label="Loading Configurations..." />;
+  if (!config) return <div>Loading configuration...</div>;
   return (
     //@ts-ignore
     <AppContext.Provider value={values}>

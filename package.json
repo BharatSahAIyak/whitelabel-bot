@@ -12,7 +12,6 @@
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
-    "@chakra-ui/react": "^1.8.8",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@magicbell/magicbell-react": "^8.5.3",
@@ -22,7 +21,6 @@
     "@mui/material": "^5.15.13",
     "@mui/system": "^5.15.13",
     "@next/bundle-analyzer": "^13.3.0",
-    "@reduxjs/toolkit": "^2.2.1",
     "@samagra-x/chatui": "1.0.3",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^10.4.9",
@@ -52,7 +50,6 @@
     "react-draggable": "^4.4.6",
     "react-hot-toast": "^2.4.0",
     "react-intl": "^6.3.2",
-    "react-redux": "^7.2.8",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.0",
     "socket-package": "0.14.0",
@@ -70,7 +67,6 @@
     "@types/react": "^18.0.10",
     "@types/react-alert": "^7.0.2",
     "@types/react-dom": "^18.0.5",
-    "@types/react-redux": "^7.1.33",
     "@types/underscore": "^1.11.4",
     "@types/uuid": "^9.0.1",
     "cypress": "^9.7.0",
