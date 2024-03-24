@@ -1,10 +1,10 @@
-import { useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import localConfig from '../../app.config.json';
 import axios from 'axios';
-import {merge} from 'lodash'
+import { merge } from 'lodash'
 
 //@ts-ignore
-const deepMerge = (target, ...sources):any => {
+const deepMerge = (target, ...sources): any => {
   if (!sources.length) return target;
   const source = sources.shift();
 
@@ -22,43 +22,55 @@ const deepMerge = (target, ...sources):any => {
   return deepMerge(target, ...sources);
 };
 
-const isObject = (item:any) => {
+const isObject = (item: any) => {
   return (item && typeof item === 'object' && !Array.isArray(item));
 };
 
 const fetchOverrideConfig = async () => {
-  try{
-    const config = {
+  try {
+
+    let deploymentIdConfig = {
       method: 'get',
-      url: process.env.NEXT_PUBLIC_CONFIG_BASE_URL,
+      maxBodyLength: Infinity,
+      url: `${process.env.NEXT_PUBLIC_PWA_DEPLOYER_URL}/deployment/whitelable-bot`,
       headers: {
-        'Content-Type': 'application/json',
-      },
-    }
+        'accept': 'application/json'
+      }
+    };
+    const deploymentResp = await axios.request(deploymentIdConfig);
+
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `${process.env.NEXT_PUBLIC_PWA_DEPLOYER_URL}/deployment/config/${deploymentResp?.data?.data?.deploymentId}`,
+      headers: {
+        'accept': 'application/json'
+      }
+    };
+
     const res = await axios.request(config);
-    console.log("config:", res);
-    return res?.data;
-  }catch(err){
+    return res?.data?.data?.config;
+  } catch (err) {
     console.error(err);
   }
   return {};
 };
 
-const mergeConfiguration =async ()=>{
-  let overrideConfig:any ={};
+const mergeConfiguration = async () => {
+  let overrideConfig: any = {};
   try {
     // const response = await axios.get('URL_TO_FETCH_OVERRIDE_CONFIG');
     overrideConfig = await fetchOverrideConfig();
+    console.log("chula chula2:",{localConfig,overrideConfig})
     //overrideConfig = response.data;
   } catch (error) {
     console.error('Error fetching override configuration:', error);
     // Optionally handle error, such as falling back to default configs
   }
 
-  // const mergedConfig =await deepMerge({} ,localConfig,overrideConfig);
-  console.log("hola:",{overrideConfig})
-  const mergedConfig = await merge(localConfig,overrideConfig);
+  const mergedConfig =await deepMerge({} ,localConfig,overrideConfig);
 
+ console.log("chula:",{mergedConfig})
   return mergedConfig
-} 
+}
 export default mergeConfiguration 

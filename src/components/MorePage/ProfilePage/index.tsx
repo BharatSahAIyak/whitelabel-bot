@@ -1,7 +1,7 @@
 import styles from './index.module.css';
 import React, { useEffect, useState } from 'react';
 import { useFlags } from 'flagsmith/react';
-import ComingSoonPage from '../../coming-soon-page';
+import ComingSoonPage from '../../../pageComponents/coming-soon-page';
 
 const ProfilePage: React.FC = () => {
   const flags = useFlags(['show_profile_page']);
