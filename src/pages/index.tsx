@@ -1,7 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { CookiesProvider } from "react-cookie";
-import { ColorModeScript } from "@chakra-ui/react";
 import { useLocalization } from "../hooks/useLocalization";
 import HomePage from "../components/HomePage";
 
@@ -30,7 +29,6 @@ const Home: NextPage = () => {
           <HomePage />
           {/* <DownTimePage/> */}
         </div>
-        <ColorModeScript />
       </CookiesProvider>
     </>
   );

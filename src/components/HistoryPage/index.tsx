@@ -1,19 +1,18 @@
 import styles from './index.module.css';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Spinner } from '@chakra-ui/react';
 import leftArrow from '../../assets/icons/leftArrow.svg';
 import rightArrow from '../../assets/icons/rightArrow.svg';
 import Image from 'next/image';
 import ChatItem from '../chat-item';
 import { NextPage } from 'next';
 import { useLocalization } from '../../hooks';
-import ComingSoonPage from '../coming-soon-page';
 import { useFlags } from 'flagsmith/react';
 import axios from 'axios';
 import _ from 'underscore';
 import { toast } from 'react-hot-toast';
 import { AppContext } from '../../context';
 import { useConfig } from '../../hooks/useConfig';
+import ComingSoonPage from '../../pageComponents/coming-soon-page';
 
 const HistoryPage: NextPage = () => {
   const [conversations, setConversations] = useState([]);
@@ -23,9 +22,7 @@ const HistoryPage: NextPage = () => {
   const context = useContext(AppContext);
 
   useEffect(() => {
-
     setGettingHistory(true);
-
     axios
       .get(`${process.env.NEXT_PUBLIC_BFF_API_URL}/user/conversations/all`, {
         headers: {
@@ -156,7 +153,7 @@ const HistoryPage: NextPage = () => {
                   height: '50vh',
                 }}>
                 {/* @ts-ignore */}
-                <Spinner size="xl" />
+                <CircularProgress />
               </div>
             ) : conversations.length > 0 ? (
               conversations.map((conv: any) => {

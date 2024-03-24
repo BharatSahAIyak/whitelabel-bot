@@ -14,7 +14,6 @@ import { IntlProvider } from 'react-intl';
 import { useLocalization } from '../hooks';
 import toast from 'react-hot-toast';
 import flagsmith from 'flagsmith/isomorphic';
-import { Button, Spinner } from '@chakra-ui/react';
 import axios from 'axios';
 import { useFlags } from 'flagsmith/react';
 import { useCookies } from 'react-cookie';
@@ -616,10 +615,7 @@ const ContextProvider: FC<{
     }
     timer = setTimeout(() => {
       if (loading) {
-        toast(() => <span>{t('message.taking_longer')}</span>, {
-          // @ts-ignore
-          icon: <Spinner />,
-        });
+        toast.loading('message.taking_longer', {duration: 3000});
       }
       secondTimer = setTimeout(async () => {
         fetchIsDown();

@@ -9,10 +9,7 @@ import React, {
 } from 'react';
 import { NextPage } from 'next';
 import axios from 'axios';
-import { getInitialMsgs } from '../../utils/textUtility';
 import { AppContext } from '../../context';
-import keyboardIcon from '../../assets/icons/keyboard.svg';
-import RightIcon from '../../assets/icons/right';
 import SendIcon from '../../assets/images/sendButton.png';
 // import reloadIcon from '../../assets/icons/reload.svg';
 import { useLocalization } from '../../hooks';
@@ -21,40 +18,24 @@ import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
-import { useFlags } from 'flagsmith/react';
-import DownTimePage from '../down-time-page';
 import { recordUserLocation } from '../../utils/location';
 import { useConfig } from '../../hooks/useConfig';
+import DowntimePage from '../../pageComponents/downtime-page';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
 const HomePage: NextPage = () => {
   const context = useContext(AppContext);
+  const config = useConfig('component', 'chatUI');
+  const theme = useColorPalates();
   const t = useLocalization();
   const inputRef = useRef(null);
   const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
-  const flags = useFlags([
-    'en_example_ques_one',
-    'en_example_ques_two',
-    'en_example_ques_three',
-    'or_example_ques_one',
-    'or_example_ques_two',
-    'or_example_ques_three',
-  ]);
-  const [messages, setMessages] = useState<Array<any>>([
-    getInitialMsgs(t, flags, context?.locale),
-  ]);
   const [inputMsg, setInputMsg] = useState('');
-  const [showExampleMessages, setShowExampleMessages] = useState(false);
-  const [showChatBox, setShowChatBox] = useState(false);
   const voiceRecorderRef = useRef(null);
-  const exampleMessagesRef = useRef(null);
   const chatBoxButton = useRef(null);
   const [suggestions, setSuggestions] = useState([]);
   const [suggestionClicked, setSuggestionClicked] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState<number>(0);
-  const [transliterationConfig, setTransliterationConfig] = useState({
-    auth: '',
-    serviceId: '',
-  });
   const [cursorPosition, setCursorPosition] = useState(0);
 
   const suggestionHandler = (e: any, index: number) => {
@@ -62,57 +43,12 @@ const HomePage: NextPage = () => {
   };
 
   useEffect(() => {
-    if (inputMsg.length > 0 && (localStorage.getItem('locale') === 'or')) {
+    if (inputMsg.length > 0 && config?.allowTransliteration) {
       if (suggestionClicked) {
         setSuggestionClicked(false);
         return;
       }
-      if (!sessionStorage.getItem('computeFetched')) {
-        sessionStorage.setItem('computeFetched', 'true');
-        let data = JSON.stringify({
-          pipelineTasks: [
-            {
-              taskType: 'transliteration',
-              config: {
-                language: {
-                  sourceLanguage: 'en',
-                  targetLanguage: 'or',
-                },
-              },
-            },
-          ],
-          pipelineRequestConfig: {
-            pipelineId: '64392f96daac500b55c543cd',
-          },
-        });
 
-        let config = {
-          method: 'post',
-          maxBodyLength: Infinity,
-          url: 'https://meity-auth.ulcacontrib.org/ulca/apis/v0/model/getModelsPipeline',
-          headers: {
-            ulcaApiKey: '13900b794f-49de-4b42-8ee5-6e0289fe8833',
-            userID: '737078729ae04552822e4e7e3093575c',
-            'Content-Type': 'application/json',
-          },
-          data: data,
-        };
-
-        axios
-          .request(config)
-          .then((response) => {
-            setTransliterationConfig({
-              serviceId:
-                response?.data?.pipelineResponseConfig?.[0]?.config?.[0]
-                  ?.serviceId,
-              auth: response?.data?.pipelineInferenceAPIEndPoint
-                ?.inferenceApiKey?.value,
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
       setSuggestions([]);
 
       const words = inputMsg.split(' ');
@@ -124,51 +60,28 @@ const HomePage: NextPage = () => {
 
       if (!wordUnderCursor) return;
       let data = JSON.stringify({
-        pipelineTasks: [
-          {
-            taskType: 'transliteration',
-            config: {
-              language: {
-                sourceLanguage: 'en',
-                targetLanguage: 'or',
-              },
-              serviceId:
-                transliterationConfig.serviceId ||
-                'ai4bharat/indicxlit--cpu-fsv2',
-              isSentence: false,
-              numSuggestions: 3,
-            },
-          },
-        ],
-        inputData: {
-          input: [
-            {
-              source: wordUnderCursor,
-            },
-          ],
-        },
+        inputLanguage:  config?.transliterationInputLanguage || 'en',
+        outputLanguage: config?.transliterationOutputLanguage || 'or',
+        input: wordUnderCursor,
+        provider: config?.transliterationProvider || 'bhashini',
+        numSuggestions: config?.transliterationSuggestions || 3,
       });
 
-      let config = {
+      let axiosConfig = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'https://dhruva-api.bhashini.gov.in/services/inference/pipeline',
+        url: `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/transliterate`,
         headers: {
-          Accept: ' */*',
-          'User-Agent': ' Thunder Client (https://www.thunderclient.com)',
-          Authorization:
-            transliterationConfig.auth ||
-            'L6zgUQ59QzincUafIoc1pZ8m54-UfxRdDKTNb0bVUDjm6z6HbXi6Nv7zxIJ-UyQN',
           'Content-Type': 'application/json',
         },
         data: data,
       };
 
       axios
-        .request(config)
+        .request(axiosConfig)
         .then((res: any) => {
           // console.log("hurray", res?.data?.output?.[0]?.target);
-          setSuggestions(res?.data?.pipelineResponse?.[0]?.output?.[0]?.target);
+          setSuggestions(res?.data?.suggestions);
         })
         .catch((err) => {
           console.log(err);
@@ -180,12 +93,11 @@ const HomePage: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputMsg, cursorPosition]);
 
-  useEffect(() => {
-    setMessages([getInitialMsgs(t, flags, context?.locale)]);
-  }, [t, context?.locale, flags]);
+  // useEffect(() => {
+  //   setMessages([getInitialMsgs(t, flags, context?.locale)]);
+  // }, [t, context?.locale, flags]);
 
   useEffect(() => {
-
     context?.fetchIsDown(); // check if server is down
 
     if (!sessionStorage.getItem('conversationId')) {
@@ -194,7 +106,6 @@ const HomePage: NextPage = () => {
       context?.setConversationId(newConversationId);
     }
     recordUserLocation();
-
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -242,9 +153,7 @@ const HomePage: NextPage = () => {
       //@ts-ignore
       !voiceRecorderRef.current?.contains(target) &&
       //@ts-ignore
-      !chatBoxButton.current?.contains(target) &&
-      //@ts-ignore
-      !exampleMessagesRef.current?.contains(target)
+      !chatBoxButton.current?.contains(target)
     ) {
       // setShowExampleMessages(false);
       setSuggestions([]);
@@ -340,52 +249,21 @@ const HomePage: NextPage = () => {
     };
   }, [handleKeyDown]);
 
-  const secondaryColorConfig = useConfig('theme','secondaryColor');
   const secondaryColor = useMemo(() => {
-    return secondaryColorConfig?.value;
-  }, [secondaryColorConfig]);
+    return theme?.primary?.main;
+  }, [theme?.primary?.main]);
 
   if (context?.isDown) {
-    return <DownTimePage />;
+    return <DowntimePage />;
   } else
     return (
       <>
         <div className={styles.main} onClick={handleDocumentClick}>
-          <div className={styles.title} style={{color: secondaryColor}}>{t('label.ask_me')}</div>
+          <div className={styles.title} style={{ color: secondaryColor }}>
+            {t('label.ask_me')}
+          </div>
           <div className={styles.voiceRecorder} ref={voiceRecorderRef}>
             <RenderVoiceRecorder setInputMsg={setInputMsg} tapToSpeak={true} />
-          </div>
-          <div
-            className={
-              styles.exampleMessages +
-              (showExampleMessages
-                ? ` ${styles.visible}`
-                : ` ${styles.invisible}`)
-            }
-            ref={exampleMessagesRef}>
-            {messages?.[0]?.payload?.buttonChoices?.map((choice: any) => {
-              return (
-                <button
-                  // onClick={() => {
-                  //   sendMessage(choice.text);
-                  //   console.log('clicked');
-                  // }}
-                  className={styles.buttonChoice}
-                  key={choice.key}>
-                  <Image
-                    src={choice.img}
-                    alt="img"
-                    width={60}
-                    height={60}
-                    style={{ marginRight: '2px' }}
-                  />
-                  {choice.text}
-                  {/* <div className={styles.rightIcon}>
-                    <RightIcon width="35px" color="var(--secondary)" />
-                  </div> */}
-                </button>
-              );
-            })}
           </div>
 
           <form onSubmit={(event) => event?.preventDefault()}>
@@ -398,8 +276,9 @@ const HomePage: NextPage = () => {
                     <div
                       key={index}
                       onClick={() => suggestionClickHandler(elem)}
-                      className={`${styles.suggestion} ${activeSuggestion === index ? styles.active : ''
-                        }`}
+                      className={`${styles.suggestion} ${
+                        activeSuggestion === index ? styles.active : ''
+                      }`}
                       onMouseEnter={(e) => suggestionHandler(e, index)}>
                       {elem}
                     </div>
@@ -413,10 +292,14 @@ const HomePage: NextPage = () => {
                 onChange={handleInputChange}
                 placeholder={placeholder}
               />
-              <button
-                type="submit"
-                className={styles.sendButton}>
-                <Image src={SendIcon} width={50} height={50} alt="sendIcon" onClick={() => sendMessage(inputMsg)} />
+              <button type="submit" className={styles.sendButton}>
+                <Image
+                  src={SendIcon}
+                  width={50}
+                  height={50}
+                  alt="sendIcon"
+                  onClick={() => sendMessage(inputMsg)}
+                />
               </button>
             </div>
           </form>

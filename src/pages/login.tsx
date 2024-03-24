@@ -1,8 +1,8 @@
 import React from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import LoginPage from '../components/LoginPage/LoginPage';
 import { useLocalization } from '../hooks';
+import LoginMobileAadharPage from '../pageComponents/login-mobile-aadhar-page';
 
 const Login: NextPage = () => {
   const t=useLocalization();
@@ -12,7 +12,7 @@ const Login: NextPage = () => {
       <Head>
       <title>{t("label.title")}</title>
       </Head>
-      <LoginPage />
+      <LoginMobileAadharPage />
     </React.Fragment>
   );
 };
