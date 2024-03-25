@@ -74,6 +74,28 @@
       "otpLength": 4,
       "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
       "title": "OTP Verification"
+    },
+    "comingSoonPage": {
+      "allowOverride": false,
+      "title": "Coming Soon!",
+      "description": "We are going to launch this feature very soon. Stay tuned!",
+      "backText": "Back"
+    },
+    "downtimePage": {
+      "allowOverride": false,
+      "title": "We're under maintainance",
+      "downTimeImage": "/src/pageComponents/downtime-page/assets/downTimeGIF.gif",
+      "supportingText": "Have an urgent query?",
+      "contactLink": "Call Ama Krushi",
+      "refreshText": "Try Again",
+      "previousPageText": "Previous Page"
+    },
+    "faqPage": {
+      "allowOverride": false,
+      "title": "FAQs",
+      "userManualText": "User Manual - For VAWs",
+      "contactDescriptionText":"To connect with call centre",
+      "contactText": "Dial"
     }
   },
   "theme": {
