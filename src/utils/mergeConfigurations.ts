@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
 import localConfig from '../../app.config.json';
 import axios from 'axios';
-import { merge } from 'lodash'
 
 //@ts-ignore
 const deepMerge = (target, ...sources): any => {
@@ -32,7 +30,7 @@ const fetchOverrideConfig = async () => {
     let deploymentIdConfig = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `${process.env.NEXT_PUBLIC_PWA_DEPLOYER_URL}/deployment/whitelable-bot`,
+      url: `${process.env.NEXT_PUBLIC_PWA_DEPLOYER_URL}/deployment/${process.env.NEXT_PUBLIC_BOT_NAME}`,
       headers: {
         'accept': 'application/json'
       }
@@ -61,16 +59,16 @@ const mergeConfiguration = async () => {
   try {
     // const response = await axios.get('URL_TO_FETCH_OVERRIDE_CONFIG');
     overrideConfig = await fetchOverrideConfig();
-    console.log("chula chula2:",{localConfig,overrideConfig})
+    console.log("localConfig and overrideConfig:",{localConfig,overrideConfig})
     //overrideConfig = response.data;
   } catch (error) {
     console.error('Error fetching override configuration:', error);
     // Optionally handle error, such as falling back to default configs
   }
 
-  const mergedConfig =await deepMerge({} ,localConfig,overrideConfig);
+  const mergedConfig =await deepMerge({}, localConfig, overrideConfig);
 
- console.log("chula:",{mergedConfig})
+ console.log("mergedConfig:", {mergedConfig})
   return mergedConfig
 }
 export default mergeConfiguration 

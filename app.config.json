@@ -1,4 +1,14 @@
 {
+  "theme": {
+    "palette": {
+      "primary": {
+        "main": "#1e6231",
+        "light": "#219653",
+        "dark": "#f6faff",
+        "contrastText": "#ffffff"
+      }
+    }
+  },
   "component": {
     "navbar": {
       "brandName": "",
@@ -90,18 +100,8 @@
       "allowOverride": false,
       "title": "FAQs",
       "userManualText": "User Manual - For VAWs",
-      "contactDescriptionText":"To connect with call centre",
+      "contactDescriptionText": "To connect with call centre",
       "contactText": "Dial"
-    }
-  },
-  "theme": {
-    "primaryColor": {
-      "allowOverride": true,
-      "value": "#D2F4E0"
-    },
-    "secondaryColor": {
-      "allowOverride": true,
-      "value": "#219653"
     }
   }
 }
