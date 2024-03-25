@@ -105,7 +105,7 @@ export const Sidebar = ({
                               lang.code === activeLanguage
                                 ? theme.primary.light
                                 : '#FFFFFF',
-                            border: '1px solid #000',
+                            border: 'none',
                             width: '60px',
                             height: '30px',
                             padding: '5px',
