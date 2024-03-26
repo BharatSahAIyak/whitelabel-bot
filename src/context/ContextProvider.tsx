@@ -460,7 +460,7 @@ const ContextProvider: FC<{
 
       console.log('my mssg:', text);
       newSocket.sendMessage({
-        text: text,
+        text: text?.replace('&', '%26'),
         to: localStorage.getItem('userID'),
         payload: {
           from: localStorage.getItem('phoneNumber'),
