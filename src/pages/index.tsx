@@ -27,7 +27,6 @@ const Home: NextPage = () => {
           }}
         >
           <HomePage />
-          {/* <DownTimePage/> */}
         </div>
       </CookiesProvider>
     </>

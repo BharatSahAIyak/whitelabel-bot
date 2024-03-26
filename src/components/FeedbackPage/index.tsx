@@ -5,8 +5,8 @@ import { Box } from "@mui/material";
 import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
 import { toast } from "react-hot-toast";
-import { useColorPalates } from "../../../providers/theme-provider/hooks";
-import { useConfig } from "../../../hooks/useConfig";
+import { useColorPalates } from "../../providers/theme-provider/hooks";
+import { useConfig } from "../../hooks/useConfig";
 
 const FeedbackPage: React.FC = () => {
   const [star, setStar] = useState(1);
