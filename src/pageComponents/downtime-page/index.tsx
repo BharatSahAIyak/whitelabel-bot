@@ -8,7 +8,7 @@ import { useConfig } from '../../hooks/useConfig';
 
 const DowntimePage: React.FC = () => {
   const theme = useColorPalates(); 
-  const config = useConfig('component', 'downtimePage');
+  const config = useConfig('component', 'downtime');
   const flags = useFlags(['dialer_number']);
   const handleRefreshClick = useCallback(()=>{
     window?.location.reload()
