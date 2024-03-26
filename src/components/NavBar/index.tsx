@@ -216,7 +216,6 @@ const Navbar: React.FC = () => {
     brandName,
     showHamburgerMenu,
     showHomeIcon,
-    leftHomeIcon,
     logos: {
       showCenterLogos,
       centerLogoIcons,
@@ -280,13 +279,6 @@ const Navbar: React.FC = () => {
                 >
                   <HomeIcon />
                 </IconButton>
-                {leftHomeIcon && (
-                  <img
-                    src={leftHomeIcon.src}
-                    alt={`Left Home Icon ${leftHomeIcon.id}`}
-                    style={{ maxHeight: '48px' }}
-                  />
-                )}
               </div>
             )}
           </div>
