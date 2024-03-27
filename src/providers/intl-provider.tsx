@@ -24,12 +24,12 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => 
     const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
         null
     );
-    useEffect(() => {
-        loadMessages(locale).then((res) => {
-            //@ts-ignore
-            setLocaleMsgs(res);
-        });
-    }, [locale]);
+    // useEffect(() => {
+    //     loadMessages(locale).then((res) => {
+    //         //@ts-ignore
+    //         setLocaleMsgs(res);
+    //     });
+    // }, [locale]);
 
     if (typeof window === 'undefined') return <FullPageLoader loading label='Fetching Locale' /> ;
     return (
@@ -38,7 +38,9 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => 
             <ContextProvider
                 locale={locale}
                 setLocale={setLocale}
-                localeMsgs={localeMsgs}>
+                localeMsgs={localeMsgs}
+                setLocaleMsgs={setLocaleMsgs}
+                >
                 {children}
             </ContextProvider>
         </IntlProvider>

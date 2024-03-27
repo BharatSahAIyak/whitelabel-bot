@@ -30,7 +30,8 @@ const ContextProvider: FC<{
   localeMsgs: any;
   setLocale: any;
   children: ReactElement;
-}> = ({ locale, children, localeMsgs, setLocale }) => {
+  setLocaleMsgs:any;
+}> = ({ locale, children, localeMsgs, setLocale,setLocaleMsgs }) => {
   const t = useLocalization();
   const flags = useFlags(['health_check_time']);
   const [loading, setLoading] = useState(false);
@@ -77,7 +78,7 @@ const ContextProvider: FC<{
       },2000)
     }
   },[config])
-  console.log('maaki:', { config });
+  console.log('maaki:', { config ,locale});
 
   const downloadChat = useMemo(() => {
     return (e: string) => {
@@ -89,7 +90,18 @@ const ContextProvider: FC<{
       }
     };
   }, []);
-
+useEffect(()=>{
+  //@ts-ignore
+  if(config?.translation){
+    onLocaleUpdate()
+  }
+},[config])
+  const onLocaleUpdate = useCallback(() => {
+    //@ts-ignore
+    // setLocaleMsgs(config?.translation?.[locale]);
+    //@ts-ignore
+   setLocaleMsgs(config?.translation?.['en']);
+  },[config])
   const shareChat = useMemo(() => {
     return (e: string) => {
       try {
