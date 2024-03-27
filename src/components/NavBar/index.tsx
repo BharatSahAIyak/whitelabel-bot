@@ -197,118 +197,136 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import Typography from '@mui/material/Typography';
-import { useColorPalates } from '../../providers/theme-provider/hooks';  
+import AddCircle from '@mui/icons-material/AddCircle';
+import { useRouter } from 'next/router';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
 import Sidebar from '../../pageComponents/sidebar';
-import router from 'next/router'
 import { recordUserLocation } from '../../utils/location';
-import {v4 as uuidv4} from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
 import toast from 'react-hot-toast';
 
 const Navbar: React.FC = () => {
-    const config = useConfig('component','navbar');
+    const router = useRouter();
+    const config = useConfig('component', 'navbar');
     const context = useContext(AppContext);
     const t = useLocalization();
-  const theme = useColorPalates();
-  const {
-    brandName,
-    showHamburgerMenu,
-    showHomeIcon,
-    logos: {
-      showCenterLogos,
-      centerLogoIcons,
-      showRightLogos,
-      rightLogoIcons
-    }
-  } = config;
+    const theme = useColorPalates();
+    const {
+        brandName,
+        showHamburgerMenu,
+        logos: {
+            showCenterLogos,
+            centerLogoIcons,
+            showRightLogos,
+            rightLogoIcons
+        }
+    } = config;
 
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
 
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen);  
-  };
+    const toggleSidebar = () => {
+        setSidebarOpen(!isSidebarOpen);
+    };
 
     const newChatHandler = useCallback(() => {
-    if (context?.isMsgReceiving) {
-      toast.error(`${t('error.wait_new_chat')}`);
-      return;
-    }
+        if (context?.isMsgReceiving) {
+            toast.error(`${t('error.wait_new_chat')}`);
+            return;
+        }
 
-    recordUserLocation();
+        recordUserLocation();
 
-    const newConversationId = uuidv4();
-    sessionStorage.setItem('conversationId', newConversationId);
-    if (context?.audioElement) context?.audioElement.pause();
-    if (context?.setAudioPlaying) context?.setAudioPlaying(false);
-    context?.setConversationId(newConversationId);
-    context?.setMessages([]);
-    context?.setIsMsgReceiving(false);
-    context?.setLoading(false);
-    router.push('/');
-  }, [context, t]);
+        const newConversationId = uuidv4();
+        sessionStorage.setItem('conversationId', newConversationId);
+        if (context?.audioElement) context?.audioElement.pause();
+        if (context?.setAudioPlaying) context?.setAudioPlaying(false);
+        context?.setConversationId(newConversationId);
+        context?.setMessages([]);
+        context?.setIsMsgReceiving(false);
+        context?.setLoading(false);
+        router.push('/');
+    }, [context, t, router]);
 
-  return (
-    <>
-      <AppBar position="static" sx={{ background: theme.primary.dark }}>
-        <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>  
-          <div style={{ display: 'flex', alignItems: 'center' }}>  
-            {showHamburgerMenu && (
-              <IconButton
-                size="large"
-                edge="start"
-                color="primary"
-                aria-label="open drawer"
-                sx={{ mr: 2 }}
-                onClick={toggleSidebar}  
-              >
-                <MenuIcon />
-              </IconButton>
-            )}
-            {showHomeIcon && (
-              <div style={{ display: 'flex', alignItems: 'center' }}>  
-                <IconButton
-                  color="primary"
-                  size="large"
-                  edge="start"
-                  aria-label="home"
-                  style={{ fontSize: '2rem', height: '48px' }}
-                  onClick={newChatHandler}
-                >
-                  <HomeIcon />
-                </IconButton>
-              </div>
-            )}
-          </div>
+    return (
+        <>
+            <AppBar position="static" sx={{ background: theme.primary.dark }}>
+                <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {showHamburgerMenu && (
+                            <IconButton
+                                size="large"
+                                edge="start"
+                                color="primary"
+                                aria-label="open drawer"
+                                sx={{ mr: 2, width: '50px', height: '50px' }}
+                                onClick={toggleSidebar}
+                                
+                            >
+                                <MenuIcon  sx={{ fontSize: '50px' }} />
+                            </IconButton>
+                        )}
+                        {router.pathname === '/chat' && (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+        <IconButton
+            color="primary"  
+            size="large"
+            edge="start"
+            aria-label="home"
+            style={{ fontSize: '2rem', width: '28px', height: '28px', margin: 0 }} // Adjusted styling
+            onClick={newChatHandler}
+        >
+            <AddCircle  sx={{ fontSize: '30px' }} />
+        </IconButton>
+        <Typography variant="body1" color="black"    sx={{ fontSize: '15px' }} >
+            New Chat
+        </Typography>
+    </div>
+)}
 
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-            {showCenterLogos && centerLogoIcons.map((logo:any) => (
-              <img key={logo.id} src={logo.src} alt={`Logo ${logo.id}`} style={{ maxHeight: '48px' }} />
-            ))}
 
-            {brandName && (
-              <Typography variant="h6" color="inherit" sx={{ marginTop: 1, fontSize: '1.5rem' }}>
-                {brandName}
-              </Typography>
-            )}
-          </div>
+                        {router.pathname !== '/' && router.pathname !== '/chat' && (
+                            <IconButton
+                                color="primary"
+                                size="large"
+                                edge="start"
+                                aria-label="home"
+                                style={{ fontSize: '2rem', height: '48px' }}
+                                onClick={() => router.push('/')}
+                            >
+                                <HomeIcon sx={{ fontSize: '50px' }} />
+                            </IconButton>
+                        )}
+                    </div>
 
-          {showRightLogos && (
-            <div>
-              {rightLogoIcons.map((logo:any) => (
-                <img key={logo.id} src={logo.src} alt={`Right Logo ${logo.id}`} style={{ maxHeight: '48px' }} />
-              ))}
-            </div>
-          )}
-         
-        </Toolbar>
-      </AppBar>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                        {showCenterLogos && centerLogoIcons.map((logo: any) => (
+                            <img key={logo.id} src={logo.src} alt={`Logo ${logo.id}`} style={{ maxHeight: '48px' }} />
+                        ))}
 
-      <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
-    </>
-  );
+                        {brandName && (
+                            <Typography variant="h6" color="inherit" sx={{ marginTop: 1, fontSize: '1.5rem' }}>
+                                {brandName}
+                            </Typography>
+                        )}
+                    </div>
+
+                    {showRightLogos && (
+                        <div style={{ marginTop: '10px' }} >
+                            {rightLogoIcons.map((logo: any) => (
+                                <img key={logo.id} src={logo.src} alt={`Right Logo ${logo.id}`} style={{ maxHeight: '60px' }} />
+                            ))}
+                        </div>
+                    )}
+
+                </Toolbar>
+            </AppBar>
+
+            <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
+        </>
+    );
 };
 
 export default Navbar;
