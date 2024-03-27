@@ -66,7 +66,7 @@ const ContextProvider: FC<{
   const [startTime, setStartTime] = useState(Date.now());
   const [endTime, setEndTime] = useState(Date.now());
   const [lastMsgId, setLastMsgId] = useState('');
-  const [lastMsg, setLastMsg] = useState('');
+  const [kaliaClicked, setKaliaClicked] = useState(false);
   const [config, setConfig] = useState(null);
 
   // const configs = useMergeConfigurations();
@@ -561,7 +561,7 @@ const ContextProvider: FC<{
       const status = res.data.status;
       console.log('hie', status);
       if (status === 'OK') {
-        setIsDown(true);
+        setIsDown(false);
       } else {
         setIsDown(true);
         console.log('Server status is not OK');
@@ -732,6 +732,8 @@ const ContextProvider: FC<{
       audioPlaying,
       setAudioPlaying,
       config,
+      kaliaClicked,
+      setKaliaClicked
     }),
     [
       locale,
@@ -759,6 +761,8 @@ const ContextProvider: FC<{
       audioPlaying,
       setAudioPlaying,
       config,
+      kaliaClicked,
+      setKaliaClicked
     ]
   );
   if (!config) return <div>Loading configuration...</div>;

@@ -10,6 +10,20 @@
     }
   },
   "component": {
+    "botDetails": {
+      "logo": "http://cdn-api.staging.bhasai.samagra.io:443/deployer/favicon.ico",
+      "botName": "Ama Krushi AI Chatbot",
+      "allowOverride": false
+    },
+    "homePage": {
+      "allowOverride": false,
+      "showKalia": false,
+      "showWeatherAdvisory": true,
+      "showPlantProtection": true,
+      "weatherAdvisoryImg": "",
+      "plantProtectionImg": "",
+      "kaliaStatusImg": ""
+    },
     "navbar": {
       "brandName": "",
       "showHamburgerMenu": true,
