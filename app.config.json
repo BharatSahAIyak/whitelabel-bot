@@ -90,7 +90,7 @@
     "downtime": {
       "allowOverride": false,
       "title": "We're under maintainance",
-      "downTimeImage": "/src/pageComponents/downtime-page/assets/downTimeGIF.gif",
+      "downTimeImage": "",
       "supportingText": "Have an urgent query?",
       "contactLink": "Call Ama Krushi",
       "refreshText": "Try Again",
@@ -102,6 +102,14 @@
       "userManualText": "User Manual - For VAWs",
       "contactDescriptionText": "To connect with call centre",
       "contactText": "Dial"
+    },
+    "voiceRecorder": {
+      "allowOverride": false,
+      "startIcon": "",
+      "stopIcon": "",
+      "errorIcon": "",
+      "processingIcon": "",
+      "delayBetweenDialogs": 2500
     }
   }
 }
