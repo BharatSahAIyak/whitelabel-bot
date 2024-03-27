@@ -288,7 +288,7 @@ const HomePage: NextPage = () => {
             </div>
           ) : (
             <>
-              <div className={styles.title}>{t('label.ask_me')}</div>
+              <div className={styles.title}>{config?.title}</div>
               {(config?.showKalia || config?.showWeatherAdvisory || config?.showPlantProtection) && <div className={styles.imgButtons}>
                 <div
                   style={{
@@ -343,12 +343,12 @@ const HomePage: NextPage = () => {
                   />
                 </div>}
               </div>}
-              <div className={styles.voiceRecorder} ref={voiceRecorderRef}>
+              {config?.showMic && <div className={styles.voiceRecorder} ref={voiceRecorderRef}>
                 <RenderVoiceRecorder
                   setInputMsg={setInputMsg}
                   tapToSpeak={true}
                 />
-              </div>
+              </div>}
             </>
           )}
 

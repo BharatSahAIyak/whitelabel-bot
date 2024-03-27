@@ -17,12 +17,14 @@
     },
     "homePage": {
       "allowOverride": false,
+      "title": "Ask me anything about farming",
       "showKalia": false,
       "showWeatherAdvisory": true,
       "showPlantProtection": true,
       "weatherAdvisoryImg": "",
       "plantProtectionImg": "",
-      "kaliaStatusImg": ""
+      "kaliaStatusImg": "",
+      "showMic": true
     },
     "navbar": {
       "brandName": "",
