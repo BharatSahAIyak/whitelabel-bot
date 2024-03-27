@@ -7,7 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { AppContext } from '.';
+import { AppContext } from '../context';
 import _ from 'underscore';
 import { v4 as uuidv4 } from 'uuid';
 import { IntlProvider } from 'react-intl';
@@ -20,17 +20,6 @@ import { useCookies } from 'react-cookie';
 import { UCI } from 'socket-package';
 
 import mergeConfigurations from '../utils/mergeConfigurations';
-
-function loadMessages(locale: string) {
-  switch (locale) {
-    case 'en':
-      return import('../../lang/en.json');
-    // case 'or':
-    //   return import('../../lang/or.json');
-    default:
-      return import('../../lang/en.json');
-  }
-}
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
 
@@ -769,39 +758,9 @@ const ContextProvider: FC<{
   return (
     //@ts-ignore
     <AppContext.Provider value={values}>
-      <IntlProvider locale={locale} messages={localeMsgs}>
         {children}
-      </IntlProvider>
     </AppContext.Provider>
   );
 };
 
-const SSR: FC<{ children: ReactElement }> = ({ children }) => {
-  const defaultLang = flagsmith.getValue('default_lang', { fallback: 'en' });
-  const [locale, setLocale] = useState(
-    localStorage.getItem('locale') || defaultLang
-  );
-  const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
-    null
-  );
-  useEffect(() => {
-    loadMessages(locale).then((res) => {
-      //@ts-ignore
-      setLocaleMsgs(res);
-    });
-  }, [locale]);
-
-  if (typeof window === 'undefined') return null;
-  return (
-    //@ts-ignore
-    <IntlProvider locale={locale} messages={localeMsgs}>
-      <ContextProvider
-        locale={locale}
-        setLocale={setLocale}
-        localeMsgs={localeMsgs}>
-        {children}
-      </ContextProvider>
-    </IntlProvider>
-  );
-};
-export default SSR;
+export default ContextProvider;
