@@ -1,21 +1,22 @@
 
 import styles from './index.module.css';
-import config from './config.json';
-import { useColorPalates } from '../../providers/theme-provider/hooks';
-// import Image from 'next/image';
+import { FC } from 'react';
+import { useConfig } from '../../hooks/useConfig';
+import Image from 'next/image';
 
- const LaunchPage=()=> {
-  const theme = useColorPalates();
+ const LaunchPage:FC<{theme:any,config:any}>=({theme,config})=> {
+  
   return (
-    <div className={`${styles.container}`} style={{background: theme?.primary?.main}}>
+    <div className={`${styles.container}`} style={{background: theme?.
+      palette?.primary?.main}}>
       <img
         className={styles.loginImage}
-        src={config?.component?.logo}
+        src={config?.icon}
         alt="KrushakOdisha"
         width={220}
-        height={233}
+        height={233}    
       />
-      <span>{config?.component?.label}</span>
+      <span>{config?.label}</span>
     </div>
   );
 }

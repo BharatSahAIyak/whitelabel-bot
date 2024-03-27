@@ -1,7 +1,6 @@
 import React from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import MorePage from '../components/MorePage';
 import { useConfig } from "../hooks/useConfig";
 import { useLocalization } from '../hooks';
 const More: NextPage = () => {
@@ -14,7 +13,7 @@ const More: NextPage = () => {
         <link rel="icon" href={config?.logo} />
         <meta name="description" content="My page description" />
       </Head>
-      <MorePage />
+     
     </React.Fragment>
   );
 };

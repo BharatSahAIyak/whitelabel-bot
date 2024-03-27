@@ -1,4 +1,4 @@
-import ProfilePage from '../components/MorePage/ProfilePage';
+
 import React from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
@@ -15,7 +15,7 @@ const Profile: NextPage = () => {
         <link rel="icon" href={config?.logo} />
         <meta name="description" content="My page description" />
       </Head>
-      <ProfilePage />
+ 
     </React.Fragment>
   );
 };
