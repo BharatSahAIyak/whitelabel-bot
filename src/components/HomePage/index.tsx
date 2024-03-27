@@ -279,8 +279,8 @@ const HomePage: NextPage = () => {
           style={{ color: secondaryColor }}>
           {context?.kaliaClicked ? (
             <div className={styles.kaliaImg}>
-              <Image
-                src={config?.kaliaStatusImg || kaliaStatusImg}
+              <img
+                src={config?.kaliaStatusImg || kaliaStatusImg?.src}
                 width={200}
                 height={200}
                 alt="kaliastatus"
@@ -304,8 +304,8 @@ const HomePage: NextPage = () => {
                         sendMessage(t('label.weather_advisory'));
                       }}>
                       <p>{t('label.weather_advisory')}</p>
-                      <Image
-                        src={config?.weatherAdvisoryImg || weatherAdvisoryImg}
+                      <img
+                        src={config?.weatherAdvisoryImg || weatherAdvisoryImg?.src}
                         width={50}
                         height={70}
                         alt="weatheradvisory"
@@ -319,8 +319,8 @@ const HomePage: NextPage = () => {
                         toast('Coming Soon!');
                       }}>
                       <p>{t('label.plant_protection')}</p>
-                      <Image
-                        src={config?.plantProtectionImg || plantProtectionImg}
+                      <img
+                        src={config?.plantProtectionImg || plantProtectionImg?.src}
                         width={60}
                         height={60}
                         alt="plantprotection"
@@ -335,8 +335,8 @@ const HomePage: NextPage = () => {
                     context?.setKaliaClicked((props: boolean) => !props);
                   }}>
                   <p>{t('label.kalia_status')}</p>
-                  <Image
-                    src={config?.kaliaStatusImg || kaliaStatusImg}
+                  <img
+                    src={config?.kaliaStatusImg || kaliaStatusImg?.src}
                     width={80}
                     height={80}
                     alt="kaliastatus"
