@@ -3,16 +3,18 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import FeedbackPage from '../components/MorePage/FeedbackPage/index';
 import { useLocalization } from '../hooks';
-
+import { useConfig } from "../hooks/useConfig";
 
 
 const Feedback: NextPage = () => {
   const t=useLocalization();
-  console.log("vbn aa dd")
+  const config = useConfig("component", "botDetails");
   return (
     <React.Fragment>
-      <Head>
-      <title>{t("label.title")}</title>
+     <Head>
+        <title>{t("label.title")}</title>
+        <link rel="icon" href={config?.logo} />
+        <meta name="description" content="My page description" />
       </Head>
       <FeedbackPage />
     </React.Fragment>

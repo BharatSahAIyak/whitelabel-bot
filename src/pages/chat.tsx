@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { AppContext } from "../context";
 import styles from "../components/dialer-popup/index.module.css";
 import DialerPopUp from "../components/dialer-popup";
+import { useConfig } from "../hooks/useConfig";
 
 const ChatUi = dynamic(() => import("../components/chat-window"), {
   ssr: false,
@@ -14,11 +15,14 @@ const ChatUi = dynamic(() => import("../components/chat-window"), {
 const Chat: NextPage = () => {
   const t = useLocalization();
   const context = useContext(AppContext);
-
+  const config = useConfig("component", "botDetails");
+  console.log("hola",{config})
   return (
     <>
       <Head>
-        <title> {t("label.title")}</title>
+        <title>{t("label.title")}</title>
+        <link rel="icon" href={config?.logo} />
+        <meta name="description" content="My page description" />
       </Head>
       {context?.showDialerPopup && (
         <div

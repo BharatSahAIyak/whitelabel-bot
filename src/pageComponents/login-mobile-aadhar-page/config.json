@@ -15,7 +15,7 @@
       "showSignUp": false,
       "showAlternateSignIn": false,
       "showLogo": false,
-      "showSplitedView": true,
+      "showSplitedView": false,
       "logo":"https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
       "title": "Welcome!"
   }

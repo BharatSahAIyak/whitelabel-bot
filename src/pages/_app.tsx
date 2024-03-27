@@ -1,7 +1,7 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import ContextProvider from '../context/ContextProvider';
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, useCallback, useContext, useEffect, useState } from 'react';
 import '@samagra-x/chatui/dist/index.css';
 import { Toaster } from 'react-hot-toast';
 import { useCookies } from 'react-cookie';
@@ -14,8 +14,10 @@ import { InstallModal } from '../components/install-modal';
 import { FullPageLoader } from '../components/fullpage-loader';
 import { FlagsmithProvider } from 'flagsmith/react';
 import flagsmith from 'flagsmith/isomorphic';
+import { AppContext } from '../context';
+import { useConfig } from '../hooks/useConfig';
 
-const LaunchPage = dynamic(() => import('../components/LaunchPage'), {
+const LaunchPage = dynamic(() => import('../pageComponents/launch-page'), {
   ssr: false,
 });
 
@@ -36,6 +38,9 @@ const App = ({ Component, pageProps }: AppProps) => {
   const [flagsmithState, setflagsmithState] = useState(null);
   const [cookie] = useCookies();
 
+  const config =useConfig('component','launchPage');
+  const context =useContext(AppContext);
+  console.log("maaki",{config,context})
   useEffect(() => {
     const getFlagSmithState = async () => {
       await flagsmith.init({
