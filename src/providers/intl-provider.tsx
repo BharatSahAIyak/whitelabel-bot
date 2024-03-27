@@ -6,16 +6,16 @@ import ContextProvider from './context-provider';
 import { IntlProvider } from 'react-intl';
 
 
-function loadMessages(locale: string) {
-    switch (locale) {
-        case 'en':
-            return import('../../lang/en.json');
-        // case 'or':
-        //     return import('../../lang/or.json');
-        default:
-            return import('../../lang/en.json');
-    }
-}
+// function loadMessages(locale: string) {
+//     switch (locale) {
+//         case 'en':
+//             return import('../../lang/en.json');
+//         // case 'or':
+//         //     return import('../../lang/or.json');
+//         default:
+//             return import('../../lang/en.json');
+//     }
+// }
 export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => {
     const defaultLang = flagsmith.getValue('default_lang', { fallback: 'en' });
     const [locale, setLocale] = useState(
