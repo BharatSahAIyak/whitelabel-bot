@@ -126,6 +126,18 @@
       "errorIcon": "",
       "processingIcon": "",
       "delayBetweenDialogs": 2500
+    },
+    "feedbackPage": {
+      "ratingBox": true,
+      "reviewBox": true,
+      "Title": "Feedback",
+      "ratingBoxTitle": "Rate your experience",
+      "ratingMaxStars": 5,
+      "ratingStarDescription": "Click on the stars to rate",
+      "ratingButtonText": "Submit Rating",
+      "reviewBoxTitle": "Write a review",
+      "reviewPlaceholder": "Enter your review here",
+      "reviewButtonText": "Submit Review"
     }
   }
 }
