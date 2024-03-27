@@ -1,14 +1,20 @@
-import React, { FC } from 'react';
-import CustomThemeProvider from './theme-provider';
-import { CssBaseline } from '@mui/material';
+import React, { FC } from "react";
+import { FlagsmithProvider } from "./flagsmith-provider";
+import { LocaleProvider } from "./intl-provider";
+import CustomThemeProvider from "./theme-provider";
+import { CssBaseline } from "@mui/material";
 
 const Provider: FC<any> = ({ children }) => {
   return (
     <>
-      <CustomThemeProvider>
-        {children}
-        <CssBaseline />
-      </CustomThemeProvider>
+        <FlagsmithProvider>
+          <LocaleProvider>
+            <CustomThemeProvider>
+              {children}
+              <CssBaseline />
+            </CustomThemeProvider>
+          </LocaleProvider>
+        </FlagsmithProvider>
     </>
   );
 };

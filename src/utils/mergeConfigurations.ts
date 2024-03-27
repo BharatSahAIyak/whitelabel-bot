@@ -37,17 +37,7 @@ const fetchOverrideConfig = async () => {
     };
     const deploymentResp = await axios.request(deploymentIdConfig);
 
-    let config = {
-      method: 'get',
-      maxBodyLength: Infinity,
-      url: `${process.env.NEXT_PUBLIC_PWA_DEPLOYER_URL}/deployment/config/${deploymentResp?.data?.data?.deploymentId}`,
-      headers: {
-        'accept': 'application/json'
-      }
-    };
-
-    const res = await axios.request(config);
-    return res?.data?.data?.config;
+    return deploymentResp?.data?.data?.config;
   } catch (err) {
     console.error(err);
   }

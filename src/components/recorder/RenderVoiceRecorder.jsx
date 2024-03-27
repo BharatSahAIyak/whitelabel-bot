@@ -1,23 +1,22 @@
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import stop from '../../assets/icons/stop.gif';
-import processing from '../../assets/icons/process.gif';
-import error from '../../assets/icons/error.gif';
-import start from '../../assets/icons/startIcon.png';
+import stop from './assets/stop.gif';
+import processing from './assets/process.gif';
+import error from './assets/error.gif';
+import start from './assets/startIcon.png';
 import styles from './styles.module.css';
 import toast from 'react-hot-toast';
 import { useLocalization } from '../../hooks';
-import { useFlags } from 'flagsmith/react';
+import { useConfig } from '../../hooks/useConfig';
 
 const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   const t = useLocalization();
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [apiCallStatus, setApiCallStatus] = useState('idle');
   const [userClickedError, setUserClickedError] = useState(false);
+  const config = useConfig('component', 'voiceRecorder');
 
-  const flags = useFlags(['delay_between_dialog']);
   let VOICE_MIN_DECIBELS = -35;
-  let DELAY_BETWEEN_DIALOGS = flags?.delay_between_dialog?.value || 2500;
+  let DELAY_BETWEEN_DIALOGS = config?.delayBetweenDialogs || 2500;
   let DIALOG_MAX_LENGTH = 60 * 1000;
   let IS_RECORDING = false;
 
@@ -133,7 +132,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
       // Append the WAV file to the FormData object
       formData.append('file', blob, 'audio.wav');
       // formData.append('phoneNumber', localStorage.getItem('phoneNumber'));
-      formData.append('language', 'en');
+      formData.append('language', localStorage.getItem('locale') || 'en');
 
       // Send the WAV data to the API
       const resp = await fetch(apiEndpoint, {
@@ -185,51 +184,43 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
       <div>
         {mediaRecorder && mediaRecorder.state === 'recording' ? (
           <div className={styles.center}>
-            <Image
-              priority
-              src={stop}
+            <img
+              src={config?.stopIcon || stop?.src}
               alt="stopIcon"
               onClick={() => {
                 stopRecording();
               }}
-              style={{ cursor: 'pointer' }}
-              layout="responsive"
+              style={{ cursor: 'pointer', width: '100%', height: '100%'  }}
             />
           </div>
         ) : (
           <div className={styles.center}>
             {apiCallStatus === 'processing' ? (
-              <Image
-                priority
-                src={processing}
+              <img
+                src={config?.processingIcon || processing?.src}
                 alt="processingIcon"
-                style={{ cursor: 'pointer' }}
-                layout="responsive"
+                style={{ cursor: 'pointer', width: '100%', height: '100%'  }}
               />
             ) : apiCallStatus === 'error' ? (
-              <Image
-                priority
-                src={error}
+              <img
+                src={config?.errorIcon || error?.src}
                 alt="errorIcon"
                 onClick={() => {
                   setUserClickedError(true);
                   startRecording();
                 }}
-                style={{ cursor: 'pointer' }}
-                layout="responsive"
+                style={{ cursor: 'pointer', width: '100%', height: '100%'  }}
               />
             ) : (
               <>
-                <Image
-                  priority
-                  src={start}
+                <img
+                  src={config?.startIcon || start?.src}
                   alt="startIcon"
                   onClick={() => {
                     setUserClickedError(true);
                     startRecording();
                   }}
-                  style={{ cursor: 'pointer' }}
-                  layout="responsive"
+                  style={{ cursor: 'pointer', width: '100%', height: '100%' }}
                 />
                 {tapToSpeak ? (
                   <p style={{ color: 'black', fontSize: '12px', marginTop: '4px' }}>

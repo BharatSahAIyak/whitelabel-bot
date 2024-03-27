@@ -19,7 +19,7 @@ const FAQPage: React.FC = () => {
     'show_pdf_buttons',
     'manual_pdf_link',
   ]);
-  const config = useConfig('component', 'faqPage');
+  const config = useConfig('component', 'faqs');
 
   
   const downloadPDFHandler=useCallback(()=>{

@@ -1,6 +1,5 @@
-import { FC, useCallback, useContext, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import styles from "./style.module.css";
-
 import { List } from "../../components/list";
 import ForumIcon from "@mui/icons-material/Forum";
 import { IconButton } from "@mui/material";
@@ -14,7 +13,6 @@ import { useColorPalates } from "../../providers/theme-provider/hooks";
 import { FullPageLoader } from "../../components/fullpage-loader";
 import { useFlags } from "flagsmith/react";
 import { useLocalization } from "../../hooks";
-
 import axios from "axios";
 import ComingSoonPage from "../coming-soon-page";
 import { useConfig } from "../../hooks/useConfig";

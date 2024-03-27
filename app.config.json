@@ -10,6 +10,22 @@
     }
   },
   "component": {
+    "botDetails": {
+      "logo": "http://cdn-api.staging.bhasai.samagra.io:443/deployer/favicon.ico",
+      "botName": "Ama Krushi AI Chatbot",
+      "allowOverride": false
+    },
+    "homePage": {
+      "allowOverride": false,
+      "title": "Ask me anything about farming",
+      "showKalia": false,
+      "showWeatherAdvisory": true,
+      "showPlantProtection": true,
+      "weatherAdvisoryImg": "",
+      "plantProtectionImg": "",
+      "kaliaStatusImg": "",
+      "showMic": true
+    },
     "navbar": {
       "brandName": "",
       "showHamburgerMenu": true,
@@ -81,27 +97,47 @@
       "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
       "title": "OTP Verification"
     },
-    "comingSoonPage": {
+    "comingSoon": {
       "allowOverride": false,
       "title": "Coming Soon!",
       "description": "We are going to launch this feature very soon. Stay tuned!",
       "backText": "Back"
     },
-    "downtimePage": {
+    "downtime": {
       "allowOverride": false,
       "title": "We're under maintainance",
-      "downTimeImage": "/src/pageComponents/downtime-page/assets/downTimeGIF.gif",
+      "downTimeImage": "",
       "supportingText": "Have an urgent query?",
       "contactLink": "Call Ama Krushi",
       "refreshText": "Try Again",
       "previousPageText": "Previous Page"
     },
-    "faqPage": {
+    "faqs": {
       "allowOverride": false,
       "title": "FAQs",
       "userManualText": "User Manual - For VAWs",
       "contactDescriptionText": "To connect with call centre",
       "contactText": "Dial"
+    },
+    "voiceRecorder": {
+      "allowOverride": false,
+      "startIcon": "",
+      "stopIcon": "",
+      "errorIcon": "",
+      "processingIcon": "",
+      "delayBetweenDialogs": 2500
+    },
+    "feedbackPage": {
+      "ratingBox": true,
+      "reviewBox": true,
+      "Title": "Feedback",
+      "ratingBoxTitle": "Rate your experience",
+      "ratingMaxStars": 5,
+      "ratingStarDescription": "Click on the stars to rate",
+      "ratingButtonText": "Submit Rating",
+      "reviewBoxTitle": "Write a review",
+      "reviewPlaceholder": "Enter your review here",
+      "reviewButtonText": "Submit Review"
     }
   }
 }

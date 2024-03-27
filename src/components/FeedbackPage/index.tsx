@@ -5,8 +5,8 @@ import { Box } from "@mui/material";
 import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
 import { toast } from "react-hot-toast";
-import { useColorPalates } from "../../../providers/theme-provider/hooks";
-import { useConfig } from "../../../hooks/useConfig";
+import { useColorPalates } from "../../providers/theme-provider/hooks";
+import { useConfig } from "../../hooks/useConfig";
 
 const FeedbackPage: React.FC = () => {
   const [star, setStar] = useState(1);
@@ -14,8 +14,8 @@ const FeedbackPage: React.FC = () => {
   const theme = useColorPalates();
   const config = useConfig('component', 'feedbackPage');
   const handleFeedback = () => {
-    const rateBox = config?.component.ratingBox;
-    const reviewContainer = config?.component.reviewBox;
+    const rateBox = config?.ratingBox;
+    const reviewContainer = config?.reviewBox;
 
     const sendReviewSuccess = () => {
       setTimeout(() => {
@@ -48,11 +48,11 @@ const FeedbackPage: React.FC = () => {
               color: theme.primary.main
             }}
           >
-            {config?.component.Title}
+            {config?.Title || "Feedback"}
           </Typography>
         </Box>
 
-        {config?.ratingBox === true && (
+        {config?.ratingBox && (
           <Box className={styles.section}>
             <Typography
               sx={{
@@ -60,14 +60,14 @@ const FeedbackPage: React.FC = () => {
                 fontSize: "3vh",
               }}
             >
-              {config?.component.ratingBoxTitle}
+              {config?.ratingBoxTitle || "Rate your experience"}
             </Typography>
 
             <Rating
               data-testid="ratingComponent"
               name="simple-controlled"
               value={star}
-              max={config?.component.ratingMaxStars}
+              max={config?.ratingMaxStars || 5}
               // @ts-ignore
               onChange={(event, newValue) => {
                 setStar(() => {
@@ -85,7 +85,7 @@ const FeedbackPage: React.FC = () => {
                 fontSize: "2vh",
               }}
             >
-              {config?.component.ratingStarDescription}
+              {config?.ratingStarDescription || "Click on the stars to rate"}
             </Typography>
             <Button
               id="ratingBtn"
@@ -104,12 +104,12 @@ const FeedbackPage: React.FC = () => {
               }}
               onClick={handleFeedback}
             >
-              {config?.component.ratingButtonText}
+              {config?.ratingButtonText || "Submit Rating"}
             </Button>
           </Box>
         )}
 
-        {config?.component.reviewBox === true && (
+        {config?.reviewBox && (
           <Box className={styles.section}>
             <Typography
               sx={{
@@ -118,10 +118,10 @@ const FeedbackPage: React.FC = () => {
                 fontSize: "3vh",
               }}
             >
-              {config?.component.reviewBoxTitle}
+              {config?.reviewBoxTitle || "Write a review"}
             </Typography>
             <textarea
-              placeholder={config?.component.reviewPlaceholder}
+              placeholder={config?.reviewPlaceholder || "Enter your review here"}
               value={review}
               className={styles.textBlock}
               style={{
@@ -149,7 +149,7 @@ const FeedbackPage: React.FC = () => {
               }}
               onClick={handleFeedback}
             >
-              {config?.component.reviewButtonText}
+              {config?.reviewButtonText || "Submit Review"}
             </Button>
           </Box>
         )}

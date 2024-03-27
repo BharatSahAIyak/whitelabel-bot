@@ -9,7 +9,7 @@ import { useConfig } from '../../hooks/useConfig';
 
 const ComingSoonPage: React.FC = () => {
   const theme = useColorPalates();
-  const config = useConfig('component', 'comingSoonPage');
+  const config = useConfig('component', 'comingSoon');
   const handleBack = useCallback(()=>{
     window?.history?.back()
     // console.log(component.backText ?? "Back Button")
