@@ -57,7 +57,7 @@ const OtpPage: React.FC = () => {
       )
       console.log(response);
       setLoading(false);
-      setCountdown(30); 
+      setCountdown(60); 
       toast.success('OTP resent successfully');
     } catch (error) {
       setLoading(false);
@@ -195,12 +195,29 @@ const OtpPage: React.FC = () => {
                   </>
                   )}
               </div>
+            <div style={{marginTop: '10px',marginBottom: '10px',display: "flex", gap:"10px"}}> 
+              <Button
+                variant="contained"
+                type="button"
+                onClick={() => router.push("/login")}
+                sx={{
+                  textTransform: 'none',
+                
+                  p: 1,
+
+                  // background: config?.theme.secondaryColor.value,
+                  background: '#000',
+                  borderRadius: '10px',
+                  width: '50%',
+                }}
+              >
+                Back
+              </Button>
               <Button
                 variant="contained"
                 sx={{
                   textTransform: 'none',
-                  mt: 3,
-                  mb: 4,
+                  
                   p: 1,
 
                   // background: config?.theme.secondaryColor.value,
@@ -216,6 +233,7 @@ const OtpPage: React.FC = () => {
                   'Login'
                 )}
               </Button>
+            </div>
             </Box>
           </div>
         </div>
