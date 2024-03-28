@@ -71,7 +71,7 @@
       "profileText": "Welcome, User",
       "links": [
         {
-          "label": "History Page",
+          "label": "Chats",
           "icon": "HistoryIcon",
           "route": "history"
         },

@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+ import { useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -10,15 +10,16 @@ import ListItemText from '@mui/material/ListItemText';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import HistoryIcon from '@mui/icons-material/History';
-import HelpIcon from '@mui/icons-material/Help';
-import FeedbackIcon from '@mui/icons-material/Feedback';
+import HelpIcon from '@mui/icons-material/QuestionMark';
+import FeedbackIcon from '@mui/icons-material/ThumbUpOffAlt';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useConfig } from '../../hooks/useConfig';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import router from 'next/router';
 import { useCookies } from 'react-cookie';
 import { AppContext } from '../../context';
+
 export const Sidebar = ({
   isOpen,
   onToggle,
@@ -26,7 +27,7 @@ export const Sidebar = ({
   isOpen: boolean;
   onToggle: () => void;
 }) => {
-  //   const [config, setConfig] = useState<{
+   //   const [config, setConfig] = useState<{
   //     showLangSwitcher: boolean;
   //     languages: { code: string; label: string; }[];
   //     showProfileIcon: boolean;
@@ -40,6 +41,7 @@ export const Sidebar = ({
   const context = useContext(AppContext);
   const config = useConfig('component', 'sidebar');
   const theme = useColorPalates();
+
   const handleLanguageClick = (langCode: string) => {
     setActiveLanguage(langCode);
     onToggle();
@@ -57,14 +59,27 @@ export const Sidebar = ({
     router.push('/login');
     if (typeof window !== 'undefined') window.location.reload();
   }
+
   return (
     <div
       style={{
         background: theme.primary.main,
       }}>
-      <Drawer open={isOpen} onClose={onToggle}>
+       <Drawer
+  open={isOpen}
+  onClose={onToggle}
+  sx={{
+    '& .MuiDrawer-paper': {
+      width: 300,
+      height: '100vh',
+      borderTopRightRadius: '15px',
+      borderBottomRightRadius: '15px',
+      backgroundColor: theme.primary.main,
+    },
+  }}
+>
         <Box
-          sx={{ width: 300, height: '100vh' }}
+           
           style={{ background: theme.primary.main }}
           role="presentation">
           {config && (
@@ -74,7 +89,7 @@ export const Sidebar = ({
                   <ListItemButton onClick={handleItemClick}>
                     <ListItemIcon>
                       <ArrowBackIcon
-                        sx={{ color: theme.primary.contrastText }}
+                        sx={{ color: theme.primary.contrastText, fontSize: '35px' }}
                       />
                     </ListItemIcon>
                     <div
@@ -120,16 +135,27 @@ export const Sidebar = ({
               )}
 
               {config.showProfileIcon && (
-                <ListItem disablePadding>
-                  <ListItemButton sx={{ color: theme.primary.contrastText }}>
-                    <ListItemIcon>
-                      <AccountCircleIcon
-                        sx={{ color: theme.primary.contrastText }}
+                <div>
+                  <ListItem disablePadding sx={{       marginBottom: '10px'}}>
+                    <ListItemButton sx={{ color: theme.primary.contrastText }}>
+                      <ListItemIcon>
+                        <AccountCircleIcon
+                          sx={{ color: theme.primary.contrastText, fontSize: '50px' }}
+                        />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={config.profileText}
+                        sx={{
+                          
+                          color: theme.primary.contrastText,
+                          
+                          
+                        }}
                       />
-                    </ListItemIcon>
-                    <ListItemText primary={config.profileText} />
-                  </ListItemButton>
-                </ListItem>
+                    </ListItemButton>
+                  </ListItem>
+                  <Divider sx={{ backgroundColor: '#999'  }} />
+                </div>
               )}
 
               {config.links.map((link: any, index: number) => (
@@ -140,35 +166,41 @@ export const Sidebar = ({
                       paddingTop: '10px',
                       paddingBottom: '10px',
                       color: theme.primary.contrastText,
+                      marginTop: '10px',
+                      marginBottom: '10px'
                     }}
                     onClick={() => {
-                      {
-                        handleItemClick();
-                        router.push(`/${link.route}`);
-                      }
+                      handleItemClick();
+                      router.push(`/${link.route}`);
                     }}>
                     <ListItemButton>
-                      <ListItemIcon sx={{ color: theme.primary.contrastText }}>
+                      <ListItemIcon
+                        sx={{ color: theme.primary.contrastText }}>
                         {getIconComponent(link.icon)}
                       </ListItemIcon>
-                      <ListItemText primary={`${link.label}`} />
-                      <ChevronRightIcon />
+                      <ListItemText
+                        primary={`${link.label}`}
+                        sx={{
+                            
+                          color: theme.primary.contrastText
+                          
+                        }}
+                      />
+                      <ChevronRightIcon sx={{ fontSize: '35px' }} />
                     </ListItemButton>
                   </ListItem>
-                  <Divider />
+                  <Divider sx={{ backgroundColor: '#999' }} />
                 </div>
               ))}
 
               {config.showLogoutButton && (
                 <ListItem disablePadding>
-                  <ListItemButton
-                    sx={{ color: theme.primary.contrastText }}
-                    onClick={logout}>
+                  <ListItemButton sx={{ color: theme.primary.contrastText, marginTop: '10px' }} onClick={logout}>
                     <ListItemIcon>
-                      <LogoutIcon sx={{ color: theme.primary.contrastText }} />
+                      <LogoutIcon sx={{ color: theme.primary.contrastText, fontSize: '35px' }} />
                     </ListItemIcon>
                     <ListItemText primary={config.logoutButtonLabel} />
-                    <ChevronRightIcon />
+                    <ChevronRightIcon sx={{ fontSize: '35px' }} />
                   </ListItemButton>
                 </ListItem>
               )}
@@ -183,13 +215,15 @@ export const Sidebar = ({
 const getIconComponent = (iconName: string) => {
   switch (iconName) {
     case 'HistoryIcon':
-      return <HistoryIcon />;
+      return <ChatBubbleOutlineIcon sx={{ fontSize: '35px' }}  />;
     case 'HelpIcon':
-      return <HelpIcon />;
+      return <HelpIcon  sx={{ fontSize: '35px' }} />;
     case 'FeedbackIcon':
-      return <FeedbackIcon />;
+      return <FeedbackIcon  sx={{ fontSize: '35px' }} />;
     default:
       return null;
+ 
+
   }
 };
 
