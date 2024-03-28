@@ -182,13 +182,15 @@ const OtpPage: React.FC = () => {
                   length={otpLength}
                 />
               </Box>
-              <div>
+              <div style={{ marginTop: '10px' }}>
                 {countdown > 0 ? (
                 <Typography>Please wait {countdown} seconds before resending OTP</Typography>
                   ):(
                   <>
                     <Typography
-                    align='center'>
+                    variant='body2'
+                    align='center'
+                    color="#838BA1">
                       Didn't receive the OTP? &nbsp;
                     <p onClick={resendOtp} style={{color:'#3da156',fontWeight:'bold', cursor: 'pointer'}}>Resend again</p>
                     </Typography>
