@@ -138,6 +138,16 @@
       "reviewBoxTitle": "Write a review",
       "reviewPlaceholder": "Enter your review here",
       "reviewButtonText": "Submit Review"
-    }
+    },
+    "loginMobileAadharPage": {
+      "allowOverride": false,
+      "loginWithAadhaar": false,
+      "showSignUp": false,
+      "showAlternateSignIn": false,
+      "showLogo": false,
+      "showSplitedView": true,
+      "logo":"https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
+      "title": "Welcome!"
+  }
   }
 }
