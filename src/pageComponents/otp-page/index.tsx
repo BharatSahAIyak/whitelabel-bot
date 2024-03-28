@@ -20,7 +20,7 @@ const OtpPage: React.FC = () => {
   const [countdown, setCountdown] = useState(0);
   const config = useConfig('component', 'otpPage');
   const theme = useColorPalates();
-  const { logo, showLogo, showSplitedView, title, otpLength } = config;
+  const { logo, showLogo, showSplitedView, title, otpLength, resendOtpTimer } = config;
   const router = useRouter();
   const t = useLocalization();
 
@@ -57,7 +57,7 @@ const OtpPage: React.FC = () => {
       )
       console.log(response);
       setLoading(false);
-      setCountdown(60); 
+      setCountdown(resendOtpTimer); 
       toast.success('OTP resent successfully');
     } catch (error) {
       setLoading(false);
