@@ -12,10 +12,13 @@ import { ListType } from "./index.d";
 import { map } from "lodash";
 import { Avatar, Divider, ListItem, ListItemAvatar, Typography } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { useConfig } from "../../hooks/useConfig";
 
 
 export const List: React.FC<ListType> = ({ items, label ,noItem }) => {
   const [openItem, setOpenItem] = React.useState<string | null>(null);
+
+  const config =useConfig('component','historyPage');
 
   const handleClick = React.useCallback(
     (id: string) => {
@@ -86,7 +89,7 @@ export const List: React.FC<ListType> = ({ items, label ,noItem }) => {
                     primary={item.label}
                     secondary={
                       <React.Fragment>
-                        {item?.secondaryLabel && (
+                        {config?.showTimestamp && item?.secondaryLabel && (
                           <Typography
                             sx={{ display: "inline" }}
                             component="span"
