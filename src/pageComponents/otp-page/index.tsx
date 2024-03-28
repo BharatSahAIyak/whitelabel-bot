@@ -17,9 +17,10 @@ import axios from 'axios';
 const OtpPage: React.FC = () => {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(0);
   const config = useConfig('component', 'otpPage');
   const theme = useColorPalates();
-  const { logo, showLogo, showSplitedView, title, otpLength } = config;
+  const { logo, showLogo, showSplitedView, title, otpLength, resendOtpTimer } = config;
   const router = useRouter();
   const t = useLocalization();
 
@@ -47,6 +48,30 @@ const OtpPage: React.FC = () => {
       console.error(error);
     }
   };
+
+  const resendOtp = async () => {
+    try {
+      setLoading(true);
+      const response = axios.get(
+        `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}api/sendOTP?phone=${router.query.state}`
+      )
+      console.log(response);
+      setLoading(false);
+      setCountdown(resendOtpTimer); 
+      toast.success('OTP resent successfully');
+    } catch (error) {
+      setLoading(false);
+      console.error('Error resending OTP:', error);
+      toast.error('Failed to resend OTP');
+    }
+  };
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown((prevCountdown) => prevCountdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
 
   const handleLogin = useCallback(
     (e: React.FormEvent) => {
@@ -122,7 +147,7 @@ const OtpPage: React.FC = () => {
             {/* Form */}
             <Typography
               variant="h4"
-              textAlign="left"
+              textAlign="center"
               width="90%"
               color="#1E232C"
               sx={{ m: 2 }}>
@@ -135,10 +160,15 @@ const OtpPage: React.FC = () => {
               color="#838BA1">
               Enter the verification code we just sent on your mobile number
             </Typography>
+            <Typography
+              fontWeight="bold"
+              textAlign='center'>
+              +91-{router.query.state}
+            </Typography>
             <Box
               component="form"
               onSubmit={handleLogin}
-              sx={{ mt: 1, width: '90%' }}>
+              sx={{ mt: 1, width: '90%',display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Box
                 sx={{
                   display: 'flex',
@@ -152,12 +182,44 @@ const OtpPage: React.FC = () => {
                   length={otpLength}
                 />
               </Box>
+              <div style={{ marginTop: '10px' }}>
+                {countdown > 0 ? (
+                <Typography>Please wait {countdown} seconds before resending OTP</Typography>
+                  ):(
+                  <>
+                    <Typography
+                    variant='body2'
+                    align='center'
+                    color="#838BA1">
+                      Didn't receive the OTP? &nbsp;
+                    <p onClick={resendOtp} style={{color:'#3da156',fontWeight:'bold', cursor: 'pointer'}}>Resend again</p>
+                    </Typography>
+                  </>
+                  )}
+              </div>
+            <div style={{marginTop: '10px',marginBottom: '10px',display: "flex", gap:"10px"}}> 
+              <Button
+                variant="contained"
+                type="button"
+                onClick={() => router.push("/login")}
+                sx={{
+                  textTransform: 'none',
+                
+                  p: 1,
+
+                  // background: config?.theme.secondaryColor.value,
+                  background: '#000',
+                  borderRadius: '10px',
+                  width: '50%',
+                }}
+              >
+                Back
+              </Button>
               <Button
                 variant="contained"
                 sx={{
                   textTransform: 'none',
-                  mt: 3,
-                  mb: 4,
+                  
                   p: 1,
 
                   // background: config?.theme.secondaryColor.value,
@@ -173,6 +235,7 @@ const OtpPage: React.FC = () => {
                   'Login'
                 )}
               </Button>
+            </div>
             </Box>
           </div>
         </div>

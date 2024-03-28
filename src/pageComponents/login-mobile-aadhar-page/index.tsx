@@ -11,14 +11,14 @@ import config from "./config.json";
 import { useColorPalates } from "../../providers/theme-provider/hooks";
 import { useLocalization } from "../../hooks";
 import { useRouter } from "next/router";
-
+import { useConfig } from "../../hooks/useConfig";
 const LoginMobileAadharPage: React.FC = () => {
-  const { loginWithAadhaar, showSignUp, showAlternateSignIn, logo, showLogo,showSplitedView } =
-    config?.component;
+  const config = useConfig('component', 'loginMobileAadharPage');
+  const { loginWithAadhaar, showSignUp, showAlternateSignIn, logo, showLogo,showSplitedView, title } = config;
 
-    const t = useLocalization();
-    const router = useRouter();
-  const [isAadharClicked, setIsAadharClicked] = useState(loginWithAadhaar);
+  const t = useLocalization();
+  const router = useRouter();
+  const [isAadharClicked, setIsAadharClicked] = useState<boolean>(loginWithAadhaar);
   const [input, setInput] = useState("");
   const [valid, setValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -135,7 +135,7 @@ const LoginMobileAadharPage: React.FC = () => {
               <div className={styles.register}>
                 <Typography
                   variant="body2"
-                  color={config?.theme.primaryColor.value}
+                  color={theme?.primary?.main}
                   className={styles.registerText}
                 >
                   Don’t have an account?
@@ -145,7 +145,7 @@ const LoginMobileAadharPage: React.FC = () => {
                   variant="button"
                   sx={{
                     textTransform: "none",
-                    color: config?.theme.primaryColor.value,
+                    color: theme.primary.main,
                     fontWeight: "bold",
                     cursor: "pointer",
                   }}
@@ -162,9 +162,9 @@ const LoginMobileAadharPage: React.FC = () => {
               variant="h4"
               textAlign="left"
               width="90%"
-              color={config?.theme.primaryColor.value}
+              color='black'
             >
-              {config?.component.title}
+              {title}
             </Typography>
             <Box
               component="form"
@@ -198,7 +198,7 @@ const LoginMobileAadharPage: React.FC = () => {
                     mt: 3,
                     mb: 4,
                     p: 1,
-                    background: config?.theme.primaryColor.value,
+                    background: 'black',
                     borderRadius: "10px",
                   }}
                   onClick={handleLogin}
