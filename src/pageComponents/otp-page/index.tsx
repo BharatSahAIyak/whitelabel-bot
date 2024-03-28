@@ -125,6 +125,7 @@ const OtpPage: React.FC = () => {
     [otp.length]
   );
 
+  useEffect(()=> setCountdown(resendOtpTimer),[])
   return (
     <>
       <meta

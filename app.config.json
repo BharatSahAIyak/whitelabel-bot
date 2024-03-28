@@ -96,7 +96,7 @@
       "otpLength": 4,
       "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
       "title": "OTP Verification",
-      "resendOtpTimer":"60"
+      "resendOtpTimer":"30"
     },
     "comingSoon": {
       "allowOverride": false,
