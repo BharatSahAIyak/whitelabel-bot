@@ -1,6 +1,8 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
-import { ReactElement, useCallback, useEffect } from 'react';
+
+import { ReactElement, useCallback, useContext, useEffect, useState } from 'react';
+
 import '@samagra-x/chatui/dist/index.css';
 import { Toaster } from 'react-hot-toast';
 import { useCookies } from 'react-cookie';
@@ -11,8 +13,11 @@ import FeaturePopup from '../components/FeaturePopup';
 import Provider from '../providers';
 import { InstallModal } from '../components/install-modal';
 import { FullPageLoader } from '../components/fullpage-loader';
+import flagsmith from 'flagsmith/isomorphic';
+import { AppContext } from '../context';
+import { useConfig } from '../hooks/useConfig';
 
-const LaunchPage = dynamic(() => import('../components/LaunchPage'), {
+const LaunchPage = dynamic(() => import('../pageComponents/launch-page'), {
   ssr: false,
 });
 
@@ -31,6 +36,23 @@ const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const { isAuthenticated, login } = useLogin();
   const [cookie] = useCookies();
+
+ 
+  const context =useContext(AppContext);
+
+  // useEffect(() => {
+  //   const getFlagSmithState = async () => {
+  //     await flagsmith.init({
+  //       // api: process.env.NEXT_PUBLIC_FLAGSMITH_API,
+  //       environmentID: process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID || '',
+  //     });
+  //     if (flagsmith.getState()) {
+  //       //@ts-ignore
+  //       setflagsmithState(flagsmith.getState());
+  //     }
+  //   };
+  //   getFlagSmithState();
+  // }, []);
 
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {

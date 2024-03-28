@@ -20,6 +20,8 @@ import { useCookies } from 'react-cookie';
 import { UCI } from 'socket-package';
 
 import mergeConfigurations from '../utils/mergeConfigurations';
+import { FullPageLoader } from '../components/fullpage-loader';
+import LaunchPage from '../pageComponents/launch-page';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
 
@@ -28,13 +30,15 @@ const ContextProvider: FC<{
   localeMsgs: any;
   setLocale: any;
   children: ReactElement;
-}> = ({ locale, children, localeMsgs, setLocale }) => {
+  setLocaleMsgs:any;
+}> = ({ locale, children, localeMsgs, setLocale,setLocaleMsgs }) => {
   const t = useLocalization();
   const flags = useFlags(['health_check_time']);
   const [loading, setLoading] = useState(false);
   const [isMsgReceiving, setIsMsgReceiving] = useState(false);
   const [messages, setMessages] = useState<Array<any>>([]);
   const [newSocket, setNewSocket] = useState<any>();
+  const [showLaunchPage, setShowLaunchPage] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(
     sessionStorage.getItem('conversationId')
   );
@@ -64,7 +68,17 @@ const ContextProvider: FC<{
     mergeConfigurations().then(setConfig);
   }, []);
 
-  console.log('config:', { config });
+
+  useEffect(()=>{
+    //@ts-ignore
+    if(config?.component?.launchPage){
+      setShowLaunchPage(true);
+      setTimeout(()=>{
+        setShowLaunchPage(false);;
+      },2000)
+    }
+  },[config])
+  console.log('maaki:', { config ,locale});
 
   const downloadChat = useMemo(() => {
     return (e: string) => {
@@ -76,7 +90,18 @@ const ContextProvider: FC<{
       }
     };
   }, []);
-
+useEffect(()=>{
+  //@ts-ignore
+  if(config?.translation){
+    onLocaleUpdate()
+  }
+},[config])
+  const onLocaleUpdate = useCallback(() => {
+    //@ts-ignore
+    // setLocaleMsgs(config?.translation?.[locale]);
+    //@ts-ignore
+   setLocaleMsgs(config?.translation?.['en']);
+  },[config])
   const shareChat = useMemo(() => {
     return (e: string) => {
       try {
@@ -754,7 +779,11 @@ const ContextProvider: FC<{
       setKaliaClicked
     ]
   );
-  if (!config) return <div>Loading configuration...</div>;
+ 
+ 
+  if (!config) return <FullPageLoader loading label='Loading configuration..' />
+  //@ts-ignore
+  if(showLaunchPage) return <LaunchPage theme={config?.theme} config={config?.component?.launchPage}/>;
   return (
     //@ts-ignore
     <AppContext.Provider value={values}>

@@ -3,14 +3,17 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useLocalization } from '../hooks';
 import OtpPage from '../pageComponents/otp-page';
-
+import { useConfig } from "../hooks/useConfig";
 
 const OTP: NextPage = () => {
   const t=useLocalization();
+  const config = useConfig("component", "botDetails");
   return (
     <React.Fragment>
       <Head>
-      <title>{t("label.title")}</title>
+        <title>{t("label.title")}</title>
+        <link rel="icon" href={config?.logo} />
+        <meta name="description" content="My page description" />
       </Head>
       <OtpPage />
     </React.Fragment>
