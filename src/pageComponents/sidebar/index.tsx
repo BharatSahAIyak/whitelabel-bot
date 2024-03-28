@@ -1,4 +1,4 @@
- import { useState, useContext } from 'react';
+ import { useState, useContext, useEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -19,6 +19,7 @@ import { useColorPalates } from '../../providers/theme-provider/hooks';
 import router from 'next/router';
 import { useCookies } from 'react-cookie';
 import { AppContext } from '../../context';
+import React from 'react';
 
 export const Sidebar = ({
   isOpen,
@@ -36,15 +37,41 @@ export const Sidebar = ({
   //     showLogoutButton: boolean;
   //     logoutButtonLabel: string;
   //   } | null>(null);
+
+  
   const [activeLanguage, setActiveLanguage] = useState<string>('en');
+  const [isEngActive, setIsEngActive] = useState<boolean>(
+    localStorage.getItem('locale')
+      ? localStorage.getItem('locale') === 'en'
+      : true 
+  );
   const [cookie, setCookie, removeCookie] = useCookies();
   const context = useContext(AppContext);
   const config = useConfig('component', 'sidebar');
   const theme = useColorPalates();
 
-  const handleLanguageClick = (langCode: string) => {
+    
+ const toggleLanguage = useCallback(
+    (newLanguage: string) => {
+      localStorage.setItem('locale', newLanguage);
+      
+      setIsEngActive(prev => !prev);  
+    },
+    []
+  );
+
+  useEffect(() => {
+    const defaultLang = 'en';  
+    const storedLang = localStorage.getItem('locale');
+    const initialLang = storedLang ? storedLang : defaultLang;
+    setActiveLanguage(initialLang);
+  }, []);
+   
+
+    const handleLanguageClick = (langCode: string) => {
     setActiveLanguage(langCode);
-    onToggle();
+     context?.setLocale(langCode);  
+  onToggle();  
   };
 
   const handleItemClick = () => {
