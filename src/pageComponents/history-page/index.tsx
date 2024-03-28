@@ -6,7 +6,6 @@ import { IconButton } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import moment from "moment";
 import _ from 'underscore';
-import { component } from "./config.json";
 import { ChatItem, HistoryItem } from "./index.d";
 import { map } from "lodash";
 import { useColorPalates } from "../../providers/theme-provider/hooks";
@@ -97,7 +96,7 @@ const HistoryPage: FC = () => {
             <div className={styles.main}>
                 <FullPageLoader loading={isFetching} color={theme?.primary?.main} label="Fetching History" />
                 <div className={styles.title} style={{ color: theme?.primary?.main }}>
-                    {component?.title ?? "No Label Provided"}
+                    {config?.title ?? "No Label Provided"}
                 </div>
                 <div className={styles.chatList}>
                     <List items={conversations} noItem={{ label: config?.noItemsText ?? "No History Found", icon: <ForumIcon style={{ color: theme?.primary?.light }} /> }} />

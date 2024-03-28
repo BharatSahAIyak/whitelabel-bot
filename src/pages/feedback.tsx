@@ -1,7 +1,7 @@
 import React from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import FeedbackPage from '../components/FeedbackPage/index';
+import FeedbackPage from '../pageComponents/feedback-page/index';
 import { useLocalization } from '../hooks';
 import { useConfig } from "../hooks/useConfig";
 

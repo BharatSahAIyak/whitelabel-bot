@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { CookiesProvider } from "react-cookie";
 import { useLocalization } from "../hooks/useLocalization";
-import HomePage from "../components/HomePage";
+import HomePage from "../pageComponents/home-page";
 import { useConfig } from "../hooks/useConfig";
 const Home: NextPage = () => {
   const t = useLocalization();

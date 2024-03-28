@@ -149,6 +149,16 @@
       "showSplitedView": true,
       "logo":"https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
       "title": "Welcome!"
+  },
+  "historyPage": {
+    "allowOverride": false,
+    "title": "History",
+    "noItemsText": "No items found"
+  },
+  "launchPage": {
+    "allowOverride": false,
+    "logo": "src/pages/launch-page/krushak_odisha.png",
+    "label":"ଆମ କୃଷି ଏ ଆଇ ଚାଟ୍ ବୋଟ୍"
   }
   }
 }
