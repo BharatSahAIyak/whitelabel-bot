@@ -92,16 +92,17 @@ const ContextProvider: FC<{
   }, []);
 useEffect(()=>{
   //@ts-ignore
-  if(config?.translation){
+  if(config?.translation && locale){
     onLocaleUpdate()
   }
-},[config])
+},[config,locale])
+
+console.log("locale",{locale})
   const onLocaleUpdate = useCallback(() => {
     //@ts-ignore
-    // setLocaleMsgs(config?.translation?.[locale]);
-    //@ts-ignore
-   setLocaleMsgs(config?.translation?.['en']);
-  },[config])
+     setLocaleMsgs(config?.translation?.[locale]);
+   
+  },[config,locale])
   const shareChat = useMemo(() => {
     return (e: string) => {
       try {

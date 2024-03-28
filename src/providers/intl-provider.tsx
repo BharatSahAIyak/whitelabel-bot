@@ -24,6 +24,7 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => 
     const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
         null
     );
+   
     // useEffect(() => {
     //     loadMessages(locale).then((res) => {
     //         //@ts-ignore
