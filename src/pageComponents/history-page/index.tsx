@@ -129,12 +129,12 @@ const HistoryPage: FC = () => {
             <div className={styles.main}>
                 <FullPageLoader loading={isFetching} color={theme?.primary?.main} label="Fetching History" />
                 <div className={styles.title} style={{ color: theme?.primary?.main }}>
-                    {config?.title ?? "No Label Provided"}
+                    {t('label.chats') ?? "No Label Provided"}
                 </div>
                 <div className={styles.chatList}>
                     <List 
                         items={conversations} 
-                        noItem={{ label: config?.noItemsText ?? "No History Found", 
+                        noItem={{ label: t('label.no_history') ?? "No History Found", 
                             icon: <ForumIcon style={{ color: theme?.primary?.light }} /> 
                         }} 
                     />
