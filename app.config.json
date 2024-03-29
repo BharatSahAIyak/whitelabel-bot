@@ -71,17 +71,17 @@
       "profileText": "Welcome, User",
       "links": [
         {
-          "label": "Chats",
+          "label": "chats",
           "icon": "HistoryIcon",
           "route": "history"
         },
         {
-          "label": "FAQs",
+          "label": "faqs",
           "icon": "HelpIcon",
           "route": "faq"
         },
         {
-          "label": "Feedback",
+          "label": "feedback",
           "icon": "FeedbackIcon",
           "route": "feedback"
         }

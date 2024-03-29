@@ -8,13 +8,16 @@ import { toast } from "react-hot-toast";
 import { useColorPalates } from "../../providers/theme-provider/hooks";
 import { useConfig } from "../../hooks/useConfig";
 import axios from 'axios';
+import { useLocalization } from '../../hooks';
+
+
 
 const FeedbackPage: React.FC = () => {
   const [star, setStar] = useState(1);
   const [review, setReview] = useState("");
   const theme = useColorPalates();
   const config = useConfig('component', 'feedbackPage');
-  
+  const t = useLocalization();
   const handleFeedback = () => {
     if (!config) return;  
     
@@ -27,6 +30,8 @@ const FeedbackPage: React.FC = () => {
       toast.error('Please provide a review');
       return;
     }
+  
+
 
     const formData = new FormData();
     formData.append('rating', String(star));
@@ -62,7 +67,7 @@ const FeedbackPage: React.FC = () => {
               color: theme.primary.main
             }}
           >
-            {config?.Title || "Feedback"}
+             {t('label.feedback')}
           </Typography>
         </Box>
 
@@ -74,7 +79,7 @@ const FeedbackPage: React.FC = () => {
                 fontSize: "3vh",
               }}
             >
-              {config?.ratingBoxTitle || "Rate your experience"}
+               {t('message.rating')}
             </Typography>
 
             <Rating
@@ -96,7 +101,7 @@ const FeedbackPage: React.FC = () => {
                 fontSize: "2vh",
               }}
             >
-              {config?.ratingStarDescription || "Click on the stars to rate"}
+              {t('message.rating_description')}
             </Typography>
             <Button
               id="ratingBtn"
@@ -115,7 +120,7 @@ const FeedbackPage: React.FC = () => {
               }}
               onClick={handleFeedback}
             >
-              {config?.ratingButtonText || "Submit Rating"}
+               {t('label.submit_review')}
             </Button>
           </Box>
         )}
@@ -129,10 +134,10 @@ const FeedbackPage: React.FC = () => {
                 fontSize: "3vh",
               }}
             >
-              {config?.reviewBoxTitle || "Write a review"}
+              {t('message.review')}
             </Typography>
             <textarea
-              placeholder={config?.reviewPlaceholder || "Enter your review here"}
+              placeholder=  {t("message.review_description")}
               value={review}
               className={styles.textBlock}
               style={{
@@ -160,7 +165,7 @@ const FeedbackPage: React.FC = () => {
               }}
               onClick={handleFeedback}
             >
-              {config?.reviewButtonText || "Submit Review"}
+                {t("label.submit_review")}
             </Button>
           </Box>
         )}
