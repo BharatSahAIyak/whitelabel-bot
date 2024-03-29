@@ -21,6 +21,7 @@ import { toast } from 'react-hot-toast';
 import styles from './index.module.css';
 import RightIcon from './assets/right';
 import SpeakerIcon from './assets/speaker.svg';
+import SpeakerPauseIcon from './assets/speakerPause.svg';
 import MsgThumbsUp from './assets/msg-thumbs-up';
 import MsgThumbsDown from './assets/msg-thumbs-down';
 import { MessageItemPropType } from './index.d';
@@ -41,6 +42,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const [optionDisabled, setOptionDisabled] = useState(
     message?.content?.data?.optionClicked || false
   );
+  const [audioFetched, setAudioFetched] = useState(false);
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -178,11 +180,58 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const handleAudio = useCallback((url: any) => {
     // console.log(url)
     if (!url) {
-      toast.error('No audio');
+      if (audioFetched) toast.error('No audio');
       return;
     }
+    context?.playAudio(url, content);
     // Write logic for handling audio here
-  }, []);
+  }, [audioFetched, content, context?.playAudio]);
+
+  const downloadAudio = useCallback(()=>{
+    const fetchAudio = async (text: string) => {
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/text-to-speech`,
+          {
+            text: text,
+            language: context?.locale
+          }
+        );
+        setAudioFetched(true);
+        // cacheAudio(response.data);
+        return response.data.url;
+      } catch (error) {
+        console.error('Error fetching audio:', error);
+        setAudioFetched(true);
+        return null;
+      }
+    };
+
+    const fetchData = async () => {
+      if (
+        !content?.data?.audio_url &&
+        content?.data?.position === 'left' &&
+        content?.text
+      ) {
+        const toastId = toast.loading(`${t('message.download_audio')}`);
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 1500);
+        const audioUrl = await fetchAudio(content?.text);
+        if (audioUrl) {
+          content.data.audio_url = audioUrl;
+          handleAudio(audioUrl);
+        } 
+      }
+    };
+
+     if (content?.data?.audio_url) {
+        handleAudio(content.data.audio_url);
+      } else {
+        fetchData();
+      }
+     
+  },[handleAudio, content?.data, content?.text, t])
 
   switch (type) {
     case 'loader':
@@ -288,7 +337,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   <div style={{ display: 'flex' }}>
                     <div
                       className={styles.msgSpeaker}
-                      onClick={handleAudio}
+                      onClick={downloadAudio}
                       style={
                         // !content?.data?.isEnd
                         //   ? {
@@ -305,7 +354,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           border: `1px solid ${secondaryColor}`,
                         }
                       }>
-                      <Image src={SpeakerIcon} width={15} height={15} alt="" />
+                        {context?.clickedAudioUrl === content?.data?.audio_url ? (
+                      <Image src={!context?.audioPlaying
+                              ? SpeakerIcon
+                              : SpeakerPauseIcon} width={!context?.audioPlaying ? 15 : 40} height={!context?.audioPlaying ? 15 : 40} alt="" />) :
+                              (
+                                <Image src={SpeakerIcon} width={15} height={15} alt="" />
+                              )}
 
                       <p
                         style={{
