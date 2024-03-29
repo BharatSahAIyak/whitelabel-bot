@@ -171,7 +171,7 @@ const ShareButtons = () => {
                   // color: config?.theme.primaryColor.value,
                   fontFamily: 'Mulish-bold',
                 }}>
-                {config?.shareChatText}
+                {t('label.share')}
               </p>
             </div>
           )}
@@ -215,7 +215,7 @@ const ShareButtons = () => {
                   // color: config?.theme.primaryColor.value,
                   fontFamily: 'Mulish-bold',
                 }}>
-                {config?.downloadChatText}
+                {t('label.download')}
               </p>
             </div>
           )}
