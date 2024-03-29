@@ -60,7 +60,7 @@ const Navbar: React.FC = () => {
 
     return (
         <>
-            <AppBar position="static" sx={{ background: theme.primary.dark }}>
+            <AppBar position="static" sx={{ background: 'white' }}>
                 <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         {showHamburgerMenu && (
