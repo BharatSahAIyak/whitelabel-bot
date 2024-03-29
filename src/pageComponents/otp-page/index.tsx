@@ -209,7 +209,7 @@ const OtpPage: React.FC = () => {
                   </>
                   )}
               </div>
-            <div style={{marginTop: '10px',marginBottom: '10px',display: "flex", gap:"10px"}}> 
+            <div style={{marginTop: '10px',marginBottom: '10px',display: "flex", gap:"10px", width:'100%'}}> 
               <Button
                 variant="contained"
                 type="button"
@@ -231,7 +231,6 @@ const OtpPage: React.FC = () => {
                 variant="contained"
                 sx={{
                   textTransform: 'none',
-                  
                   p: 1,
 
                   // background: config?.theme.secondaryColor.value,

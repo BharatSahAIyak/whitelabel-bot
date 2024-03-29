@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useCallback } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -19,9 +19,7 @@ import { useColorPalates } from '../../providers/theme-provider/hooks';
 import router from 'next/router';
 import { useCookies } from 'react-cookie';
 import { AppContext } from '../../context';
-import React from 'react';
 import { useLocalization } from '../../hooks';
-
 
 export const Sidebar = ({
   isOpen,
@@ -38,41 +36,26 @@ export const Sidebar = ({
   //     links: { label: string; icon: string; route: string; }[];
   //     showLogoutButton: boolean;
   //     logoutButtonLabel: string;
-  //   } | null>(null);
-  const contex = useContext(AppContext);
-
-  const [activeLanguage, setActiveLanguage] = useState<string>(contex?.locale ?? 'en');
-  const [isEngActive, setIsEngActive] = useState<boolean>(
-    localStorage.getItem('locale')
-      ? localStorage.getItem('locale') === 'en'
-      : true
-  );
+  //   } | null>(null); 
+  
+  const [activeLanguage, setActiveLanguage] = useState<string>(() => {
+    const storedLang = localStorage.getItem('locale');
+    return storedLang || 'en';  
+  });
+ 
   const [cookie, setCookie, removeCookie] = useCookies();
   const context = useContext(AppContext);
   const config = useConfig('component', 'sidebar');
   const theme = useColorPalates();
-
   const t = useLocalization();
-  const toggleLanguage = useCallback(
-    (newLanguage: string) => {
-      localStorage.setItem('locale', newLanguage);
-
-      setIsEngActive(prev => !prev);
-    },
-    []
-  );
 
   useEffect(() => {
-    const defaultLang = 'en';
-    const storedLang = localStorage.getItem('locale');
-    const initialLang = storedLang ? storedLang : defaultLang;
-    setActiveLanguage(initialLang);
-  }, []);
-
+    context?.setLocale(activeLanguage);  
+  }, [activeLanguage, context]);
 
   const handleLanguageClick = (langCode: string) => {
     setActiveLanguage(langCode);
-    context?.setLocale(langCode);
+    localStorage.setItem('locale', langCode);  
     onToggle();
   };
 
@@ -90,10 +73,7 @@ export const Sidebar = ({
   }
 
   return (
-    <div
-      style={{
-        background: theme.primary.main,
-      }}>
+    <div style={{ background: theme.primary.main }}>
       <Drawer
         open={isOpen}
         onClose={onToggle}
@@ -107,56 +87,37 @@ export const Sidebar = ({
           },
         }}
       >
-        <Box
-
-          style={{ background: theme.primary.main }}
-          role="presentation">
+        <Box style={{ background: theme.primary.main }} role="presentation">
           {config && (
             <List>
               {config.showLangSwitcher && (
                 <ListItem disablePadding>
                   <ListItemButton onClick={handleItemClick}>
                     <ListItemIcon>
-                      <ArrowBackIcon
-                        sx={{ color: theme.primary.contrastText, fontSize: '35px' }}
-                      />
+                      <ArrowBackIcon sx={{ color: theme.primary.contrastText, fontSize: '35px' }} />
                     </ListItemIcon>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        width: '100%',
-                      }}>
-                      {/* {config.languages.map((lang: any, index: number) => (
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+                      {config.languages.map((lang: any, index: number) => (
                         <button
                           key={index}
                           id={lang.code}
-                          className={`Sidemenu_button ${lang.code === activeLanguage ? 'active' : ''
-                            }`}
+                          className={`Sidemenu_button ${lang.code === activeLanguage ? 'active' : ''}`}
                           style={{
                             borderTopLeftRadius: index === 0 ? '10px' : '0',
                             borderBottomLeftRadius: index === 0 ? '10px' : '0',
-                            borderTopRightRadius:
-                              index === config.languages.length - 1
-                                ? '10px'
-                                : '0',
-                            borderBottomRightRadius:
-                              index === config.languages.length - 1
-                                ? '10px'
-                                : '0',
-                            backgroundColor:
-                              lang.code === activeLanguage
-                                ? theme.primary.light
-                                : '#FFFFFF',
+                            borderTopRightRadius: index === config.languages.length - 1 ? '10px' : '0',
+                            borderBottomRightRadius: index === config.languages.length - 1 ? '10px' : '0',
+                            backgroundColor: lang.code === activeLanguage ? theme.primary.light : '#FFFFFF',
                             border: 'none',
                             width: '60px',
                             height: '30px',
                             padding: '5px',
                           }}
-                          onClick={() => handleLanguageClick(lang.code)}>
+                          onClick={() => handleLanguageClick(lang.code)}
+                        >
                           {lang.label}
                         </button>
-                      ))} */}
+                      ))} 
 
 <button
                         
@@ -220,19 +181,9 @@ export const Sidebar = ({
                   <ListItem disablePadding sx={{ marginBottom: '10px' }}>
                     <ListItemButton sx={{ color: theme.primary.contrastText }}>
                       <ListItemIcon>
-                        <AccountCircleIcon
-                          sx={{ color: theme.primary.contrastText, fontSize: '50px' }}
-                        />
+                        <AccountCircleIcon sx={{ color: theme.primary.contrastText, fontSize: '50px' }} />
                       </ListItemIcon>
-                      <ListItemText
-                        primary={t('label.welcome')}
-                        sx={{
-
-                          color: theme.primary.contrastText,
-
-
-                        }}
-                      />
+                      <ListItemText primary={t('label.welcome')} sx={{ color: theme.primary.contrastText }} />
                     </ListItemButton>
                   </ListItem>
                   <Divider sx={{ backgroundColor: '#999' }} />
@@ -248,25 +199,18 @@ export const Sidebar = ({
                       paddingBottom: '10px',
                       color: theme.primary.contrastText,
                       marginTop: '10px',
-                      marginBottom: '10px'
+                      marginBottom: '10px',
                     }}
                     onClick={() => {
                       handleItemClick();
                       router.push(`/${link.route}`);
-                    }}>
+                    }}
+                  >
                     <ListItemButton>
-                      <ListItemIcon
-                        sx={{ color: theme.primary.contrastText }}>
+                      <ListItemIcon sx={{ color: theme.primary.contrastText }}>
                         {getIconComponent(link.icon)}
                       </ListItemIcon>
-                      <ListItemText
-                        primary={t(`label.${link.label}`)}
-                        sx={{
-
-                          color: theme.primary.contrastText
-
-                        }}
-                      />
+                      <ListItemText primary={t(`label.${link.label}`)} sx={{ color: theme.primary.contrastText }} />
                       <ChevronRightIcon sx={{ fontSize: '35px' }} />
                     </ListItemButton>
                   </ListItem>
@@ -303,7 +247,7 @@ const getIconComponent = (iconName: string) => {
       return <FeedbackIcon sx={{ fontSize: '35px' }} />;
     default:
       return null;
-
+ 
 
   }
 };
