@@ -129,7 +129,7 @@ const LoginMobileAadharPage: React.FC = () => {
         )}
 
         <div className={styles.rightColumn}>
-          {true && (
+          {showSignUp && (
             <div className={styles.topSection}>
               <div className={styles.register}>
                 <Typography
@@ -211,13 +211,13 @@ const LoginMobileAadharPage: React.FC = () => {
                 </Button>
               }
             </Box>
-            {true && (
+            {showAlternateSignIn && (
               <>
                 <Typography
                   variant="caption"
                   textAlign="center"
                   width="90%"
-                  color='black'
+                  color={theme.primary.main}
                   sx={{ mb: 1 }}
                 >
                   or Login using
