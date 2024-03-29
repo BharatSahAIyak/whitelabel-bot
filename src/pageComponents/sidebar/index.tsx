@@ -20,6 +20,8 @@ import router from 'next/router';
 import { useCookies } from 'react-cookie';
 import { AppContext } from '../../context';
 import React from 'react';
+import { useLocalization } from '../../hooks';
+
 
 export const Sidebar = ({
   isOpen,
@@ -50,7 +52,7 @@ export const Sidebar = ({
   const config = useConfig('component', 'sidebar');
   const theme = useColorPalates();
 
-    
+    const t = useLocalization();
  const toggleLanguage = useCallback(
     (newLanguage: string) => {
       localStorage.setItem('locale', newLanguage);
@@ -171,7 +173,7 @@ export const Sidebar = ({
                         />
                       </ListItemIcon>
                       <ListItemText
-                        primary={config.profileText}
+                        primary={ t('label.welcome')}
                         sx={{
                           
                           color: theme.primary.contrastText,
@@ -206,7 +208,7 @@ export const Sidebar = ({
                         {getIconComponent(link.icon)}
                       </ListItemIcon>
                       <ListItemText
-                        primary={`${link.label}`}
+                        primary={t(`label.${link.label}`)}
                         sx={{
                             
                           color: theme.primary.contrastText
@@ -226,7 +228,7 @@ export const Sidebar = ({
                     <ListItemIcon>
                       <LogoutIcon sx={{ color: theme.primary.contrastText, fontSize: '35px' }} />
                     </ListItemIcon>
-                    <ListItemText primary={config.logoutButtonLabel} />
+                    <ListItemText primary={ t('label.logout')} />
                     <ChevronRightIcon sx={{ fontSize: '35px' }} />
                   </ListItemButton>
                 </ListItem>
