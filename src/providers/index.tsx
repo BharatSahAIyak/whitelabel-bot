@@ -8,12 +8,14 @@ const Provider: FC<any> = ({ children }) => {
   return (
     <>
         <FlagsmithProvider>
-          <LocaleProvider>
-            <CustomThemeProvider>
+          <CustomThemeProvider >
+            <LocaleProvider>
+              <>
               {children}
               <CssBaseline />
-            </CustomThemeProvider>
-          </LocaleProvider>
+              </>
+            </LocaleProvider>
+          </CustomThemeProvider>
         </FlagsmithProvider>
     </>
   );

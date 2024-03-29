@@ -137,7 +137,7 @@ const LoginMobileAadharPage: React.FC = () => {
                   color={theme?.primary?.main}
                   className={styles.registerText}
                 >
-                  Don’t have an account?
+                  {t("message.not_register_yet")}
                 </Typography>
                 <Typography
                   onClick={handleRegistration}
@@ -149,7 +149,7 @@ const LoginMobileAadharPage: React.FC = () => {
                     cursor: "pointer",
                   }}
                 >
-                  Register Now
+                  {t("message.register_at_krushak")}
                 </Typography>
               </div>
             </div>
@@ -163,7 +163,7 @@ const LoginMobileAadharPage: React.FC = () => {
               width="90%"
               color='black'
             >
-              {title}
+              {t("label.title")}
             </Typography>
             <Box
               component="form"
@@ -179,7 +179,7 @@ const LoginMobileAadharPage: React.FC = () => {
                 helperText={!valid ? errorMessage : ""}
                 onChange={handleInput}
                 label={
-                  isAadharClicked ? `Enter Aadhar Number` : `Enter Phone Number`
+                  isAadharClicked ? `Enter Aadhar Number` : t("message.enter_mobile")
                 }
                 name={isAadharClicked ? "aadhar" : "phone"}
                 autoComplete={isAadharClicked ? "aadhar" : "phone"}
@@ -189,7 +189,7 @@ const LoginMobileAadharPage: React.FC = () => {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
                 <Button
-                 
+                
                   fullWidth
                   variant="contained"
                   sx={{
@@ -206,7 +206,7 @@ const LoginMobileAadharPage: React.FC = () => {
                   {loading ? (
                     <CircularProgress size={24} color="inherit" />
                   ) : (
-                    "Login"
+                    `${t("label.continue")}`
                   )}
                 </Button>
               }
@@ -217,7 +217,7 @@ const LoginMobileAadharPage: React.FC = () => {
                   variant="caption"
                   textAlign="center"
                   width="90%"
-                  color={config?.theme.primaryColor.value}
+                  color={theme.primary.main}
                   sx={{ mb: 1 }}
                 >
                   or Login using
@@ -230,12 +230,12 @@ const LoginMobileAadharPage: React.FC = () => {
                   sx={{
                     textTransform: "none",
                     textDecoration: "underline",
-                    color: config?.theme.primaryColor.value,
+                    color: theme.primary.light,
                     fontWeight: "bold",
                     cursor: "pointer",
                   }}
                 >
-                  {!isAadharClicked ? `Aadhar Number` : `Phone Number`}
+                  {!isAadharClicked ? `Aadhar Number` : t("message.enter_mobile")}
                 </Typography>
               </>
             )}

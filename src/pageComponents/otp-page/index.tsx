@@ -13,14 +13,14 @@ import jwt_decode from 'jwt-decode';
 import { useCookies } from 'react-cookie';
 import { useConfig } from '../../hooks/useConfig';
 import axios from 'axios';
-
+import { FormattedMessage } from "react-intl";
 const OtpPage: React.FC = () => {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const config = useConfig('component', 'otpPage');
   const theme = useColorPalates();
-  const { logo, showLogo, showSplitedView, title, otpLength, resendOtpTimer } = config;
+  const { logo, showLogo, showSplitedView, otpLength, resendOtpTimer } = config;
   const router = useRouter();
   const t = useLocalization();
 
@@ -44,7 +44,7 @@ const OtpPage: React.FC = () => {
       );
       return response.data;
     } catch (error) {
-      toast.error('Failed to verify OTP');
+      toast.error(`${t("message.invalid_otp")}`);
       console.error(error);
     }
   };
@@ -58,11 +58,11 @@ const OtpPage: React.FC = () => {
       console.log(response);
       setLoading(false);
       setCountdown(resendOtpTimer); 
-      toast.success('OTP resent successfully');
+      toast.success(`${t("message.otp_sent_again")}`);
     } catch (error) {
       setLoading(false);
       console.error('Error resending OTP:', error);
-      toast.error('Failed to resend OTP');
+      toast.error(`${t("error.error.sending_otp")}`);
     }
   };
 
@@ -114,12 +114,12 @@ const OtpPage: React.FC = () => {
                 router.push('/');
               }, 10);
             } else {
-              toast.error(res.params.err);
+              toast.error(`${t("message.invalid_otp")}`);
             }
           });
         }
       } else {
-        toast.error(`${t('label.no_internet')}`);
+        toast.error(`${t("label.no_internet")}`);
       }
     },
     [otp.length]
@@ -152,14 +152,14 @@ const OtpPage: React.FC = () => {
               width="90%"
               color="#1E232C"
               sx={{ m: 2 }}>
-              {title}
+              {t("message.otp_verification")}
             </Typography>
             <Typography
               variant="body2"
               textAlign="left"
               width="90%"
               color="#838BA1">
-              Enter the verification code we just sent on your mobile number
+              {t("message.otp_message")} {t("label.mobile_number")}
             </Typography>
             <Typography
               fontWeight="bold"
@@ -185,15 +185,21 @@ const OtpPage: React.FC = () => {
               </Box>
               <div style={{ marginTop: '10px' }}>
                 {countdown > 0 ? (
-                <Typography>Please wait {countdown} seconds before resending OTP</Typography>
+                <span>
+                  <FormattedMessage
+                    id="message.wait_minutes"
+                    defaultMessage="Please wait {countdown} seconds before resending OTP"
+                    values={{ countdown }}
+                  />
+                </span>
                   ):(
                   <>
                     <Typography
                     variant='body2'
                     align='center'
                     color="#838BA1">
-                      Didn't receive the OTP? &nbsp;
-                    <p onClick={resendOtp} style={{color:'#3da156',fontWeight:'bold', cursor: 'pointer'}}>Resend again</p>
+                      {t("message.didnt_receive")} &nbsp;
+                    <p onClick={resendOtp} style={{color:'#3da156',fontWeight:'bold', cursor: 'pointer'}}>{t("message.resend_again")}</p>
                     </Typography>
                   </>
                   )}
@@ -214,7 +220,7 @@ const OtpPage: React.FC = () => {
                   width: '50%',
                 }}
               >
-                Back
+                {t("label.back")}
               </Button>
               <Button
                 variant="contained"
@@ -233,7 +239,7 @@ const OtpPage: React.FC = () => {
                 {loading ? (
                   <CircularProgress size={24} color="inherit" />
                 ) : (
-                  'Login'
+                  `${t("label.submit")}`
                 )}
               </Button>
             </div>

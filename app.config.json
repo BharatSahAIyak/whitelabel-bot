@@ -153,7 +153,9 @@
   "historyPage": {
     "allowOverride": false,
     "title": "History",
-    "noItemsText": "No items found"
+    "noItemsText": "No items found",
+    "allowDelete": true,
+    "showTimestamp": true
   },
   "launchPage": {
     "allowOverride": false,

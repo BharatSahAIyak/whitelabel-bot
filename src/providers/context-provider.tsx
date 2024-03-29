@@ -3,6 +3,7 @@ import {
   FC,
   ReactElement,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
@@ -22,6 +23,7 @@ import { UCI } from 'socket-package';
 import mergeConfigurations from '../utils/mergeConfigurations';
 import { FullPageLoader } from '../components/fullpage-loader';
 import LaunchPage from '../pageComponents/launch-page';
+import { ThemeContext } from './theme-provider/theme-context';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
 
@@ -61,11 +63,15 @@ const ContextProvider: FC<{
   const [lastMsgId, setLastMsgId] = useState('');
   const [kaliaClicked, setKaliaClicked] = useState(false);
   const [config, setConfig] = useState(null);
-
+  const themeContext =useContext(ThemeContext);
   // const configs = useMergeConfigurations();
   // console.log("hola:",{configs})
+  
   useEffect(() => {
-    mergeConfigurations().then(setConfig);
+    mergeConfigurations().then(res=>{
+      setConfig(res);
+      themeContext?.modifyPaletes(res?.theme?.palette)
+    });
   }, []);
 
 
@@ -78,7 +84,8 @@ const ContextProvider: FC<{
       },2000)
     }
   },[config])
-  console.log('maaki:', { config ,locale});
+ 
+
 
   const downloadChat = useMemo(() => {
     return (e: string) => {
@@ -97,7 +104,7 @@ useEffect(()=>{
   }
 },[config,locale])
 
-console.log("locale",{locale})
+
   const onLocaleUpdate = useCallback(() => {
     //@ts-ignore
      setLocaleMsgs(config?.translation?.[locale]);

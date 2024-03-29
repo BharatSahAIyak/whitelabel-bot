@@ -317,7 +317,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           marginRight: '1px',
                           padding: '0 5px',
                         }}>
-                        {config?.textToSpeechLabel}
+                         {t('message.speaker')}
                       </p>
                     </div>
                   </div>
@@ -348,7 +348,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             fontSize: '11px',
                             fontFamily: 'Mulish-bold',
                           }}>
-                          {config?.positiveFeedbackText}
+                          {t('label.helpful')}
                         </p>
                       </div>
                       <div
@@ -377,7 +377,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             fontSize: '11px',
                             fontFamily: 'Mulish-bold',
                           }}>
-                          {config?.negativeFeedbackText}
+                          {t('label.not_helpful')}
                         </p>
                       </div>
                     </div>

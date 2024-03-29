@@ -36,12 +36,13 @@ export const Sidebar = ({
   //     links: { label: string; icon: string; route: string; }[];
   //     showLogoutButton: boolean;
   //     logoutButtonLabel: string;
-  //   } | null>(null);
+  //   } | null>(null); 
+  
   const [activeLanguage, setActiveLanguage] = useState<string>(() => {
     const storedLang = localStorage.getItem('locale');
     return storedLang || 'en';  
   });
-
+ 
   const [cookie, setCookie, removeCookie] = useCookies();
   const context = useContext(AppContext);
   const config = useConfig('component', 'sidebar');
