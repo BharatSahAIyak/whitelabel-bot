@@ -253,3 +253,62 @@ const getIconComponent = (iconName: string) => {
 };
 
 export default Sidebar;
+
+
+
+// <button
+                        
+                         
+//                         className={`Sidemenu_button ${ activeLanguage==='en' ? 'active' : ''
+//                           }`}
+//                         style={{
+//                           borderTopLeftRadius:  '10px',
+//                           borderBottomLeftRadius: '10px' ,
+//                           borderTopRightRadius:
+                           
+//                              '0',
+//                           borderBottomRightRadius:
+//                              '0',
+//                           backgroundColor:
+//                              activeLanguage ==='en'
+//                               ? theme.primary.light
+//                               : '#FFFFFF',
+//                           border: 'none',
+//                           width: '60px',
+//                           height: '30px',
+//                           padding: '5px',
+//                         }}
+//                         onClick={() => handleLanguageClick('en')}>
+//                        ENG
+//                       </button>
+
+//                       <button
+                        
+//                         className={`Sidemenu_button ${activeLanguage === config?.
+//                           languageCode2 ?'active' : ''
+//                           }`} 
+//                         style={{
+//                           borderTopLeftRadius:  '0',
+//                           borderBottomLeftRadius: '0',
+//                           borderTopRightRadius:
+                        
+//                                '0',
+//                           borderBottomRightRadius: '0',
+//                           backgroundColor:
+//                           config?.
+//                           languageCode2  === activeLanguage
+//                               ? theme.primary.light
+//                               : '#FFFFFF',
+//                           border: 'none',
+//                           width: '60px',
+//                           height: '30px',
+//                           padding: '5px',
+//                         }}
+//                         onClick={() => handleLanguageClick(config?.
+//                           languageCode2)}>
+//                         {config?.languageName2}
+//                       </button>
+//                   </div>
+//                 </ListItemButton>
+//               </ListItem>
+//             )}
