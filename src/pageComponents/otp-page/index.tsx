@@ -154,13 +154,18 @@ const OtpPage: React.FC = () => {
               sx={{ m: 2 }}>
               {t("message.otp_verification")}
             </Typography>
-            <Typography
+            <FormattedMessage
+              id="message.otp_message"
+              defaultMessage="We will send you a 4 digit one time password <br></br> on this mobile number <br></br><b>{mobile}</b>"
+              values={{ mobile: '', br: (chunks) => <br/>, b: (chunks) => <b>{chunks}</b>}}
+            />
+            {/* <Typography
               variant="body2"
               textAlign="left"
               width="90%"
               color="#838BA1">
               {t("message.otp_message")} {t("label.mobile_number")}
-            </Typography>
+            </Typography> */}
             <Typography
               fontWeight="bold"
               textAlign='center'>

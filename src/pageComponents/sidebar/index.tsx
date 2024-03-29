@@ -1,4 +1,4 @@
- import { useState, useContext, useEffect, useCallback } from 'react';
+import { useState, useContext, useEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -30,7 +30,7 @@ export const Sidebar = ({
   isOpen: boolean;
   onToggle: () => void;
 }) => {
-   //   const [config, setConfig] = useState<{
+  //   const [config, setConfig] = useState<{
   //     showLangSwitcher: boolean;
   //     languages: { code: string; label: string; }[];
   //     showProfileIcon: boolean;
@@ -39,41 +39,41 @@ export const Sidebar = ({
   //     showLogoutButton: boolean;
   //     logoutButtonLabel: string;
   //   } | null>(null);
-const contex =useContext(AppContext);
-  
-  const [activeLanguage, setActiveLanguage] = useState<string>( contex?.locale ?? 'en');
+  const contex = useContext(AppContext);
+
+  const [activeLanguage, setActiveLanguage] = useState<string>(contex?.locale ?? 'en');
   const [isEngActive, setIsEngActive] = useState<boolean>(
     localStorage.getItem('locale')
       ? localStorage.getItem('locale') === 'en'
-      : true 
+      : true
   );
   const [cookie, setCookie, removeCookie] = useCookies();
   const context = useContext(AppContext);
   const config = useConfig('component', 'sidebar');
   const theme = useColorPalates();
 
-    const t = useLocalization();
- const toggleLanguage = useCallback(
+  const t = useLocalization();
+  const toggleLanguage = useCallback(
     (newLanguage: string) => {
       localStorage.setItem('locale', newLanguage);
-      
-      setIsEngActive(prev => !prev);  
+
+      setIsEngActive(prev => !prev);
     },
     []
   );
 
   useEffect(() => {
-    const defaultLang = 'en';  
+    const defaultLang = 'en';
     const storedLang = localStorage.getItem('locale');
     const initialLang = storedLang ? storedLang : defaultLang;
     setActiveLanguage(initialLang);
   }, []);
-   
 
-    const handleLanguageClick = (langCode: string) => {
+
+  const handleLanguageClick = (langCode: string) => {
     setActiveLanguage(langCode);
-     context?.setLocale(langCode);  
-  onToggle();  
+    context?.setLocale(langCode);
+    onToggle();
   };
 
   const handleItemClick = () => {
@@ -94,21 +94,21 @@ const contex =useContext(AppContext);
       style={{
         background: theme.primary.main,
       }}>
-       <Drawer
-  open={isOpen}
-  onClose={onToggle}
-  sx={{
-    '& .MuiDrawer-paper': {
-      width: 300,
-      height: '100vh',
-      borderTopRightRadius: '15px',
-      borderBottomRightRadius: '15px',
-      backgroundColor: theme.primary.main,
-    },
-  }}
->
+      <Drawer
+        open={isOpen}
+        onClose={onToggle}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: 300,
+            height: '100vh',
+            borderTopRightRadius: '15px',
+            borderBottomRightRadius: '15px',
+            backgroundColor: theme.primary.main,
+          },
+        }}
+      >
         <Box
-           
+
           style={{ background: theme.primary.main }}
           role="presentation">
           {config && (
@@ -127,13 +127,12 @@ const contex =useContext(AppContext);
                         justifyContent: 'flex-end',
                         width: '100%',
                       }}>
-                      {config.languages.map((lang: any, index: number) => (
+                      {/* {config.languages.map((lang: any, index: number) => (
                         <button
                           key={index}
                           id={lang.code}
-                          className={`Sidemenu_button ${
-                            lang.code === activeLanguage ? 'active' : ''
-                          }`}
+                          className={`Sidemenu_button ${lang.code === activeLanguage ? 'active' : ''
+                            }`}
                           style={{
                             borderTopLeftRadius: index === 0 ? '10px' : '0',
                             borderBottomLeftRadius: index === 0 ? '10px' : '0',
@@ -157,7 +156,60 @@ const contex =useContext(AppContext);
                           onClick={() => handleLanguageClick(lang.code)}>
                           {lang.label}
                         </button>
-                      ))}
+                      ))} */}
+
+<button
+                        
+                         
+                          className={`Sidemenu_button ${ activeLanguage==='en' ? 'active' : ''
+                            }`}
+                          style={{
+                            borderTopLeftRadius:  '10px',
+                            borderBottomLeftRadius: '10px' ,
+                            borderTopRightRadius:
+                             
+                               '0',
+                            borderBottomRightRadius:
+                               '0',
+                            backgroundColor:
+                               activeLanguage ==='en'
+                                ? theme.primary.light
+                                : '#FFFFFF',
+                            border: 'none',
+                            width: '60px',
+                            height: '30px',
+                            padding: '5px',
+                          }}
+                          onClick={() => handleLanguageClick('en')}>
+                         ENG
+                        </button>
+
+                        <button
+                          
+                          className={`Sidemenu_button ${activeLanguage === config?.
+                            languageCode2 ?'active' : ''
+                            }`} 
+                          style={{
+                            borderTopLeftRadius:  '0',
+                            borderBottomLeftRadius: '0',
+                            borderTopRightRadius:
+                          
+                                 '0',
+                            borderBottomRightRadius: '0',
+                            backgroundColor:
+                            config?.
+                            languageCode2  === activeLanguage
+                                ? theme.primary.light
+                                : '#FFFFFF',
+                            border: 'none',
+                            width: '60px',
+                            height: '30px',
+                            padding: '5px',
+                          }}
+                          onClick={() => handleLanguageClick(config?.
+                            languageCode2)}>
+                          {config?.languageName2}
+                        </button>
                     </div>
                   </ListItemButton>
                 </ListItem>
@@ -165,7 +217,7 @@ const contex =useContext(AppContext);
 
               {config.showProfileIcon && (
                 <div>
-                  <ListItem disablePadding sx={{       marginBottom: '10px'}}>
+                  <ListItem disablePadding sx={{ marginBottom: '10px' }}>
                     <ListItemButton sx={{ color: theme.primary.contrastText }}>
                       <ListItemIcon>
                         <AccountCircleIcon
@@ -173,17 +225,17 @@ const contex =useContext(AppContext);
                         />
                       </ListItemIcon>
                       <ListItemText
-                        primary={ t('label.welcome')}
+                        primary={t('label.welcome')}
                         sx={{
-                          
+
                           color: theme.primary.contrastText,
-                          
-                          
+
+
                         }}
                       />
                     </ListItemButton>
                   </ListItem>
-                  <Divider sx={{ backgroundColor: '#999'  }} />
+                  <Divider sx={{ backgroundColor: '#999' }} />
                 </div>
               )}
 
@@ -210,9 +262,9 @@ const contex =useContext(AppContext);
                       <ListItemText
                         primary={t(`label.${link.label}`)}
                         sx={{
-                            
+
                           color: theme.primary.contrastText
-                          
+
                         }}
                       />
                       <ChevronRightIcon sx={{ fontSize: '35px' }} />
@@ -228,7 +280,7 @@ const contex =useContext(AppContext);
                     <ListItemIcon>
                       <LogoutIcon sx={{ color: theme.primary.contrastText, fontSize: '35px' }} />
                     </ListItemIcon>
-                    <ListItemText primary={ t('label.logout')} />
+                    <ListItemText primary={t('label.logout')} />
                     <ChevronRightIcon sx={{ fontSize: '35px' }} />
                   </ListItemButton>
                 </ListItem>
@@ -244,14 +296,14 @@ const contex =useContext(AppContext);
 const getIconComponent = (iconName: string) => {
   switch (iconName) {
     case 'HistoryIcon':
-      return <ChatBubbleOutlineIcon sx={{ fontSize: '35px' }}  />;
+      return <ChatBubbleOutlineIcon sx={{ fontSize: '35px' }} />;
     case 'HelpIcon':
-      return <HelpIcon  sx={{ fontSize: '35px' }} />;
+      return <HelpIcon sx={{ fontSize: '35px' }} />;
     case 'FeedbackIcon':
-      return <FeedbackIcon  sx={{ fontSize: '35px' }} />;
+      return <FeedbackIcon sx={{ fontSize: '35px' }} />;
     default:
       return null;
- 
+
 
   }
 };

@@ -462,6 +462,8 @@ const ContextProvider: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endTime]);
 
+
+  console.log("chu:",{config})
   //@ts-ignore
   const sendMessage = useCallback(
     async (text: string, media: any, isVisibile = true) => {
