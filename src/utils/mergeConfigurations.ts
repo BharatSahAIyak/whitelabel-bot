@@ -49,7 +49,7 @@ const mergeConfiguration = async () => {
   try {
     // const response = await axios.get('URL_TO_FETCH_OVERRIDE_CONFIG');
     overrideConfig = await fetchOverrideConfig();
-    console.log("localConfig and overrideConfig:",{localConfig,overrideConfig})
+  
     //overrideConfig = response.data;
   } catch (error) {
     console.error('Error fetching override configuration:', error);
@@ -58,7 +58,7 @@ const mergeConfiguration = async () => {
 
   const mergedConfig =await deepMerge({}, localConfig, overrideConfig);
 
- console.log("mergedConfig:", {mergedConfig})
+
   return mergedConfig
 }
 export default mergeConfiguration 

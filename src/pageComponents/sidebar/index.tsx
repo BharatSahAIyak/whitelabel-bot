@@ -39,9 +39,9 @@ export const Sidebar = ({
   //     showLogoutButton: boolean;
   //     logoutButtonLabel: string;
   //   } | null>(null);
-
+const contex =useContext(AppContext);
   
-  const [activeLanguage, setActiveLanguage] = useState<string>('en');
+  const [activeLanguage, setActiveLanguage] = useState<string>( contex?.locale ?? 'en');
   const [isEngActive, setIsEngActive] = useState<boolean>(
     localStorage.getItem('locale')
       ? localStorage.getItem('locale') === 'en'
