@@ -97,7 +97,7 @@ export const Sidebar = ({
                       <ArrowBackIcon sx={{ color: theme.primary.contrastText, fontSize: '35px' }} />
                     </ListItemIcon>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-                      {config.languages.map((lang: any, index: number) => (
+                      {/* {config.languages.map((lang: any, index: number) => (
                         <button
                           key={index}
                           id={lang.code}
@@ -117,7 +117,7 @@ export const Sidebar = ({
                         >
                           {lang.label}
                         </button>
-                      ))} 
+                      ))}  */}
 
 <button
                         
@@ -155,8 +155,8 @@ export const Sidebar = ({
                             borderBottomLeftRadius: '0',
                             borderTopRightRadius:
                           
-                                 '0',
-                            borderBottomRightRadius: '0',
+                                 '10px',
+                            borderBottomRightRadius: '10px',
                             backgroundColor:
                             config?.
                             languageCode2  === activeLanguage
