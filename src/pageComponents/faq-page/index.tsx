@@ -88,7 +88,7 @@ const FAQPage: React.FC = () => {
            <CallRoundedIcon fontSize='medium'/>
            </Avatar></Box>
                   <Button variant='text' size="large" onClick={handleContactClick} sx={{textTransform:'none',color:theme?.primary?.main, "&:hover":{color:theme?.primary?.main}}}>
-                    <Typography variant='h5' fontWeight={600}>{`t('label.dial') ${flags.dialer_number.value}`}</Typography></Button>
+                    <Typography variant='h5' fontWeight={600}>{`${t('label.dial')} ${flags.dialer_number.value}`}</Typography></Button>
                 </Box>
               </Box>
             )}
