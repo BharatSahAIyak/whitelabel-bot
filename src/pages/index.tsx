@@ -13,7 +13,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="white" />
-        <title>{t("label.title")}</title>
+        <title>{t("label.title")?.split('<br/>').join(" ")}</title>
         <link rel="icon" href={config?.logo} />
       </Head>
      
