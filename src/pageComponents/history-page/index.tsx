@@ -58,13 +58,13 @@ const HistoryPage: FC = () => {
                 context?.setMessages([]);
               }
               deleteConversationById(conversationId);
-            //   setIsConversationDeleted(true);
+              fetchHistory();
             })
             .catch((error) => {
               console.error(error);
             });
         }
-      }, [context, t]);
+      }, [context?.setConversationId, context?.setMessages, t]);
 
     const deleteConversationById = useCallback((conversationIdToDelete: any) => {
         const filteredConversations = [...conversations].filter(
@@ -74,8 +74,11 @@ const HistoryPage: FC = () => {
         setConversations(filteredConversations);
     }, [conversations]);
 
+    useEffect(() => {
+        fetchHistory();
+    }, [])
 
-    useMemo(() => {
+    const fetchHistory = () => {
         setIsFetching(true);
         axios
             .get(`${process.env.NEXT_PUBLIC_BFF_API_URL}/user/conversations/all`, {
@@ -119,7 +122,7 @@ const HistoryPage: FC = () => {
                 console.error(error);
                 setIsFetching(false);
             });
-    }, [conversations]);
+    }
 
     if (!flags?.show_chat_history_page?.enabled) {
         return <ComingSoonPage />;
