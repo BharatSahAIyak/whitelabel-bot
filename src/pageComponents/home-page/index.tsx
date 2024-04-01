@@ -288,67 +288,83 @@ const HomePage: NextPage = () => {
             </div>
           ) : (
             <>
-              <div className={styles.title}>{config?.title}</div>
-              {(config?.showKalia || config?.showWeatherAdvisory || config?.showPlantProtection) && <div className={styles.imgButtons}>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-evenly',
-                    width: '100%',
-                    maxWidth: '500px',
-                  }}>
-                  {config?.showWeatherAdvisory && (
+              <div
+                className={styles.title}
+                dangerouslySetInnerHTML={{ __html: t('label.title') }}></div>
+              {(config?.showKalia ||
+                config?.showWeatherAdvisory ||
+                config?.showPlantProtection) && (
+                <div className={styles.imgButtons}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-evenly',
+                      width: '100%',
+                      maxWidth: '500px',
+                    }}>
+                    {config?.showWeatherAdvisory && (
+                      <div
+                        className={styles.imgBtn}
+                        onClick={() => {
+                          sendMessage(t('label.weather_advisory'));
+                        }}>
+                        <p>{t('label.weather_advisory')}</p>
+                        <img
+                          src={
+                            config?.weatherAdvisoryImg ||
+                            weatherAdvisoryImg?.src
+                          }
+                          width={50}
+                          height={70}
+                          alt="weatheradvisory"
+                        />
+                      </div>
+                    )}
+                    {config?.showPlantProtection && (
+                      <div
+                        className={styles.imgBtn}
+                        onClick={() => {
+                          toast('Coming Soon!');
+                        }}>
+                        <p>{t('label.plant_protection')}</p>
+                        <img
+                          src={
+                            config?.plantProtectionImg ||
+                            plantProtectionImg?.src
+                          }
+                          width={60}
+                          height={60}
+                          alt="plantprotection"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {config?.showKalia && (
                     <div
                       className={styles.imgBtn}
+                      style={{ marginTop: '10px' }}
                       onClick={() => {
-                        sendMessage(t('label.weather_advisory'));
+                        context?.setKaliaClicked((props: boolean) => !props);
                       }}>
-                      <p>{t('label.weather_advisory')}</p>
+                      <p>{t('label.kalia_status')}</p>
                       <img
-                        src={config?.weatherAdvisoryImg || weatherAdvisoryImg?.src}
-                        width={50}
-                        height={70}
-                        alt="weatheradvisory"
-                      />
-                    </div>
-                  )}
-                  {config?.showPlantProtection && (
-                    <div
-                      className={styles.imgBtn}
-                      onClick={() => {
-                        toast('Coming Soon!');
-                      }}>
-                      <p>{t('label.plant_protection')}</p>
-                      <img
-                        src={config?.plantProtectionImg || plantProtectionImg?.src}
-                        width={60}
-                        height={60}
-                        alt="plantprotection"
+                        src={config?.kaliaStatusImg || kaliaStatusImg?.src}
+                        width={80}
+                        height={80}
+                        alt="kaliastatus"
                       />
                     </div>
                   )}
                 </div>
-                {config?.showKalia && <div
-                  className={styles.imgBtn}
-                  style={{marginTop: '10px'}}
-                  onClick={() => {
-                    context?.setKaliaClicked((props: boolean) => !props);
-                  }}>
-                  <p>{t('label.kalia_status')}</p>
-                  <img
-                    src={config?.kaliaStatusImg || kaliaStatusImg?.src}
-                    width={80}
-                    height={80}
-                    alt="kaliastatus"
+              )}
+              {config?.showMic && (
+                <div className={styles.voiceRecorder} ref={voiceRecorderRef}>
+                  <RenderVoiceRecorder
+                    setInputMsg={setInputMsg}
+                    tapToSpeak={true}
                   />
-                </div>}
-              </div>}
-              {config?.showMic && <div className={styles.voiceRecorder} ref={voiceRecorderRef}>
-                <RenderVoiceRecorder
-                  setInputMsg={setInputMsg}
-                  tapToSpeak={true}
-                />
-              </div>}
+                </div>
+              )}
             </>
           )}
 

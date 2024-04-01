@@ -117,14 +117,15 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
       toast.success(`${t('message.recorder_wait')}`);
 
       // const audioElement = new Audio();
-  
+
       // const blobUrl = URL.createObjectURL(blob);
       // audioElement.src = blobUrl;
       // console.log(audioElement)
       // audioElement.play();
 
       // Define the API endpoint
-      const apiEndpoint = process.env.NEXT_PUBLIC_AI_TOOLS_API + '/speech-to-text';
+      const apiEndpoint =
+        process.env.NEXT_PUBLIC_AI_TOOLS_API + '/speech-to-text';
 
       // Create a FormData object
       const formData = new FormData();
@@ -190,7 +191,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
               onClick={() => {
                 stopRecording();
               }}
-              style={{ cursor: 'pointer', width: '100%', height: '100%'  }}
+              style={{ cursor: 'pointer', width: '100%', height: '100%' }}
             />
           </div>
         ) : (
@@ -199,7 +200,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
               <img
                 src={config?.processingIcon || processing?.src}
                 alt="processingIcon"
-                style={{ cursor: 'pointer', width: '100%', height: '100%'  }}
+                style={{ cursor: 'pointer', width: '100%', height: '100%' }}
               />
             ) : apiCallStatus === 'error' ? (
               <img
@@ -209,7 +210,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
                   setUserClickedError(true);
                   startRecording();
                 }}
-                style={{ cursor: 'pointer', width: '100%', height: '100%'  }}
+                style={{ cursor: 'pointer', width: '100%', height: '100%' }}
               />
             ) : (
               <>
@@ -223,9 +224,15 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
                   style={{ cursor: 'pointer', width: '100%', height: '100%' }}
                 />
                 {tapToSpeak ? (
-                  <p style={{ color: 'black', fontSize: '12px', marginTop: '4px' }}>
-                    {t('label.tap_to_speak')}
-                  </p>
+                  <p
+                    style={{
+                      color: 'black',
+                      fontSize: '12px',
+                      marginTop: '4px',
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: t('label.tap_to_speak'),
+                    }}></p>
                 ) : (
                   <></>
                 )}
