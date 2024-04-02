@@ -162,8 +162,8 @@ const LoginMobileAadharPage: React.FC = () => {
               textAlign="left"
               width="90%"
               color='black'
+              dangerouslySetInnerHTML={{__html: t("label.title")}}
             >
-              {t("label.title")}
             </Typography>
             <Box
               component="form"
