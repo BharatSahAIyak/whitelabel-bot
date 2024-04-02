@@ -92,7 +92,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           <Toaster position="top-center" reverseOrder={false} />
           <FeaturePopup />
           <InstallModal />
-          {isAuthenticated && <NavBar />}
+          <NavBar />
           <SafeHydrate>
             <Component {...pageProps} />
           </SafeHydrate>
