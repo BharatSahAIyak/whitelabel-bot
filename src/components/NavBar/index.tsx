@@ -53,12 +53,12 @@ const Navbar: React.FC = () => {
     context?.setLoading(false);
     router.push('/');
   }, [context, t, router]);
-
   return (
     <>
       <AppBar position="static" sx={{ background: 'white' }}>
         <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
+          
             {isAuthenticated && showHamburgerMenu && (
               <IconButton
                 size="large"
@@ -96,7 +96,7 @@ const Navbar: React.FC = () => {
                   variant="body1"
                   color="black"
                   sx={{ fontSize: '15px' }}>
-                  New Chat
+                  {t('label.new_chat')}
                 </Typography>
               </div>
             )}
@@ -130,7 +130,6 @@ const Navbar: React.FC = () => {
                   style={{ maxHeight: '48px' }}
                 />
               ))}
-
             {brandName && (
               <Typography
                 variant="h6"
