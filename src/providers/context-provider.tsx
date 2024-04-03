@@ -3,11 +3,12 @@ import {
   FC,
   ReactElement,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react';
-import { AppContext } from '.';
+import { AppContext } from '../context';
 import _ from 'underscore';
 import { v4 as uuidv4 } from 'uuid';
 import { IntlProvider } from 'react-intl';
@@ -20,17 +21,9 @@ import { useCookies } from 'react-cookie';
 import { UCI } from 'socket-package';
 
 import mergeConfigurations from '../utils/mergeConfigurations';
-
-function loadMessages(locale: string) {
-  switch (locale) {
-    case 'en':
-      return import('../../lang/en.json');
-    // case 'or':
-    //   return import('../../lang/or.json');
-    default:
-      return import('../../lang/en.json');
-  }
-}
+import { FullPageLoader } from '../components/fullpage-loader';
+import LaunchPage from '../pageComponents/launch-page';
+import { ThemeContext } from './theme-provider/theme-context';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
 
@@ -39,13 +32,15 @@ const ContextProvider: FC<{
   localeMsgs: any;
   setLocale: any;
   children: ReactElement;
-}> = ({ locale, children, localeMsgs, setLocale }) => {
+  setLocaleMsgs: any;
+}> = ({ locale, children, localeMsgs, setLocale, setLocaleMsgs }) => {
   const t = useLocalization();
   const flags = useFlags(['health_check_time']);
   const [loading, setLoading] = useState(false);
   const [isMsgReceiving, setIsMsgReceiving] = useState(false);
   const [messages, setMessages] = useState<Array<any>>([]);
   const [newSocket, setNewSocket] = useState<any>();
+  const [showLaunchPage, setShowLaunchPage] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(
     sessionStorage.getItem('conversationId')
   );
@@ -66,16 +61,31 @@ const ContextProvider: FC<{
   const [startTime, setStartTime] = useState(Date.now());
   const [endTime, setEndTime] = useState(Date.now());
   const [lastMsgId, setLastMsgId] = useState('');
-  const [lastMsg, setLastMsg] = useState('');
+  const [kaliaClicked, setKaliaClicked] = useState(false);
   const [config, setConfig] = useState(null);
-
+  const themeContext = useContext(ThemeContext);
   // const configs = useMergeConfigurations();
   // console.log("hola:",{configs})
+
   useEffect(() => {
-    mergeConfigurations().then(setConfig);
+    mergeConfigurations().then(res => {
+      setConfig(res);
+      themeContext?.modifyPaletes(res?.theme?.palette)
+    });
   }, []);
 
-  console.log('config:', { config });
+
+  useEffect(() => {
+    //@ts-ignore
+    if (config?.component?.launchPage && config?.component?.launcPage?.showLaunchPage) {
+      setShowLaunchPage(true);
+      setTimeout(() => {
+        setShowLaunchPage(false);;
+      }, 2000)
+    }
+  }, [config])
+
+
 
   const downloadChat = useMemo(() => {
     return (e: string) => {
@@ -87,7 +97,19 @@ const ContextProvider: FC<{
       }
     };
   }, []);
+  useEffect(() => {
+    //@ts-ignore
+    if (config?.translation && locale) {
+      onLocaleUpdate()
+    }
+  }, [config, locale])
 
+
+  const onLocaleUpdate = useCallback(() => {
+    //@ts-ignore
+    setLocaleMsgs(config?.translation?.[locale]);
+
+  }, [config, locale])
   const shareChat = useMemo(() => {
     return (e: string) => {
       try {
@@ -156,7 +178,7 @@ const ContextProvider: FC<{
         .get(
           `${process.env.NEXT_PUBLIC_BFF_API_URL}/incrementaudioused/${content?.data?.messageId}`
         )
-        .then((res) => {})
+        .then((res) => { })
         .catch((err) => {
           console.log(err);
         });
@@ -317,51 +339,53 @@ const ContextProvider: FC<{
     []
   );
 
-  const telemetryApi =
-    process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
-  useEffect(() => {
-    const postTelemetry = async () => {
-      console.log('MESSAGE:', messages[messages.length - 1]);
-      try {
-        await axios.post(telemetryApi, [
-          {
-            generator: 'pwa',
-            version: '1.0',
-            timestamp: new Date().getTime(),
-            actorId: localStorage.getItem('userID') || '',
-            actorType: 'user',
-            env: 'prod',
-            eventId: 'E037',
-            event: 'messageQuery',
-            subEvent: 'messageReceived',
-            os:
-              // @ts-ignore
-              window.navigator?.userAgentData?.platform ||
-              window.navigator.platform,
-            browser: window.navigator.userAgent,
-            ip: sessionStorage.getItem('ip') || '',
-            // @ts-ignore
-            deviceType: window.navigator?.userAgentData?.mobile
-              ? 'mobile'
-              : 'desktop',
-            eventData: {
-              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-              userId: localStorage.getItem('userID') || '',
-              phoneNumber: localStorage.getItem('phoneNumber') || '',
-              conversationId: sessionStorage.getItem('conversationId') || '',
-              messageId: messages[messages.length - 1]?.messageId,
-              text: messages[messages.length - 1]?.text,
-              createdAt: new Date().getTime(),
-              timeTaken: endTime - startTime,
-            },
-          },
-        ]);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    postTelemetry();
-  }, [endTime]);
+
+  // TODO: add message received telemetry once confirmed when full message is received 
+  // const telemetryApi =
+  //   process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+  // useEffect(() => {
+  //   const postTelemetry = async () => {
+  //     console.log('MESSAGE:', messages);
+  //     try {
+  //       await axios.post(telemetryApi, [
+  //         {
+  //           generator: 'pwa',
+  //           version: '1.0',
+  //           timestamp: new Date().getTime(),
+  //           actorId: localStorage.getItem('userID') || '',
+  //           actorType: 'user',
+  //           env: 'prod',
+  //           eventId: 'E037',
+  //           event: 'messageQuery',
+  //           subEvent: 'messageReceived',
+  //           os:
+  //             // @ts-ignore
+  //             window.navigator?.userAgentData?.platform ||
+  //             window.navigator.platform,
+  //           browser: window.navigator.userAgent,
+  //           ip: sessionStorage.getItem('ip') || '',
+  //           // @ts-ignore
+  //           deviceType: window.navigator?.userAgentData?.mobile
+  //             ? 'mobile'
+  //             : 'desktop',
+  //           eventData: {
+  //             botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+  //             userId: localStorage.getItem('userID') || '',
+  //             phoneNumber: localStorage.getItem('phoneNumber') || '',
+  //             conversationId: sessionStorage.getItem('conversationId') || '',
+  //             messageId: messages[messages.length - 1]?.messageId,
+  //             text: messages[messages.length - 1]?.text,
+  //             createdAt: new Date().getTime(),
+  //             timeTaken: endTime - startTime,
+  //           },
+  //         },
+  //       ]);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
+  //   postTelemetry();
+  // }, [endTime]);
 
   console.log('erty:', { conversationId });
 
@@ -438,6 +462,8 @@ const ContextProvider: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endTime]);
 
+
+  console.log("chu:",{config})
   //@ts-ignore
   const sendMessage = useCallback(
     async (text: string, media: any, isVisibile = true) => {
@@ -478,7 +504,7 @@ const ContextProvider: FC<{
         },
       });
       const messageId = uuidv4();
-      
+
       setStartTime(Date.now());
       if (isVisibile)
         if (media) {
@@ -505,44 +531,48 @@ const ContextProvider: FC<{
           ]);
           sessionStorage.removeItem('asrId');
         }
-        try {
-          const telemetryApi =
-            process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
-          await axios.post(telemetryApi, [
-            {
-              generator: 'pwa',
-              version: '1.0',
-              timestamp: new Date().getTime(),
-              actorId: localStorage.getItem('userID') || '',
-              actorType: 'user',
-              env: 'prod',
-              eventId: 'E036',
-              event: 'messageQuery',
-              subEvent: 'messageSent',
-              os:
-                // @ts-ignore
-                window.navigator?.userAgentData?.platform ||
-                window.navigator.platform,
-              browser: window.navigator.userAgent,
-              ip: sessionStorage.getItem('ip') || '',
+      try {
+        const telemetryApi =
+          process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+        await axios.post(telemetryApi, [
+          {
+            generator: 'pwa',
+            version: '1.0',
+            timestamp: new Date().getTime(),
+            actorId: localStorage.getItem('userID') || '',
+            actorType: 'user',
+            env: 'prod',
+            eventId: 'E036',
+            event: 'messageQuery',
+            subEvent: 'messageSent',
+            os:
               // @ts-ignore
-              deviceType: window.navigator?.userAgentData?.mobile
-                ? 'mobile'
-                : 'desktop',
-              eventData: {
-                botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-                userId: localStorage.getItem('userID') || '',
-                phoneNumber: localStorage.getItem('phoneNumber') || '',
-                conversationId: sessionStorage.getItem('conversationId') || '',
-                messageId: messageId,
-                text: text,
-                createdAt: new Date().getTime(),
-              },
+              window.navigator?.userAgentData?.platform ||
+              window.navigator.platform,
+            browser: window.navigator.userAgent,
+            ip: sessionStorage.getItem('ip') || '',
+            // @ts-ignore
+            deviceType: window.navigator?.userAgentData?.mobile
+              ? 'mobile'
+              : 'desktop',
+            eventData: {
+              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+              userId: localStorage.getItem('userID') || '',
+              phoneNumber: localStorage.getItem('phoneNumber') || '',
+              conversationId: sessionStorage.getItem('conversationId') || '',
+              messageId: messageId,
+              text: text,
+              createdAt: new Date().getTime(),
             },
-          ]);
-        } catch (err) {
-          console.error(err);
-        }
+          },
+        ], {
+          headers: {
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || ''
+          }
+        });
+      } catch (err) {
+        console.error(err);
+      }
     },
     [conversationId, newSocket, removeCookie]
   );
@@ -615,7 +645,7 @@ const ContextProvider: FC<{
     }
     timer = setTimeout(() => {
       if (loading) {
-        toast.loading('message.taking_longer', {duration: 3000});
+        toast.loading('message.taking_longer', { duration: 3000 });
       }
       secondTimer = setTimeout(async () => {
         fetchIsDown();
@@ -624,8 +654,7 @@ const ContextProvider: FC<{
           console.log('log:', loading);
           try {
             const chatHistory = await axios.get(
-              `${
-                process.env.NEXT_PUBLIC_BFF_API_URL
+              `${process.env.NEXT_PUBLIC_BFF_API_URL
               }/user/chathistory/${sessionStorage.getItem('conversationId')}`,
               {
                 headers: {
@@ -688,9 +717,9 @@ const ContextProvider: FC<{
           setIsMsgReceiving(false);
         }
       }, timer2);
-      console.log('log:', secondTimer);
+
     }, timer1);
-    console.log('log: called', isMsgReceiving, loading);
+
     return () => {
       clearTimeout(timer);
       clearTimeout(secondTimer);
@@ -726,6 +755,8 @@ const ContextProvider: FC<{
       audioPlaying,
       setAudioPlaying,
       config,
+      kaliaClicked,
+      setKaliaClicked
     }),
     [
       locale,
@@ -753,45 +784,21 @@ const ContextProvider: FC<{
       audioPlaying,
       setAudioPlaying,
       config,
+      kaliaClicked,
+      setKaliaClicked
     ]
   );
-  if (!config) return <div>Loading configuration...</div>;
+
+
+  if (!config) return <FullPageLoader loading label='Loading configuration..' />
+  //@ts-ignore
+  if (showLaunchPage) return <LaunchPage theme={config?.theme} config={config?.component?.launchPage} />;
   return (
     //@ts-ignore
     <AppContext.Provider value={values}>
-      <IntlProvider locale={locale} messages={localeMsgs}>
-        {children}
-      </IntlProvider>
+      {children}
     </AppContext.Provider>
   );
 };
 
-const SSR: FC<{ children: ReactElement }> = ({ children }) => {
-  const defaultLang = flagsmith.getValue('default_lang', { fallback: 'en' });
-  const [locale, setLocale] = useState(
-    localStorage.getItem('locale') || defaultLang
-  );
-  const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
-    null
-  );
-  useEffect(() => {
-    loadMessages(locale).then((res) => {
-      //@ts-ignore
-      setLocaleMsgs(res);
-    });
-  }, [locale]);
-
-  if (typeof window === 'undefined') return null;
-  return (
-    //@ts-ignore
-    <IntlProvider locale={locale} messages={localeMsgs}>
-      <ContextProvider
-        locale={locale}
-        setLocale={setLocale}
-        localeMsgs={localeMsgs}>
-        {children}
-      </ContextProvider>
-    </IntlProvider>
-  );
-};
-export default SSR;
+export default ContextProvider;

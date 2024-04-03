@@ -1,7 +1,8 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
-import ContextProvider from '../context/ContextProvider';
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+
+import { ReactElement, useCallback, useContext, useEffect, useState } from 'react';
+
 import '@samagra-x/chatui/dist/index.css';
 import { Toaster } from 'react-hot-toast';
 import { useCookies } from 'react-cookie';
@@ -12,10 +13,11 @@ import FeaturePopup from '../components/FeaturePopup';
 import Provider from '../providers';
 import { InstallModal } from '../components/install-modal';
 import { FullPageLoader } from '../components/fullpage-loader';
-import { FlagsmithProvider } from 'flagsmith/react';
 import flagsmith from 'flagsmith/isomorphic';
+import { AppContext } from '../context';
+import { useConfig } from '../hooks/useConfig';
 
-const LaunchPage = dynamic(() => import('../components/LaunchPage'), {
+const LaunchPage = dynamic(() => import('../pageComponents/launch-page'), {
   ssr: false,
 });
 
@@ -33,22 +35,24 @@ function SafeHydrate({ children }: { children: ReactElement }) {
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const { isAuthenticated, login } = useLogin();
-  const [flagsmithState, setflagsmithState] = useState(null);
   const [cookie] = useCookies();
 
-  useEffect(() => {
-    const getFlagSmithState = async () => {
-      await flagsmith.init({
-        // api: process.env.NEXT_PUBLIC_FLAGSMITH_API,
-        environmentID: process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID || '',
-      });
-      if (flagsmith.getState()) {
-        //@ts-ignore
-        setflagsmithState(flagsmith.getState());
-      }
-    };
-    getFlagSmithState();
-  }, []);
+ 
+  const context =useContext(AppContext);
+
+  // useEffect(() => {
+  //   const getFlagSmithState = async () => {
+  //     await flagsmith.init({
+  //       // api: process.env.NEXT_PUBLIC_FLAGSMITH_API,
+  //       environmentID: process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID || '',
+  //     });
+  //     if (flagsmith.getState()) {
+  //       //@ts-ignore
+  //       setflagsmithState(flagsmith.getState());
+  //     }
+  //   };
+  //   getFlagSmithState();
+  // }, []);
 
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
@@ -81,30 +85,21 @@ const App = ({ Component, pageProps }: AppProps) => {
   }
 
   if (typeof window === 'undefined') return <FullPageLoader loading />;
-  if (
-    // launch ||
-    !flagsmithState
-  ) {
-    // return <LaunchPage />;
-    return <></>;
-  } else
-    return (
-      <Provider>
-        <FlagsmithProvider flagsmith={flagsmith} serverState={flagsmithState}>
-          <ContextProvider>
-            <div style={{ height: '100%' }}>
-              <Toaster position="top-center" reverseOrder={false} />
-              <FeaturePopup />
-              <InstallModal />
-              {isAuthenticated && <NavBar />}
-              <SafeHydrate>
-                <Component {...pageProps} />
-              </SafeHydrate>
-            </div>
-          </ContextProvider>
-        </FlagsmithProvider>
-      </Provider>
-    );
+  return (
+    <Provider>
+      <>
+        <div style={{ height: '100%' }}>
+          <Toaster position="top-center" reverseOrder={false} />
+          <FeaturePopup />
+          <InstallModal />
+          <NavBar />
+          <SafeHydrate>
+            <Component {...pageProps} />
+          </SafeHydrate>
+        </div>
+      </>
+    </Provider>
+  );
 };
 
 export default App;

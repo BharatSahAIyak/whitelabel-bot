@@ -2,20 +2,21 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { CookiesProvider } from "react-cookie";
 import { useLocalization } from "../hooks/useLocalization";
-import HomePage from "../components/HomePage";
-
+import HomePage from "../pageComponents/home-page";
+import { useConfig } from "../hooks/useConfig";
 const Home: NextPage = () => {
   const t = useLocalization();
-
+  const config = useConfig("component", "botDetails");
   return (
     <>
       <Head>
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="white" />
-        <meta name="UCI Web Channel" content="A project under C4GT" />
-        <title>{t("label.title")}</title>
+        <title>{t("label.title")?.split('<br/>').join(" ")}</title>
+        <link rel="icon" href={config?.logo} />
       </Head>
+     
 
       <CookiesProvider>
         <div
@@ -27,7 +28,6 @@ const Home: NextPage = () => {
           }}
         >
           <HomePage />
-          {/* <DownTimePage/> */}
         </div>
       </CookiesProvider>
     </>

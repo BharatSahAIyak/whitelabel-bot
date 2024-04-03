@@ -10,6 +10,22 @@
     }
   },
   "component": {
+    "botDetails": {
+      "logo": "http://cdn-api.staging.bhasai.samagra.io:443/deployer/favicon.ico",
+      "botName": "Ama Krushi AI Chatbot",
+      "allowOverride": false
+    },
+    "homePage": {
+      "allowOverride": false,
+      "title": "Ask me anything about farming",
+      "showKalia": false,
+      "showWeatherAdvisory": true,
+      "showPlantProtection": true,
+      "weatherAdvisoryImg": "",
+      "plantProtectionImg": "",
+      "kaliaStatusImg": "",
+      "showMic": true
+    },
     "navbar": {
       "brandName": "",
       "showHamburgerMenu": true,
@@ -55,17 +71,17 @@
       "profileText": "Welcome, User",
       "links": [
         {
-          "label": "History Page",
+          "label": "chats",
           "icon": "HistoryIcon",
           "route": "history"
         },
         {
-          "label": "FAQs",
+          "label": "faqs",
           "icon": "HelpIcon",
           "route": "faq"
         },
         {
-          "label": "Feedback",
+          "label": "feedback",
           "icon": "FeedbackIcon",
           "route": "feedback"
         }
@@ -79,7 +95,8 @@
       "showSplitedView": true,
       "otpLength": 4,
       "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
-      "title": "OTP Verification"
+      "title": "OTP Verification",
+      "resendOtpTimer":"30"
     },
     "comingSoon": {
       "allowOverride": false,
@@ -90,7 +107,7 @@
     "downtime": {
       "allowOverride": false,
       "title": "We're under maintainance",
-      "downTimeImage": "/src/pageComponents/downtime-page/assets/downTimeGIF.gif",
+      "downTimeImage": "",
       "supportingText": "Have an urgent query?",
       "contactLink": "Call Ama Krushi",
       "refreshText": "Try Again",
@@ -102,6 +119,48 @@
       "userManualText": "User Manual - For VAWs",
       "contactDescriptionText": "To connect with call centre",
       "contactText": "Dial"
-    }
+    },
+    "voiceRecorder": {
+      "allowOverride": false,
+      "startIcon": "",
+      "stopIcon": "",
+      "errorIcon": "",
+      "processingIcon": "",
+      "delayBetweenDialogs": 2500
+    },
+    "feedbackPage": {
+      "ratingBox": true,
+      "reviewBox": true,
+      "Title": "Feedback",
+      "ratingBoxTitle": "Rate your experience",
+      "ratingMaxStars": 5,
+      "ratingStarDescription": "Click on the stars to rate",
+      "ratingButtonText": "Submit Rating",
+      "reviewBoxTitle": "Write a review",
+      "reviewPlaceholder": "Enter your review here",
+      "reviewButtonText": "Submit Review"
+    },
+    "loginMobileAadharPage": {
+      "allowOverride": false,
+      "loginWithAadhaar": false,
+      "showSignUp": false,
+      "showAlternateSignIn": false,
+      "showLogo": false,
+      "showSplitedView": true,
+      "logo":"https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
+      "title": "Welcome!"
+  },
+  "historyPage": {
+    "allowOverride": false,
+    "title": "History",
+    "noItemsText": "No items found",
+    "allowDelete": true,
+    "showTimestamp": true
+  },
+  "launchPage": {
+    "allowOverride": false,
+    "logo": "src/pages/launch-page/krushak_odisha.png",
+    "label":"ଆମ କୃଷି ଏ ଆଇ ଚାଟ୍ ବୋଟ୍"
+  }
   }
 }

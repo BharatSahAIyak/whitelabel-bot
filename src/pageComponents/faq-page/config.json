@@ -1,9 +1,0 @@
-{
-  "component": {
-      "allowOverride": false,
-      "title": "FAQs",
-      "userManualText": "User Manual - For VAWs",
-      "contactDescriptionText":"To connect with call centre",
-      "contactText": "Dial"
-  }
-}

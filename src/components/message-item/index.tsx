@@ -21,6 +21,7 @@ import { toast } from 'react-hot-toast';
 import styles from './index.module.css';
 import RightIcon from './assets/right';
 import SpeakerIcon from './assets/speaker.svg';
+import SpeakerPauseIcon from './assets/speakerPause.svg';
 import MsgThumbsUp from './assets/msg-thumbs-up';
 import MsgThumbsDown from './assets/msg-thumbs-down';
 import { MessageItemPropType } from './index.d';
@@ -30,11 +31,18 @@ import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
+import axios from 'axios';
+import { getReactionUrl } from '../../utils/getUrls';
 // import BlinkingSpinner from '../blinking-spinner/index';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
+  const [reaction, setReaction] = useState(message?.content?.data?.reaction);
+  const [optionDisabled, setOptionDisabled] = useState(
+    message?.content?.data?.optionClicked || false
+  );
+  const [audioFetched, setAudioFetched] = useState(false);
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -45,30 +53,67 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     return theme?.primary?.contrastText;
   }, [theme?.primary?.contrastText]);
 
-  const [reaction, setReaction] = useState(message?.content?.data?.reaction);
-  // @ts-ignore
-  const [optionDisabled, setOptionDisabled] = useState(
-    message?.content?.data?.optionClicked || false
-  );
+  const getToastMessage = (t: any, reaction: number): string => {
+    if (reaction === 1) return t('toast.reaction_like');
+    return t('toast.reaction_reset');
+  };
 
   useEffect(() => {
     setReaction(message?.content?.data?.reaction);
   }, [message?.content?.data?.reaction]);
 
+  const onLikeDislike = useCallback(
+    ({ value, msgId }: { value: 0 | 1 | -1; msgId: string }) => {
+      let url = getReactionUrl({ msgId, reaction: value });
+
+      axios
+        .get(url, {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('auth')}`,
+          },
+        })
+        .then((res: any) => {
+          if (value === -1) {
+            context?.setCurrentQuery(msgId);
+            context?.setShowDialerPopup(true);
+          } else {
+            toast.success(`${getToastMessage(t, value)}`);
+          }
+        })
+        .catch((error: any) => {
+          //@ts-ignore
+          logEvent(analytics, 'console_error', {
+            error_message: error.message,
+          });
+        });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t]
+  );
+
   const feedbackHandler = useCallback(
-    ({ like }: { like: 0 | 1 | -1; msgId: string }) => {
+    ({ like, msgId }: { like: 0 | 1 | -1; msgId: string }) => {
+      console.log('vbnm:', { reaction, like });
       if (reaction === 0) {
-        return setReaction(like);
+        setReaction(like);
+        return onLikeDislike({ value: like, msgId });
       }
       if (reaction === 1 && like === -1) {
-        return setReaction(-1);
+        console.log('vbnm triggered 1');
+        setReaction(-1);
+        return onLikeDislike({ value: -1, msgId });
       }
       if (reaction === -1 && like === 1) {
-        return setReaction(1);
+        console.log('vbnm triggered 2');
+        setReaction(1);
+        return onLikeDislike({ value: 1, msgId });
       }
+
+      console.log('vbnm triggered');
+      onLikeDislike({ value: 0, msgId });
       setReaction(0);
     },
-    [reaction]
+    [onLikeDislike, reaction]
   );
 
   const getLists = useCallback(
@@ -89,7 +134,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       color: 'var(--font)',
                       boxShadow: 'none',
                     }
-                  : {cursor: 'pointer'}
+                  : { cursor: 'pointer' }
               }
               onClick={(e: any): void => {
                 e.preventDefault();
@@ -116,9 +161,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 <div style={{ marginLeft: 'auto' }}>
                   <RightIcon
                     width="30px"
-                    color={
-                      optionDisabled ? 'var(--font)' : secondaryColor
-                    }
+                    color={optionDisabled ? 'var(--font)' : secondaryColor}
                   />
                 </div>
               </div>
@@ -137,11 +180,58 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const handleAudio = useCallback((url: any) => {
     // console.log(url)
     if (!url) {
-      toast.error('No audio');
+      if (audioFetched) toast.error('No audio');
       return;
     }
+    context?.playAudio(url, content);
     // Write logic for handling audio here
-  }, []);
+  }, [audioFetched, content, context?.playAudio]);
+
+  const downloadAudio = useCallback(()=>{
+    const fetchAudio = async (text: string) => {
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/text-to-speech`,
+          {
+            text: text,
+            language: context?.locale
+          }
+        );
+        setAudioFetched(true);
+        // cacheAudio(response.data);
+        return response.data.url;
+      } catch (error) {
+        console.error('Error fetching audio:', error);
+        setAudioFetched(true);
+        return null;
+      }
+    };
+
+    const fetchData = async () => {
+      if (
+        !content?.data?.audio_url &&
+        content?.data?.position === 'left' &&
+        content?.text
+      ) {
+        const toastId = toast.loading(`${t('message.download_audio')}`);
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 1500);
+        const audioUrl = await fetchAudio(content?.text);
+        if (audioUrl) {
+          content.data.audio_url = audioUrl;
+          handleAudio(audioUrl);
+        } 
+      }
+    };
+
+     if (content?.data?.audio_url) {
+        handleAudio(content.data.audio_url);
+      } else {
+        fetchData();
+      }
+     
+  },[handleAudio, content?.data, content?.text, t])
 
   switch (type) {
     case 'loader':
@@ -247,7 +337,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   <div style={{ display: 'flex' }}>
                     <div
                       className={styles.msgSpeaker}
-                      onClick={handleAudio}
+                      onClick={downloadAudio}
                       style={
                         // !content?.data?.isEnd
                         //   ? {
@@ -264,7 +354,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           border: `1px solid ${secondaryColor}`,
                         }
                       }>
-                      <Image src={SpeakerIcon} width={15} height={15} alt="" />
+                        {context?.clickedAudioUrl === content?.data?.audio_url ? (
+                      <Image src={!context?.audioPlaying
+                              ? SpeakerIcon
+                              : SpeakerPauseIcon} width={!context?.audioPlaying ? 15 : 40} height={!context?.audioPlaying ? 15 : 40} alt="" />) :
+                              (
+                                <Image src={SpeakerIcon} width={15} height={15} alt="" />
+                              )}
 
                       <p
                         style={{
@@ -276,7 +372,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           marginRight: '1px',
                           padding: '0 5px',
                         }}>
-                        {config?.textToSpeechLabel}
+                         {t('message.speaker')}
                       </p>
                     </div>
                   </div>
@@ -307,7 +403,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             fontSize: '11px',
                             fontFamily: 'Mulish-bold',
                           }}>
-                          {config?.positiveFeedbackText}
+                          {t('label.helpful')}
                         </p>
                       </div>
                       <div
@@ -336,7 +432,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             fontSize: '11px',
                             fontFamily: 'Mulish-bold',
                           }}>
-                          {config?.negativeFeedbackText}
+                          {t('label.not_helpful')}
                         </p>
                       </div>
                     </div>

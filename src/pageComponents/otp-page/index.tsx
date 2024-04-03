@@ -13,13 +13,14 @@ import jwt_decode from 'jwt-decode';
 import { useCookies } from 'react-cookie';
 import { useConfig } from '../../hooks/useConfig';
 import axios from 'axios';
-
+import { FormattedMessage } from "react-intl";
 const OtpPage: React.FC = () => {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(0);
   const config = useConfig('component', 'otpPage');
   const theme = useColorPalates();
-  const { logo, showLogo, showSplitedView, title, otpLength } = config;
+  const { logo, showLogo, showSplitedView, otpLength, resendOtpTimer } = config;
   const router = useRouter();
   const t = useLocalization();
 
@@ -43,10 +44,34 @@ const OtpPage: React.FC = () => {
       );
       return response.data;
     } catch (error) {
-      toast.error('Failed to verify OTP');
+      toast.error(`${t("message.invalid_otp")}`);
       console.error(error);
     }
   };
+
+  const resendOtp = async () => {
+    try {
+      setLoading(true);
+      const response = axios.get(
+        `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}api/sendOTP?phone=${router.query.state}`
+      )
+      console.log(response);
+      setLoading(false);
+      setCountdown(resendOtpTimer); 
+      toast.success(`${t("message.otp_sent_again")}`);
+    } catch (error) {
+      setLoading(false);
+      console.error('Error resending OTP:', error);
+      toast.error(`${t("error.error.sending_otp")}`);
+    }
+  };
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown((prevCountdown) => prevCountdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
 
   const handleLogin = useCallback(
     (e: React.FormEvent) => {
@@ -89,17 +114,18 @@ const OtpPage: React.FC = () => {
                 router.push('/');
               }, 10);
             } else {
-              toast.error(res.params.err);
+              toast.error(`${t("message.invalid_otp")}`);
             }
           });
         }
       } else {
-        toast.error(`${t('label.no_internet')}`);
+        toast.error(`${t("label.no_internet")}`);
       }
     },
     [otp.length]
   );
 
+  useEffect(()=> setCountdown(resendOtpTimer),[])
   return (
     <>
       <meta
@@ -122,23 +148,33 @@ const OtpPage: React.FC = () => {
             {/* Form */}
             <Typography
               variant="h4"
-              textAlign="left"
+              textAlign="center"
               width="90%"
               color="#1E232C"
               sx={{ m: 2 }}>
-              {title}
+              {t("message.otp_verification")}
             </Typography>
-            <Typography
+            <FormattedMessage
+              id="message.otp_message"
+              defaultMessage="We will send you a 4 digit one time password <br></br> on this mobile number <br></br><b>{mobile}</b>"
+              values={{ mobile: '', br: (chunks) => <br/>, b: (chunks) => <b>{chunks}</b>}}
+            />
+            {/* <Typography
               variant="body2"
               textAlign="left"
               width="90%"
               color="#838BA1">
-              Enter the verification code we just sent on your mobile number
+              {t("message.otp_message")} {t("label.mobile_number")}
+            </Typography> */}
+            <Typography
+              fontWeight="bold"
+              textAlign='center'>
+              +91-{router.query.state}
             </Typography>
             <Box
               component="form"
               onSubmit={handleLogin}
-              sx={{ mt: 1, width: '90%' }}>
+              sx={{ mt: 1, width: '90%',display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Box
                 sx={{
                   display: 'flex',
@@ -152,12 +188,49 @@ const OtpPage: React.FC = () => {
                   length={otpLength}
                 />
               </Box>
+              <div style={{ marginTop: '10px' }}>
+                {countdown > 0 ? (
+                <span>
+                  <FormattedMessage
+                    id="message.wait_minutes"
+                    defaultMessage="Please wait {countdown} seconds before resending OTP"
+                    values={{ countdown }}
+                  />
+                </span>
+                  ):(
+                  <>
+                    <Typography
+                    variant='body2'
+                    align='center'
+                    color="#838BA1">
+                      {t("message.didnt_receive")} &nbsp;
+                    <p onClick={resendOtp} style={{color:'#3da156',fontWeight:'bold', cursor: 'pointer'}}>{t("message.resend_again")}</p>
+                    </Typography>
+                  </>
+                  )}
+              </div>
+            <div style={{marginTop: '10px',marginBottom: '10px',display: "flex", gap:"10px", width:'100%'}}> 
+              <Button
+                variant="contained"
+                type="button"
+                onClick={() => router.push("/login")}
+                sx={{
+                  textTransform: 'none',
+                
+                  p: 1,
+
+                  // background: config?.theme.secondaryColor.value,
+                  background: '#000',
+                  borderRadius: '10px',
+                  width: '50%',
+                }}
+              >
+                {t("label.back")}
+              </Button>
               <Button
                 variant="contained"
                 sx={{
                   textTransform: 'none',
-                  mt: 3,
-                  mb: 4,
                   p: 1,
 
                   // background: config?.theme.secondaryColor.value,
@@ -170,9 +243,10 @@ const OtpPage: React.FC = () => {
                 {loading ? (
                   <CircularProgress size={24} color="inherit" />
                 ) : (
-                  'Login'
+                  `${t("label.submit")}`
                 )}
               </Button>
+            </div>
             </Box>
           </div>
         </div>
