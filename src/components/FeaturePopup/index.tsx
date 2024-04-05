@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './styles.module.css';
 import { useConfig } from '../../hooks/useConfig';
+
 
 function FeaturePopup() {
   const [popupData, setPopupData] = useState<any>(null);
@@ -9,19 +10,16 @@ function FeaturePopup() {
   useEffect(() => {
     // Open IndexedDB database
     if (!dbExists) {
-      indexedDB.databases().then((databases) => {
-        for (let i = 0; i < databases.length; i++) {
-          if (databases[i].name === 'featureDetailsDB') {
-            setDbExists(true);
-            break;
-          }
-        }
-      });
-    }
-    if (dbExists) {
-      const request = indexedDB.open('featureDetailsDB', 1);
+      const request = indexedDB.open('featureDetailsDB', 1); // Define request here
 
-      request.onsuccess = (event: any) => {
+      request.onsuccess = function(event) {
+        setDbExists(true); // If the database exists and opens successfully
+      };
+
+      request.onerror = function(event) {
+        setDbExists(false); // If an error occurs or the database does not exist
+      };
+request.onsuccess = (event: any) => {
         const db = event.target.result;
         if (!db.objectStoreNames.contains('featureDetailsStore')) {
           console.log("featureDetailsDB doesn't exist.");
@@ -45,19 +43,20 @@ function FeaturePopup() {
               description: details.description,
             });
           }
-        };
+        };   
 
         transaction.oncomplete = () => {
           db.close();
         };
       };
-    }
-  }, [dbExists]);
+    } }
+
+  , [dbExists]);
 
   const handleClose = () => {
     if (popupData) {
       // Open IndexedDB database
-      const request = indexedDB.open('featureDetailsDB', 1);
+      const request = indexedDB.open('featureDetailsDB', 1); // Define request here
 
       request.onsuccess = (event: any) => {
         const db = event.target.result;
@@ -82,12 +81,10 @@ function FeaturePopup() {
   if (!popupData) {
     return null;
   }
-
-  const config = useConfig('theme','primaryColor');
+ const config = useConfig('theme','primaryColor');
   const primaryColor = useMemo(() => {
     return config?.value;
   }, [config]);
-
   return (
     <div className={styles.popup} style={{backgroundColor: primaryColor}}>
       <h2>{popupData.title}</h2>
