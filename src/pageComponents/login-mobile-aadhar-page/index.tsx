@@ -31,6 +31,9 @@ const LoginMobileAadharPage: React.FC = () => {
       let maxLength;
       let errorMessage = "";
 
+      const inputValue = e.target.value;
+      const numericInput = inputValue.replace(/[^0-9]/g, '');
+
       if (isAadharClicked) {
         reg = /^\d{0,12}$/; // Allow up to 12 digits for Aadhar
         maxLength = 12;
@@ -41,20 +44,20 @@ const LoginMobileAadharPage: React.FC = () => {
         errorMessage = "Please enter a valid mobile number";
       }
 
-      const isValid = reg.test(e.target.value);
+      const isValid = reg.test(numericInput);
       setValid(isValid);
 
-      if (isValid || e.target.value === "") {
-        setInput(e.target.value);
+      if (isValid || numericInput === "") {
+        setInput(numericInput);
       } else {
         // Truncate input if it exceeds maximum length
-        setInput(e.target.value.slice(0, maxLength));
+        setInput(numericInput.slice(0, maxLength));
       }
 
-      if (e.target.value.length > maxLength) {
+      if (numericInput.length > maxLength) {
         // If input length exceeds maximum allowed digits
         setValid(false);
-        setInput(e.target.value.slice(0, maxLength));
+        setInput(numericInput.slice(0, maxLength));
         errorMessage = isAadharClicked
           ? `Please enter a valid Aadhar number`
           : `Please enter a valid mobile number`;

@@ -53,6 +53,7 @@ const Navbar: React.FC = () => {
     context?.setLoading(false);
     router.push('/');
   }, [context, t, router]);
+
   return (
     <>
       <AppBar position="static" sx={{ background: 'white' }}>

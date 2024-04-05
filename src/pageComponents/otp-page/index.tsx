@@ -76,51 +76,52 @@ const OtpPage: React.FC = () => {
   const handleLogin = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      if (navigator.onLine) {
-        setLoading(true);
-        if (otp.length === Number(otpLength)) {
-          verifyOtp({
-            loginId: router.query.state,
-            password: otp,
-            applicationId: process.env.NEXT_PUBLIC_USER_SERVICE_APP_ID,
-            //@ts-ignore
-          }).then((res: any) => {
-            console.log({ res });
-            setLoading(false);
-            if (res.params.status === 'Success') {
-              let expires = new Date();
-              expires.setTime(
-                expires.getTime() +
-                  res.result.data.user.tokenExpirationInstant * 1000
-              );
-              removeCookie('access_token');
-              setCookie('access_token', res.result.data.user.token, {
-                path: '/',
-                expires,
-              });
-              const phoneNumber = router.query.state;
-              // @ts-ignore
-              localStorage.setItem('phoneNumber', phoneNumber);
-              const decodedToken = jwt_decode(
-                res.result.data.user.token
-              );
+      if( otp.length === Number(otpLength)){
+        if (navigator.onLine) {
+          setLoading(true);
+            verifyOtp({
+              loginId: router.query.state,
+              password: otp,
+              applicationId: process.env.NEXT_PUBLIC_USER_SERVICE_APP_ID,
               //@ts-ignore
-              localStorage.setItem('userID', decodedToken?.sub);
-              localStorage.setItem('auth', res.result.data.user.token);
-              // @ts-ignore
-              // setUserId(analytics, localStorage.getItem("userID"));
-
-              setTimeout(() => {
-                router.push('/');
-              }, 10);
-            } else {
-              toast.error(`${t("message.invalid_otp")}`);
-            }
-          });
+            }).then((res: any) => {
+              console.log({ res });
+              setLoading(false);
+              if (res.params.status === 'Success') {
+                let expires = new Date();
+                expires.setTime(
+                  expires.getTime() +
+                    res.result.data.user.tokenExpirationInstant * 1000
+                );
+                removeCookie('access_token');
+                setCookie('access_token', res.result.data.user.token, {
+                  path: '/',
+                  expires,
+                });
+                const phoneNumber = router.query.state;
+                // @ts-ignore
+                localStorage.setItem('phoneNumber', phoneNumber);
+                const decodedToken = jwt_decode(
+                  res.result.data.user.token
+                );
+                //@ts-ignore
+                localStorage.setItem('userID', decodedToken?.sub);
+                localStorage.setItem('auth', res.result.data.user.token);
+                // @ts-ignore
+                // setUserId(analytics, localStorage.getItem("userID"));
+                setTimeout(() => {
+                  router.push('/');
+                }, 10);
+              } else {
+                toast.error(`${t("message.invalid_otp")}`);
+              }
+            });
+          
+        } else {
+          toast.error(`${t("label.no_internet")}`);
         }
-      } else {
-        toast.error(`${t("label.no_internet")}`);
       }
+      
     },
     [otp.length]
   );
