@@ -54,8 +54,7 @@ const Navbar: React.FC = () => {
     router.push('/');
   }, [context, t, router]);
 
-  // Manually set isAuthenticated to true to debug for the navbar error.
-  // const isAuthenticated = true;
+
 
   return (
     <>
