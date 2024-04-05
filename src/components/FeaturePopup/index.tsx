@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import styles from './styles.module.css';
-import { useConfig } from '../../hooks/useConfig';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
 
 function FeaturePopup() {
   const [popupData, setPopupData] = useState<any>(null);
   const [dbExists, setDbExists] = useState(false);
+  const theme = useColorPalates();
 
   useEffect(() => {
     // Open IndexedDB database
@@ -81,12 +82,9 @@ request.onsuccess = (event: any) => {
   if (!popupData) {
     return null;
   }
- const config = useConfig('theme','primaryColor');
-  const primaryColor = useMemo(() => {
-    return config?.value;
-  }, [config]);
+  
   return (
-    <div className={styles.popup} style={{backgroundColor: primaryColor}}>
+    <div className={styles.popup} style={{ backgroundColor: theme?.primary?.main}}>
       <h2>{popupData.title}</h2>
       <p>{popupData.description}</p>
       <button onClick={handleClose}>Close</button>
