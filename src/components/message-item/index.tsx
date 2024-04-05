@@ -25,7 +25,7 @@ import SpeakerPauseIcon from './assets/speakerPause.svg';
 import MsgThumbsUp from './assets/msg-thumbs-up';
 import MsgThumbsDown from './assets/msg-thumbs-down';
 import { MessageItemPropType } from './index.d';
-const jsonToTable = require('json-to-table');
+import { JsonToTable } from '../json-to-table';
 import moment from 'moment';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
@@ -177,24 +177,27 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   console.log('here', content);
 
-  const handleAudio = useCallback((url: any) => {
-    // console.log(url)
-    if (!url) {
-      if (audioFetched) toast.error('No audio');
-      return;
-    }
-    context?.playAudio(url, content);
-    // Write logic for handling audio here
-  }, [audioFetched, content, context?.playAudio]);
+  const handleAudio = useCallback(
+    (url: any) => {
+      // console.log(url)
+      if (!url) {
+        if (audioFetched) toast.error('No audio');
+        return;
+      }
+      context?.playAudio(url, content);
+      // Write logic for handling audio here
+    },
+    [audioFetched, content, context?.playAudio]
+  );
 
-  const downloadAudio = useCallback(()=>{
+  const downloadAudio = useCallback(() => {
     const fetchAudio = async (text: string) => {
       try {
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/text-to-speech`,
           {
             text: text,
-            language: context?.locale
+            language: context?.locale,
           }
         );
         setAudioFetched(true);
@@ -221,17 +224,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         if (audioUrl) {
           content.data.audio_url = audioUrl;
           handleAudio(audioUrl);
-        } 
+        }
       }
     };
 
-     if (content?.data?.audio_url) {
-        handleAudio(content.data.audio_url);
-      } else {
-        fetchData();
-      }
-     
-  },[handleAudio, content?.data, content?.text, t])
+    if (content?.data?.audio_url) {
+      handleAudio(content.data.audio_url);
+    } else {
+      fetchData();
+    }
+  }, [handleAudio, content?.data, content?.text, t]);
 
   switch (type) {
     case 'loader':
@@ -354,13 +356,25 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           border: `1px solid ${secondaryColor}`,
                         }
                       }>
-                        {context?.clickedAudioUrl === content?.data?.audio_url ? (
-                      <Image src={!context?.audioPlaying
+                      {context?.clickedAudioUrl === content?.data?.audio_url ? (
+                        <Image
+                          src={
+                            !context?.audioPlaying
                               ? SpeakerIcon
-                              : SpeakerPauseIcon} width={!context?.audioPlaying ? 15 : 40} height={!context?.audioPlaying ? 15 : 40} alt="" />) :
-                              (
-                                <Image src={SpeakerIcon} width={15} height={15} alt="" />
-                              )}
+                              : SpeakerPauseIcon
+                          }
+                          width={!context?.audioPlaying ? 15 : 40}
+                          height={!context?.audioPlaying ? 15 : 40}
+                          alt=""
+                        />
+                      ) : (
+                        <Image
+                          src={SpeakerIcon}
+                          width={15}
+                          height={15}
+                          alt=""
+                        />
+                      )}
 
                       <p
                         style={{
@@ -372,7 +386,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           marginRight: '1px',
                           padding: '0 5px',
                         }}>
-                         {t('message.speaker')}
+                        {t('message.speaker')}
                       </p>
                     </div>
                   </div>
@@ -591,7 +605,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             }></div>
           <Bubble type="text">
             <div className={styles.tableContainer}>
-              {jsonToTable(JSON.parse(content?.text)?.table)}
+              {<JsonToTable json={JSON.parse(content?.text)?.table} />}
             </div>
             <span
               style={{

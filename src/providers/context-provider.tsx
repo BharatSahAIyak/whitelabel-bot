@@ -645,7 +645,7 @@ const ContextProvider: FC<{
     }
     timer = setTimeout(() => {
       if (loading) {
-        toast.loading('message.taking_longer', { duration: 3000 });
+        toast.loading(t('message.taking_longer'), { duration: 3000 });
       }
       secondTimer = setTimeout(async () => {
         fetchIsDown();
