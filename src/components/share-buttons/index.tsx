@@ -12,7 +12,7 @@ import { CircularProgress, Divider } from '@mui/material';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
 const ShareButtons = () => {
-  const config = useConfig('component', 'chatUI');
+  const config = useConfig('component', 'share-buttons');
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
     return theme?.primary?.light;
