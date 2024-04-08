@@ -94,6 +94,7 @@ const OtpPage: React.FC = () => {
                     res.result.data.user.tokenExpirationInstant * 1000
                 );
                 removeCookie('access_token');
+                
                 setCookie('access_token', res.result.data.user.token, {
                   path: '/',
                   expires,
