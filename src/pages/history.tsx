@@ -10,7 +10,7 @@ const History: NextPage = () => {
   return (
     <React.Fragment>
       <Head>
-        <title>{t("label.title")}</title>
+        <title>{t("label.tab_title")}</title>
         <link rel="icon" href={config?.logo} />
         <meta name="description" content="My page description" />
       </Head>
