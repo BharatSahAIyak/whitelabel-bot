@@ -141,7 +141,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 if (optionDisabled) {
                   toast.error(`${t('message.cannot_answer_again')}`);
                 } else {
-                  context?.sendMessage(choice?.text);
+                  context?.sendMessage(choice?.key);
                   setOptionDisabled(true);
                 }
               }}>
