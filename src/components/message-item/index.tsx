@@ -602,6 +602,15 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               content?.data?.position === 'right'
                 ? styles.messageTriangleRight
                 : styles.messageTriangleLeft
+            }
+            style={
+              content?.data?.position === 'right'
+                ? {
+                    borderColor: `${secondaryColor} transparent transparent transparent`,
+                  }
+                : {
+                    borderColor: `${contrastText} transparent transparent transparent`,
+                  }
             }></div>
           <Bubble type="text">
             <div className={styles.tableContainer}>
@@ -613,13 +622,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 fontSize: '1rem',
                 color:
                   content?.data?.position === 'right'
-                    ? secondaryColor
-                    : contrastText,
+                    ? contrastText
+                    : secondaryColor,
               }}>
               {`\n` +
-                JSON.parse(content?.text)?.generalAdvice +
+                JSON.parse(content?.text)?.generalAdvice || "" +
                 `\n\n` +
-                JSON.parse(content?.text)?.buttonDescription}
+                JSON.parse(content?.text)?.buttonDescription || ""}
               {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
               })}
