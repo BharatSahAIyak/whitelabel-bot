@@ -324,7 +324,7 @@ const HomePage: NextPage = () => {
                       <div
                         className={styles.imgBtn}
                         onClick={() => {
-                          toast('Coming Soon!');
+                          sendMessage(t('Guided: pest'));
                         }}>
                         <p>{t('label.plant_protection')}</p>
                         <img
