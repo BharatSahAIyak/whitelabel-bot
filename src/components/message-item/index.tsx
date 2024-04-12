@@ -612,7 +612,17 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     borderColor: `${contrastText} transparent transparent transparent`,
                   }
             }></div>
-          <Bubble type="text">
+          <Bubble type="text" style={
+              content?.data?.position === 'right'
+                ? {
+                    background: secondaryColor,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                  }
+                : {
+                    background: contrastText,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                  }
+            }>
             <div className={styles.tableContainer}>
               {<JsonToTable json={JSON.parse(content?.text)?.table} />}
             </div>
