@@ -355,7 +355,7 @@ const ContextProvider: FC<{
   //           actorId: localStorage.getItem('userID') || '',
   //           actorType: 'user',
   //           env: 'prod',
-  //           eventId: 'E037',
+  //           eventId: 'E033',
   //           event: 'messageQuery',
   //           subEvent: 'messageReceived',
   //           os:
@@ -542,7 +542,7 @@ const ContextProvider: FC<{
             actorId: localStorage.getItem('userID') || '',
             actorType: 'user',
             env: 'prod',
-            eventId: 'E036',
+            eventId: 'E032',
             event: 'messageQuery',
             subEvent: 'messageSent',
             os:
