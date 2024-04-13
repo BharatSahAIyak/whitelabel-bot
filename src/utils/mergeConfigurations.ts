@@ -30,7 +30,7 @@ const fetchOverrideConfig = async () => {
     let deploymentIdConfig = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `${process.env.NEXT_PUBLIC_PWA_DEPLOYER_URL}/deployment/${process.env.NEXT_PUBLIC_BOT_ID}`,
+      url: `${process.env.NEXT_PUBLIC_CONFIG_BASE_URL}`,
       headers: {
         'accept': 'application/json'
       }
