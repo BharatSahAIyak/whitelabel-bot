@@ -116,34 +116,55 @@ const HistoryPage: FC = () => {
           (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
         );
         console.log({ sortedConversations });
-        const historyList = map(sortedConversations, (chatItem: any) => ({
-          id: chatItem?.messageId,
-          label:
-            (chatItem?.payload?.text.replace(/<end\/>/g, '') || '').split(' ')
-              .length > 12
-              ? (chatItem?.payload?.text.replace(/<end\/>/g, '') || '')
-                  .split(' ')
-                  .slice(0, 12)
-                  .join(' ') + '...'
-              : chatItem?.payload?.text.replace(/<end\/>/g, '') || '',
-          conversationId: chatItem?.channelMessageId,
-          userId: chatItem?.from,
-          secondaryLabel: moment(chatItem?.timestamp).format(
-            'hh:mm A DD/MM/YYYY'
-          ),
-          icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
-          secondaryAction: (
-            <IconButton edge="end" aria-label="comments">
-              {config?.allowDelete && (
-                <DeleteOutlineIcon
-                  onClick={() => deleteConversation(chatItem?.conversationId)}
-                />
-              )}
-            </IconButton>
-          ),
-          onClick: handleClick,
-          isDivider: true,
-        }));
+        const historyList = map(sortedConversations, (chatItem: any) => {
+          const text = chatItem?.payload?.text.replace(/<end\/>/g, '') || '';
+          let label;
+          if (text.startsWith('{') && text.endsWith('}')) {
+            try {
+              const parsedText = JSON.parse(text);
+              const generalAdvice = parsedText?.generalAdvice;
+              if (generalAdvice) {
+                label =
+                  generalAdvice?.split(' ').slice(0, 12).join(' ') +
+                  (generalAdvice?.split(' ').length > 12 ? '...' : '');
+              } else {
+                label =
+                  text.split(' ').slice(0, 12).join(' ') +
+                  (text.split(' ').length > 12 ? '...' : '');
+              }
+            } catch (error) {
+              label =
+                text.split(' ').slice(0, 12).join(' ') +
+                (text.split(' ').length > 12 ? '...' : '');
+            }
+          } else {
+            label =
+              text.split(' ').slice(0, 12).join(' ') +
+              (text.split(' ').length > 12 ? '...' : '');
+          }
+
+          return {
+            id: chatItem?.messageId,
+            label: label,
+            conversationId: chatItem?.channelMessageId,
+            userId: chatItem?.from,
+            secondaryLabel: moment(chatItem?.timestamp).format(
+              'hh:mm A DD/MM/YYYY'
+            ),
+            icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
+            secondaryAction: (
+              <IconButton edge="end" aria-label="comments">
+                {config?.allowDelete && (
+                  <DeleteOutlineIcon
+                    onClick={() => deleteConversation(chatItem?.conversationId)}
+                  />
+                )}
+              </IconButton>
+            ),
+            onClick: handleClick,
+            isDivider: true,
+          };
+        });
         //@ts-ignore
         setConversations(historyList);
         setIsFetching(false);
