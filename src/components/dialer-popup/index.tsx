@@ -1,4 +1,11 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import crossIcon from '../../assets/icons/crossIcon.svg';
 import styles from './index.module.css';
 import Image from 'next/image';
@@ -16,33 +23,25 @@ const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
   const context = useContext(AppContext);
   const [review, setReview] = useState('');
   const inputRef = useRef(null);
+  const negativeFeedbackPayload = {
+    from: localStorage.getItem('phoneNumber'),
+    appId: 'AKAI_App_Id',
+    channel: 'AKAI',
+    userId: localStorage.getItem('userID'),
+    messageType: 'FEEDBACK_NEGATIVE',
+    replyId: context?.currentQuery,
+    conversationId: sessionStorage.getItem('conversationId'),
+    botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+  };
 
   const submitReview = useCallback(
     (r: string) => {
-      axios
-        .post(
-          `${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback/${context?.currentQuery}`,
-          {
-            feedback: r,
-          },
-          {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('auth')}`,
-            },
-          }
-        )
-        .then((response) => {
-          toast.success(reviewSubmitted);
-          context?.setCurrentQuery("")
-          setShowDialerPopup(false);
-        })
-        .catch((error) => {
-          toast.error(reviewSubmitError);
-          //@ts-ignore
-          logEvent(analytics, 'console_error', {
-            error_message: error.message,
-          });
-        });
+      context?.newSocket.sendMessage({
+        text: r,
+        payload: negativeFeedbackPayload
+      });
+      context?.setCurrentQuery('');
+      setShowDialerPopup(false);
     },
     [reviewSubmitError, reviewSubmitted, setShowDialerPopup]
   );
@@ -63,12 +62,17 @@ const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
     <div className={styles.main}>
       <div
         className={styles.crossIconBox}
-        onClick={() => { context?.setCurrentQuery(""); setShowDialerPopup(false) }}>
+        onClick={() => {
+          context?.setCurrentQuery('');
+          setShowDialerPopup(false);
+          context?.newSocket.sendMessage({
+            payload: negativeFeedbackPayload
+          });
+        }}>
         <Image src={crossIcon} alt="crossIcon" layout="responsive" />
       </div>
       <p>{t('label.comment')}</p>
       <div className={styles.dialerBox}>
-        
         <textarea
           ref={inputRef}
           value={review}

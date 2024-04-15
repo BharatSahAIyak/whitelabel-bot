@@ -53,10 +53,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     return theme?.primary?.contrastText;
   }, [theme?.primary?.contrastText]);
 
-  const getToastMessage = (t: any, reaction: number): string => {
-    if (reaction === 1) return t('toast.reaction_like');
-    return t('toast.reaction_reset');
-  };
+  // const getToastMessage = (t: any, reaction: number): string => {
+  //   if (reaction === 1) return t('toast.reaction_like');
+  //   return t('toast.reaction_reset');
+  // };
 
   useEffect(() => {
     setReaction(message?.content?.data?.reaction);
@@ -64,28 +64,23 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   const onLikeDislike = useCallback(
     ({ value, msgId }: { value: 0 | 1 | -1; msgId: string }) => {
-      let url = getReactionUrl({ msgId, reaction: value });
-
-      axios
-        .get(url, {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem('auth')}`,
-          },
-        })
-        .then((res: any) => {
-          if (value === -1) {
-            context?.setCurrentQuery(msgId);
-            context?.setShowDialerPopup(true);
-          } else {
-            toast.success(`${getToastMessage(t, value)}`);
+      if(value === 1) {
+        context?.newSocket.sendMessage({
+          payload: {
+            from: localStorage.getItem('phoneNumber'),
+            appId: 'AKAI_App_Id',
+            channel: 'AKAI',
+            userId: localStorage.getItem('userID'),
+            messageType: "FEEDBACK_POSITIVE",
+            replyId: msgId,
+            conversationId: sessionStorage.getItem('conversationId'),
+            botId: process.env.NEXT_PUBLIC_BOT_ID || ''
           }
         })
-        .catch((error: any) => {
-          //@ts-ignore
-          logEvent(analytics, 'console_error', {
-            error_message: error.message,
-          });
-        });
+      }else if (value === -1) {
+        context?.setCurrentQuery(msgId);
+        context?.setShowDialerPopup(true);
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [t]
@@ -94,6 +89,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const feedbackHandler = useCallback(
     ({ like, msgId }: { like: 0 | 1 | -1; msgId: string }) => {
       console.log('vbnm:', { reaction, like });
+      // Don't let user change reaction once given
+      if(reaction !== 0) return;
       if (reaction === 0) {
         setReaction(like);
         return onLikeDislike({ value: like, msgId });
@@ -108,10 +105,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         setReaction(1);
         return onLikeDislike({ value: 1, msgId });
       }
-
-      console.log('vbnm triggered');
-      onLikeDislike({ value: 0, msgId });
-      setReaction(0);
     },
     [onLikeDislike, reaction]
   );

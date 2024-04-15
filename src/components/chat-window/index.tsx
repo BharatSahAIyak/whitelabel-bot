@@ -160,7 +160,7 @@ const ChatUiWindow: React.FC = () => {
           disableSend={isMsgReceiving}
           //@ts-ignore
           translation={t}
-          showTransliteration={config?.allowTransliteration}
+          showTransliteration={config?.allowTransliteration  && localStorage.getItem('locale') === config?.transliterationOutputLanguage}
           transliterationConfig={{
             transliterationApi: config?.transliterationApi + '/transliterate',
             transliterationInputLanguage: config?.transliterationInputLanguage,
