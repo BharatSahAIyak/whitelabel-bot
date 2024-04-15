@@ -297,11 +297,11 @@ const ContextProvider: FC<{
                 updatedMessages[existingMsgIndex].isEnd = true;
               }
               updatedMessages[existingMsgIndex].text +=
-                word.replace('<end/>', '') + ' ';
+                word.replace(/<end\/>/g, "") + ' ';
             } else {
               // If the message doesn't exist, create a new one
               const newMsg = {
-                text: word.replace('<end/>', '') + ' ',
+                text: word.replace(/<end\/>/g, "") + ' ',
                 isEnd: word.endsWith('<end/>') ? true : false,
                 choices: msg?.payload?.buttonChoices,
                 position: 'left',
@@ -436,10 +436,12 @@ const ContextProvider: FC<{
       setIsMsgReceiving(true);
 
       console.log('my mssg:', text);
+      const messageId = uuidv4();
       newSocket.sendMessage({
         text: text?.replace('&', '%26'),
         to: localStorage.getItem('userID'),
         payload: {
+          messageId: messageId,
           from: localStorage.getItem('phoneNumber'),
           appId: 'AKAI_App_Id',
           channel: 'AKAI',
@@ -454,7 +456,6 @@ const ContextProvider: FC<{
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
         },
       });
-      const messageId = uuidv4();
 
       setStartTime(Date.now());
       if (isVisibile)

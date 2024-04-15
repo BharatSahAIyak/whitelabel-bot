@@ -50,13 +50,6 @@ const ChatUiWindow: React.FC = () => {
           console.log('ghji:', chatHistory);
           console.log('history:', chatHistory.data);
 
-          const modifiedChatHistory = chatHistory.data.map((chat: any) => {
-            if (!chat?.payload?.text) {
-              chat.payload.text = t('message.no_signal');
-            }
-            return chat;
-          });
-
           const normalizedChats = normalizedChat(chatHistory?.data);
           console.log('normalized chats', normalizedChats);
           if (normalizedChats.length > 0) {
@@ -81,7 +74,7 @@ const ChatUiWindow: React.FC = () => {
           conversationId === 'null' || item?.channelMessageId === conversationId
       )
       .map((item: any) => ({
-            text: item.payload.text,
+            text: item.payload.text.replace(/<end\/>/g, ""),
             position: item.to === 'admin' ? 'right' : 'left',
             timestamp: item.timestamp,
             reaction: item?.feedback?.type === 'FEEDBACK_POSITIVE' ? 1 : item?.feedback?.type === 'FEEDBACK_NEGATIVE' ? -1 : 0,
