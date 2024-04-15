@@ -244,7 +244,7 @@ const ContextProvider: FC<{
   }, []);
 
   useEffect(() => {
-    // if (localStorage.getItem('userID') && localStorage.getItem('auth')) {
+    if (localStorage.getItem('userID')) {
     setNewSocket(
       new UCI(
         URL,
@@ -267,7 +267,7 @@ const ContextProvider: FC<{
         onMessageReceived
       )
     );
-    // }
+    }
     function cleanup() {
       if (newSocket)
         newSocket.onDisconnect(() => {
@@ -275,7 +275,8 @@ const ContextProvider: FC<{
         });
     }
     return cleanup;
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localStorage.getItem('userID')]);
 
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
