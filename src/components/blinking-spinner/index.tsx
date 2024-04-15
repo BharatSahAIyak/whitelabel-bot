@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import styles from './index.module.css';
-import { useConfig } from '../../hooks/useConfig';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
 const BlinkingSpinner = () => {
-  const config = useConfig('theme', 'secondaryColor');
+  const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
-    return config?.value;
-  }, [config]);
+    return theme?.primary?.light;
+  }, [theme?.primary?.light]);
   
   return (
     <p

@@ -33,7 +33,7 @@ import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
 import axios from 'axios';
 import saveTelemetryEvent from '../../utils/telemetry';
-// import BlinkingSpinner from '../blinking-spinner/index';
+import BlinkingSpinner from '../blinking-spinner/index';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
@@ -319,12 +319,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     : secondaryColor,
               }}>
               {content?.text}{' '}
-              {/* {
+              {
                 content?.data?.position === 'right'
                   ? null
                   : !content?.data?.isEnd
                 && <BlinkingSpinner />
-              } */}
+              }
             </span>
             {getLists({
               choices:
@@ -374,14 +374,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       className={styles.msgSpeaker}
                       onClick={downloadAudio}
                       style={
-                        // !content?.data?.isEnd
-                        //   ? {
-                        //       pointerEvents: 'none',
-                        //       filter: 'grayscale(100%)',
-                        //       opacity: '0.5',
-                        //       border: `1px solid ${secondaryColor}`,
-                        //     }
-                        //   :
+                        !content?.data?.isEnd
+                          ? {
+                              pointerEvents: 'none',
+                              filter: 'grayscale(100%)',
+                              opacity: '0.5',
+                              border: `1px solid ${secondaryColor}`,
+                            }
+                          :
                         {
                           pointerEvents: 'auto',
                           opacity: '1',

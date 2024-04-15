@@ -32,6 +32,10 @@ const Navbar: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
+    if (context?.isMsgReceiving) {
+      toast.error(`${t('error.wait_new_chat')}`);
+      return;
+    }
     setSidebarOpen(!isSidebarOpen);
   };
 

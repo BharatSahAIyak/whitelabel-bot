@@ -98,7 +98,7 @@ const HistoryPage: FC = () => {
                 console.log({ sortedConversations });
                 const historyList = map(sortedConversations, (chatItem: any) => ({
                     id: chatItem?.messageId,
-                    label: chatItem?.payload?.text,
+                    label: chatItem?.payload?.text.replace(/<end\/>/g, ""),
                     conversationId: chatItem?.channelMessageId,
                     userId: chatItem?.from,
                     secondaryLabel: moment(chatItem?.timestamp).format("hh:mm A DD/MM/YYYY"),

@@ -78,11 +78,11 @@ const ContextProvider: FC<{
 
   useEffect(() => {
     //@ts-ignore
-    if (config?.component?.launchPage && config?.component?.launcPage?.showLaunchPage) {
+    if (config?.component?.launchPage && config?.component?.launchPage?.showLaunchPage) {
       setShowLaunchPage(true);
-      setTimeout(() => {
-        setShowLaunchPage(false);;
-      }, 2000)
+      // setTimeout(() => {
+      //   setShowLaunchPage(false);;
+      // }, 2000)
     }
   }, [config])
 
@@ -296,7 +296,7 @@ const ContextProvider: FC<{
               if (word.endsWith('<end/>')) {
                 updatedMessages[existingMsgIndex].isEnd = true;
               }
-              updatedMessages[existingMsgIndex].text +=
+              updatedMessages[existingMsgIndex].text =
                 word.replace(/<end\/>/g, "") + ' ';
             } else {
               // If the message doesn't exist, create a new one
@@ -321,8 +321,8 @@ const ContextProvider: FC<{
             }
             return updatedMessages;
           });
-          setIsMsgReceiving(false);
           if (msg.payload.text.endsWith('<end/>')) {
+            setIsMsgReceiving(false);
             setLastMsgId(msg?.messageId.Id);
             setEndTime(Date.now());
           }
