@@ -175,14 +175,6 @@ const ContextProvider: FC<{
         setAudioElement(null);
         setAudioPlaying(false);
       });
-      axios
-        .get(
-          `${process.env.NEXT_PUBLIC_BFF_API_URL}/incrementaudioused/${content?.data?.messageId}`
-        )
-        .then((res) => { })
-        .catch((err) => {
-          console.log(err);
-        });
       audio
         .play()
         .then(() => {
@@ -422,29 +414,6 @@ const ContextProvider: FC<{
     },
     [isOnline, updateMsgState]
   );
-
-  useEffect(() => {
-    if (!lastMsgId) return;
-    const timeDiff = endTime - startTime;
-    console.log('time taken', timeDiff);
-    axios
-      .post(
-        `${process.env.NEXT_PUBLIC_BFF_API_URL}/timetakenatapplication/${lastMsgId}`,
-        {
-          data: {
-            timeTaken: timeDiff,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endTime]);
-
 
   console.log("chu:",{config})
   //@ts-ignore

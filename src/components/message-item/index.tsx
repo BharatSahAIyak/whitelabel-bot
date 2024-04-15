@@ -32,7 +32,6 @@ import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
 import axios from 'axios';
-import { getReactionUrl } from '../../utils/getUrls';
 import saveTelemetryEvent from '../../utils/telemetry';
 // import BlinkingSpinner from '../blinking-spinner/index';
 
