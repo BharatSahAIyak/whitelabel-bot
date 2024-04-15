@@ -122,7 +122,7 @@ export const Sidebar = ({
 <button
                         
                          
-                          className={`Sidemenu_button ${ activeLanguage==='en' ? 'active' : ''
+                          className={`Sidemenu_button ${ activeLanguage === config?.languageCode1 ? 'active' : ''
                             }`}
                           style={{
                             borderTopLeftRadius:  '10px',
@@ -133,7 +133,7 @@ export const Sidebar = ({
                             borderBottomRightRadius:
                                '0',
                             backgroundColor:
-                               activeLanguage ==='en'
+                               activeLanguage === config?.languageCode1
                                 ? theme.primary.light
                                 : '#FFFFFF',
                             border: 'none',
@@ -141,8 +141,8 @@ export const Sidebar = ({
                             height: '30px',
                             padding: '5px',
                           }}
-                          onClick={() => handleLanguageClick('en')}>
-                         ENG
+                          onClick={() => handleLanguageClick(config?.languageCode1)}>
+                         {config?.languageName1}
                         </button>
 
                         <button
@@ -153,9 +153,7 @@ export const Sidebar = ({
                           style={{
                             borderTopLeftRadius:  '0',
                             borderBottomLeftRadius: '0',
-                            borderTopRightRadius:
-                          
-                                 '10px',
+                            borderTopRightRadius: '10px',
                             borderBottomRightRadius: '10px',
                             backgroundColor:
                             config?.
