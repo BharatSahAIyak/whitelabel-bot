@@ -15,7 +15,7 @@ const saveTelemetryEvent = async (
     const telemetryData = {
       generator,
       version,
-      timestamp: new Date().getTime(),
+      timestamp: Math.floor(new Date().getTime() / 1000),
       actorId: localStorage.getItem('userID') || '',
       actorType: 'user',
       env: process.env.NEXT_PUBLIC_ENV === 'production' ? 'prod' : 'dev',
