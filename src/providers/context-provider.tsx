@@ -333,34 +333,33 @@ const ContextProvider: FC<{
     []
   );
 
-
-  // TODO: add message received telemetry once confirmed when full message is received 
-  // useEffect(() => {
-  //   const postTelemetry = async () => {
-  //     console.log('MESSAGE:', messages);
-  //     try {
-  //       await saveTelemetryEvent(
-  //           '0.1',
-  //           'E033',
-  //           'messageQuery',
-  //           'messageReceived',
-  //           {
-  //             botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-  //             orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-  //             userId: localStorage.getItem('userID') || '',
-  //             phoneNumber: localStorage.getItem('phoneNumber') || '',
-  //             conversationId: sessionStorage.getItem('conversationId') || '',
-  //             messageId: messages[messages.length - 1]?.messageId,
-  //             text: messages[messages.length - 1]?.text,
-  //             createdAt: Math.floor(new Date().getTime() / 1000),
-  //             timeTaken: endTime - startTime,
-  //           });
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-  //   postTelemetry();
-  // }, [endTime]);
+  useEffect(() => {
+    const postTelemetry = async () => {
+      console.log('MESSAGE:', messages);
+      if (messages.length > 0)
+        try {
+          await saveTelemetryEvent(
+              '0.1',
+              'E033',
+              'messageQuery',
+              'messageReceived',
+              {
+                botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+                orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+                userId: localStorage.getItem('userID') || '',
+                phoneNumber: localStorage.getItem('phoneNumber') || '',
+                conversationId: sessionStorage.getItem('conversationId') || '',
+                messageId: messages[messages.length - 1]?.messageId,
+                text: messages[messages.length - 1]?.text,
+                createdAt: Math.floor(new Date().getTime() / 1000),
+                timeTaken: endTime - startTime,
+              });
+        } catch (err) {
+          console.log(err);
+        }
+    };
+    postTelemetry();
+  }, [endTime]);
 
   console.log('erty:', { conversationId });
 
@@ -508,21 +507,21 @@ const ContextProvider: FC<{
   );
 
   const fetchIsDown = useCallback(async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_BFF_API_URL}/health/${flags?.health_check_time?.value}`
-      );
-      const status = res.data.status;
-      console.log('hie', status);
-      if (status === 'OK') {
-        setIsDown(false);
-      } else {
-        setIsDown(true);
-        console.log('Server status is not OK');
-      }
-    } catch (error: any) {
-      console.error(error);
-    }
+    // try {
+    //   const res = await axios.get(
+    //     `${process.env.NEXT_PUBLIC_BFF_API_URL}/health/${flags?.health_check_time?.value}`
+    //   );
+    //   const status = res.data.status;
+    //   console.log('hie', status);
+    //   if (status === 'OK') {
+    //     setIsDown(false);
+    //   } else {
+    //     setIsDown(true);
+    //     console.log('Server status is not OK');
+    //   }
+    // } catch (error: any) {
+    //   console.error(error);
+    // }
   }, [flags?.health_check_time?.value]);
 
   // Remove ASR ID from session storage on conversation change

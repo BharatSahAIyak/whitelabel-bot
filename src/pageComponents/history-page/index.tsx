@@ -81,27 +81,27 @@ const HistoryPage: FC = () => {
     const fetchHistory = () => {
         setIsFetching(true);
         axios
-            .get(`${process.env.NEXT_PUBLIC_BFF_API_URL}/user/conversations/all`, {
+            .get(`${process.env.NEXT_PUBLIC_BFF_API_URL}/history/conversations?userId=${localStorage.getItem('userID')}`, {
                 headers: {
-                    authorization: `Bearer ${localStorage.getItem('auth')}`,
+                    botId: process.env.NEXT_PUBLIC_BOT_ID || ''
                 },
             })
             .then((res) => {
-                console.log({ res })
+                console.log('All chat history:',{ res })
                 const sortedConversations = _.filter(
                     res?.data,
-                    (conv) => conv?.conversationId !== null
+                    (conv) => conv?.channelMessageId !== null
                 ).sort(
                     //@ts-ignore
-                    (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+                    (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
                 );
                 console.log({ sortedConversations });
-                const historyList = map(sortedConversations, (chatItem: ChatItem) => ({
-                    id: chatItem?.id,
-                    label: chatItem?.query,
-                    conversationId: chatItem?.conversationId,
-                    userId: chatItem?.userId,
-                    secondaryLabel: moment(chatItem?.updatedAt).format("hh:mm A DD/MM/YYYY"),
+                const historyList = map(sortedConversations, (chatItem: any) => ({
+                    id: chatItem?.messageId,
+                    label: chatItem?.payload?.text,
+                    conversationId: chatItem?.channelMessageId,
+                    userId: chatItem?.from,
+                    secondaryLabel: moment(chatItem?.timestamp).format("hh:mm A DD/MM/YYYY"),
                     icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
                     secondaryAction: (
                         <IconButton

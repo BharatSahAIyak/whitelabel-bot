@@ -5,13 +5,13 @@ import { useConfig } from '../../hooks/useConfig';
 import Image from 'next/image';
 
  const LaunchPage:FC<{theme:any,config:any}>=({theme,config})=> {
-  
+  console.log({config})
   return (
     <div className={`${styles.container}`} style={{background: theme?.
       palette?.primary?.main}}>
       <img
         className={styles.loginImage}
-        src={config?.icon}
+        src={config?.logo}
         alt="KrushakOdisha"
         width={220}
         height={233}    

@@ -23,7 +23,7 @@ const ShareButtons = () => {
   const [shareLoader, setShareLoader] = useState(false);
   const [downloadLoader, setDownloadLoader] = useState(false);
 
-  const downloadChat = async (type: string) => {
+  const downloadChat = async () => {
     const url = `${
       process.env.NEXT_PUBLIC_BFF_API_URL
     }/user/chathistory/generate-pdf/${sessionStorage.getItem(
@@ -43,7 +43,7 @@ const ShareButtons = () => {
         setDownloadLoader(true);
       } else setShareLoader(true);
 
-      const response = await downloadChat(type);
+      const response = await downloadChat();
       const pdfUrl = response.data.pdfUrl;
 
       if (!pdfUrl) {

@@ -344,8 +344,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   fontSize: '10px',
                 }}>
                 {moment(
-                  content?.data?.sentTimestamp ||
-                    content?.data?.repliedTimestamp
+                  content?.data?.timestamp
                 ).format('hh:mm A DD/MM/YYYY')}
               </span>
             </div>
@@ -519,8 +518,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     fontSize: '10px',
                   }}>
                   {moment(
-                    content?.data?.sentTimestamp ||
-                      content?.data?.repliedTimestamp
+                    content?.data?.timestamp
                   ).format('hh:mm A DD/MM/YYYY')}
                 </span>
               </div>
@@ -557,8 +555,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     fontSize: '10px',
                   }}>
                   {moment(
-                    content?.data?.sentTimestamp ||
-                      content?.data?.repliedTimestamp
+                    content?.data?.timestamp
                   ).format('hh:mm A DD/MM/YYYY')}
                 </span>
               </div>
@@ -594,8 +591,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     fontSize: '10px',
                   }}>
                   {moment(
-                    content?.data?.sentTimestamp ||
-                      content?.data?.repliedTimestamp
+                    content?.data?.timestamp
                   ).format('hh:mm A DD/MM/YYYY')}
                 </span>
               </div>

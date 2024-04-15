@@ -95,11 +95,11 @@ const ChatItem: React.FC<ChatItemPropsType> = ({
               />
             </div>
           )} */}
-            <div
+            {/* <div
               onClick={deleteConversation}
               className={styles.deleteIconContainer}>
               <Image src={deleteIcon} alt="deleteIcon" layout="responsive" />
-            </div>
+            </div> */}
           </div>
         </div>
       )}
