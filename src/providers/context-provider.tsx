@@ -80,9 +80,9 @@ const ContextProvider: FC<{
     //@ts-ignore
     if (config?.component?.launchPage && config?.component?.launchPage?.showLaunchPage) {
       setShowLaunchPage(true);
-      // setTimeout(() => {
-      //   setShowLaunchPage(false);;
-      // }, 2000)
+      setTimeout(() => {
+        setShowLaunchPage(false);;
+      }, 2000)
     }
   }, [config])
 
