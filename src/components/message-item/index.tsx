@@ -38,7 +38,7 @@ import saveTelemetryEvent from '../../utils/telemetry';
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
-  const [reaction, setReaction] = useState(message?.content?.data?.reaction);
+  const [reaction, setReaction] = useState(message?.content?.data?.reaction?.type);
   const [optionDisabled, setOptionDisabled] = useState(
     message?.content?.data?.optionClicked || false
   );
@@ -90,7 +90,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     ({ like, msgId }: { like: 0 | 1 | -1; msgId: string }) => {
       console.log('vbnm:', { reaction, like });
       // Don't let user change reaction once given
-      if(reaction !== 0) return;
+      if(reaction !== 0) return toast.error('Cannot give feedback again');
       if (reaction === 0) {
         setReaction(like);
         return onLikeDislike({ value: like, msgId });
@@ -209,7 +209,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             phoneNumber: localStorage.getItem('phoneNumber') || '',
             conversationId: sessionStorage.getItem('conversationId') || '',
             text: text,
-            msgId: content?.data?.messageId,
+            messageId: content?.data?.messageId,
             timeTaken: latency,
             createdAt: Math.floor(startTime / 1000),
             audioUrl: response?.data?.url || 'No audio URL'

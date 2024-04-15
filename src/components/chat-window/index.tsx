@@ -84,7 +84,7 @@ const ChatUiWindow: React.FC = () => {
             text: item.payload.text,
             position: item.to === 'admin' ? 'right' : 'left',
             timestamp: item.timestamp,
-            reaction: item?.feedback || 0,
+            reaction: item?.feedback?.type === 'FEEDBACK_POSITIVE' ? 1 : item?.feedback?.type === 'FEEDBACK_NEGATIVE' ? -1 : 0,
             msgId: item.messageId,
             messageId: item.messageId,
             audio_url: item?.audioURL,
