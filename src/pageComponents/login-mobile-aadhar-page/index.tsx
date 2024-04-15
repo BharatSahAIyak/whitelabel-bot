@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import { useConfig } from "../../hooks/useConfig";
 const LoginMobileAadharPage: React.FC = () => {
   const config = useConfig('component', 'loginMobileAadharPage');
-  const { loginWithAadhaar, showSignUp, showAlternateSignIn, logo, showLogo,showSplitedView, title } = config;
+  const { loginWithAadhaar, showSignUp, showAlternateSignIn, logo, showLogo,showSplitedView } = config;
 
   const t = useLocalization();
   const router = useRouter();
@@ -54,7 +54,7 @@ const LoginMobileAadharPage: React.FC = () => {
         setInput(numericInput.slice(0, maxLength));
       }
 
-      if (numericInput.length > maxLength) {
+      if (numericInput.length !== maxLength) {
         // If input length exceeds maximum allowed digits
         setValid(false);
         setInput(numericInput.slice(0, maxLength));
