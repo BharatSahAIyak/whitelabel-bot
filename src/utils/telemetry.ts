@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const saveTelemetryEvent = async (
-  generator: string,
   version: string,
   eventId: string,
   event: string,
@@ -13,7 +12,7 @@ const saveTelemetryEvent = async (
 
   try {
     const telemetryData = {
-      generator,
+      generator: process.env.NEXT_PUBLIC_BOT_NAME,
       version,
       timestamp: Math.floor(new Date().getTime() / 1000),
       actorId: localStorage.getItem('userID') || '',

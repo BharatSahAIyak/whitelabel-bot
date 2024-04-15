@@ -347,7 +347,6 @@ const ContextProvider: FC<{
   //     console.log('MESSAGE:', messages);
   //     try {
   //       await saveTelemetryEvent(
-  //           'pwa',
   //           '0.1',
   //           'E033',
   //           'messageQuery',
@@ -515,7 +514,6 @@ const ContextProvider: FC<{
         }
       try {
         await saveTelemetryEvent(
-            'pwa',
             '0.1',
             'E032',
             'messageQuery',
