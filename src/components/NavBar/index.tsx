@@ -117,10 +117,9 @@ const Navbar: React.FC = () => {
 
           <div
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              flex: 1,
+              position: 'absolute',
+              left: '50%',
+              transform: 'translateX(-50%)',
             }}>
             {showCenterLogos &&
               centerLogoIcons.map((logo: any) => (
