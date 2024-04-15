@@ -57,7 +57,7 @@ const ContextProvider: FC<{
   const [cookie, setCookie, removeCookie] = useCookies();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [audioElement, setAudioElement] = useState(null);
-  const [audioPlaying, setAudioPlaying] = useState(true);
+  const [audioPlaying, setAudioPlaying] = useState(false);
   const [clickedAudioUrl, setClickedAudioUrl] = useState<string | null>(null);
   const [startTime, setStartTime] = useState(Date.now());
   const [endTime, setEndTime] = useState(Date.now());
