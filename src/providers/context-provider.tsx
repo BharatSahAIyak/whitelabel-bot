@@ -24,6 +24,7 @@ import mergeConfigurations from '../utils/mergeConfigurations';
 import { FullPageLoader } from '../components/fullpage-loader';
 import LaunchPage from '../pageComponents/launch-page';
 import { ThemeContext } from './theme-provider/theme-context';
+import saveTelemetryEvent from '../utils/telemetry';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
 
@@ -341,34 +342,17 @@ const ContextProvider: FC<{
 
 
   // TODO: add message received telemetry once confirmed when full message is received 
-  // const telemetryApi =
-  //   process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
   // useEffect(() => {
   //   const postTelemetry = async () => {
   //     console.log('MESSAGE:', messages);
   //     try {
-  //       await axios.post(telemetryApi, [
-  //         {
-  //           generator: 'pwa',
-  //           version: '1.0',
-  //           timestamp: new Date().getTime(),
-  //           actorId: localStorage.getItem('userID') || '',
-  //           actorType: 'user',
-  //           env: 'prod',
-  //           eventId: 'E033',
-  //           event: 'messageQuery',
-  //           subEvent: 'messageReceived',
-  //           os:
-  //             // @ts-ignore
-  //             window.navigator?.userAgentData?.platform ||
-  //             window.navigator.platform,
-  //           browser: window.navigator.userAgent,
-  //           ip: sessionStorage.getItem('ip') || '',
-  //           // @ts-ignore
-  //           deviceType: window.navigator?.userAgentData?.mobile
-  //             ? 'mobile'
-  //             : 'desktop',
-  //           eventData: {
+  //       await saveTelemetryEvent(
+  //           'pwa',
+  //           '0.1',
+  //           'E033',
+  //           'messageQuery',
+  //           'messageReceived',
+  //           {
   //             botId: process.env.NEXT_PUBLIC_BOT_ID || '',
   //             userId: localStorage.getItem('userID') || '',
   //             phoneNumber: localStorage.getItem('phoneNumber') || '',
@@ -377,9 +361,7 @@ const ContextProvider: FC<{
   //             text: messages[messages.length - 1]?.text,
   //             createdAt: new Date().getTime(),
   //             timeTaken: endTime - startTime,
-  //           },
-  //         },
-  //       ]);
+  //           });
   //     } catch (err) {
   //       console.log(err);
   //     }
@@ -532,44 +514,22 @@ const ContextProvider: FC<{
           sessionStorage.removeItem('asrId');
         }
       try {
-        const telemetryApi =
-          process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
-        await axios.post(telemetryApi, [
-          {
-            generator: 'pwa',
-            version: '1.0',
-            timestamp: new Date().getTime(),
-            actorId: localStorage.getItem('userID') || '',
-            actorType: 'user',
-            env: 'prod',
-            eventId: 'E032',
-            event: 'messageQuery',
-            subEvent: 'messageSent',
-            os:
-              // @ts-ignore
-              window.navigator?.userAgentData?.platform ||
-              window.navigator.platform,
-            browser: window.navigator.userAgent,
-            ip: sessionStorage.getItem('ip') || '',
-            // @ts-ignore
-            deviceType: window.navigator?.userAgentData?.mobile
-              ? 'mobile'
-              : 'desktop',
-            eventData: {
+        await saveTelemetryEvent(
+            'pwa',
+            '0.1',
+            'E032',
+            'messageQuery',
+            'messageSent',
+            {
               botId: process.env.NEXT_PUBLIC_BOT_ID || '',
               userId: localStorage.getItem('userID') || '',
               phoneNumber: localStorage.getItem('phoneNumber') || '',
               conversationId: sessionStorage.getItem('conversationId') || '',
               messageId: messageId,
               text: text,
-              createdAt: new Date().getTime(),
-            },
-          },
-        ], {
-          headers: {
-            orgId: process.env.NEXT_PUBLIC_ORG_ID || ''
-          }
-        });
+              createdAt: new Date().getTime()
+            }
+          );
       } catch (err) {
         console.error(err);
       }

@@ -49,7 +49,7 @@ const HomePage: NextPage = () => {
   };
 
   useEffect(() => {
-    if (inputMsg.length > 0 && botConfig?.allowTransliteration) {
+    if (inputMsg.length > 0 && botConfig?.allowTransliteration && localStorage.getItem('locale') === botConfig?.transliterationOutputLanguage) {
       if (suggestionClicked) {
         setSuggestionClicked(false);
         return;
@@ -66,8 +66,8 @@ const HomePage: NextPage = () => {
 
       if (!wordUnderCursor) return;
       let data = JSON.stringify({
-        inputLanguage: botConfig?.transliterationInputLanguage || 'en',
-        outputLanguage: botConfig?.transliterationOutputLanguage || 'or',
+        inputLanguage: botConfig?.transliterationInputLanguage,
+        outputLanguage: botConfig?.transliterationOutputLanguage,
         input: wordUnderCursor,
         provider: botConfig?.transliterationProvider || 'bhashini',
         numSuggestions: botConfig?.transliterationSuggestions || 3,
