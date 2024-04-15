@@ -40,6 +40,8 @@ const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
         text: r,
         payload: negativeFeedbackPayload
       });
+      context?.setCurrentQuery('');
+      setShowDialerPopup(false);
     },
     [reviewSubmitError, reviewSubmitted, setShowDialerPopup]
   );
