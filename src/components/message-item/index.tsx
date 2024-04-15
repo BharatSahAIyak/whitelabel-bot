@@ -319,12 +319,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     : secondaryColor,
               }}>
               {content?.text}{' '}
-              {
+              {/* {
                 content?.data?.position === 'right'
                   ? null
                   : !content?.data?.isEnd
                 && <BlinkingSpinner />
-              }
+              } */}
             </span>
             {getLists({
               choices:

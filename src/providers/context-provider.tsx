@@ -81,11 +81,10 @@ const ContextProvider: FC<{
     if (config?.component?.launchPage && config?.component?.launchPage?.showLaunchPage) {
       setShowLaunchPage(true);
       setTimeout(() => {
-        setShowLaunchPage(false);;
+        setShowLaunchPage(false);
       }, 2000)
     }
-  }, [config])
-
+  }, [config]);
 
 
   const downloadChat = useMemo(() => {
@@ -321,8 +320,8 @@ const ContextProvider: FC<{
             }
             return updatedMessages;
           });
+          setIsMsgReceiving(false);
           if (msg.payload.text.endsWith('<end/>')) {
-            setIsMsgReceiving(false);
             setLastMsgId(msg?.messageId.Id);
             setEndTime(Date.now());
           }
