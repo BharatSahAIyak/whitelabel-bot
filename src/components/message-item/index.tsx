@@ -89,6 +89,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const feedbackHandler = useCallback(
     ({ like, msgId }: { like: 0 | 1 | -1; msgId: string }) => {
       console.log('vbnm:', { reaction, like });
+      // Don't let user change reaction once given
+      if(reaction !== 0) return;
       if (reaction === 0) {
         setReaction(like);
         return onLikeDislike({ value: like, msgId });
