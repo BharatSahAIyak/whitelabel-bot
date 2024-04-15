@@ -290,7 +290,7 @@ const HomePage: NextPage = () => {
             <>
               <div
                 className={styles.title}
-                dangerouslySetInnerHTML={{ __html: t('label.title') }}></div>
+                dangerouslySetInnerHTML={{ __html: t('label.ask_me') }}></div>
               {(config?.showKalia ||
                 config?.showWeatherAdvisory ||
                 config?.showPlantProtection) && (
