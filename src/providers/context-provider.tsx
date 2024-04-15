@@ -353,12 +353,13 @@ const ContextProvider: FC<{
   //           'messageReceived',
   //           {
   //             botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+  //             orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
   //             userId: localStorage.getItem('userID') || '',
   //             phoneNumber: localStorage.getItem('phoneNumber') || '',
   //             conversationId: sessionStorage.getItem('conversationId') || '',
   //             messageId: messages[messages.length - 1]?.messageId,
   //             text: messages[messages.length - 1]?.text,
-  //             createdAt: new Date().getTime(),
+  //             createdAt: Math.floor(new Date().getTime() / 1000),
   //             timeTaken: endTime - startTime,
   //           });
   //     } catch (err) {
@@ -520,12 +521,13 @@ const ContextProvider: FC<{
             'messageSent',
             {
               botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+              orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
               userId: localStorage.getItem('userID') || '',
               phoneNumber: localStorage.getItem('phoneNumber') || '',
               conversationId: sessionStorage.getItem('conversationId') || '',
               messageId: messageId,
               text: text,
-              createdAt: new Date().getTime()
+              createdAt: Math.floor(new Date().getTime() / 1000)
             }
           );
       } catch (err) {

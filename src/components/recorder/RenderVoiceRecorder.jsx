@@ -7,6 +7,7 @@ import styles from './styles.module.css';
 import toast from 'react-hot-toast';
 import { useLocalization } from '../../hooks';
 import { useConfig } from '../../hooks/useConfig';
+import saveTelemetryEvent from '../../utils/telemetry';
 
 const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   const t = useLocalization();
@@ -111,6 +112,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   }
 
   const makeComputeAPICall = async (blob) => {
+    const startTime = Date.now();
     try {
       setApiCallStatus('processing');
       console.log('base', blob);
@@ -148,6 +150,23 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
           throw new Error('Unexpected end of JSON input');
         setInputMsg(rsp_data.text);
         sessionStorage.setItem('asrId', rsp_data.id);
+        const endTime = Date.now();
+        const latency = endTime - startTime;
+        await saveTelemetryEvent(
+          '0.1',
+          'E046',
+          'aiToolProxyToolLatency',
+          's2tLatency',
+          {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+            phoneNumber: localStorage.getItem('phoneNumber') || '',
+            conversationId: sessionStorage.getItem('conversationId') || '',
+            timeTaken: latency,
+            createdAt: Math.floor(startTime / 1000)
+          }
+        );
       } else {
         toast.error(`${t('message.recorder_error')}`);
         console.log(resp);
@@ -169,6 +188,24 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
       toast.error(`${t('message.recorder_error')}`);
       // Set userClickedError to true when an error occurs
       setUserClickedError(false);
+      const endTime = Date.now();
+      const latency = endTime - startTime;
+      await saveTelemetryEvent(
+        '0.1',
+        'E046',
+        'aiToolProxyToolLatency',
+        's2tLatency',
+        {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+          timeTaken: latency,
+          createdAt: Math.floor(startTime / 1000),
+          error: error?.message || t('message.recorder_error')
+        }
+      );
 
       // Automatically change back to startIcon after 3 seconds
       setTimeout(() => {

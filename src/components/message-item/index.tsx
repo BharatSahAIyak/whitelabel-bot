@@ -33,6 +33,7 @@ import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
 import axios from 'axios';
 import { getReactionUrl } from '../../utils/getUrls';
+import saveTelemetryEvent from '../../utils/telemetry';
 // import BlinkingSpinner from '../blinking-spinner/index';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
@@ -185,6 +186,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   const downloadAudio = useCallback(() => {
     const fetchAudio = async (text: string) => {
+      const startTime = Date.now();
       try {
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/text-to-speech`,
@@ -194,11 +196,51 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           }
         );
         setAudioFetched(true);
+        const endTime = Date.now();
+        const latency = endTime - startTime;
+        await saveTelemetryEvent(
+          '0.1',
+          'E045',
+          'aiToolProxyToolLatency',
+          't2sLatency',
+          {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+            phoneNumber: localStorage.getItem('phoneNumber') || '',
+            conversationId: sessionStorage.getItem('conversationId') || '',
+            text: text,
+            msgId: content?.data?.messageId,
+            timeTaken: latency,
+            createdAt: Math.floor(startTime / 1000),
+            audioUrl: response?.data?.url || 'No audio URL'
+          }
+        );
         // cacheAudio(response.data);
-        return response.data.url;
-      } catch (error) {
+        return response?.data?.url;
+      } catch (error: any) {
         console.error('Error fetching audio:', error);
         setAudioFetched(true);
+        const endTime = Date.now();
+        const latency = endTime - startTime;
+        await saveTelemetryEvent(
+          '0.1',
+          'E045',
+          'aiToolProxyToolLatency',
+          't2sLatency',
+          {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+            phoneNumber: localStorage.getItem('phoneNumber') || '',
+            conversationId: sessionStorage.getItem('conversationId') || '',
+            text: text,
+            msgId: content?.data?.messageId,
+            timeTaken: latency,
+            createdAt: Math.floor(startTime / 1000),
+            error: error?.message || 'Error fetching audio'
+          }
+        );
         return null;
       }
     };
