@@ -61,7 +61,7 @@ const ContextProvider: FC<{
   const [clickedAudioUrl, setClickedAudioUrl] = useState<string | null>(null);
   const [startTime, setStartTime] = useState(Date.now());
   const [endTime, setEndTime] = useState(Date.now());
-  const [lastMsgId, setLastMsgId] = useState('');
+  const [s2tMsgId, sets2tMsgId] = useState('');
   const [kaliaClicked, setKaliaClicked] = useState(false);
   const [config, setConfig] = useState(null);
   const themeContext = useContext(ThemeContext);
@@ -322,7 +322,6 @@ const ContextProvider: FC<{
           });
           setIsMsgReceiving(false);
           if (msg.payload.text.endsWith('<end/>')) {
-            setLastMsgId(msg?.messageId.Id);
             setEndTime(Date.now());
           }
           setLoading(false);
@@ -435,7 +434,9 @@ const ContextProvider: FC<{
       setIsMsgReceiving(true);
 
       console.log('my mssg:', text);
-      const messageId = uuidv4();
+      console.log("s2tMsgId:", s2tMsgId)
+      const messageId = s2tMsgId ? s2tMsgId : uuidv4();
+      console.log('s2t messageId:', messageId);
       newSocket.sendMessage({
         text: text?.replace('&', '%26'),
         to: localStorage.getItem('userID'),
@@ -449,7 +450,6 @@ const ContextProvider: FC<{
           city: sessionStorage.getItem('city'),
           state: sessionStorage.getItem('state'),
           ip: sessionStorage.getItem('ip'),
-          asrId: sessionStorage.getItem('asrId'),
           userId: localStorage.getItem('userID'),
           conversationId: sessionStorage.getItem('conversationId'),
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
@@ -480,7 +480,6 @@ const ContextProvider: FC<{
               repliedTimestamp: Date.now(),
             },
           ]);
-          sessionStorage.removeItem('asrId');
         }
       try {
         await saveTelemetryEvent(
@@ -502,8 +501,9 @@ const ContextProvider: FC<{
       } catch (err) {
         console.error(err);
       }
+      sets2tMsgId('');
     },
-    [conversationId, newSocket, removeCookie]
+    [conversationId, newSocket, removeCookie, s2tMsgId]
   );
 
   const fetchIsDown = useCallback(async () => {
@@ -523,11 +523,6 @@ const ContextProvider: FC<{
     //   console.error(error);
     // }
   }, [flags?.health_check_time?.value]);
-
-  // Remove ASR ID from session storage on conversation change
-  useEffect(() => {
-    sessionStorage.removeItem('asrId');
-  }, [conversationId]);
 
   const normalizedChat = (chats: any): any => {
     console.log('in normalized', chats);
@@ -636,7 +631,6 @@ const ContextProvider: FC<{
                 appId: 'AKAI_App_Id',
                 channel: 'AKAI',
               },
-              asrId: sessionStorage.getItem('asrId'),
               userId: localStorage.getItem('userID'),
               conversationId: sessionStorage.getItem('conversationId'),
             });
@@ -685,7 +679,9 @@ const ContextProvider: FC<{
       setAudioPlaying,
       config,
       kaliaClicked,
-      setKaliaClicked
+      setKaliaClicked,
+      s2tMsgId,
+      sets2tMsgId
     }),
     [
       locale,
@@ -714,7 +710,9 @@ const ContextProvider: FC<{
       setAudioPlaying,
       config,
       kaliaClicked,
-      setKaliaClicked
+      setKaliaClicked,
+      s2tMsgId,
+      sets2tMsgId
     ]
   );
 

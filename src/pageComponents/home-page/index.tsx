@@ -308,7 +308,8 @@ const HomePage: NextPage = () => {
                         onClick={() => {
                           sendMessage(t('label.weather_advisory'));
                         }}>
-                        <p>{t('label.weather_advisory')}</p>
+                        {/* <p>{t('label.weather_advisory')}</p> */}
+                        <p>Guided: weather</p>
                         <img
                           src={
                             config?.weatherAdvisoryImg ||

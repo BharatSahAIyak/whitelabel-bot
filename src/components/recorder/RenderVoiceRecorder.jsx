@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import stop from './assets/stop.gif';
 import processing from './assets/process.gif';
 import error from './assets/error.gif';
@@ -7,6 +7,8 @@ import styles from './styles.module.css';
 import toast from 'react-hot-toast';
 import { useLocalization } from '../../hooks';
 import { useConfig } from '../../hooks/useConfig';
+import { v4 as uuidv4 } from 'uuid';
+import { AppContext } from '../../context';
 import saveTelemetryEvent from '../../utils/telemetry';
 
 const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
@@ -15,6 +17,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   const [apiCallStatus, setApiCallStatus] = useState('idle');
   const [userClickedError, setUserClickedError] = useState(false);
   const config = useConfig('component', 'voiceRecorder');
+  const context = useContext(AppContext);
 
   let VOICE_MIN_DECIBELS = -35;
   let DELAY_BETWEEN_DIALOGS = config?.delayBetweenDialogs || 2500;
@@ -113,6 +116,8 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
 
   const makeComputeAPICall = async (blob) => {
     const startTime = Date.now();
+    const s2tMsgId = uuidv4();
+    console.log("s2tMsgId:", s2tMsgId)
     try {
       setApiCallStatus('processing');
       console.log('base', blob);
@@ -149,7 +154,6 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
         if (rsp_data.text === '')
           throw new Error('Unexpected end of JSON input');
         setInputMsg(rsp_data.text);
-        sessionStorage.setItem('asrId', rsp_data.id);
         const endTime = Date.now();
         const latency = endTime - startTime;
         await saveTelemetryEvent(
@@ -164,6 +168,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
             phoneNumber: localStorage.getItem('phoneNumber') || '',
             conversationId: sessionStorage.getItem('conversationId') || '',
             timeTaken: latency,
+            messageId: s2tMsgId,
             createdAt: Math.floor(startTime / 1000)
           }
         );
@@ -202,6 +207,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
           phoneNumber: localStorage.getItem('phoneNumber') || '',
           conversationId: sessionStorage.getItem('conversationId') || '',
           timeTaken: latency,
+          messageId: s2tMsgId,
           createdAt: Math.floor(startTime / 1000),
           error: error?.message || t('message.recorder_error')
         }
@@ -215,6 +221,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
         }
       }, 2500);
     }
+    context?.sets2tMsgId((prev) => prev = s2tMsgId);
   };
 
   return (
