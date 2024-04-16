@@ -22,6 +22,7 @@ const OtpPage: React.FC = () => {
   const theme = useColorPalates();
   const { logo, showLogo, showSplitedView, otpLength, resendOtpTimer } = config;
   const router = useRouter();
+  const mobile = router.query.state;
   const t = useLocalization();
 
   const [cookies, setCookie, removeCookie] = useCookies(['access_token']);
@@ -149,6 +150,16 @@ const OtpPage: React.FC = () => {
           <div className={styles.form}>
             {/* Form */}
             <Typography
+              component="h1"
+              variant="h4"
+              fontWeight={"bold"}
+              textAlign="center"
+              width="100%"
+              color={theme?.primary?.main || 'black'}
+              dangerouslySetInnerHTML={{__html: t("label.subtitle")}}
+            >
+            </Typography>
+            <Typography
               variant="h4"
               textAlign="center"
               width="90%"
@@ -158,21 +169,9 @@ const OtpPage: React.FC = () => {
             </Typography>
             <FormattedMessage
               id="message.otp_message"
-              defaultMessage="We will send you a 4 digit one time password <br></br> on this mobile number <br></br><b>{mobile}</b>"
-              values={{ mobile: '', br: (chunks) => <br/>, b: (chunks) => <b>{chunks}</b>}}
+              defaultMessage="We will send you a 4 digit one time password on this mobile number <br><b>{mobile}</b>"
+              values={{ mobile: mobile, br: (chunks) => <br/>, b: (chunks) => <b>{chunks}</b>}}
             />
-            {/* <Typography
-              variant="body2"
-              textAlign="left"
-              width="90%"
-              color="#838BA1">
-              {t("message.otp_message")} {t("label.mobile_number")}
-            </Typography> */}
-            <Typography
-              fontWeight="bold"
-              textAlign='center'>
-              +91-{router.query.state}
-            </Typography>
             <Box
               component="form"
               onSubmit={handleLogin}
@@ -206,7 +205,7 @@ const OtpPage: React.FC = () => {
                     align='center'
                     color="#838BA1">
                       {t("message.didnt_receive")} &nbsp;
-                    <p onClick={resendOtp} style={{color:'#3da156',fontWeight:'bold', cursor: 'pointer'}}>{t("message.resend_again")}</p>
+                    <p onClick={resendOtp} style={{color:theme?.primary?.main || '#3da156', fontWeight:'bold', cursor: 'pointer'}}>{t("message.resend_again")}</p>
                     </Typography>
                   </>
                   )}

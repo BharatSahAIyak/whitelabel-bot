@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -7,7 +7,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import Typography from '@mui/material/Typography';
 import AddCircle from '@mui/icons-material/AddCircle';
 import { useRouter } from 'next/router';
-import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
 import Sidebar from '../../pageComponents/sidebar';
 import { recordUserLocation } from '../../utils/location';
@@ -15,19 +14,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
 import { useLocalization, useLogin } from '../../hooks';
 import toast from 'react-hot-toast';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
 const Navbar: React.FC = () => {
   const router = useRouter();
   const config = useConfig('component', 'navbar');
   const context = useContext(AppContext);
   const t = useLocalization();
-  const { isAuthenticated } = useLogin();
   const theme = useColorPalates();
-  const secondaryColor = useMemo(() => {
-    return theme?.primary?.dark;
-  }, [theme?.primary?.dark]);
+  const { isAuthenticated } = useLogin();
   const {
-    brandName,
     showHamburgerMenu,
     logos: { showCenterLogos, centerLogoIcons, showRightLogos, rightLogoIcons },
   } = config;
@@ -63,8 +59,8 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ background: secondaryColor || 'white', boxShadow: 'none', borderBottom: '1px solid lightgray' }}>
-        <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <AppBar position="static" sx={{ background: 'var(--bg-color)', boxShadow: 'none', borderBottom: '1px solid lightgray', height: router.pathname==='/login' ? '100px' : '70px' }}>
+        <Toolbar style={{ display: 'flex', justifyContent: 'space-between', height: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
           
             {isAuthenticated && showHamburgerMenu && (
@@ -127,6 +123,7 @@ const Navbar: React.FC = () => {
               position: 'absolute',
               left: '50%',
               transform: 'translateX(-50%)',
+              textAlign:'center'
             }}>
             {showCenterLogos &&
               centerLogoIcons.map((logo: any) => (
@@ -134,17 +131,14 @@ const Navbar: React.FC = () => {
                   key={logo.id}
                   src={logo.src}
                   alt={`Logo ${logo.id}`}
-                  style={{ maxHeight: '48px' }}
+                  style={{ maxHeight: '50px' }}
                 />
               ))}
-            {brandName && (
-              <Typography
-                variant="h6"
-                color="inherit"
-                sx={{ marginTop: 1, fontSize: '1.5rem' }}>
-                {brandName}
-              </Typography>
-            )}
+            
+              {router.pathname === '/login' && <div
+                style={{ fontSize: '10px', color: theme?.primary?.dark || 'black', fontWeight: 'bold', textAlign: 'center' }}
+                dangerouslySetInnerHTML={{ __html: t('label.title') }}
+                />}
           </div>
 
           {showRightLogos && (

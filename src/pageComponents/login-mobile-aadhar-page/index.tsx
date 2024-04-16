@@ -147,12 +147,14 @@ const LoginMobileAadharPage: React.FC = () => {
             <Typography
               component="h1"
               variant="h4"
-              textAlign="left"
-              width="90%"
-              color='black'
-              dangerouslySetInnerHTML={{__html: t("label.title")}}
+              fontWeight={"bold"}
+              textAlign="center"
+              width="100%"
+              color={theme?.primary?.main || 'black'}
+              dangerouslySetInnerHTML={{__html: t("label.subtitle")}}
             >
             </Typography>
+            {config?.showLogo && config?.logo && <img src={config?.logo} alt='loginPageImg' height='250px' width='320px' />}
             <Box
               component="form"
               onSubmit={handleLogin}
@@ -177,7 +179,6 @@ const LoginMobileAadharPage: React.FC = () => {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
                 <Button
-                
                   fullWidth
                   variant="contained"
                   sx={{
@@ -185,7 +186,7 @@ const LoginMobileAadharPage: React.FC = () => {
                     mt: 3,
                     mb: 4,
                     p: 1,
-                    background: 'black',
+                    background: theme?.primary?.main || 'black',
                     borderRadius: "10px",
                   }}
                   onClick={handleLogin}
