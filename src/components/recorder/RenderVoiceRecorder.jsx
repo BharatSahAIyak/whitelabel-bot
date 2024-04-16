@@ -140,6 +140,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
       // Append the WAV file to the FormData object
       formData.append('file', blob, 'audio.wav');
       formData.append('messageId', s2tMsgId);
+      formData.append('conversationId', sessionStorage.getItem('conversationId') || '');
       formData.append('language', localStorage.getItem('locale') || 'en');
 
       // Send the WAV data to the API
