@@ -192,6 +192,15 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {
             text: text,
             language: context?.locale,
+            messageId: content?.data?.messageId,
+            conversationId: sessionStorage.getItem('conversationId') || ''
+          },
+          {
+            headers: {
+              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+              orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+              userId: localStorage.getItem('userID') || ''
+            },
           }
         );
         setAudioFetched(true);
