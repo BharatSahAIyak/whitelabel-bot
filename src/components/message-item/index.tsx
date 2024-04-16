@@ -334,8 +334,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   : !content?.data?.isEnd
                 && <BlinkingSpinner />
               } */}
-            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div>
-              <span>messageId: {content?.data?.messageId}</span><br></br>
+            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div style={{color: content?.data?.position === 'right' ? 'yellow' : 'black', fontSize: '12px', fontWeight: 'normal'}}>
+            <br></br><span>messageId: {content?.data?.messageId}</span><br></br>
               <span>conversationId: {content?.data?.conversationId}</span>
             </div>}
             </span>
@@ -621,8 +621,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <div style={{ display: 'flex' }}>
               <span className={styles.optionsText}>
                 {content?.data?.payload?.text}
-            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div>
-              <span>messageId: {content?.data?.messageId}</span><br></br>
+            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div style={{color: 'black', fontSize: '12px', fontWeight: 'normal'}}>
+            <br></br><span>messageId: {content?.data?.messageId}</span><br></br>
               <span>conversationId: {content?.data?.conversationId}</span>
             </div>}
               </span>
@@ -690,8 +690,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
               })}
-            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div>
-              <span>messageId: {content?.data?.messageId}</span><br></br>
+            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div style={{color: 'black', fontSize: '12px', fontWeight: 'normal'}}>
+            <br></br><span>messageId: {content?.data?.messageId}</span><br></br>
               <span>conversationId: {content?.data?.conversationId}</span>
             </div>}
             </span>

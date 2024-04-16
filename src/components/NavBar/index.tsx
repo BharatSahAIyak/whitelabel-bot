@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -23,6 +23,9 @@ const Navbar: React.FC = () => {
   const t = useLocalization();
   const { isAuthenticated } = useLogin();
   const theme = useColorPalates();
+  const secondaryColor = useMemo(() => {
+    return theme?.primary?.dark;
+  }, [theme?.primary?.dark]);
   const {
     brandName,
     showHamburgerMenu,
@@ -60,7 +63,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ background: 'white' }}>
+      <AppBar position="static" sx={{ background: secondaryColor || 'white', boxShadow: 'none', borderBottom: '1px solid lightgray' }}>
         <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
           
