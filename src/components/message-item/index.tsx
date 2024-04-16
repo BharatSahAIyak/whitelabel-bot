@@ -373,22 +373,23 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     <div
                       className={styles.msgSpeaker}
                       onClick={downloadAudio}
-                      style={
-                        !content?.data?.isEnd
-                          ? {
-                              pointerEvents: 'none',
-                              filter: 'grayscale(100%)',
-                              opacity: '0.5',
-                              border: `1px solid ${secondaryColor}`,
-                            }
-                          :
-                        {
-                          pointerEvents: 'auto',
-                          opacity: '1',
-                          filter: 'grayscale(0%)',
-                          border: `1px solid ${secondaryColor}`,
-                        }
-                      }>
+                      // style={
+                      //   !content?.data?.isEnd
+                      //     ? {
+                      //         pointerEvents: 'none',
+                      //         filter: 'grayscale(100%)',
+                      //         opacity: '0.5',
+                      //         border: `1px solid ${secondaryColor}`,
+                      //       }
+                      //     :
+                      //   {
+                      //     pointerEvents: 'auto',
+                      //     opacity: '1',
+                      //     filter: 'grayscale(0%)',
+                      //     border: `1px solid ${secondaryColor}`,
+                      //   }
+                      // }
+                      >
                       {context?.clickedAudioUrl === content?.data?.audio_url ? (
                         <Image
                           src={
