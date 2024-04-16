@@ -139,12 +139,17 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
 
       // Append the WAV file to the FormData object
       formData.append('file', blob, 'audio.wav');
-      // formData.append('phoneNumber', localStorage.getItem('phoneNumber'));
+      formData.append('messageId', s2tMsgId);
       formData.append('language', localStorage.getItem('locale') || 'en');
 
       // Send the WAV data to the API
       const resp = await fetch(apiEndpoint, {
         method: 'POST',
+        headers: {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+        },
         body: formData,
       });
 
