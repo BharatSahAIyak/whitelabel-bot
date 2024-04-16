@@ -1,8 +1,10 @@
+import { useLocalization } from '../../hooks';
 import styles from './index.module.css';
 import { FC } from 'react';
 
- const LaunchPage:FC<{theme:any,config:any}>=({theme,config})=> {
+ const LaunchPage:FC<{theme:any,config:any}>=({theme, config})=> {
   console.log({config})
+  const t = useLocalization();
   return (
     <div className={`${styles.container}`} style={{background: theme?.
       palette?.primary?.main}}>
@@ -13,7 +15,7 @@ import { FC } from 'react';
         width={220}
         height={233}    
       />
-      <span>{config?.label}</span>
+      <span style={{color: theme?.palette?.primary?.contrastText}}>{t('label.title')}</span>
     </div>
   );
 }
