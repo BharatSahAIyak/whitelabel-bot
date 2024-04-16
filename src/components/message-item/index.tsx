@@ -178,7 +178,22 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         return;
       }
       context?.playAudio(url, content);
-      // Write logic for handling audio here
+      saveTelemetryEvent(
+        '0.1',
+        'E015',
+        'userQuery',
+        'timesAudioUsed',
+        {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+          messageId: content?.data?.messageId,
+          text: content?.text,
+          timesAudioUsed: 1
+        }
+      )
     },
     [audioFetched, content, context?.playAudio]
   );

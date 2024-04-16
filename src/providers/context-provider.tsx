@@ -317,6 +317,25 @@ const ContextProvider: FC<{
               };
 
               updatedMessages.push(newMsg);
+
+              const firstMsgTime = Date.now();
+
+              saveTelemetryEvent(
+                '0.1',
+                'E017',
+                'userQuery',
+                'responseAt',
+                {
+                  botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+                  orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+                  userId: localStorage.getItem('userID') || '',
+                  phoneNumber: localStorage.getItem('phoneNumber') || '',
+                  conversationId: sessionStorage.getItem('conversationId') || '',
+                  messageId: newMsg.messageId,
+                  text: newMsg.text,
+                  timeTaken: 0
+                }
+              )
             }
             return updatedMessages;
           });
