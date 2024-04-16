@@ -83,7 +83,8 @@ const ChatUiWindow: React.FC = () => {
             audio_url: item?.audioURL,
             isEnd: true,
             optionClicked: true,
-            choices: item?.payload?.buttonChoices
+            choices: item?.payload?.buttonChoices,
+            conversationId: item?.channelMessageId
           })
       ).sort(
         //@ts-ignore

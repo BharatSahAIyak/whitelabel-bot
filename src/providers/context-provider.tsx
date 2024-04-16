@@ -477,6 +477,7 @@ const ContextProvider: FC<{
               time: Date.now(),
               disabled: true,
               messageId: messageId,
+              conversationId: sessionStorage.getItem('conversationId'),
               repliedTimestamp: Date.now(),
             },
           ]);

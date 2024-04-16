@@ -334,6 +334,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   : !content?.data?.isEnd
                 && <BlinkingSpinner />
               } */}
+            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div>
+              <span>messageId: {content?.data?.messageId}</span><br></br>
+              <span>conversationId: {content?.data?.conversationId}</span>
+            </div>}
             </span>
             {getLists({
               choices:
@@ -617,6 +621,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <div style={{ display: 'flex' }}>
               <span className={styles.optionsText}>
                 {content?.data?.payload?.text}
+            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div>
+              <span>messageId: {content?.data?.messageId}</span><br></br>
+              <span>conversationId: {content?.data?.conversationId}</span>
+            </div>}
               </span>
             </div>
             {getLists({
@@ -682,6 +690,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
               })}
+            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div>
+              <span>messageId: {content?.data?.messageId}</span><br></br>
+              <span>conversationId: {content?.data?.conversationId}</span>
+            </div>}
             </span>
           </Bubble>
         </div>
