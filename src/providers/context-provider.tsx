@@ -318,8 +318,6 @@ const ContextProvider: FC<{
 
               updatedMessages.push(newMsg);
 
-              const firstMsgTime = Date.now();
-
               saveTelemetryEvent(
                 '0.1',
                 'E017',
