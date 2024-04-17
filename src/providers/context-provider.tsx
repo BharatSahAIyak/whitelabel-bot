@@ -250,6 +250,7 @@ const ContextProvider: FC<{
                 },
               },
             },
+            path: process.env.NEXT_PUBLIC_SOCKET_PATH || '/',
             query: {
               deviceId: localStorage.getItem('userID'),
             },
