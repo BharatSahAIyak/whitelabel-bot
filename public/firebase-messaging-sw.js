@@ -21,7 +21,7 @@ const defaultConfig = {
 firebase.initializeApp(self.firebaseConfig || defaultConfig);
 const messaging = firebase.messaging();
 
-// Function to retrieve notifications from IndexedDB
+ 
 function getStoredNotifications() {
   return new Promise((resolve, reject) => {
     const request = self.indexedDB.open('notificationDataDB', 1);

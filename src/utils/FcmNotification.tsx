@@ -2,48 +2,48 @@ import React, { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { onMessageListener } from './firebase';
 
-const FcmNotification = () => {
-  const [notification, setNotification] = useState<any>({
-    title: '',
-    body: '',
-    icon: '',
-    featureDetails: null,
-    clickActionUrl: '',
-  });
+interface Notification {
+  title: string;
+  body: string;
+  icon: string;
+  featureDetails: any | null;
+  clickActionUrl: string;
+}
 
-  const notify = () =>
-    toast(<ToastDisplay />, {
+const FcmNotification: React.FC = () => {
+  const [storedNotifications, setStoredNotifications] = useState<Notification[]>([]);
+
+  const notify = (notificationData: Notification) => {
+    toast(<ToastDisplay notification={notificationData} />, {
       style: {
-        backgroundColor:  '#add8e6',
-        color:  '#000000',
-          borderRadius: 15,
+        backgroundColor: '#add8e6',
+        color: '#000000',
+        borderRadius: 16,
         padding: '19px',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
       },
       duration: 8000,
-      icon: notification.icon ? (
-        <img src={notification.icon} alt="" width={70} height={70} />
+      icon: notificationData.icon ? (
+        <img src={notificationData.icon} alt="" width={70} height={70} />
       ) : null,
       position: 'top-right',
     });
+  };
 
-  function ToastDisplay() {
+  const ToastDisplay: React.FC<{ notification: Notification }> = ({ notification }) => {
     const handleLinkClick = () => {
       if (notification.clickActionUrl) {
-        window.open(notification.clickActionUrl, '_blank');  
+        window.open(notification.clickActionUrl, '_blank');
       }
     };
 
-    const createMarkup = (body: string) => ({ __html: body });  
+    const createMarkup = (body: string) => ({ __html: body });
 
     return (
-      <div style={{   alignItems: 'center', justifyContent: 'space-between' }}>
-        <p>
-          <b>{notification?.title}</b>
-        </p>
-       
-        <p dangerouslySetInnerHTML={createMarkup(notification?.body)} onClick={handleLinkClick}></p>
-        {notification?.featureDetails && (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', justifyContent: 'space-between' }}>
+        <p><b>{notification.title}</b></p>
+        <p dangerouslySetInnerHTML={createMarkup(notification.body)} onClick={handleLinkClick}></p>
+        {notification.featureDetails && (
           <div>
             <b>{notification.featureDetails.title}</b>
             <p>{notification.featureDetails.description}</p>
@@ -53,67 +53,74 @@ const FcmNotification = () => {
     );
   }
 
-  useEffect(() => {
-    if (notification.title) {
-      notify();
+  // Notifications fetched from IndexedDB
+  const loadNotificationsFromDB = async (): Promise<void> => {
+    try {
+      const db: IDBDatabase = await new Promise((resolve, reject) => {
+        const request: IDBOpenDBRequest = indexedDB.open('notificationDataDB', 1);
+
+        request.onsuccess = (event: Event) => {
+          resolve((event.target as IDBOpenDBRequest).result as IDBDatabase);
+        };
+
+        request.onerror = (event: Event) => {
+          reject((event.target as IDBOpenDBRequest).error);
+        };
+      });
+
+      const transaction: IDBTransaction = db.transaction(['notificationDataStore'], 'readonly');
+      const objectStore: IDBObjectStore = transaction.objectStore('notificationDataStore');
+
+      const notifications: Notification[] = [];
+      const cursorRequest: IDBRequest<IDBCursorWithValue | null> = objectStore.openCursor();
+
+      cursorRequest.onsuccess = (cursorEvent: Event) => {
+        const cursor: IDBCursorWithValue | null = (cursorEvent.target as IDBRequest<IDBCursorWithValue | null>).result;
+        if (cursor) {
+          notifications.push(cursor.value);
+          cursor.continue();
+        } else {
+          setStoredNotifications(notifications);
+        }
+      };
+
+      cursorRequest.onerror = (errorEvent: Event) => {
+        console.error('Cursor request error:', (errorEvent.target as IDBRequest<IDBCursorWithValue | null>).error);
+      };
+
+      transaction.oncomplete = () => {
+        db.close();
+      };
+    } catch (error) {
+      console.error('Failed to load notifications from IndexedDB:', error);
     }
-  }, [notification]);
+  }
 
   useEffect(() => {
-    const handleMessage = async (payload: any) => {
-      console.log('Notification payload:', payload);
-      const featureDetailsData = payload.data?.['gcm.notification.featureDetails'];
-      if (featureDetailsData) {
-        try {
-          const featureDetails = JSON.parse(featureDetailsData);
-          if (featureDetails.description !== '' && featureDetails.title !== '') {
-            setNotification({
-              title: payload.notification?.title || '',
-              body: payload.notification?.body || '',
-              icon: payload.notification?.image || '',
-              featureDetails,
-              clickActionUrl: payload.data?.click_action_url || '', 
-            });
-          }
-        } catch (error) {
-          console.error('Error parsing featureDetails:', error);
-        }
-      } else {
-        setNotification({
+    loadNotificationsFromDB();
+  }, []);
+
+  useEffect(() => {
+    storedNotifications.forEach(notify);
+  }, [storedNotifications]);
+
+  useEffect(() => {
+    const unsubscribe = onMessageListener().subscribe({
+      next: (payload: any) => {
+        const newNotification: Notification = {
           title: payload.notification?.title || '',
           body: payload.notification?.body || '',
           icon: payload.notification?.image || '',
-          featureDetails: null,
-          clickActionUrl: payload.data?.click_action || '',  
-        });
-      }
-    };
-
-    const setupNotificationListener = async () => {
-      try {
-        const observable = await onMessageListener();
-        if (observable && typeof observable.subscribe === 'function') {
-          const subscription = observable.subscribe({
-            next: handleMessage,
-            error: (error: any) => {
-              console.error('Error in notification listener:', error);
-            },
-          });
-          return subscription;
-        } else {
-          console.error('Invalid observable:', observable);
-        }
-      } catch (error) {
-        console.error('Error setting up notification listener:', error);
-      }
-    };
-
-    const unsubscribe = setupNotificationListener();
+          featureDetails: payload.data?.featureDetails || null,
+          clickActionUrl: payload.data?.click_action_url || '',
+        };
+        notify(newNotification);
+      },
+      error: (error) => console.error('Error in notification listener:', error),
+    });
 
     return () => {
-      if (unsubscribe && typeof unsubscribe.then === 'function') {
-        unsubscribe.then((subscription: any) => subscription.unsubscribe());
-      }
+      unsubscribe.unsubscribe();
     };
   }, []);
 
