@@ -62,6 +62,8 @@ const ContextProvider: FC<{
   const [startTime, setStartTime] = useState(Date.now());
   const [endTime, setEndTime] = useState(Date.now());
   const [s2tMsgId, sets2tMsgId] = useState('');
+  const [lastSentMsgId, setLastSentMsgId] = useState('');
+  const [lastText, setLastText] = useState('');
   const [kaliaClicked, setKaliaClicked] = useState(false);
   const [config, setConfig] = useState(null);
   const themeContext = useContext(ThemeContext);
@@ -69,23 +71,25 @@ const ContextProvider: FC<{
   // console.log("hola:",{configs})
 
   useEffect(() => {
-    mergeConfigurations().then(res => {
+    mergeConfigurations().then((res) => {
       setConfig(res);
-      themeContext?.modifyPaletes(res?.theme?.palette)
+      themeContext?.modifyPaletes(res?.theme?.palette);
     });
   }, []);
 
-
   useEffect(() => {
-    //@ts-ignore
-    if (config?.component?.launchPage && config?.component?.launchPage?.showLaunchPage) {
+    if (
+      //@ts-ignore
+      config?.component?.launchPage &&
+      //@ts-ignore
+      config?.component?.launchPage?.showLaunchPage
+    ) {
       setShowLaunchPage(true);
       setTimeout(() => {
         setShowLaunchPage(false);
-      }, 2000)
+      }, 2000);
     }
   }, [config]);
-
 
   const downloadChat = useMemo(() => {
     return (e: string) => {
@@ -100,16 +104,14 @@ const ContextProvider: FC<{
   useEffect(() => {
     //@ts-ignore
     if (config?.translation && locale) {
-      onLocaleUpdate()
+      onLocaleUpdate();
     }
-  }, [config, locale])
-
+  }, [config, locale]);
 
   const onLocaleUpdate = useCallback(() => {
     //@ts-ignore
     setLocaleMsgs(config?.translation?.[locale]);
-
-  }, [config, locale])
+  }, [config, locale]);
   const shareChat = useMemo(() => {
     return (e: string) => {
       try {
@@ -236,28 +238,28 @@ const ContextProvider: FC<{
 
   useEffect(() => {
     if (localStorage.getItem('userID')) {
-    setNewSocket(
-      new UCI(
-        URL,
-        {
-          transportOptions: {
-            polling: {
-              extraHeaders: {
-                // Authorization: `Bearer ${localStorage.getItem('auth')}`,
-                channel: 'akai',
+      setNewSocket(
+        new UCI(
+          URL,
+          {
+            transportOptions: {
+              polling: {
+                extraHeaders: {
+                  // Authorization: `Bearer ${localStorage.getItem('auth')}`,
+                  channel: 'akai',
+                },
               },
             },
+            query: {
+              deviceId: localStorage.getItem('userID'),
+            },
+            autoConnect: false,
+            transports: ['polling', 'websocket'],
+            upgrade: true,
           },
-          query: {
-            deviceId: localStorage.getItem('userID'),
-          },
-          autoConnect: false,
-          transports: ['polling', 'websocket'],
-          upgrade: true,
-        },
-        onMessageReceived
-      )
-    );
+          onMessageReceived
+        )
+      );
     }
     function cleanup() {
       if (newSocket)
@@ -268,6 +270,24 @@ const ContextProvider: FC<{
     return cleanup;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStorage.getItem('userID')]);
+
+  useEffect(() => {
+    if (lastText === '') return;
+    try {
+      saveTelemetryEvent('0.1', 'E017', 'userQuery', 'responseAt', {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || '',
+        messageId: lastSentMsgId,
+        text: lastText,
+        timeTaken: 0,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }, [lastText]);
 
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
@@ -296,11 +316,11 @@ const ContextProvider: FC<{
                 updatedMessages[existingMsgIndex].isEnd = true;
               }
               updatedMessages[existingMsgIndex].text =
-                word.replace(/<end\/>/g, "") + ' ';
+                word.replace(/<end\/>/g, '') + ' ';
             } else {
               // If the message doesn't exist, create a new one
               const newMsg = {
-                text: word.replace(/<end\/>/g, "") + ' ',
+                text: word.replace(/<end\/>/g, '') + ' ',
                 isEnd: word.endsWith('<end/>') ? true : false,
                 choices: msg?.payload?.buttonChoices,
                 position: 'left',
@@ -317,23 +337,8 @@ const ContextProvider: FC<{
               };
 
               updatedMessages.push(newMsg);
-
-              saveTelemetryEvent(
-                '0.1',
-                'E017',
-                'userQuery',
-                'responseAt',
-                {
-                  botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-                  orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-                  userId: localStorage.getItem('userID') || '',
-                  phoneNumber: localStorage.getItem('phoneNumber') || '',
-                  conversationId: sessionStorage.getItem('conversationId') || '',
-                  messageId: newMsg.messageId,
-                  text: newMsg.text,
-                  timeTaken: 0
-                }
-              )
+              // console.log('useeffect', newMsg.text);
+              setLastText((prev) => (prev = newMsg.text));
             }
             return updatedMessages;
           });
@@ -345,7 +350,7 @@ const ContextProvider: FC<{
         }
       }
     },
-    []
+    [messages]
   );
 
   useEffect(() => {
@@ -354,21 +359,22 @@ const ContextProvider: FC<{
       if (messages.length > 0)
         try {
           await saveTelemetryEvent(
-              '0.1',
-              'E033',
-              'messageQuery',
-              'messageReceived',
-              {
-                botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-                orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-                userId: localStorage.getItem('userID') || '',
-                phoneNumber: localStorage.getItem('phoneNumber') || '',
-                conversationId: sessionStorage.getItem('conversationId') || '',
-                messageId: messages[messages.length - 1]?.messageId,
-                text: messages[messages.length - 1]?.text,
-                createdAt: Math.floor(new Date().getTime() / 1000),
-                timeTaken: endTime - startTime,
-              });
+            '0.1',
+            'E033',
+            'messageQuery',
+            'messageReceived',
+            {
+              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+              orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+              userId: localStorage.getItem('userID') || '',
+              phoneNumber: localStorage.getItem('phoneNumber') || '',
+              conversationId: sessionStorage.getItem('conversationId') || '',
+              messageId: messages[messages.length - 1]?.messageId,
+              text: messages[messages.length - 1]?.text,
+              createdAt: Math.floor(new Date().getTime() / 1000),
+              timeTaken: endTime - startTime,
+            }
+          );
         } catch (err) {
           console.log(err);
         }
@@ -429,7 +435,7 @@ const ContextProvider: FC<{
     [isOnline, updateMsgState]
   );
 
-  console.log("chu:",{config})
+  console.log('config:', { config });
   //@ts-ignore
   const sendMessage = useCallback(
     async (text: string, media: any, isVisibile = true) => {
@@ -449,11 +455,11 @@ const ContextProvider: FC<{
       // console.log('mssgs:', messages)
       setLoading(true);
       setIsMsgReceiving(true);
-
       console.log('my mssg:', text);
-      console.log("s2tMsgId:", s2tMsgId)
+      console.log('s2tMsgId:', s2tMsgId);
       const messageId = s2tMsgId ? s2tMsgId : uuidv4();
       console.log('s2t messageId:', messageId);
+      setLastSentMsgId((prev) => (prev = messageId));
       newSocket.sendMessage({
         text: text?.replace('&', '%26'),
         to: localStorage.getItem('userID'),
@@ -502,22 +508,16 @@ const ContextProvider: FC<{
           ]);
         }
       try {
-        await saveTelemetryEvent(
-            '0.1',
-            'E032',
-            'messageQuery',
-            'messageSent',
-            {
-              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-              orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-              userId: localStorage.getItem('userID') || '',
-              phoneNumber: localStorage.getItem('phoneNumber') || '',
-              conversationId: sessionStorage.getItem('conversationId') || '',
-              messageId: messageId,
-              text: text,
-              createdAt: Math.floor(new Date().getTime() / 1000)
-            }
-          );
+        await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+          messageId: messageId,
+          text: text,
+          createdAt: Math.floor(new Date().getTime() / 1000),
+        });
       } catch (err) {
         console.error(err);
       }
@@ -598,7 +598,8 @@ const ContextProvider: FC<{
           console.log('log:', loading);
           try {
             const chatHistory = await axios.get(
-              `${process.env.NEXT_PUBLIC_BFF_API_URL
+              `${
+                process.env.NEXT_PUBLIC_BFF_API_URL
               }/user/chathistory/${sessionStorage.getItem('conversationId')}`,
               {
                 headers: {
@@ -660,7 +661,6 @@ const ContextProvider: FC<{
           setIsMsgReceiving(false);
         }
       }, timer2);
-
     }, timer1);
 
     return () => {
@@ -701,7 +701,7 @@ const ContextProvider: FC<{
       kaliaClicked,
       setKaliaClicked,
       s2tMsgId,
-      sets2tMsgId
+      sets2tMsgId,
     }),
     [
       locale,
@@ -732,19 +732,24 @@ const ContextProvider: FC<{
       kaliaClicked,
       setKaliaClicked,
       s2tMsgId,
-      sets2tMsgId
+      sets2tMsgId,
     ]
   );
 
-
-  if (!config) return <FullPageLoader loading label='Loading configuration..' />
-  //@ts-ignore
-  if (showLaunchPage) return <LaunchPage theme={config?.theme} config={config?.component?.launchPage} />;
+  if (!config)
+    return <FullPageLoader loading label="Loading configuration.." />;
+    if (showLaunchPage)
+    return (
+      <LaunchPage
+      //@ts-ignore
+      theme={config?.theme}
+      //@ts-ignore
+        config={config?.component?.launchPage}
+      />
+    );
   return (
     //@ts-ignore
-    <AppContext.Provider value={values}>
-      {children}
-    </AppContext.Provider>
+    <AppContext.Provider value={values}>{children}</AppContext.Provider>
   );
 };
 
