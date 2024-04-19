@@ -10,10 +10,10 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="white" />
-        <title>{t("label.title")?.split('<br/>').join(" ")}</title>
+        <title>{t("label.tab_title")}</title>
         <link rel="icon" href={config?.logo} />
       </Head>
      

@@ -1,22 +1,21 @@
-
+import { useLocalization } from '../../hooks';
 import styles from './index.module.css';
 import { FC } from 'react';
-import { useConfig } from '../../hooks/useConfig';
-import Image from 'next/image';
 
- const LaunchPage:FC<{theme:any,config:any}>=({theme,config})=> {
-  
+ const LaunchPage:FC<{theme:any,config:any}>=({theme, config})=> {
+  console.log({config})
+  const t = useLocalization();
   return (
     <div className={`${styles.container}`} style={{background: theme?.
       palette?.primary?.main}}>
       <img
         className={styles.loginImage}
-        src={config?.icon}
-        alt="KrushakOdisha"
+        src={config?.logo}
+        alt="launchPageLogo"
         width={220}
         height={233}    
       />
-      <span>{config?.label}</span>
+      <span style={{color: theme?.palette?.primary?.contrastText}}>{t('label.title')}</span>
     </div>
   );
 }

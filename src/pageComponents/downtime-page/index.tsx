@@ -11,7 +11,7 @@ import { useLocalization } from '../../hooks';
 const DowntimePage: React.FC = () => {
   const t = useLocalization();
   const theme = useColorPalates(); 
-  const config = useConfig('component', 'downtime');
+  const config = useConfig('component', 'downtimePage');
   const flags = useFlags(['dialer_number']);
   const handleRefreshClick = useCallback(()=>{
     window?.location.reload()

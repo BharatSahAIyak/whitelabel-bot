@@ -1,59 +1,74 @@
- import React, { useState } from "react";
-import styles from "./index.module.css";
-import Typography from "@mui/material/Typography";
-import { Box } from "@mui/material";
-import Rating from "@mui/material/Rating";
-import Button from "@mui/material/Button";
-import { toast } from "react-hot-toast";
-import { useColorPalates } from "../../providers/theme-provider/hooks";
-import { useConfig } from "../../hooks/useConfig";
+import React, { useEffect, useState } from 'react';
+import styles from './index.module.css';
+import Typography from '@mui/material/Typography';
+import { Box } from '@mui/material';
+import Rating from '@mui/material/Rating';
+import Button from '@mui/material/Button';
+import { toast } from 'react-hot-toast';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
+import { useConfig } from '../../hooks/useConfig';
 import axios from 'axios';
 import { useLocalization } from '../../hooks';
 
-
-
 const FeedbackPage: React.FC = () => {
   const [star, setStar] = useState(1);
-  const [review, setReview] = useState("");
+  const [review, setReview] = useState('');
   const theme = useColorPalates();
   const config = useConfig('component', 'feedbackPage');
   const t = useLocalization();
+
+  useEffect(() => {
+    axios.get(`${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback/${localStorage.getItem(
+      'userID'
+    )}`,{
+      headers: {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+      },
+    }).then((res) => {
+      setStar(res?.data?.rating);
+      setReview(res?.data?.review);
+    }).catch((error) => {
+      console.log(error);
+    })
+  }, [])
+
   const handleFeedback = () => {
-    if (!config) return;  
-    
+    if (!config) return;
+
     if (config?.ratingBox && star === 0) {
       toast.error('Please provide a rating');
       return;
     }
 
-    if (config?.reviewBox && review === "") {
+    if (config?.reviewBox && review === '') {
       toast.error('Please provide a review');
       return;
     }
-  
 
-
-    const formData = new FormData();
-    formData.append('rating', String(star));
-    formData.append('review', review);
-
-    axios.post(`${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback`,  {
-              rating: star,
-              phoneNumber: localStorage.getItem('phoneNumber'),
-            }, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('auth')}`
-      }
-    })
-    .then(() => {
-      toast.success('Feedback submitted successfully');
-      setStar(1);
-      setReview("");
-    })
-    .catch(error => {
-      console.error('Error submitting feedback:', error);
-      toast.error('Failed to submit feedback. Please try again later.');
-    });
+    axios
+      .post(
+        `${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback/${localStorage.getItem(
+          'userID'
+        )}`,
+        {
+          rating: star,
+          review: review,
+        },
+        {
+          headers: {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          },
+        }
+      )
+      .then(() => {
+        toast.success('Feedback submitted successfully');
+      })
+      .catch((error) => {
+        console.error('Error submitting feedback:', error);
+        toast.error('Failed to submit feedback. Please try again later.');
+      });
   };
 
   return (
@@ -62,12 +77,11 @@ const FeedbackPage: React.FC = () => {
         <Box>
           <Typography
             sx={{
-              fontSize: "5vh",
-              fontWeight: "bold",
-              color: theme.primary.main
-            }}
-          >
-             {t('label.feedback')}
+              fontSize: '5vh',
+              fontWeight: 'bold',
+              color: theme.primary.main,
+            }}>
+            {t('label.feedback')}
           </Typography>
         </Box>
 
@@ -75,11 +89,10 @@ const FeedbackPage: React.FC = () => {
           <Box className={styles.section}>
             <Typography
               sx={{
-                fontWeight: "bold",
-                fontSize: "3vh",
-              }}
-            >
-               {t('message.rating')}
+                fontWeight: 'bold',
+                fontSize: '3vh',
+              }}>
+              {t('message.rating')}
             </Typography>
 
             <Rating
@@ -92,15 +105,14 @@ const FeedbackPage: React.FC = () => {
               }}
               defaultValue={1}
               sx={{
-                fontSize: "6vh",
+                fontSize: '6vh',
               }}
             />
             <Typography
               sx={{
-                textAlign: "center",
-                fontSize: "2vh",
-              }}
-            >
+                textAlign: 'center',
+                fontSize: '2vh',
+              }}>
               {t('message.rating_description')}
             </Typography>
             <Button
@@ -110,17 +122,16 @@ const FeedbackPage: React.FC = () => {
               sx={{
                 mt: 2,
                 backgroundColor: `${theme.primary.main}`,
-                fontWeight: "bold",
-                borderRadius: "10rem",
-                fontSize: "1.5vh",
+                fontWeight: 'bold',
+                borderRadius: '10rem',
+                fontSize: '1.5vh',
                 p: 1.5,
-                "&:hover": {
+                '&:hover': {
                   backgroundColor: `${theme.primary.dark}`,
                 },
               }}
-              onClick={handleFeedback}
-            >
-               {t('label.submit_review')}
+              onClick={handleFeedback}>
+              {t('label.submit_review')}
             </Button>
           </Box>
         )}
@@ -129,19 +140,18 @@ const FeedbackPage: React.FC = () => {
           <Box className={styles.section}>
             <Typography
               sx={{
-                m: "1rem",
-                fontWeight: "bold",
-                fontSize: "3vh",
-              }}
-            >
+                m: '1rem',
+                fontWeight: 'bold',
+                fontSize: '3vh',
+              }}>
               {t('message.review')}
             </Typography>
             <textarea
-              placeholder=  {t("message.review_description")}
+              placeholder={t('message.review_description')}
               value={review}
               className={styles.textBlock}
               style={{
-                border: `2px solid ${theme.primary.main}`
+                border: `2px solid ${theme.primary.main}`,
               }}
               onChange={(e) => {
                 setReview(e.target.value);
@@ -155,17 +165,16 @@ const FeedbackPage: React.FC = () => {
               sx={{
                 mt: 2,
                 backgroundColor: `${theme.primary.main}`,
-                fontWeight: "bold",
-                borderRadius: "10rem",
-                fontSize: "1.5vh",
+                fontWeight: 'bold',
+                borderRadius: '10rem',
+                fontSize: '1.5vh',
                 p: 1.5,
-                "&:hover": {
+                '&:hover': {
                   backgroundColor: `${theme.primary.dark}`,
                 },
               }}
-              onClick={handleFeedback}
-            >
-                {t("label.submit_review")}
+              onClick={handleFeedback}>
+              {t('label.submit_review')}
             </Button>
           </Box>
         )}

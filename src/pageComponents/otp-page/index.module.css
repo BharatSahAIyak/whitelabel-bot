@@ -34,6 +34,7 @@ input::-webkit-inner-spin-button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
   width: 60%;
 }
 
@@ -45,7 +46,8 @@ input::-webkit-inner-spin-button {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    padding-top: 32px;
     flex: 1;
   }
   .form {

@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import { useConfig } from "../../hooks/useConfig";
 const LoginMobileAadharPage: React.FC = () => {
   const config = useConfig('component', 'loginMobileAadharPage');
-  const { loginWithAadhaar, showSignUp, showAlternateSignIn, logo, showLogo,showSplitedView, title } = config;
+  const { loginWithAadhaar, showSignUp, showAlternateSignIn, logo, showLogo,showSplitedView } = config;
 
   const t = useLocalization();
   const router = useRouter();
@@ -28,39 +28,27 @@ const LoginMobileAadharPage: React.FC = () => {
   const handleInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       let reg;
-      let maxLength;
       let errorMessage = "";
-
+  
+      const inputValue = e.target.value;
+      const numericInput = inputValue.replace(/[^0-9]/g, '');
+  
       if (isAadharClicked) {
-        reg = /^\d{0,12}$/; // Allow up to 12 digits for Aadhar
-        maxLength = 12;
+        reg = /^\d{12}$/; // Allow up to 12 digits for Aadhar
         errorMessage = "Please enter a valid Aadhar number";
       } else {
-        reg = /^\d{0,10}$/; // Allow up to 10 digits for Phone Number
-        maxLength = 10;
+        reg = /^\d{10}$/; // Allow any number of digits for Phone Number
         errorMessage = "Please enter a valid mobile number";
       }
-
-      const isValid = reg.test(e.target.value);
+  
+      const isValid = reg.test(numericInput);
       setValid(isValid);
-
-      if (isValid || e.target.value === "") {
-        setInput(e.target.value);
-      } else {
-        // Truncate input if it exceeds maximum length
-        setInput(e.target.value.slice(0, maxLength));
+  
+      setInput(numericInput); // Update input directly
+  
+      if (!isValid) {
+        setErrorMessage(errorMessage);
       }
-
-      if (e.target.value.length > maxLength) {
-        // If input length exceeds maximum allowed digits
-        setValid(false);
-        setInput(e.target.value.slice(0, maxLength));
-        errorMessage = isAadharClicked
-          ? `Please enter a valid Aadhar number`
-          : `Please enter a valid mobile number`;
-      }
-
-      setErrorMessage(errorMessage);
     },
     [isAadharClicked]
   );
@@ -159,12 +147,14 @@ const LoginMobileAadharPage: React.FC = () => {
             <Typography
               component="h1"
               variant="h4"
-              textAlign="left"
-              width="90%"
-              color='black'
-              dangerouslySetInnerHTML={{__html: t("label.title")}}
+              fontWeight={"bold"}
+              textAlign="center"
+              width="100%"
+              color={theme?.primary?.main || 'black'}
+              dangerouslySetInnerHTML={{__html: t("label.subtitle")}}
             >
             </Typography>
+            {config?.showLogo && config?.logo && <img src={config?.logo} alt='loginPageImg' height='250px' width='320px' />}
             <Box
               component="form"
               onSubmit={handleLogin}
@@ -189,7 +179,6 @@ const LoginMobileAadharPage: React.FC = () => {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
                 <Button
-                
                   fullWidth
                   variant="contained"
                   sx={{
@@ -197,7 +186,7 @@ const LoginMobileAadharPage: React.FC = () => {
                     mt: 3,
                     mb: 4,
                     p: 1,
-                    background: 'black',
+                    background: theme?.primary?.main || 'black',
                     borderRadius: "10px",
                   }}
                   onClick={handleLogin}

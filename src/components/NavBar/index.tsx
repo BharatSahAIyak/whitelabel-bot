@@ -7,7 +7,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import Typography from '@mui/material/Typography';
 import AddCircle from '@mui/icons-material/AddCircle';
 import { useRouter } from 'next/router';
-import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
 import Sidebar from '../../pageComponents/sidebar';
 import { recordUserLocation } from '../../utils/location';
@@ -15,16 +14,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
 import { useLocalization, useLogin } from '../../hooks';
 import toast from 'react-hot-toast';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
 const Navbar: React.FC = () => {
   const router = useRouter();
   const config = useConfig('component', 'navbar');
   const context = useContext(AppContext);
   const t = useLocalization();
-  const { isAuthenticated } = useLogin();
   const theme = useColorPalates();
+  const { isAuthenticated } = useLogin();
   const {
-    brandName,
     showHamburgerMenu,
     logos: { showCenterLogos, centerLogoIcons, showRightLogos, rightLogoIcons },
   } = config;
@@ -32,6 +31,10 @@ const Navbar: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
+    if (context?.isMsgReceiving) {
+      toast.error(`${t('error.wait_new_chat')}`);
+      return;
+    }
     setSidebarOpen(!isSidebarOpen);
   };
 
@@ -56,9 +59,10 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ background: 'white' }}>
-        <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <AppBar position="static" sx={{ background: 'var(--bg-color)', boxShadow: 'none', borderBottom: '1px solid lightgray', height: router.pathname==='/login' ? '100px' : '70px' }}>
+        <Toolbar style={{ display: 'flex', justifyContent: 'space-between', height: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
+          
             {isAuthenticated && showHamburgerMenu && (
               <IconButton
                 size="large"
@@ -96,7 +100,7 @@ const Navbar: React.FC = () => {
                   variant="body1"
                   color="black"
                   sx={{ fontSize: '15px' }}>
-                  New Chat
+                  {t('label.new_chat')}
                 </Typography>
               </div>
             )}
@@ -116,10 +120,10 @@ const Navbar: React.FC = () => {
 
           <div
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              flex: 1,
+              position: 'absolute',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              textAlign:'center'
             }}>
             {showCenterLogos &&
               centerLogoIcons.map((logo: any) => (
@@ -127,18 +131,14 @@ const Navbar: React.FC = () => {
                   key={logo.id}
                   src={logo.src}
                   alt={`Logo ${logo.id}`}
-                  style={{ maxHeight: '48px' }}
+                  style={{ maxHeight: '50px' }}
                 />
               ))}
-
-            {brandName && (
-              <Typography
-                variant="h6"
-                color="inherit"
-                sx={{ marginTop: 1, fontSize: '1.5rem' }}>
-                {brandName}
-              </Typography>
-            )}
+            
+              {router.pathname === '/login' && <div
+                style={{ fontSize: '10px', color: theme?.primary?.dark || 'black', fontWeight: 'bold', textAlign: 'center' }}
+                dangerouslySetInnerHTML={{ __html: t('label.title') }}
+                />}
           </div>
 
           {showRightLogos && (

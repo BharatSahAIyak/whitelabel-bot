@@ -39,10 +39,10 @@ const ChatUiWindow: React.FC = () => {
           const chatHistory = await axios.get(
             `${
               process.env.NEXT_PUBLIC_BFF_API_URL
-            }/user/chathistory/${sessionStorage.getItem('conversationId')}`,
+            }/history?userId=${localStorage.getItem('userID')}&conversationId=${sessionStorage.getItem('conversationId')}`,
             {
               headers: {
-                authorization: `Bearer ${localStorage.getItem('auth')}`,
+                botId: process.env.NEXT_PUBLIC_BOT_ID || ''
               },
             }
           );
@@ -50,14 +50,7 @@ const ChatUiWindow: React.FC = () => {
           console.log('ghji:', chatHistory);
           console.log('history:', chatHistory.data);
 
-          const modifiedChatHistory = chatHistory.data.map((chat: any) => {
-            if (!chat.response) {
-              chat.response = t('message.no_signal');
-            }
-            return chat;
-          });
-
-          const normalizedChats = normalizedChat(modifiedChatHistory);
+          const normalizedChats = normalizedChat(chatHistory?.data);
           console.log('normalized chats', normalizedChats);
           if (normalizedChats.length > 0) {
             context?.setMessages(normalizedChats);
@@ -78,29 +71,25 @@ const ChatUiWindow: React.FC = () => {
     const history = chats
       .filter(
         (item: any) =>
-          conversationId === 'null' || item.conversationId === conversationId
+          conversationId === 'null' || item?.channelMessageId === conversationId
       )
-      .flatMap((item: any) =>
-        [
-          item.query?.length && {
-            text: item.query,
-            position: 'right',
-            repliedTimestamp: item.createdAt,
-            messageId: uuidv4(),
-          },
-          {
-            text: item.response,
-            position: 'left',
-            sentTimestamp: item.createdAt,
-            reaction: item.reaction,
-            msgId: item.id,
-            messageId: item.id,
-            audio_url: item.audioURL,
+      .map((item: any) => ({
+            text: item.payload.text.replace(/<end\/>/g, ""),
+            position: item.to === 'admin' ? 'right' : 'left',
+            timestamp: item.timestamp,
+            reaction: item?.feedback?.type === 'FEEDBACK_POSITIVE' ? 1 : item?.feedback?.type === 'FEEDBACK_NEGATIVE' ? -1 : 0,
+            msgId: item.messageId,
+            messageId: item.messageId,
+            audio_url: item?.audioURL,
             isEnd: true,
             optionClicked: true,
-          },
-        ].filter(Boolean)
-      );
+            choices: item?.payload?.buttonChoices,
+            conversationId: item?.channelMessageId
+          })
+      ).sort(
+        //@ts-ignore
+        (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+    );
 
     console.log('historyyy', history);
     console.log('history length:', history.length);
@@ -160,7 +149,7 @@ const ChatUiWindow: React.FC = () => {
           disableSend={isMsgReceiving}
           //@ts-ignore
           translation={t}
-          showTransliteration={config?.allowTransliteration}
+          showTransliteration={config?.allowTransliteration  && localStorage.getItem('locale') === config?.transliterationOutputLanguage}
           transliterationConfig={{
             transliterationApi: config?.transliterationApi + '/transliterate',
             transliterationInputLanguage: config?.transliterationInputLanguage,

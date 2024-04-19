@@ -49,7 +49,7 @@ const HomePage: NextPage = () => {
   };
 
   useEffect(() => {
-    if (inputMsg.length > 0 && botConfig?.allowTransliteration) {
+    if (inputMsg.length > 0 && botConfig?.allowTransliteration && localStorage.getItem('locale') === botConfig?.transliterationOutputLanguage) {
       if (suggestionClicked) {
         setSuggestionClicked(false);
         return;
@@ -66,8 +66,8 @@ const HomePage: NextPage = () => {
 
       if (!wordUnderCursor) return;
       let data = JSON.stringify({
-        inputLanguage: botConfig?.transliterationInputLanguage || 'en',
-        outputLanguage: botConfig?.transliterationOutputLanguage || 'or',
+        inputLanguage: botConfig?.transliterationInputLanguage,
+        outputLanguage: botConfig?.transliterationOutputLanguage,
         input: wordUnderCursor,
         provider: botConfig?.transliterationProvider || 'bhashini',
         numSuggestions: botConfig?.transliterationSuggestions || 3,
@@ -290,7 +290,7 @@ const HomePage: NextPage = () => {
             <>
               <div
                 className={styles.title}
-                dangerouslySetInnerHTML={{ __html: t('label.title') }}></div>
+                dangerouslySetInnerHTML={{ __html: t('label.ask_me') }}></div>
               {(config?.showKalia ||
                 config?.showWeatherAdvisory ||
                 config?.showPlantProtection) && (
@@ -306,7 +306,7 @@ const HomePage: NextPage = () => {
                       <div
                         className={styles.imgBtn}
                         onClick={() => {
-                          sendMessage(t('label.weather_advisory'));
+                          sendMessage('Guided: weather');
                         }}>
                         <p>{t('label.weather_advisory')}</p>
                         <img
@@ -324,7 +324,7 @@ const HomePage: NextPage = () => {
                       <div
                         className={styles.imgBtn}
                         onClick={() => {
-                          toast('Coming Soon!');
+                          sendMessage(t('Guided: pest'));
                         }}>
                         <p>{t('label.plant_protection')}</p>
                         <img

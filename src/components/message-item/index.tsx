@@ -25,20 +25,20 @@ import SpeakerPauseIcon from './assets/speakerPause.svg';
 import MsgThumbsUp from './assets/msg-thumbs-up';
 import MsgThumbsDown from './assets/msg-thumbs-down';
 import { MessageItemPropType } from './index.d';
-const jsonToTable = require('json-to-table');
+import { JsonToTable } from '../json-to-table';
 import moment from 'moment';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
 import axios from 'axios';
-import { getReactionUrl } from '../../utils/getUrls';
-// import BlinkingSpinner from '../blinking-spinner/index';
+import saveTelemetryEvent from '../../utils/telemetry';
+import BlinkingSpinner from '../blinking-spinner/index';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
-  const [reaction, setReaction] = useState(message?.content?.data?.reaction);
+  const [reaction, setReaction] = useState(message?.content?.data?.reaction?.type);
   const [optionDisabled, setOptionDisabled] = useState(
     message?.content?.data?.optionClicked || false
   );
@@ -53,10 +53,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     return theme?.primary?.contrastText;
   }, [theme?.primary?.contrastText]);
 
-  const getToastMessage = (t: any, reaction: number): string => {
-    if (reaction === 1) return t('toast.reaction_like');
-    return t('toast.reaction_reset');
-  };
+  // const getToastMessage = (t: any, reaction: number): string => {
+  //   if (reaction === 1) return t('toast.reaction_like');
+  //   return t('toast.reaction_reset');
+  // };
 
   useEffect(() => {
     setReaction(message?.content?.data?.reaction);
@@ -64,28 +64,23 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   const onLikeDislike = useCallback(
     ({ value, msgId }: { value: 0 | 1 | -1; msgId: string }) => {
-      let url = getReactionUrl({ msgId, reaction: value });
-
-      axios
-        .get(url, {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem('auth')}`,
-          },
-        })
-        .then((res: any) => {
-          if (value === -1) {
-            context?.setCurrentQuery(msgId);
-            context?.setShowDialerPopup(true);
-          } else {
-            toast.success(`${getToastMessage(t, value)}`);
+      if(value === 1) {
+        context?.newSocket.sendMessage({
+          payload: {
+            from: localStorage.getItem('phoneNumber'),
+            appId: 'AKAI_App_Id',
+            channel: 'AKAI',
+            userId: localStorage.getItem('userID'),
+            messageType: "FEEDBACK_POSITIVE",
+            replyId: msgId,
+            conversationId: sessionStorage.getItem('conversationId'),
+            botId: process.env.NEXT_PUBLIC_BOT_ID || ''
           }
         })
-        .catch((error: any) => {
-          //@ts-ignore
-          logEvent(analytics, 'console_error', {
-            error_message: error.message,
-          });
-        });
+      }else if (value === -1) {
+        context?.setCurrentQuery(msgId);
+        context?.setShowDialerPopup(true);
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [t]
@@ -94,6 +89,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const feedbackHandler = useCallback(
     ({ like, msgId }: { like: 0 | 1 | -1; msgId: string }) => {
       console.log('vbnm:', { reaction, like });
+      // Don't let user change reaction once given
+      if(reaction !== 0) return toast.error('Cannot give feedback again');
       if (reaction === 0) {
         setReaction(like);
         return onLikeDislike({ value: like, msgId });
@@ -108,10 +105,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         setReaction(1);
         return onLikeDislike({ value: 1, msgId });
       }
-
-      console.log('vbnm triggered');
-      onLikeDislike({ value: 0, msgId });
-      setReaction(0);
     },
     [onLikeDislike, reaction]
   );
@@ -141,7 +134,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 if (optionDisabled) {
                   toast.error(`${t('message.cannot_answer_again')}`);
                 } else {
-                  context?.sendMessage(choice?.text);
+                  context?.sendMessage(choice?.key);
                   setOptionDisabled(true);
                 }
               }}>
@@ -177,32 +170,100 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   console.log('here', content);
 
-  const handleAudio = useCallback((url: any) => {
-    // console.log(url)
-    if (!url) {
-      if (audioFetched) toast.error('No audio');
-      return;
-    }
-    context?.playAudio(url, content);
-    // Write logic for handling audio here
-  }, [audioFetched, content, context?.playAudio]);
+  const handleAudio = useCallback(
+    (url: any) => {
+      // console.log(url)
+      if (!url) {
+        if (audioFetched) toast.error('No audio');
+        return;
+      }
+      context?.playAudio(url, content);
+      saveTelemetryEvent(
+        '0.1',
+        'E015',
+        'userQuery',
+        'timesAudioUsed',
+        {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+          messageId: content?.data?.messageId,
+          text: content?.text,
+          timesAudioUsed: 1
+        }
+      )
+    },
+    [audioFetched, content, context?.playAudio]
+  );
 
-  const downloadAudio = useCallback(()=>{
+  const downloadAudio = useCallback(() => {
     const fetchAudio = async (text: string) => {
+      const startTime = Date.now();
       try {
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/text-to-speech`,
           {
             text: text,
-            language: context?.locale
+            language: context?.locale,
+            messageId: content?.data?.messageId,
+            conversationId: sessionStorage.getItem('conversationId') || ''
+          },
+          {
+            headers: {
+              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+              orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+              userId: localStorage.getItem('userID') || ''
+            },
           }
         );
         setAudioFetched(true);
+        const endTime = Date.now();
+        const latency = endTime - startTime;
+        await saveTelemetryEvent(
+          '0.1',
+          'E045',
+          'aiToolProxyToolLatency',
+          't2sLatency',
+          {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+            phoneNumber: localStorage.getItem('phoneNumber') || '',
+            conversationId: sessionStorage.getItem('conversationId') || '',
+            text: text,
+            messageId: content?.data?.messageId,
+            timeTaken: latency,
+            createdAt: Math.floor(startTime / 1000),
+            audioUrl: response?.data?.url || 'No audio URL'
+          }
+        );
         // cacheAudio(response.data);
-        return response.data.url;
-      } catch (error) {
+        return response?.data?.url;
+      } catch (error: any) {
         console.error('Error fetching audio:', error);
         setAudioFetched(true);
+        const endTime = Date.now();
+        const latency = endTime - startTime;
+        await saveTelemetryEvent(
+          '0.1',
+          'E045',
+          'aiToolProxyToolLatency',
+          't2sLatency',
+          {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+            phoneNumber: localStorage.getItem('phoneNumber') || '',
+            conversationId: sessionStorage.getItem('conversationId') || '',
+            text: text,
+            msgId: content?.data?.messageId,
+            timeTaken: latency,
+            createdAt: Math.floor(startTime / 1000),
+            error: error?.message || 'Error fetching audio'
+          }
+        );
         return null;
       }
     };
@@ -221,17 +282,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         if (audioUrl) {
           content.data.audio_url = audioUrl;
           handleAudio(audioUrl);
-        } 
+        }
       }
     };
 
-     if (content?.data?.audio_url) {
-        handleAudio(content.data.audio_url);
-      } else {
-        fetchData();
-      }
-     
-  },[handleAudio, content?.data, content?.text, t])
+    if (content?.data?.audio_url) {
+      handleAudio(content.data.audio_url);
+    } else {
+      fetchData();
+    }
+  }, [handleAudio, content?.data, content?.text, t]);
 
   switch (type) {
     case 'loader':
@@ -289,6 +349,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   : !content?.data?.isEnd
                 && <BlinkingSpinner />
               } */}
+            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div style={{color: content?.data?.position === 'right' ? 'yellow' : 'black', fontSize: '12px', fontWeight: 'normal'}}>
+            <br></br><span>messageId: {content?.data?.messageId}</span><br></br>
+              <span>conversationId: {content?.data?.conversationId}</span>
+            </div>}
             </span>
             {getLists({
               choices:
@@ -308,8 +372,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   fontSize: '10px',
                 }}>
                 {moment(
-                  content?.data?.sentTimestamp ||
-                    content?.data?.repliedTimestamp
+                  content?.data?.timestamp
                 ).format('hh:mm A DD/MM/YYYY')}
               </span>
             </div>
@@ -338,29 +401,42 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     <div
                       className={styles.msgSpeaker}
                       onClick={downloadAudio}
-                      style={
-                        // !content?.data?.isEnd
-                        //   ? {
-                        //       pointerEvents: 'none',
-                        //       filter: 'grayscale(100%)',
-                        //       opacity: '0.5',
-                        //       border: `1px solid ${secondaryColor}`,
-                        //     }
-                        //   :
-                        {
-                          pointerEvents: 'auto',
-                          opacity: '1',
-                          filter: 'grayscale(0%)',
-                          border: `1px solid ${secondaryColor}`,
-                        }
-                      }>
-                        {context?.clickedAudioUrl === content?.data?.audio_url ? (
-                      <Image src={!context?.audioPlaying
+                      // style={
+                      //   !content?.data?.isEnd
+                      //     ? {
+                      //         pointerEvents: 'none',
+                      //         filter: 'grayscale(100%)',
+                      //         opacity: '0.5',
+                      //         border: `1px solid ${secondaryColor}`,
+                      //       }
+                      //     :
+                      //   {
+                      //     pointerEvents: 'auto',
+                      //     opacity: '1',
+                      //     filter: 'grayscale(0%)',
+                      //     border: `1px solid ${secondaryColor}`,
+                      //   }
+                      // }
+                      >
+                      {context?.clickedAudioUrl === content?.data?.audio_url ? (
+                        <Image
+                          src={
+                            !context?.audioPlaying
                               ? SpeakerIcon
-                              : SpeakerPauseIcon} width={!context?.audioPlaying ? 15 : 40} height={!context?.audioPlaying ? 15 : 40} alt="" />) :
-                              (
-                                <Image src={SpeakerIcon} width={15} height={15} alt="" />
-                              )}
+                              : SpeakerPauseIcon
+                          }
+                          width={!context?.audioPlaying ? 15 : 40}
+                          height={!context?.audioPlaying ? 15 : 40}
+                          alt=""
+                        />
+                      ) : (
+                        <Image
+                          src={SpeakerIcon}
+                          width={15}
+                          height={15}
+                          alt=""
+                        />
+                      )}
 
                       <p
                         style={{
@@ -372,7 +448,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           marginRight: '1px',
                           padding: '0 5px',
                         }}>
-                         {t('message.speaker')}
+                        {t('message.speaker')}
                       </p>
                     </div>
                   </div>
@@ -471,8 +547,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     fontSize: '10px',
                   }}>
                   {moment(
-                    content?.data?.sentTimestamp ||
-                      content?.data?.repliedTimestamp
+                    content?.data?.timestamp
                   ).format('hh:mm A DD/MM/YYYY')}
                 </span>
               </div>
@@ -509,8 +584,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     fontSize: '10px',
                   }}>
                   {moment(
-                    content?.data?.sentTimestamp ||
-                      content?.data?.repliedTimestamp
+                    content?.data?.timestamp
                   ).format('hh:mm A DD/MM/YYYY')}
                 </span>
               </div>
@@ -546,8 +620,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     fontSize: '10px',
                   }}>
                   {moment(
-                    content?.data?.sentTimestamp ||
-                      content?.data?.repliedTimestamp
+                    content?.data?.timestamp
                   ).format('hh:mm A DD/MM/YYYY')}
                 </span>
               </div>
@@ -563,6 +636,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <div style={{ display: 'flex' }}>
               <span className={styles.optionsText}>
                 {content?.data?.payload?.text}
+            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div style={{color: 'black', fontSize: '12px', fontWeight: 'normal'}}>
+            <br></br><span>messageId: {content?.data?.messageId}</span><br></br>
+              <span>conversationId: {content?.data?.conversationId}</span>
+            </div>}
               </span>
             </div>
             {getLists({
@@ -588,10 +665,29 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               content?.data?.position === 'right'
                 ? styles.messageTriangleRight
                 : styles.messageTriangleLeft
+            }
+            style={
+              content?.data?.position === 'right'
+                ? {
+                    borderColor: `${secondaryColor} transparent transparent transparent`,
+                  }
+                : {
+                    borderColor: `${contrastText} transparent transparent transparent`,
+                  }
             }></div>
-          <Bubble type="text">
+          <Bubble type="text" style={
+              content?.data?.position === 'right'
+                ? {
+                    background: secondaryColor,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                  }
+                : {
+                    background: contrastText,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                  }
+            }>
             <div className={styles.tableContainer}>
-              {jsonToTable(JSON.parse(content?.text)?.table)}
+              {<JsonToTable json={JSON.parse(content?.text)?.table} />}
             </div>
             <span
               style={{
@@ -599,16 +695,20 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 fontSize: '1rem',
                 color:
                   content?.data?.position === 'right'
-                    ? secondaryColor
-                    : contrastText,
+                    ? contrastText
+                    : secondaryColor,
               }}>
               {`\n` +
-                JSON.parse(content?.text)?.generalAdvice +
+                JSON.parse(content?.text)?.generalAdvice || "" +
                 `\n\n` +
-                JSON.parse(content?.text)?.buttonDescription}
+                JSON.parse(content?.text)?.buttonDescription || ""}
               {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
               })}
+            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div style={{color: 'black', fontSize: '12px', fontWeight: 'normal'}}>
+            <br></br><span>messageId: {content?.data?.messageId}</span><br></br>
+              <span>conversationId: {content?.data?.conversationId}</span>
+            </div>}
             </span>
           </Bubble>
         </div>

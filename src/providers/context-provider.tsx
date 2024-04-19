@@ -24,6 +24,7 @@ import mergeConfigurations from '../utils/mergeConfigurations';
 import { FullPageLoader } from '../components/fullpage-loader';
 import LaunchPage from '../pageComponents/launch-page';
 import { ThemeContext } from './theme-provider/theme-context';
+import saveTelemetryEvent from '../utils/telemetry';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
 
@@ -56,11 +57,13 @@ const ContextProvider: FC<{
   const [cookie, setCookie, removeCookie] = useCookies();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [audioElement, setAudioElement] = useState(null);
-  const [audioPlaying, setAudioPlaying] = useState(true);
+  const [audioPlaying, setAudioPlaying] = useState(false);
   const [clickedAudioUrl, setClickedAudioUrl] = useState<string | null>(null);
   const [startTime, setStartTime] = useState(Date.now());
   const [endTime, setEndTime] = useState(Date.now());
-  const [lastMsgId, setLastMsgId] = useState('');
+  const [s2tMsgId, sets2tMsgId] = useState('');
+  const [lastSentMsgId, setLastSentMsgId] = useState('');
+  const [lastText, setLastText] = useState('');
   const [kaliaClicked, setKaliaClicked] = useState(false);
   const [config, setConfig] = useState(null);
   const themeContext = useContext(ThemeContext);
@@ -68,24 +71,25 @@ const ContextProvider: FC<{
   // console.log("hola:",{configs})
 
   useEffect(() => {
-    mergeConfigurations().then(res => {
+    mergeConfigurations().then((res) => {
       setConfig(res);
-      themeContext?.modifyPaletes(res?.theme?.palette)
+      themeContext?.modifyPaletes(res?.theme?.palette);
     });
   }, []);
 
-
   useEffect(() => {
-    //@ts-ignore
-    if (config?.component?.launchPage && config?.component?.launcPage?.showLaunchPage) {
+    if (
+      //@ts-ignore
+      config?.component?.launchPage &&
+      //@ts-ignore
+      config?.component?.launchPage?.showLaunchPage
+    ) {
       setShowLaunchPage(true);
       setTimeout(() => {
-        setShowLaunchPage(false);;
-      }, 2000)
+        setShowLaunchPage(false);
+      }, 2000);
     }
-  }, [config])
-
-
+  }, [config]);
 
   const downloadChat = useMemo(() => {
     return (e: string) => {
@@ -100,16 +104,14 @@ const ContextProvider: FC<{
   useEffect(() => {
     //@ts-ignore
     if (config?.translation && locale) {
-      onLocaleUpdate()
+      onLocaleUpdate();
     }
-  }, [config, locale])
-
+  }, [config, locale]);
 
   const onLocaleUpdate = useCallback(() => {
     //@ts-ignore
     setLocaleMsgs(config?.translation?.[locale]);
-
-  }, [config, locale])
+  }, [config, locale]);
   const shareChat = useMemo(() => {
     return (e: string) => {
       try {
@@ -174,14 +176,6 @@ const ContextProvider: FC<{
         setAudioElement(null);
         setAudioPlaying(false);
       });
-      axios
-        .get(
-          `${process.env.NEXT_PUBLIC_BFF_API_URL}/incrementaudioused/${content?.data?.messageId}`
-        )
-        .then((res) => { })
-        .catch((err) => {
-          console.log(err);
-        });
       audio
         .play()
         .then(() => {
@@ -243,30 +237,31 @@ const ContextProvider: FC<{
   }, []);
 
   useEffect(() => {
-    // if (localStorage.getItem('userID') && localStorage.getItem('auth')) {
-    setNewSocket(
-      new UCI(
-        URL,
-        {
-          transportOptions: {
-            polling: {
-              extraHeaders: {
-                // Authorization: `Bearer ${localStorage.getItem('auth')}`,
-                channel: 'akai',
+    if (localStorage.getItem('userID')) {
+      setNewSocket(
+        new UCI(
+          URL,
+          {
+            transportOptions: {
+              polling: {
+                extraHeaders: {
+                  // Authorization: `Bearer ${localStorage.getItem('auth')}`,
+                  channel: 'akai',
+                },
               },
             },
+            path: process.env.NEXT_PUBLIC_SOCKET_PATH || '',
+            query: {
+              deviceId: localStorage.getItem('userID'),
+            },
+            autoConnect: false,
+            transports: ['polling', 'websocket'],
+            upgrade: true,
           },
-          query: {
-            deviceId: localStorage.getItem('userID'),
-          },
-          autoConnect: false,
-          transports: ['polling', 'websocket'],
-          upgrade: true,
-        },
-        onMessageReceived
-      )
-    );
-    // }
+          onMessageReceived
+        )
+      );
+    }
     function cleanup() {
       if (newSocket)
         newSocket.onDisconnect(() => {
@@ -274,7 +269,26 @@ const ContextProvider: FC<{
         });
     }
     return cleanup;
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localStorage.getItem('userID')]);
+
+  useEffect(() => {
+    if (lastText === '') return;
+    try {
+      saveTelemetryEvent('0.1', 'E017', 'userQuery', 'responseAt', {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || '',
+        messageId: lastSentMsgId,
+        text: lastText,
+        timeTaken: 0,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }, [lastText]);
 
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
@@ -302,12 +316,12 @@ const ContextProvider: FC<{
               if (word.endsWith('<end/>')) {
                 updatedMessages[existingMsgIndex].isEnd = true;
               }
-              updatedMessages[existingMsgIndex].text +=
-                word.replace('<end/>', '') + ' ';
+              updatedMessages[existingMsgIndex].text =
+                word.replace(/<end\/>/g, '') + ' ';
             } else {
               // If the message doesn't exist, create a new one
               const newMsg = {
-                text: word.replace('<end/>', '') + ' ',
+                text: word.replace(/<end\/>/g, '') + ' ',
                 isEnd: word.endsWith('<end/>') ? true : false,
                 choices: msg?.payload?.buttonChoices,
                 position: 'left',
@@ -324,68 +338,50 @@ const ContextProvider: FC<{
               };
 
               updatedMessages.push(newMsg);
+              // console.log('useeffect', newMsg.text);
+              setLastText((prev) => (prev = newMsg.text));
             }
             return updatedMessages;
           });
           setIsMsgReceiving(false);
           if (msg.payload.text.endsWith('<end/>')) {
-            setLastMsgId(msg?.messageId.Id);
             setEndTime(Date.now());
           }
           setLoading(false);
         }
       }
     },
-    []
+    [messages]
   );
 
-
-  // TODO: add message received telemetry once confirmed when full message is received 
-  // const telemetryApi =
-  //   process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
-  // useEffect(() => {
-  //   const postTelemetry = async () => {
-  //     console.log('MESSAGE:', messages);
-  //     try {
-  //       await axios.post(telemetryApi, [
-  //         {
-  //           generator: 'pwa',
-  //           version: '1.0',
-  //           timestamp: new Date().getTime(),
-  //           actorId: localStorage.getItem('userID') || '',
-  //           actorType: 'user',
-  //           env: 'prod',
-  //           eventId: 'E037',
-  //           event: 'messageQuery',
-  //           subEvent: 'messageReceived',
-  //           os:
-  //             // @ts-ignore
-  //             window.navigator?.userAgentData?.platform ||
-  //             window.navigator.platform,
-  //           browser: window.navigator.userAgent,
-  //           ip: sessionStorage.getItem('ip') || '',
-  //           // @ts-ignore
-  //           deviceType: window.navigator?.userAgentData?.mobile
-  //             ? 'mobile'
-  //             : 'desktop',
-  //           eventData: {
-  //             botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-  //             userId: localStorage.getItem('userID') || '',
-  //             phoneNumber: localStorage.getItem('phoneNumber') || '',
-  //             conversationId: sessionStorage.getItem('conversationId') || '',
-  //             messageId: messages[messages.length - 1]?.messageId,
-  //             text: messages[messages.length - 1]?.text,
-  //             createdAt: new Date().getTime(),
-  //             timeTaken: endTime - startTime,
-  //           },
-  //         },
-  //       ]);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-  //   postTelemetry();
-  // }, [endTime]);
+  useEffect(() => {
+    const postTelemetry = async () => {
+      console.log('MESSAGE:', messages);
+      if (messages.length > 0)
+        try {
+          await saveTelemetryEvent(
+            '0.1',
+            'E033',
+            'messageQuery',
+            'messageReceived',
+            {
+              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+              orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+              userId: localStorage.getItem('userID') || '',
+              phoneNumber: localStorage.getItem('phoneNumber') || '',
+              conversationId: sessionStorage.getItem('conversationId') || '',
+              messageId: messages[messages.length - 1]?.messageId,
+              text: messages[messages.length - 1]?.text,
+              createdAt: Math.floor(new Date().getTime() / 1000),
+              timeTaken: endTime - startTime,
+            }
+          );
+        } catch (err) {
+          console.log(err);
+        }
+    };
+    postTelemetry();
+  }, [endTime]);
 
   console.log('erty:', { conversationId });
 
@@ -440,30 +436,7 @@ const ContextProvider: FC<{
     [isOnline, updateMsgState]
   );
 
-  useEffect(() => {
-    if (!lastMsgId) return;
-    const timeDiff = endTime - startTime;
-    console.log('time taken', timeDiff);
-    axios
-      .post(
-        `${process.env.NEXT_PUBLIC_BFF_API_URL}/timetakenatapplication/${lastMsgId}`,
-        {
-          data: {
-            timeTaken: timeDiff,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endTime]);
-
-
-  console.log("chu:",{config})
+  console.log('config:', { config });
   //@ts-ignore
   const sendMessage = useCallback(
     async (text: string, media: any, isVisibile = true) => {
@@ -483,27 +456,31 @@ const ContextProvider: FC<{
       // console.log('mssgs:', messages)
       setLoading(true);
       setIsMsgReceiving(true);
-
       console.log('my mssg:', text);
+      console.log('s2tMsgId:', s2tMsgId);
+      const messageId = s2tMsgId ? s2tMsgId : uuidv4();
+      console.log('s2t messageId:', messageId);
+      setLastSentMsgId((prev) => (prev = messageId));
       newSocket.sendMessage({
         text: text?.replace('&', '%26'),
         to: localStorage.getItem('userID'),
         payload: {
+          messageId: messageId,
           from: localStorage.getItem('phoneNumber'),
           appId: 'AKAI_App_Id',
           channel: 'AKAI',
-          latitude: sessionStorage.getItem('latitude'),
-          longitude: sessionStorage.getItem('longitude'),
-          city: sessionStorage.getItem('city'),
-          state: sessionStorage.getItem('state'),
-          ip: sessionStorage.getItem('ip'),
-          asrId: sessionStorage.getItem('asrId'),
+          metaData: {
+            latitude: sessionStorage.getItem('latitude'),
+            longitude: sessionStorage.getItem('longitude'),
+            city: sessionStorage.getItem('city'),
+            state: sessionStorage.getItem('state'),
+            ip: sessionStorage.getItem('ip'),
+          },
           userId: localStorage.getItem('userID'),
           conversationId: sessionStorage.getItem('conversationId'),
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
         },
       });
-      const messageId = uuidv4();
 
       setStartTime(Date.now());
       if (isVisibile)
@@ -526,79 +503,47 @@ const ContextProvider: FC<{
               time: Date.now(),
               disabled: true,
               messageId: messageId,
+              conversationId: sessionStorage.getItem('conversationId'),
               repliedTimestamp: Date.now(),
             },
           ]);
-          sessionStorage.removeItem('asrId');
         }
       try {
-        const telemetryApi =
-          process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
-        await axios.post(telemetryApi, [
-          {
-            generator: 'pwa',
-            version: '1.0',
-            timestamp: new Date().getTime(),
-            actorId: localStorage.getItem('userID') || '',
-            actorType: 'user',
-            env: 'prod',
-            eventId: 'E036',
-            event: 'messageQuery',
-            subEvent: 'messageSent',
-            os:
-              // @ts-ignore
-              window.navigator?.userAgentData?.platform ||
-              window.navigator.platform,
-            browser: window.navigator.userAgent,
-            ip: sessionStorage.getItem('ip') || '',
-            // @ts-ignore
-            deviceType: window.navigator?.userAgentData?.mobile
-              ? 'mobile'
-              : 'desktop',
-            eventData: {
-              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-              userId: localStorage.getItem('userID') || '',
-              phoneNumber: localStorage.getItem('phoneNumber') || '',
-              conversationId: sessionStorage.getItem('conversationId') || '',
-              messageId: messageId,
-              text: text,
-              createdAt: new Date().getTime(),
-            },
-          },
-        ], {
-          headers: {
-            orgId: process.env.NEXT_PUBLIC_ORG_ID || ''
-          }
+        await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+          messageId: messageId,
+          text: text,
+          createdAt: Math.floor(new Date().getTime() / 1000),
         });
       } catch (err) {
         console.error(err);
       }
+      sets2tMsgId('');
     },
-    [conversationId, newSocket, removeCookie]
+    [conversationId, newSocket, removeCookie, s2tMsgId]
   );
 
   const fetchIsDown = useCallback(async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_BFF_API_URL}/health/${flags?.health_check_time?.value}`
-      );
-      const status = res.data.status;
-      console.log('hie', status);
-      if (status === 'OK') {
-        setIsDown(false);
-      } else {
-        setIsDown(true);
-        console.log('Server status is not OK');
-      }
-    } catch (error: any) {
-      console.error(error);
-    }
+    // try {
+    //   const res = await axios.get(
+    //     `${process.env.NEXT_PUBLIC_BFF_API_URL}/health/${flags?.health_check_time?.value}`
+    //   );
+    //   const status = res.data.status;
+    //   console.log('hie', status);
+    //   if (status === 'OK') {
+    //     setIsDown(false);
+    //   } else {
+    //     setIsDown(true);
+    //     console.log('Server status is not OK');
+    //   }
+    // } catch (error: any) {
+    //   console.error(error);
+    // }
   }, [flags?.health_check_time?.value]);
-
-  // Remove ASR ID from session storage on conversation change
-  useEffect(() => {
-    sessionStorage.removeItem('asrId');
-  }, [conversationId]);
 
   const normalizedChat = (chats: any): any => {
     console.log('in normalized', chats);
@@ -645,7 +590,7 @@ const ContextProvider: FC<{
     }
     timer = setTimeout(() => {
       if (loading) {
-        toast.loading('message.taking_longer', { duration: 3000 });
+        toast.loading(t('message.taking_longer'), { duration: 3000 });
       }
       secondTimer = setTimeout(async () => {
         fetchIsDown();
@@ -654,7 +599,8 @@ const ContextProvider: FC<{
           console.log('log:', loading);
           try {
             const chatHistory = await axios.get(
-              `${process.env.NEXT_PUBLIC_BFF_API_URL
+              `${
+                process.env.NEXT_PUBLIC_BFF_API_URL
               }/user/chathistory/${sessionStorage.getItem('conversationId')}`,
               {
                 headers: {
@@ -707,7 +653,6 @@ const ContextProvider: FC<{
                 appId: 'AKAI_App_Id',
                 channel: 'AKAI',
               },
-              asrId: sessionStorage.getItem('asrId'),
               userId: localStorage.getItem('userID'),
               conversationId: sessionStorage.getItem('conversationId'),
             });
@@ -717,7 +662,6 @@ const ContextProvider: FC<{
           setIsMsgReceiving(false);
         }
       }, timer2);
-
     }, timer1);
 
     return () => {
@@ -756,7 +700,9 @@ const ContextProvider: FC<{
       setAudioPlaying,
       config,
       kaliaClicked,
-      setKaliaClicked
+      setKaliaClicked,
+      s2tMsgId,
+      sets2tMsgId,
     }),
     [
       locale,
@@ -785,19 +731,26 @@ const ContextProvider: FC<{
       setAudioPlaying,
       config,
       kaliaClicked,
-      setKaliaClicked
+      setKaliaClicked,
+      s2tMsgId,
+      sets2tMsgId,
     ]
   );
 
-
-  if (!config) return <FullPageLoader loading label='Loading configuration..' />
-  //@ts-ignore
-  if (showLaunchPage) return <LaunchPage theme={config?.theme} config={config?.component?.launchPage} />;
+  if (!config)
+    return <FullPageLoader loading label="Loading configuration.." />;
+    if (showLaunchPage)
+    return (
+      <LaunchPage
+      //@ts-ignore
+      theme={config?.theme}
+      //@ts-ignore
+        config={config?.component?.launchPage}
+      />
+    );
   return (
     //@ts-ignore
-    <AppContext.Provider value={values}>
-      {children}
-    </AppContext.Provider>
+    <AppContext.Provider value={values}>{children}</AppContext.Provider>
   );
 };
 
