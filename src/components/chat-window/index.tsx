@@ -147,6 +147,7 @@ const ChatUiWindow: React.FC = () => {
           btnColor={secondaryColor || 'black'}
           background="var(--bg-color)"
           disableSend={isMsgReceiving}
+          
           //@ts-ignore
           translation={t}
           showTransliteration={config?.allowTransliteration  && localStorage.getItem('locale') === config?.transliterationOutputLanguage}

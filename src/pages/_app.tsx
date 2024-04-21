@@ -17,9 +17,7 @@ import flagsmith from 'flagsmith/isomorphic';
 import { AppContext } from '../context';
 import { useConfig } from '../hooks/useConfig';
 
-const LaunchPage = dynamic(() => import('../pageComponents/launch-page'), {
-  ssr: false,
-});
+
 
 const NavBar = dynamic(() => import('../components/NavBar'), {
   ssr: false,

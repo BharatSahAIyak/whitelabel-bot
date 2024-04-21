@@ -746,6 +746,7 @@ const ContextProvider: FC<{
       theme={config?.theme}
       //@ts-ignore
         config={config?.component?.launchPage}
+        compConfig={config}
       />
     );
   return (
