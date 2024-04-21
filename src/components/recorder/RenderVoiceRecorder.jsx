@@ -230,13 +230,16 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
     context?.sets2tMsgId((prev) => prev = s2tMsgId);
   };
 
+  if(config?.showVoiceRecorder === false){
+    return null;
+  }
   return (
     <div>
       <div>
         {mediaRecorder && mediaRecorder.state === 'recording' ? (
           <div className={styles.center}>
             <img
-              src={config?.stopIcon || stop?.src}
+              src={stop?.src}
               alt="stopIcon"
               onClick={() => {
                 stopRecording();
@@ -248,13 +251,13 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
           <div className={styles.center}>
             {apiCallStatus === 'processing' ? (
               <img
-                src={config?.processingIcon || processing?.src}
+                src={processing?.src}
                 alt="processingIcon"
                 style={{ cursor: 'pointer', width: '100%', height: '100%' }}
               />
             ) : apiCallStatus === 'error' ? (
               <img
-                src={config?.errorIcon || error?.src}
+                src={error?.src}
                 alt="errorIcon"
                 onClick={() => {
                   setUserClickedError(true);
@@ -265,7 +268,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
             ) : (
               <>
                 <img
-                  src={config?.startIcon || start?.src}
+                  src={start?.src}
                   alt="startIcon"
                   onClick={() => {
                     setUserClickedError(true);

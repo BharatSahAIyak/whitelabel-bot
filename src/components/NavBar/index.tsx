@@ -25,7 +25,15 @@ const Navbar: React.FC = () => {
   const { isAuthenticated } = useLogin();
   const {
     showHamburgerMenu,
-    logos: { showCenterLogos, centerLogoIcons, showRightLogos, rightLogoIcons },
+    showHomeIcon,
+    showCenterLogo,
+    centerLogoSrc,
+    showRightLogo1,
+    rightLogo1Src,
+    showRightLogo2,
+    rightLogo2Src,
+    showRightLogo3,
+    rightLogo3Src
   } = config;
 
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -105,7 +113,7 @@ const Navbar: React.FC = () => {
               </div>
             )}
 
-            {isAuthenticated && router.pathname !== '/' && router.pathname !== '/chat' && (
+            {isAuthenticated && showHomeIcon && router.pathname !== '/' && router.pathname !== '/chat' && (
               <IconButton
                 color="primary"
                 size="large"
@@ -125,15 +133,13 @@ const Navbar: React.FC = () => {
               transform: 'translateX(-50%)',
               textAlign:'center'
             }}>
-            {showCenterLogos &&
-              centerLogoIcons.map((logo: any) => (
+            {showCenterLogo &&
                 <img
-                  key={logo.id}
-                  src={logo.src}
-                  alt={`Logo ${logo.id}`}
+                  src={centerLogoSrc}
+                  alt="Center Logo"
                   style={{ maxHeight: '50px' }}
                 />
-              ))}
+              }
             
               {router.pathname === '/login' && <div
                 style={{ fontSize: '10px', color: theme?.primary?.dark || 'black', fontWeight: 'bold', textAlign: 'center' }}
@@ -141,18 +147,29 @@ const Navbar: React.FC = () => {
                 />}
           </div>
 
-          {showRightLogos && (
-            <div style={{ marginTop: '10px' }}>
-              {rightLogoIcons.map((logo: any) => (
+          <div>
+          {showRightLogo1 && (
                 <img
-                  key={logo.id}
-                  src={logo.src}
-                  alt={`Right Logo ${logo.id}`}
+                  src={rightLogo1Src}
+                  alt={`Right Logo 1`}
                   style={{ maxHeight: '60px' }}
                 />
-              ))}
-            </div>
           )}
+          {showRightLogo2 && (
+                <img
+                  src={rightLogo2Src}
+                  alt={`Right Logo 2`}
+                  style={{ maxHeight: '60px' }}
+                />
+          )}
+          {showRightLogo3 && (
+                <img
+                  src={rightLogo3Src}
+                  alt={`Right Logo 3`}
+                  style={{ maxHeight: '60px' }}
+                />
+          )}
+          </div>
         </Toolbar>
       </AppBar>
 

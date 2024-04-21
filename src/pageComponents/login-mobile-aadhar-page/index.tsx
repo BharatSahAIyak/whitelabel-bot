@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import { useConfig } from "../../hooks/useConfig";
 const LoginMobileAadharPage: React.FC = () => {
   const config = useConfig('component', 'loginMobileAadharPage');
-  const { loginWithAadhaar, showSignUp, showAlternateSignIn, logo, showLogo,showSplitedView } = config;
+  const { loginWithAadhaar, showSignUp, showAlternateSignIn, logo, showLogo, showSplitedView } = config;
 
   const t = useLocalization();
   const router = useRouter();
@@ -110,9 +110,6 @@ const LoginMobileAadharPage: React.FC = () => {
             className={styles.leftColumn}
             style={{background: theme?.primary?.main}}
           >
-            {showLogo && (<div className={styles.logo}>
-              <img src={logo} width={150} height={40} alt="" />
-            </div>)}
           </div>
         )}
 
@@ -154,7 +151,7 @@ const LoginMobileAadharPage: React.FC = () => {
               dangerouslySetInnerHTML={{__html: t("label.subtitle")}}
             >
             </Typography>
-            {config?.showLogo && config?.logo && <img src={config?.logo} alt='loginPageImg' height='250px' width='320px' />}
+            {showLogo && config?.logo && <img src={logo} alt='loginPageImg' height='250px' width='320px' />}
             <Box
               component="form"
               onSubmit={handleLogin}

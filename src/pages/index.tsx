@@ -14,7 +14,7 @@ const Home: NextPage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="white" />
         <title>{t("label.tab_title")}</title>
-        <link rel="icon" href={config?.logo} />
+        <link rel="icon" href={config?.favicon} />
       </Head>
      
 
