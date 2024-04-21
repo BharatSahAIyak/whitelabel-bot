@@ -68,7 +68,7 @@
       "downTimeImage": ""
     },
     "voiceRecorder": {
-      "showVoiceRecorder": false,
+      "showVoiceRecorder": true,
       "delayBetweenDialogs": 2500
     },
     "feedbackPage": {
