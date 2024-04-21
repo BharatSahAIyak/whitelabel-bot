@@ -21,8 +21,8 @@ const Chat: NextPage = () => {
     <>
       <Head>
         <title>{t("label.tab_title")}</title>
-        <link rel="icon" href={config?.logo} />
-        <meta name="description" content="My page description" />
+        <link rel="icon" href={config?.favicon} />
+        
       </Head>
       {context?.showDialerPopup && (
         <div
