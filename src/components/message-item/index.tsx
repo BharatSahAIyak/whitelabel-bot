@@ -34,6 +34,7 @@ import { AppContext } from '../../context';
 import axios from 'axios';
 import saveTelemetryEvent from '../../utils/telemetry';
 import BlinkingSpinner from '../blinking-spinner/index';
+import Loader from '../loader';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
@@ -43,6 +44,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     message?.content?.data?.optionClicked || false
   );
   const [audioFetched, setAudioFetched] = useState(false);
+  const [ttsLoader, setTtsLoader] = useState(false);
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -178,6 +180,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         return;
       }
       context?.playAudio(url, content);
+      setTtsLoader(false);
       saveTelemetryEvent(
         '0.1',
         'E015',
@@ -279,16 +282,21 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           toast.dismiss(toastId);
         }, 1500);
         const audioUrl = await fetchAudio(content?.text);
+
+        setTtsLoader(false);
         if (audioUrl) {
           content.data.audio_url = audioUrl;
           handleAudio(audioUrl);
-        }
+        }else setTtsLoader(false);
+
+       
       }
     };
 
     if (content?.data?.audio_url) {
       handleAudio(content.data.audio_url);
     } else {
+      setTtsLoader(true);
       fetchData();
     }
   }, [handleAudio, content?.data, content?.text, t]);
@@ -486,7 +494,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           height={!context?.audioPlaying ? 15 : 40}
                           alt=""
                         />
-                      ) : (
+                      ) : ttsLoader ? <Loader /> : (
                         <Image
                           src={SpeakerIcon}
                           width={15}

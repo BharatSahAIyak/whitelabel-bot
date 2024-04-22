@@ -188,6 +188,8 @@ export const Sidebar = ({
                       </ListItemIcon>
                       <ListItemText
                         primary={t('label.welcome')}
+                        secondary={config?.showPhoneNumber && `+91 ${localStorage.getItem("phoneNumber")}`}
+                        secondaryTypographyProps={{color:'white'}}
                         sx={{ color: theme.primary.contrastText }}
                       />
                     </ListItemButton>
