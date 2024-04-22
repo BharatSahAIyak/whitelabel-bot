@@ -63,7 +63,7 @@ export const Sidebar = ({
   }
 
   return (
-    <div style={{ background: theme.primary.main }}>
+    <div style={{ background: config?.background ?? theme.primary.main }}>
       <Drawer
         open={isOpen}
         onClose={onToggle}
@@ -73,10 +73,10 @@ export const Sidebar = ({
             height: "100vh",
             borderTopRightRadius: "15px",
             borderBottomRightRadius: "15px",
-            backgroundColor: theme.primary.main,
+            backgroundColor: config?.background ?? theme.primary.main,
           },
         }}>
-        <Box style={{ background: theme.primary.main }} role="presentation">
+        <Box style={{ background: config?.background ?? theme.primary.main }} role="presentation">
           {config && (
             <List>
               {config.showLangSwitcher && (
@@ -96,27 +96,7 @@ export const Sidebar = ({
                         justifyContent: 'flex-end',
                         width: '100%',
                       }}>
-                      {/* {config.languages.map((lang: any, index: number) => (
-                        <button
-                          key={index}
-                          id={lang.code}
-                          className={`Sidemenu_button ${lang.code === activeLanguage ? 'active' : ''}`}
-                          style={{
-                            borderTopLeftRadius: index === 0 ? '10px' : '0',
-                            borderBottomLeftRadius: index === 0 ? '10px' : '0',
-                            borderTopRightRadius: index === config.languages.length - 1 ? '10px' : '0',
-                            borderBottomRightRadius: index === config.languages.length - 1 ? '10px' : '0',
-                            backgroundColor: lang.code === activeLanguage ? theme.primary.light : '#FFFFFF',
-                            border: 'none',
-                            width: '60px',
-                            height: '30px',
-                            padding: '5px',
-                          }}
-                          onClick={() => handleLanguageClick(lang.code)}
-                        >
-                          {lang.label}
-                        </button>
-                      ))}  */}
+                    
 
                       <button
                         className={`Sidemenu_button ${
@@ -131,7 +111,7 @@ export const Sidebar = ({
                           borderBottomRightRadius: '0',
                           backgroundColor:
                             activeLanguage === config?.languageCode1
-                              ? theme.primary.light
+                              ? '#F5952E'
                               : '#FFFFFF',
                           border: 'none',
                           width: '60px',
@@ -157,7 +137,7 @@ export const Sidebar = ({
                           borderBottomRightRadius: '10px',
                           backgroundColor:
                             config?.languageCode2 === activeLanguage
-                              ? theme.primary.light
+                              ? '#F5952E'
                               : '#FFFFFF',
                           border: 'none',
                           width: '60px',
