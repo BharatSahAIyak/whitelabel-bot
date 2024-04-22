@@ -105,7 +105,7 @@ const LoginMobileAadharPage: React.FC = () => {
     },
     [isAadharClicked, input]
   )
-
+console.log("debug login:",{config})
   return (
     <>
       <meta
@@ -161,8 +161,8 @@ const LoginMobileAadharPage: React.FC = () => {
               <img
                 src={config?.logo}
                 alt="loginPageImg"
-                height={config.logoheight}
-                width={config.logowidth}
+                height={config.logoheight || "280px"}
+                width={config.logowidth || "280px"}
               />
             )}
             <Box

@@ -420,7 +420,6 @@ const HomePage: NextPage = () => {
               <button
                 type="submit"
                 className={styles.sendButton}
-                style={{ backgroundColor: 'red' }}
               >
                 <Image
                   src={SendIcon}

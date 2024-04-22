@@ -20,6 +20,10 @@ import router from 'next/router'
 import { useCookies } from 'react-cookie'
 import { AppContext } from '../../context'
 import { useLocalization } from '../../hooks'
+import BhashiniImg from '../../assets/images/bhashinilogo.png';
+import darshanLogo from '../../assets/images/darshan-logo.png';
+import styles from './style.module.css'
+import Image from 'next/image'
 
 export const Sidebar = ({
   isOpen,
@@ -62,9 +66,9 @@ export const Sidebar = ({
     if (typeof window !== 'undefined') window.location.reload()
   }
 
-  console.log(config, 'testing config')
+  console.log("debug",{config})
   return (
-    <div style={{ background: config?.background ?? theme.primary.main }}>
+    <div style={{ background: config?.sidebarBackground ?? theme.primary.main }}>
       <Drawer
         open={isOpen}
         onClose={onToggle}
@@ -74,12 +78,12 @@ export const Sidebar = ({
             height: '100vh',
             borderTopRightRadius: '15px',
             borderBottomRightRadius: '15px',
-            backgroundColor: config?.background ?? theme.primary.main,
+            backgroundColor: config?.sidebarBackground ?? theme.primary.main,
           },
         }}
       >
         <Box
-          style={{ background: config?.background ?? theme.primary.main }}
+          style={{ background: config?.sidebarBackground ?? theme.primary.main }}
           role="presentation"
         >
           {config && (
@@ -115,7 +119,7 @@ export const Sidebar = ({
                           borderBottomRightRadius: '0',
                           backgroundColor:
                             activeLanguage === config?.languageCode1
-                              ? '#F5952E'
+                              ? config?.languageToggleColor
                               : '#FFFFFF',
                           border: 'none',
                           width: '60px',
@@ -142,7 +146,7 @@ export const Sidebar = ({
                           borderBottomRightRadius: '10px',
                           backgroundColor:
                             config?.languageCode2 === activeLanguage
-                              ? '#F5952E'
+                              ? config?.languageToggleColor
                               : '#FFFFFF',
                           border: 'none',
                           width: '60px',
@@ -302,6 +306,34 @@ export const Sidebar = ({
               )}
             </List>
           )}
+            <div
+              className={styles.user}
+              style={{
+                background: 'var(--bg-color)',
+                flexDirection: 'column',
+                fontSize: '12px',
+                position: 'absolute',
+                top: 'auto',
+                bottom: '10px',
+              }}>
+              <div
+                style={{
+                  color: 'var(--secondarygreen)',
+                  textAlign: 'left',
+                  width: '100%',
+                }}>
+                Powered by:
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}>
+                <Image src={BhashiniImg} alt="" width={180} height={45} />
+                <Image src={darshanLogo} alt="" width={55} height={45} />
+              </div>
+            </div>
         </Box>
       </Drawer>
     </div>

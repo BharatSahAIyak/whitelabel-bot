@@ -90,7 +90,7 @@ const Navbar: React.FC = () => {
           background: 'var(--bg-color)',
           boxShadow: 'none',
           borderBottom: '1px solid lightgray',
-          height: router.pathname === '/login' ? '110px' : '80px',
+          height: router.pathname === '/login' ? '120px' : '80px',
         }}
       >
         <Toolbar
@@ -238,7 +238,7 @@ const Navbar: React.FC = () => {
               </div>
             )}
 
-            {router.pathname === '/login' && (
+            {router.pathname === '/login' && showCenterLogo &&(
               <div
                 style={{
                   fontSize: '10px',
