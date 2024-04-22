@@ -24,20 +24,25 @@
       "weatherAdvisoryImg": "",
       "plantProtectionImg": "",
       "kaliaStatusImg": "",
-      "showMic": true
+      "showMic": true,
+      "micHeight": "18vh",
+      "micWidth": "18vh"
     },
     "navbar": {
       "showHamburgerMenu": true,
       "showHomeIcon": true,
+      "textColor": "orange",
       "logos": {
-        "showCenterLogos": false,
+        "showCenterLogos": true,
+        "centerLogoSize": "80px",
         "centerLogoIcons": [
           {
             "id": "logo1",
             "src": " https://www.amakrushi.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=64&q=75"
           }
         ],
-        "showRightLogos": true,
+        "logoTitleColor": "green",
+        "showRightLogos": false,
         "rightLogoIcons": [
           {
             "id": "logo2",
@@ -55,6 +60,10 @@
       }
     },
     "sidebar": {
+      "mobileNumber": "1234567890",
+      "activeLanguageColor": "orange",
+      "nonActiveLanguageColor": "whilte",
+      "backgroudColor": "green",
       "showLangSwitcher": true,
       "languages": [
         {
@@ -95,7 +104,7 @@
       "otpLength": 4,
       "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
       "title": "OTP Verification",
-      "resendOtpTimer":"30"
+      "resendOtpTimer": "30"
     },
     "comingSoon": {
       "allowOverride": false,
@@ -146,25 +155,33 @@
       "showAlternateSignIn": false,
       "showLogo": false,
       "showSplitedView": true,
-      "logo":"https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
-      "title": "Welcome!"
-  },
-  "historyPage": {
-    "allowOverride": false,
-    "title": "History",
-    "noItemsText": "No items found",
-    "allowDelete": true,
-    "showTimestamp": true
-  },
-  "launchPage": {
-    "allowOverride": false,
-    "logo": "src/pages/launch-page/krushak_odisha.png",
-    "label":"ଆମ କୃଷି ଏ ଆଇ ଚାଟ୍ ବୋଟ୍"
-  },
-  "share-buttons": {
-    "allowOverride": false,
-    "allowDownloadChat": true,
-    "allowShareChat": true
-  }
+      "logowidth": "350px",
+      "logoheight": "270px",
+      "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
+      "title": "Welcome!",
+      "inputBoxWidth": "100%"
+    },
+    "historyPage": {
+      "allowOverride": false,
+      "title": "History",
+      "noItemsText": "No items found",
+      "allowDelete": true,
+      "showTimestamp": true
+    },
+    "launchPage": {
+      "allowOverride": false,
+      "logo": "src/pages/launch-page/krushak_odisha.png",
+      "label": "ଆମ କୃଷି ଏ ଆଇ ଚାଟ୍ ବୋଟ୍"
+    },
+    "share-buttons": {
+      "allowOverride": false,
+      "allowDownloadChat": true,
+      "allowShareChat": true,
+      "shareButtonColor": "orange",
+      "downloadButtonColor": "orange"
+    },
+    "chatUI": {
+      "iconBorderColor": "orange"
+    }
   }
 }
