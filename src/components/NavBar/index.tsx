@@ -41,6 +41,7 @@ const Navbar: React.FC = () => {
     centerLogoSize,
     logoTitleColor,
     textColor,
+    newChatButtonColor
   } = config
 
   const [isSidebarOpen, setSidebarOpen] = useState(false)
@@ -194,7 +195,7 @@ const Navbar: React.FC = () => {
                 </IconButton>
                 <Typography
                   variant="body1"
-                  color={textColor ?? 'black'}
+                  color={newChatButtonColor ?? 'black'}
                   sx={{ fontSize: '15px' }}
                 >
                   {t('label.new_chat')}
