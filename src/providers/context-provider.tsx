@@ -465,7 +465,7 @@ const ContextProvider: FC<{
       console.log('s2t messageId:', messageId);
       setLastSentMsgId((prev) => (prev = messageId));
       newSocket.sendMessage({
-        text: text?.replace('&', '%26'),
+        text: text?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
         to: localStorage.getItem('userID'),
         payload: {
           messageId: messageId,
@@ -500,7 +500,7 @@ const ContextProvider: FC<{
           setMessages((prev: any) => [
             ...prev.map((prevMsg: any) => ({ ...prevMsg, disabled: true })),
             {
-              text: text,
+              text: text?.replace(/^\s+|\s+$/g, ''),
               position: 'right',
               payload: { text },
               time: Date.now(),
