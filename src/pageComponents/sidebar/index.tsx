@@ -28,16 +28,6 @@ export const Sidebar = ({
   isOpen: boolean
   onToggle: () => void
 }) => {
-  //   const [config, setConfig] = useState<{
-  //     showLangSwitcher: boolean;
-  //     languages: { code: string; label: string; }[];
-  //     showProfileIcon: boolean;
-  //     profileText: string;
-  //     links: { label: string; icon: string; route: string; }[];
-  //     showLogoutButton: boolean;
-  //     logoutButtonLabel: string;
-  //   } | null>(null);
-
   const [activeLanguage, setActiveLanguage] = useState<string>(() => {
     const storedLang = localStorage.getItem('locale')
     return storedLang || 'en'
@@ -46,7 +36,6 @@ export const Sidebar = ({
   const [cookie, setCookie, removeCookie] = useCookies()
   const context = useContext(AppContext)
   const config = useConfig('component', 'sidebar')
-  const { backgroudColor } = config
   const theme = useColorPalates()
   const t = useLocalization()
 
@@ -73,8 +62,9 @@ export const Sidebar = ({
     if (typeof window !== 'undefined') window.location.reload()
   }
 
+  console.log(config, 'testing config')
   return (
-    <div style={{ background: theme.primary.main }}>
+    <div style={{ background: config?.background ?? theme.primary.main }}>
       <Drawer
         open={isOpen}
         onClose={onToggle}
@@ -84,16 +74,12 @@ export const Sidebar = ({
             height: '100vh',
             borderTopRightRadius: '15px',
             borderBottomRightRadius: '15px',
-            backgroundColor: backgroudColor
-              ? backgroudColor
-              : theme.primary.main,
+            backgroundColor: config?.background ?? theme.primary.main,
           },
         }}
       >
         <Box
-          style={{
-            background: backgroudColor ? backgroudColor : theme.primary.main,
-          }}
+          style={{ background: config?.background ?? theme.primary.main }}
           role="presentation"
         >
           {config && (
@@ -116,28 +102,6 @@ export const Sidebar = ({
                         width: '100%',
                       }}
                     >
-                      {/* {config.languages.map((lang: any, index: number) => (
-                        <button
-                          key={index}
-                          id={lang.code}
-                          className={`Sidemenu_button ${lang.code === activeLanguage ? 'active' : ''}`}
-                          style={{
-                            borderTopLeftRadius: index === 0 ? '10px' : '0',
-                            borderBottomLeftRadius: index === 0 ? '10px' : '0',
-                            borderTopRightRadius: index === config.languages.length - 1 ? '10px' : '0',
-                            borderBottomRightRadius: index === config.languages.length - 1 ? '10px' : '0',
-                            backgroundColor: lang.code === activeLanguage ? theme.primary.light : '#FFFFFF',
-                            border: 'none',
-                            width: '60px',
-                            height: '30px',
-                            padding: '5px',
-                          }}
-                          onClick={() => handleLanguageClick(lang.code)}
-                        >
-                          {lang.label}
-                        </button>
-                      ))}  */}
-
                       <button
                         className={`Sidemenu_button ${
                           activeLanguage === config?.languageCode1
@@ -151,11 +115,7 @@ export const Sidebar = ({
                           borderBottomRightRadius: '0',
                           backgroundColor:
                             activeLanguage === config?.languageCode1
-                              ? config.activeLanguageColor
-                                ? config.activeLanguageColor
-                                : theme.primary.light
-                              : config.nonActiveLanguageColor
-                              ? config.nonActiveLanguageColor
+                              ? '#F5952E'
                               : '#FFFFFF',
                           border: 'none',
                           width: '60px',
@@ -182,11 +142,7 @@ export const Sidebar = ({
                           borderBottomRightRadius: '10px',
                           backgroundColor:
                             config?.languageCode2 === activeLanguage
-                              ? config.activeLanguageColor
-                                ? config.activeLanguageColor
-                                : theme.primary.light
-                              : config.nonActiveLanguageColor
-                              ? config.nonActiveLanguageColor
+                              ? '#F5952E'
                               : '#FFFFFF',
                           border: 'none',
                           width: '60px',
@@ -216,24 +172,23 @@ export const Sidebar = ({
                           }}
                         />
                       </ListItemIcon>
-                      <div>
-                        <ListItemText
-                          primary={t('label.welcome')}
-                          sx={{ color: theme.primary.contrastText }}
-                        />
-                        <ListItemText
-                          primary={`+91 ${config.mobileNumber}`}
-                          sx={{ color: theme.primary.contrastText }}
-                        />
-                      </div>
+                      <ListItemText
+                        primary={t('label.welcome')}
+                        secondary={
+                          config?.showPhoneNumber &&
+                          `+91 ${localStorage.getItem('phoneNumber')}`
+                        }
+                        secondaryTypographyProps={{ color: 'white' }}
+                        sx={{ color: theme.primary.contrastText }}
+                      />
                     </ListItemButton>
                   </ListItem>
                   <Divider sx={{ backgroundColor: '#999' }} />
                 </div>
               )}
 
-              {config.links.map((link: any, index: number) => (
-                <div key={index}>
+              {config?.historyPage && (
+                <div>
                   <ListItem
                     disablePadding
                     sx={{
@@ -245,15 +200,15 @@ export const Sidebar = ({
                     }}
                     onClick={() => {
                       handleItemClick()
-                      router.push(`/${link.route}`)
+                      router.push(`/history`)
                     }}
                   >
                     <ListItemButton>
                       <ListItemIcon sx={{ color: theme.primary.contrastText }}>
-                        {getIconComponent(link.icon)}
+                        {getIconComponent('HistoryIcon')}
                       </ListItemIcon>
                       <ListItemText
-                        primary={t(`label.${link.label}`)}
+                        primary={t(`label.chats`)}
                         sx={{ color: theme.primary.contrastText }}
                       />
                       <ChevronRightIcon sx={{ fontSize: '35px' }} />
@@ -261,7 +216,67 @@ export const Sidebar = ({
                   </ListItem>
                   <Divider sx={{ backgroundColor: '#999' }} />
                 </div>
-              ))}
+              )}
+              {config?.faqPage && (
+                <div>
+                  <ListItem
+                    disablePadding
+                    sx={{
+                      paddingTop: '10px',
+                      paddingBottom: '10px',
+                      color: theme.primary.contrastText,
+                      marginTop: '10px',
+                      marginBottom: '10px',
+                    }}
+                    onClick={() => {
+                      handleItemClick()
+                      router.push(`/faq`)
+                    }}
+                  >
+                    <ListItemButton>
+                      <ListItemIcon sx={{ color: theme.primary.contrastText }}>
+                        {getIconComponent('HelpIcon')}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={t(`label.faqs`)}
+                        sx={{ color: theme.primary.contrastText }}
+                      />
+                      <ChevronRightIcon sx={{ fontSize: '35px' }} />
+                    </ListItemButton>
+                  </ListItem>
+                  <Divider sx={{ backgroundColor: '#999' }} />
+                </div>
+              )}
+              {config?.feedbackPage && (
+                <div>
+                  <ListItem
+                    disablePadding
+                    sx={{
+                      paddingTop: '10px',
+                      paddingBottom: '10px',
+                      color: theme.primary.contrastText,
+                      marginTop: '10px',
+                      marginBottom: '10px',
+                    }}
+                    onClick={() => {
+                      handleItemClick()
+                      router.push(`/feedback`)
+                    }}
+                  >
+                    <ListItemButton>
+                      <ListItemIcon sx={{ color: theme.primary.contrastText }}>
+                        {getIconComponent('FeedbackIcon')}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={t(`label.feedback`)}
+                        sx={{ color: theme.primary.contrastText }}
+                      />
+                      <ChevronRightIcon sx={{ fontSize: '35px' }} />
+                    </ListItemButton>
+                  </ListItem>
+                  <Divider sx={{ backgroundColor: '#999' }} />
+                </div>
+              )}
 
               {config.showLogoutButton && (
                 <ListItem disablePadding>
@@ -307,59 +322,3 @@ const getIconComponent = (iconName: string) => {
 }
 
 export default Sidebar
-
-// <button
-
-//                         className={`Sidemenu_button ${ activeLanguage==='en' ? 'active' : ''
-//                           }`}
-//                         style={{
-//                           borderTopLeftRadius:  '10px',
-//                           borderBottomLeftRadius: '10px' ,
-//                           borderTopRightRadius:
-
-//                              '0',
-//                           borderBottomRightRadius:
-//                              '0',
-//                           backgroundColor:
-//                              activeLanguage ==='en'
-//                               ? theme.primary.light
-//                               : '#FFFFFF',
-//                           border: 'none',
-//                           width: '60px',
-//                           height: '30px',
-//                           padding: '5px',
-//                         }}
-//                         onClick={() => handleLanguageClick('en')}>
-//                        ENG
-//                       </button>
-
-//                       <button
-
-//                         className={`Sidemenu_button ${activeLanguage === config?.
-//                           languageCode2 ?'active' : ''
-//                           }`}
-//                         style={{
-//                           borderTopLeftRadius:  '0',
-//                           borderBottomLeftRadius: '0',
-//                           borderTopRightRadius:
-
-//                                '0',
-//                           borderBottomRightRadius: '0',
-//                           backgroundColor:
-//                           config?.
-//                           languageCode2  === activeLanguage
-//                               ? theme.primary.light
-//                               : '#FFFFFF',
-//                           border: 'none',
-//                           width: '60px',
-//                           height: '30px',
-//                           padding: '5px',
-//                         }}
-//                         onClick={() => handleLanguageClick(config?.
-//                           languageCode2)}>
-//                         {config?.languageName2}
-//                       </button>
-//                   </div>
-//                 </ListItemButton>
-//               </ListItem>
-//             )}

@@ -34,6 +34,7 @@ import { AppContext } from '../../context'
 import axios from 'axios'
 import saveTelemetryEvent from '../../utils/telemetry'
 import BlinkingSpinner from '../blinking-spinner/index'
+import Loader from '../loader'
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI')
@@ -45,6 +46,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     message?.content?.data?.optionClicked || false
   )
   const [audioFetched, setAudioFetched] = useState(false)
+  const [ttsLoader, setTtsLoader] = useState(false)
   const t = useLocalization()
   const theme = useColorPalates()
   const secondaryColor = useMemo(() => {
@@ -182,6 +184,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         return
       }
       context?.playAudio(url, content)
+      setTtsLoader(false)
       saveTelemetryEvent('0.1', 'E015', 'userQuery', 'timesAudioUsed', {
         botId: process.env.NEXT_PUBLIC_BOT_ID || '',
         orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
@@ -277,20 +280,34 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           toast.dismiss(toastId)
         }, 1500)
         const audioUrl = await fetchAudio(content?.text)
+
+        setTtsLoader(false)
         if (audioUrl) {
           content.data.audio_url = audioUrl
           handleAudio(audioUrl)
-        }
+        } else setTtsLoader(false)
       }
     }
 
     if (content?.data?.audio_url) {
       handleAudio(content.data.audio_url)
     } else {
+      setTtsLoader(true)
       fetchData()
     }
   }, [handleAudio, content?.data, content?.text, t])
 
+  const getFormattedDate = (datestr: string) => {
+    const today = new Date(datestr)
+    const yyyy = today.getFullYear()
+    let mm: any = today.getMonth() + 1 // Months start at 0!
+    let dd: any = today.getDate()
+
+    if (dd < 10) dd = '0' + dd
+    if (mm < 10) mm = '0' + mm
+
+    return dd + '/' + mm + '/' + yyyy
+  }
   switch (type) {
     case 'loader':
       return <Typing />
@@ -415,11 +432,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   <div style={{ display: 'flex' }}>
                     <div
                       style={{
-                        border: `1px solid ${
-                          config.iconBorderColor
-                            ? config.iconBorderColor
-                            : secondaryColor
-                        }`,
+                        border: `1px solid ${theme?.primary?.main}`,
                       }}
                       className={styles.msgSpeaker}
                       onClick={downloadAudio}
@@ -451,6 +464,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           height={!context?.audioPlaying ? 15 : 40}
                           alt=""
                         />
+                      ) : ttsLoader ? (
+                        <Loader />
                       ) : (
                         <Image
                           src={SpeakerIcon}
@@ -481,11 +496,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     <div
                       className={styles.msgFeedbackIcons}
                       style={{
-                        border: `1px solid ${
-                          config.iconBorderColor
-                            ? config.iconBorderColor
-                            : secondaryColor
-                        }`,
+                        border: `1px solid ${theme?.primary?.main}`,
                       }}
                     >
                       <div
@@ -516,9 +527,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         style={{
                           height: '32px',
                           width: '1px',
-                          backgroundColor: config.iconBorderColor
-                            ? config.iconBorderColor
-                            : secondaryColor,
+                          backgroundColor: theme?.primary?.main,
                           margin: '6px 0',
                         }}
                       ></div>
@@ -706,6 +715,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     }
 
     case 'table': {
+      console.log({ table: content })
       return (
         <div
           style={{
@@ -745,17 +755,26 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   }
             }
           >
-            <div className={styles.tableContainer}>
+            <div
+              className={styles.tableContainer}
+              style={{ overflowX: 'scroll' }}
+            >
               {<JsonToTable json={JSON.parse(content?.text)?.table} />}
+              <style>
+                {`
+          div::-webkit-scrollbar-thumb {
+            background-color: #d4aa70;
+            border-radius: 10px;
+          }
+        `}
+              </style>
             </div>
             <span
               style={{
                 fontWeight: 600,
                 fontSize: '1rem',
                 color:
-                  content?.data?.position === 'right'
-                    ? contrastText
-                    : secondaryColor,
+                  content?.data?.position === 'right' ? contrastText : 'black',
               }}
             >
               {`\n` + JSON.parse(content?.text)?.generalAdvice ||

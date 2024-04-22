@@ -2,8 +2,11 @@ import { useLocalization } from '../../hooks'
 import styles from './index.module.css'
 import { FC } from 'react'
 
-const LaunchPage: FC<{ theme: any; config: any }> = ({ theme, config }) => {
-  console.log({ config })
+const LaunchPage: FC<{ theme: any; config: any; compConfig: any }> = ({
+  theme,
+  config,
+  compConfig,
+}) => {
   const t = useLocalization()
   return (
     <div

@@ -19,8 +19,8 @@ const LoginMobileAadharPage: React.FC = () => {
     showAlternateSignIn,
     logo,
     showLogo,
-    showSplitedView,
     inputBoxWidth,
+    showSplitedView,
   } = config
 
   const t = useLocalization()
@@ -117,13 +117,7 @@ const LoginMobileAadharPage: React.FC = () => {
           <div
             className={styles.leftColumn}
             style={{ background: theme?.primary?.main }}
-          >
-            {showLogo && (
-              <div className={styles.logo}>
-                <img src={logo} width={150} height={40} alt="" />
-              </div>
-            )}
-          </div>
+          ></div>
         )}
 
         <div className={styles.rightColumn}>
