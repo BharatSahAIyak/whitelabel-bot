@@ -34,6 +34,11 @@
     },
     "navbar": {
       "showNavbar": true,
+      "showLanguageToggle":true,
+      "languageCode1":"en",
+      "languageLabel1":"English",
+      "languageLabel2":"Hindi",
+      "languageCode2":"hi",
       "showHamburgerMenu": true,
       "showHomeIcon": true,
       "showCenterLogo": false,
@@ -47,6 +52,7 @@
     },
     "sidebar": {
       "showLangSwitcher": true,
+      "background":"#1D6231",
       "faqPage": true,
       "feedbackPage": true,
       "historyPage": true,

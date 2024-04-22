@@ -89,3 +89,18 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.ChatFooter {
+  border-top: 1px solid lightgray !important;
+}
+
+::-webkit-scrollbar {
+  width: 5px; /* width of the vertical scrollbar */
+  height: 5px; /* height of the horizontal scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: darkgrey; /* color of the thumb */
+  border-radius: 6px; /* roundness of the edges */
+  border: 3px solid orange; /* creates padding around the thumb */
+}

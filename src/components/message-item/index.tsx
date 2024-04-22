@@ -34,6 +34,7 @@ import { AppContext } from '../../context';
 import axios from 'axios';
 import saveTelemetryEvent from '../../utils/telemetry';
 import BlinkingSpinner from '../blinking-spinner/index';
+import Loader from '../loader';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
@@ -43,6 +44,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     message?.content?.data?.optionClicked || false
   );
   const [audioFetched, setAudioFetched] = useState(false);
+  const [ttsLoader, setTtsLoader] = useState(false);
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -178,6 +180,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         return;
       }
       context?.playAudio(url, content);
+      setTtsLoader(false);
       saveTelemetryEvent(
         '0.1',
         'E015',
@@ -279,21 +282,39 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           toast.dismiss(toastId);
         }, 1500);
         const audioUrl = await fetchAudio(content?.text);
+
+        setTtsLoader(false);
         if (audioUrl) {
           content.data.audio_url = audioUrl;
           handleAudio(audioUrl);
-        }
+        }else setTtsLoader(false);
+
+       
       }
     };
 
     if (content?.data?.audio_url) {
       handleAudio(content.data.audio_url);
     } else {
+      setTtsLoader(true);
       fetchData();
     }
   }, [handleAudio, content?.data, content?.text, t]);
 
+
+  const getFormattedDate = (datestr: string) => {
+    const today = new Date(datestr);
+    const yyyy = today.getFullYear();
+    let mm: any = today.getMonth() + 1; // Months start at 0!
+    let dd: any = today.getDate();
+
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+
+    return dd + '/' + mm + '/' + yyyy;
+  };
   switch (type) {
+    
     case 'loader':
       return <Typing />;
     case 'text':
@@ -429,7 +450,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           height={!context?.audioPlaying ? 15 : 40}
                           alt=""
                         />
-                      ) : (
+                      ) : ttsLoader ? <Loader /> : (
                         <Image
                           src={SpeakerIcon}
                           width={15}
@@ -652,6 +673,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     }
 
     case 'table': {
+      console.log({table:content})
       return (
         <div
           style={{
@@ -686,8 +708,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                   }
             }>
-            <div className={styles.tableContainer}>
-              {<JsonToTable json={JSON.parse(content?.text)?.table} />}
+            <div className={styles.tableContainer} style={{overflowX:'scroll'}}>
+               {<JsonToTable json={JSON.parse(content?.text)?.table} />} 
+               <style>
+        {`
+          div::-webkit-scrollbar-thumb {
+            background-color: #d4aa70;
+            border-radius: 10px;
+          }
+        `}
+      </style>
             </div>
             <span
               style={{
@@ -696,7 +726,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 color:
                   content?.data?.position === 'right'
                     ? contrastText
-                    : secondaryColor,
+                    : 'black',
               }}>
               {`\n` +
                 JSON.parse(content?.text)?.generalAdvice || "" +
