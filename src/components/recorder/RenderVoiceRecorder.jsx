@@ -25,6 +25,19 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   let IS_RECORDING = false;
 
   const startRecording = async () => {
+    saveTelemetryEvent(
+      '0.1',
+      'E044',
+      'micAction',
+      'micTap',
+      {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || ''
+      }
+    )
     IS_RECORDING = true;
     record();
   };
