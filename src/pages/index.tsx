@@ -7,6 +7,7 @@ import { useConfig } from "../hooks/useConfig";
 const Home: NextPage = () => {
   const t = useLocalization();
   const config = useConfig("component", "botDetails");
+  const homeConfig = useConfig("component", "homePage");
   return (
     <>
       <Head>
@@ -24,7 +25,7 @@ const Home: NextPage = () => {
             position: "fixed",
             width: "100%",
             bottom: "1vh",
-            top: "75px",
+            top: homeConfig?.topGap || "75px",
           }}
         >
           <HomePage />

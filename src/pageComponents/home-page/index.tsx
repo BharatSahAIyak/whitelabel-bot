@@ -10,7 +10,7 @@ import React, {
 import { NextPage } from 'next'
 import axios from 'axios'
 import { AppContext } from '../../context'
-import SendIcon from '../../assets/images/sendButton.png'
+import SendIcon from './assets/sendButton.svg'
 import { useLocalization } from '../../hooks'
 import router from 'next/router'
 import Image from 'next/image'

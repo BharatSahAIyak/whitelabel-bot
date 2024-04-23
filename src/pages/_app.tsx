@@ -15,9 +15,6 @@ import { InstallModal } from '../components/install-modal';
 import { FullPageLoader } from '../components/fullpage-loader';
 import flagsmith from 'flagsmith/isomorphic';
 import { AppContext } from '../context';
-import { useConfig } from '../hooks/useConfig';
-
-
 
 const NavBar = dynamic(() => import('../components/NavBar'), {
   ssr: false,
@@ -34,7 +31,6 @@ const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const { isAuthenticated, login } = useLogin();
   const [cookie] = useCookies();
-
  
   const context =useContext(AppContext);
 

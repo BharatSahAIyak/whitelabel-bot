@@ -19,6 +19,7 @@ import { useColorPalates } from '../../providers/theme-provider/hooks'
 const Navbar: React.FC = () => {
   const router = useRouter()
   const config = useConfig('component', 'navbar')
+  const botConfig = useConfig('component', 'botDetails')
   const context = useContext(AppContext)
   const [activeLanguage, setActiveLanguage] = useState<string>(() => {
     const storedLang = localStorage.getItem('locale')
@@ -44,6 +45,7 @@ const Navbar: React.FC = () => {
   } = config
 
   const [isSidebarOpen, setSidebarOpen] = useState(false)
+  document.documentElement.style.setProperty('--scrollbar-thumb-color', botConfig?.scrollbarColor || '#030311');
 
   const toggleSidebar = () => {
     if (context?.isMsgReceiving) {

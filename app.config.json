@@ -11,7 +11,8 @@
   },
   "component": {
     "botDetails": {
-      "favicon": "http://cdn-api.staging.bhasai.samagra.io:443/deployer/favicon.ico"
+      "favicon": "http://cdn-api.staging.bhasai.samagra.io:443/deployer/favicon.ico",
+      "scrollbarColor": "#030311"
     },
     "homePage": {
       "showKalia": false,
@@ -22,7 +23,8 @@
       "kaliaStatusImg": "",
       "showMic": true,
       "micHeight": "143px",
-      "micWidth": "143px"
+      "micWidth": "143px",
+      "topGap": "75px"
     },
     "chatUI": {
       "allowFeedback": true,
@@ -110,7 +112,8 @@
   "launchPage": {
     "allowOverride": false,
     "logo": "src/pages/launch-page/krushak_odisha.png",
-    "showLaunchPage": true
+    "showLaunchPage": true,
+    "launchPageColor": ""
   },
   "share-buttons": {
     "allowOverride": false,

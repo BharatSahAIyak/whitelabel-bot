@@ -11,16 +11,16 @@ const LaunchPage: FC<{ theme: any; config: any; compConfig: any }> = ({
   return (
     <div
       className={`${styles.container}`}
-      style={{ background: theme?.palette?.primary?.main }}
+      style={{ background: config?.launchPageColor || theme?.palette?.primary?.light }}
     >
-      <img
+      {config?.logo && <img
         className={styles.loginImage}
         src={config?.logo}
         alt="launchPageLogo"
         width={220}
         height={233}
-      />
-      <span style={{ color: theme?.palette?.primary?.contrastText }}>
+      />}
+      <span style={{ color: theme?.palette?.primary?.main }}>
         {t('label.title')}
       </span>
     </div>

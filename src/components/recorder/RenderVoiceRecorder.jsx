@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import stop from './assets/stop.gif';
 import processing from './assets/process.gif';
 import error from './assets/error.gif';
-import start from './assets/startIcon.png';
+import start from './assets/startIcon.svg';
 import styles from './styles.module.css';
 import toast from 'react-hot-toast';
 import { useLocalization } from '../../hooks';
