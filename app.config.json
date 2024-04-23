@@ -70,7 +70,8 @@
     "languageName1": "ENG",
     "languageName2": "ଓଡିଆ",
     "showProfileIcon": true,
-    "showLogoutButton": true
+    "showLogoutButton": true,
+    "showBhashiniLogo": false
   },
   "otpPage": {
     "showLogo": false,

@@ -306,7 +306,7 @@ export const Sidebar = ({
               )}
             </List>
           )}
-            <div
+            {config?.showBhashiniLogo && <div
               className={styles.user}
               style={{
                 background: 'var(--bg-color)',
@@ -333,7 +333,7 @@ export const Sidebar = ({
                 <Image src={BhashiniImg} alt="" width={180} height={45} />
                 <Image src={darshanLogo} alt="" width={55} height={45} />
               </div>
-            </div>
+            </div>}
         </Box>
       </Drawer>
     </div>
