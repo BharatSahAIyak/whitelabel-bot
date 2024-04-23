@@ -15,8 +15,8 @@ const ShareButtons = () => {
   const config = useConfig('component', 'share-buttons')
   const theme = useColorPalates()
   const secondaryColor = useMemo(() => {
-    return theme?.primary?.light
-  }, [theme?.primary?.light])
+    return theme?.primary?.main
+  }, [theme?.primary?.main])
 
   const t = useLocalization()
   const context = useContext(AppContext)

@@ -21,8 +21,8 @@
       "plantProtectionImg": "",
       "kaliaStatusImg": "",
       "showMic": true,
-      "micHeight": "18vh",
-      "micWidth": "18vh"
+      "micHeight": "143px",
+      "micWidth": "143px"
     },
     "chatUI": {
       "allowFeedback": true,

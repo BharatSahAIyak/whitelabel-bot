@@ -20,8 +20,8 @@ import Image from 'next/image';
 import { toast } from 'react-hot-toast';
 import styles from './index.module.css';
 import RightIcon from './assets/right';
-import SpeakerIcon from './assets/speaker.svg';
-import SpeakerPauseIcon from './assets/speakerPause.svg';
+import SpeakerIcon from './assets/speaker';
+import SpeakerPauseIcon from './assets/speakerPause';
 import MsgThumbsUp from './assets/msg-thumbs-up';
 import MsgThumbsDown from './assets/msg-thumbs-down';
 import { MessageItemPropType } from './index.d';
@@ -460,25 +460,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       // }
                     >
                       {context?.clickedAudioUrl === content?.data?.audio_url ? (
-                        <Image
-                          src={
                             !context?.audioPlaying
-                              ? SpeakerIcon
-                              : SpeakerPauseIcon
-                          }
-                          width={!context?.audioPlaying ? 15 : 40}
-                          height={!context?.audioPlaying ? 15 : 40}
-                          alt=""
-                        />
+                              ? <SpeakerIcon color={theme?.primary?.main} />
+                              : <SpeakerPauseIcon color={theme?.primary?.main} />
                       ) : ttsLoader ? (
                         <Loader />
                       ) : (
-                        <Image
-                          src={SpeakerIcon}
-                          width={15}
-                          height={15}
-                          alt=""
-                        />
+                        <SpeakerIcon color={theme?.primary?.main} />
                       )}
 
                       <p
