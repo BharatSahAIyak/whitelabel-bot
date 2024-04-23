@@ -66,15 +66,15 @@ export const JsonToTable: React.FC<IJsonToTableProps> = ({ json, id, styles }) =
     isHeader?: boolean;
     key?:any
   }): JSX.Element => {
-    const valueDisplay = isHeader ? <strong>{getCellValue(content)}</strong> : getCellValue(content);
+    const valueDisplay = getCellValue(content);
     //@ts-ignore
-    return <TableCell colSpan={colspan} key={`__j2t_td${content}`}>{capitalize(valueDisplay) }</TableCell>;
+    return <TableCell colSpan={colspan} key={`__j2t_td${content}`}>{ isHeader ? <strong>{capitalize(valueDisplay)}</strong> : capitalize(valueDisplay) }</TableCell>;
   };
 
   const renderHeader = (labels: string[]): JSX.Element => {
     return (
       <TableRow key={`__j2t_trHeader`}>
-        {labels.map((v, index) => renderCell({ content: v, key: `header-${index}` }))}
+        {labels.map((v, index) => renderCell({ content: v, key: `header-${index}`, isHeader: true }))}
       </TableRow>
     );
   };
