@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import styles from './index.module.css'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
@@ -19,7 +19,6 @@ const LoginMobileAadharPage: React.FC = () => {
     showAlternateSignIn,
     logo,
     showLogo,
-    inputBoxWidth,
     showSplitedView,
   } = config
 
@@ -157,7 +156,7 @@ console.log("debug login:",{config})
               color={theme?.primary?.main || 'black'}
               dangerouslySetInnerHTML={{ __html: t('label.subtitle') }}
             ></Typography>
-            {config?.showLogo && config?.logo && (
+            {showLogo && logo && (
               <img
                 src={config?.logo}
                 alt="loginPageImg"
@@ -168,7 +167,7 @@ console.log("debug login:",{config})
             <Box
               component="form"
               onSubmit={handleLogin}
-              sx={{ mt: 1, width: inputBoxWidth }}
+              sx={{ mt: 1, width: "100%" }}
             >
               <TextField
                 margin="normal"

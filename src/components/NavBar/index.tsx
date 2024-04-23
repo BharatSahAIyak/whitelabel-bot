@@ -40,7 +40,6 @@ const Navbar: React.FC = () => {
     rightLogo3Src,
     centerLogoSize,
     logoTitleColor,
-    textColor,
     newChatButtonColor
   } = config
 

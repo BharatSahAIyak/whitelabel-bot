@@ -38,9 +38,9 @@
       "showNavbar": true,
       "showLanguageToggle": true,
       "languageCode1": "en",
-      "languageLabel1": "English",
-      "languageLabel2": "Hindi",
-      "languageCode2": "hi",
+      "languageLabel1": "ENG",
+      "languageLabel2": "ଓଡିଆ",
+      "languageCode2": "or",
       "showHamburgerMenu": true,
       "showHomeIcon": true,
       "showCenterLogo": false,
@@ -53,16 +53,15 @@
       "rightLogo3Src": "https://app.staging.akai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fkrushak_odisha.ebf64370.png&w=128&q=75",
       "centerLogoSize": "60px",
       "logoTitleColor": "green",
-      "textColor": "orange"
+      "newChatButtonColor": "orange"
     }
   },
   "sidebar": {
-    "mobileNumber": "1234567890",
     "activeLanguageColor": "orange",
     "nonActiveLanguageColor": "whilte",
     "backgroudColor": "green",
     "showLangSwitcher": true,
-    "background": "#1D6231",
+    "sidebarBackground": "#1D6231",
     "faqPage": true,
     "feedbackPage": true,
     "historyPage": true,
@@ -98,23 +97,18 @@
     "showSignUp": false,
     "showAlternateSignIn": false,
     "showSplitedView": true,
-    "logowidth": "350px",
-    "logoheight": "270px",
-    "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
-    "title": "Welcome!",
-    "inputBoxWidth": "100%"
+    "logowidth": "320px",
+    "logoheight": "280px",
+    "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
   },
   "historyPage": {
     "allowOverride": false,
-    "title": "History",
-    "noItemsText": "No items found",
     "allowDelete": true,
     "showTimestamp": true
   },
   "launchPage": {
     "allowOverride": false,
     "logo": "src/pages/launch-page/krushak_odisha.png",
-    "label": "ଆମ କୃଷି ଏ ଆଇ ଚାଟ୍ ବୋଟ୍",
     "showLaunchPage": true
   },
   "share-buttons": {
@@ -125,7 +119,6 @@
     "downloadButtonColor": "orange"
   },
   "chatUI": {
-    "iconBorderColor": "orange",
     "showLogo": false,
     "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
   }
