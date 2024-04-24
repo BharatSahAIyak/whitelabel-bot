@@ -13,7 +13,7 @@ input::-webkit-inner-spin-button {
 .leftColumn {
   margin: 0;
   flex: 1;
-  background-color: #ffa500;
+  /* background-color: #ffa500; */
 }
 
 .logo {

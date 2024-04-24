@@ -11,160 +11,119 @@
   },
   "component": {
     "botDetails": {
-      "logo": "http://cdn-api.staging.bhasai.samagra.io:443/deployer/favicon.ico",
-      "botName": "Ama Krushi AI Chatbot",
-      "allowOverride": false
+      "favicon": "http://cdn-api.staging.bhasai.samagra.io:443/deployer/favicon.ico",
+      "scrollbarColor": "#030311"
     },
     "homePage": {
-      "allowOverride": false,
-      "title": "Ask me anything about farming",
       "showKalia": false,
       "showWeatherAdvisory": true,
       "showPlantProtection": true,
       "weatherAdvisoryImg": "",
       "plantProtectionImg": "",
       "kaliaStatusImg": "",
-      "showMic": true
+      "showMic": true,
+      "micHeight": "143px",
+      "micWidth": "143px",
+      "topGap": "75px"
+    },
+    "chatUI": {
+      "allowFeedback": true,
+      "allowTextToSpeech": true,
+      "transliterationApi": "https://ai-tools-proxy.staging.bhasai.samagra.io",
+      "allowTransliteration": true,
+      "transliterationProvider": "bhashini",
+      "transliterationSuggestions": "3",
+      "transliterationInputLanguage": "en",
+      "transliterationOutputLanguage": "or"
     },
     "navbar": {
+      "showNavbar": true,
+      "showLanguageToggle": true,
+      "languageCode1": "en",
+      "languageLabel1": "ENG",
+      "languageLabel2": "ଓଡିଆ",
+      "languageCode2": "or",
       "showHamburgerMenu": true,
       "showHomeIcon": true,
-      "logos": {
-        "showCenterLogos": false,
-        "centerLogoIcons": [
-          {
-            "id": "logo1",
-            "src": " https://www.amakrushi.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=64&q=75"
-          }
-        ],
-        "showRightLogos": true,
-        "rightLogoIcons": [
-          {
-            "id": "logo2",
-            "src": "https://app.staging.akai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo-green.db3a25d1.png&w=128&q=75"
-          },
-          {
-            "id": "logo3",
-            "src": "https://app.staging.akai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fkrushak_odisha.ebf64370.png&w=128&q=75"
-          },
-          {
-            "id": "logo5",
-            "src": "https://app.staging.akai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=128&q=75"
-          }
-        ]
-      }
-    },
-    "sidebar": {
-      "showLangSwitcher": true,
-      "languages": [
-        {
-          "code": "en",
-          "label": "ENG"
-        },
-        {
-          "code": "or",
-          "label": "ଓଡ଼ିଆ"
-        }
-      ],
-      "showProfileIcon": true,
-      "profileText": "Welcome, User",
-      "links": [
-        {
-          "label": "chats",
-          "icon": "HistoryIcon",
-          "route": "history"
-        },
-        {
-          "label": "faqs",
-          "icon": "HelpIcon",
-          "route": "faq"
-        },
-        {
-          "label": "feedback",
-          "icon": "FeedbackIcon",
-          "route": "feedback"
-        }
-      ],
-      "showLogoutButton": true,
-      "logoutButtonLabel": "Logout"
-    },
-    "otpPage": {
-      "allowOverride": false,
-      "showLogo": false,
-      "showSplitedView": true,
-      "otpLength": 4,
-      "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
-      "title": "OTP Verification",
-      "resendOtpTimer":"30"
-    },
-    "comingSoon": {
-      "allowOverride": false,
-      "title": "Coming Soon!",
-      "description": "We are going to launch this feature very soon. Stay tuned!",
-      "backText": "Back"
-    },
-    "downtime": {
-      "allowOverride": false,
-      "title": "We're under maintainance",
-      "downTimeImage": "",
-      "supportingText": "Have an urgent query?",
-      "contactLink": "Call Ama Krushi",
-      "refreshText": "Try Again",
-      "previousPageText": "Previous Page"
-    },
-    "faqs": {
-      "allowOverride": false,
-      "title": "FAQs",
-      "userManualText": "User Manual - For VAWs",
-      "contactDescriptionText": "To connect with call centre",
-      "contactText": "Dial"
-    },
-    "voiceRecorder": {
-      "allowOverride": false,
-      "startIcon": "",
-      "stopIcon": "",
-      "errorIcon": "",
-      "processingIcon": "",
-      "delayBetweenDialogs": 2500
-    },
-    "feedbackPage": {
-      "ratingBox": true,
-      "reviewBox": true,
-      "Title": "Feedback",
-      "ratingBoxTitle": "Rate your experience",
-      "ratingMaxStars": 5,
-      "ratingStarDescription": "Click on the stars to rate",
-      "ratingButtonText": "Submit Rating",
-      "reviewBoxTitle": "Write a review",
-      "reviewPlaceholder": "Enter your review here",
-      "reviewButtonText": "Submit Review"
-    },
-    "loginMobileAadharPage": {
-      "allowOverride": false,
-      "loginWithAadhaar": false,
-      "showSignUp": false,
-      "showAlternateSignIn": false,
-      "showLogo": false,
-      "showSplitedView": true,
-      "logo":"https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
-      "title": "Welcome!"
+      "showCenterLogo": false,
+      "centerLogoSrc": "https://www.amakrushi.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=64&q=75",
+      "showRightLogo1": true,
+      "rightLogo1Src": "https://app.staging.akai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo-green.db3a25d1.png&w=128&q=75",
+      "showRightLogo2": true,
+      "rightLogo2Src": "https://app.staging.akai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=128&q=75",
+      "showRightLogo3": true,
+      "rightLogo3Src": "https://app.staging.akai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fkrushak_odisha.ebf64370.png&w=128&q=75",
+      "centerLogoSize": "60px",
+      "logoTitleColor": "green",
+      "newChatButtonColor": "orange"
+    }
+  },
+  "sidebar": {
+    "activeLanguageColor": "orange",
+    "nonActiveLanguageColor": "whilte",
+    "backgroudColor": "green",
+    "showLangSwitcher": true,
+    "sidebarBackground": "#1D6231",
+    "faqPage": true,
+    "feedbackPage": true,
+    "historyPage": true,
+    "languageCode1": "en",
+    "languageCode2": "or",
+    "languageName1": "ENG",
+    "languageName2": "ଓଡିଆ",
+    "showProfileIcon": true,
+    "showLogoutButton": true,
+    "showBhashiniLogo": false
+  },
+  "otpPage": {
+    "showLogo": false,
+    "showSplitedView": true,
+    "otpLength": 4,
+    "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
+    "title": "OTP Verification",
+    "resendOtpTimer": "30"
+  },
+  "downtimePage": {
+    "downTimeImage": ""
+  },
+  "voiceRecorder": {
+    "showVoiceRecorder": true,
+    "delayBetweenDialogs": 2500
+  },
+  "feedbackPage": {
+    "reviewBox": true,
+    "ratingBox": true,
+    "ratingMaxStars": 5
+  },
+  "loginMobileAadharPage": {
+    "loginWithAadhaar": false,
+    "showSignUp": false,
+    "showAlternateSignIn": false,
+    "showSplitedView": true,
+    "logowidth": "320px",
+    "logoheight": "280px",
+    "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
   },
   "historyPage": {
     "allowOverride": false,
-    "title": "History",
-    "noItemsText": "No items found",
     "allowDelete": true,
     "showTimestamp": true
   },
   "launchPage": {
     "allowOverride": false,
     "logo": "src/pages/launch-page/krushak_odisha.png",
-    "label":"ଆମ କୃଷି ଏ ଆଇ ଚାଟ୍ ବୋଟ୍"
+    "showLaunchPage": true,
+    "launchPageColor": ""
   },
   "share-buttons": {
     "allowOverride": false,
     "allowDownloadChat": true,
-    "allowShareChat": true
-  }
+    "allowShareChat": true,
+    "shareButtonColor": "orange",
+    "downloadButtonColor": "orange"
+  },
+  "chatUI": {
+    "showLogo": false,
+    "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
   }
 }

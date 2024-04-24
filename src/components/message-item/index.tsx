@@ -20,8 +20,8 @@ import Image from 'next/image';
 import { toast } from 'react-hot-toast';
 import styles from './index.module.css';
 import RightIcon from './assets/right';
-import SpeakerIcon from './assets/speaker.svg';
-import SpeakerPauseIcon from './assets/speakerPause.svg';
+import SpeakerIcon from './assets/speaker';
+import SpeakerPauseIcon from './assets/speakerPause';
 import MsgThumbsUp from './assets/msg-thumbs-up';
 import MsgThumbsDown from './assets/msg-thumbs-down';
 import { MessageItemPropType } from './index.d';
@@ -34,15 +34,19 @@ import { AppContext } from '../../context';
 import axios from 'axios';
 import saveTelemetryEvent from '../../utils/telemetry';
 import BlinkingSpinner from '../blinking-spinner/index';
+import Loader from '../loader';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
-  const [reaction, setReaction] = useState(message?.content?.data?.reaction?.type);
+  const [reaction, setReaction] = useState(
+    message?.content?.data?.reaction?.type
+  );
   const [optionDisabled, setOptionDisabled] = useState(
     message?.content?.data?.optionClicked || false
   );
   const [audioFetched, setAudioFetched] = useState(false);
+  const [ttsLoader, setTtsLoader] = useState(false);
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -64,20 +68,20 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   const onLikeDislike = useCallback(
     ({ value, msgId }: { value: 0 | 1 | -1; msgId: string }) => {
-      if(value === 1) {
+      if (value === 1) {
         context?.newSocket.sendMessage({
           payload: {
             from: localStorage.getItem('phoneNumber'),
             appId: 'AKAI_App_Id',
             channel: 'AKAI',
             userId: localStorage.getItem('userID'),
-            messageType: "FEEDBACK_POSITIVE",
+            messageType: 'FEEDBACK_POSITIVE',
             replyId: msgId,
             conversationId: sessionStorage.getItem('conversationId'),
-            botId: process.env.NEXT_PUBLIC_BOT_ID || ''
-          }
-        })
-      }else if (value === -1) {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          },
+        });
+      } else if (value === -1) {
         context?.setCurrentQuery(msgId);
         context?.setShowDialerPopup(true);
       }
@@ -90,7 +94,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     ({ like, msgId }: { like: 0 | 1 | -1; msgId: string }) => {
       console.log('vbnm:', { reaction, like });
       // Don't let user change reaction once given
-      if(reaction !== 0) return toast.error('Cannot give feedback again');
+      if (reaction !== 0) return toast.error('Cannot give feedback again');
       if (reaction === 0) {
         setReaction(like);
         return onLikeDislike({ value: like, msgId });
@@ -178,22 +182,17 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         return;
       }
       context?.playAudio(url, content);
-      saveTelemetryEvent(
-        '0.1',
-        'E015',
-        'userQuery',
-        'timesAudioUsed',
-        {
-          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-          userId: localStorage.getItem('userID') || '',
-          phoneNumber: localStorage.getItem('phoneNumber') || '',
-          conversationId: sessionStorage.getItem('conversationId') || '',
-          messageId: content?.data?.messageId,
-          text: content?.text,
-          timesAudioUsed: 1
-        }
-      )
+      setTtsLoader(false);
+      saveTelemetryEvent('0.1', 'E015', 'userQuery', 'timesAudioUsed', {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || '',
+        messageId: content?.data?.messageId,
+        text: content?.text,
+        timesAudioUsed: 1,
+      });
     },
     [audioFetched, content, context?.playAudio]
   );
@@ -208,13 +207,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             text: text,
             language: context?.locale,
             messageId: content?.data?.messageId,
-            conversationId: sessionStorage.getItem('conversationId') || ''
+            conversationId: sessionStorage.getItem('conversationId') || '',
           },
           {
             headers: {
               botId: process.env.NEXT_PUBLIC_BOT_ID || '',
               orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-              userId: localStorage.getItem('userID') || ''
+              userId: localStorage.getItem('userID') || '',
             },
           }
         );
@@ -236,7 +235,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             messageId: content?.data?.messageId,
             timeTaken: latency,
             createdAt: Math.floor(startTime / 1000),
-            audioUrl: response?.data?.url || 'No audio URL'
+            audioUrl: response?.data?.url || 'No audio URL',
           }
         );
         // cacheAudio(response.data);
@@ -261,7 +260,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             msgId: content?.data?.messageId,
             timeTaken: latency,
             createdAt: Math.floor(startTime / 1000),
-            error: error?.message || 'Error fetching audio'
+            error: error?.message || 'Error fetching audio',
           }
         );
         return null;
@@ -279,19 +278,50 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           toast.dismiss(toastId);
         }, 1500);
         const audioUrl = await fetchAudio(content?.text);
+
+        setTtsLoader(false);
         if (audioUrl) {
           content.data.audio_url = audioUrl;
           handleAudio(audioUrl);
-        }
+        } else setTtsLoader(false);
       }
     };
 
     if (content?.data?.audio_url) {
       handleAudio(content.data.audio_url);
     } else {
+      setTtsLoader(true);
       fetchData();
     }
   }, [handleAudio, content?.data, content?.text, t]);
+
+  const getFormattedDate = (datestr: string) => {
+    const today = new Date(datestr);
+    const yyyy = today.getFullYear();
+    let mm: any = today.getMonth() + 1; // Months start at 0!
+    let dd: any = today.getDate();
+
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+
+    return dd + '/' + mm + '/' + yyyy;
+  };
+  const parseWeatherJson = (data: any) => {
+    const result = Object.keys(data[0]).reduce((acc: any, key) => {
+      if (key !== 'datetime') {
+        acc.push({
+          datetime: key,
+          ...data.reduce((obj: any, item: any) => {
+            obj[item.datetime] = item[key];
+            return obj;
+          }, {}),
+        });
+      }
+      return acc;
+    }, []);
+    console.log({ result });
+    return result;
+  };
 
   switch (type) {
     case 'loader':
@@ -349,10 +379,20 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   : !content?.data?.isEnd
                 && <BlinkingSpinner />
               } */}
-            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div style={{color: content?.data?.position === 'right' ? 'yellow' : 'black', fontSize: '12px', fontWeight: 'normal'}}>
-            <br></br><span>messageId: {content?.data?.messageId}</span><br></br>
-              <span>conversationId: {content?.data?.conversationId}</span>
-            </div>}
+              {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
+                <div
+                  style={{
+                    color:
+                      content?.data?.position === 'right' ? 'yellow' : 'black',
+                    fontSize: '12px',
+                    fontWeight: 'normal',
+                  }}>
+                  <br></br>
+                  <span>messageId: {content?.data?.messageId}</span>
+                  <br></br>
+                  <span>conversationId: {content?.data?.conversationId}</span>
+                </div>
+              )}
             </span>
             {getLists({
               choices:
@@ -371,9 +411,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       : secondaryColor,
                   fontSize: '10px',
                 }}>
-                {moment(
-                  content?.data?.timestamp
-                ).format('hh:mm A DD/MM/YYYY')}
+                {moment(content?.data?.timestamp).format('hh:mm A DD/MM/YYYY')}
               </span>
             </div>
           </Bubble>
@@ -399,6 +437,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 {config?.allowTextToSpeech && (
                   <div style={{ display: 'flex' }}>
                     <div
+                      style={{
+                        border: `1px solid ${theme?.primary?.main}`,
+                      }}
                       className={styles.msgSpeaker}
                       onClick={downloadAudio}
                       // style={
@@ -417,25 +458,15 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       //     border: `1px solid ${secondaryColor}`,
                       //   }
                       // }
-                      >
+                    >
                       {context?.clickedAudioUrl === content?.data?.audio_url ? (
-                        <Image
-                          src={
                             !context?.audioPlaying
-                              ? SpeakerIcon
-                              : SpeakerPauseIcon
-                          }
-                          width={!context?.audioPlaying ? 15 : 40}
-                          height={!context?.audioPlaying ? 15 : 40}
-                          alt=""
-                        />
+                              ? <SpeakerIcon color={theme?.primary?.main} />
+                              : <SpeakerPauseIcon color={theme?.primary?.main} />
+                      ) : ttsLoader ? (
+                        <Loader />
                       ) : (
-                        <Image
-                          src={SpeakerIcon}
-                          width={15}
-                          height={15}
-                          alt=""
-                        />
+                        <SpeakerIcon color={theme?.primary?.main} />
                       )}
 
                       <p
@@ -458,7 +489,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     <div
                       className={styles.msgFeedbackIcons}
                       style={{
-                        border: `1px solid ${secondaryColor}`,
+                        border: `1px solid ${theme?.primary?.main}`,
                       }}>
                       <div
                         style={{
@@ -486,7 +517,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         style={{
                           height: '32px',
                           width: '1px',
-                          backgroundColor: secondaryColor,
+                          backgroundColor: theme?.primary?.main,
                           margin: '6px 0',
                         }}></div>
 
@@ -546,9 +577,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     color: contrastText,
                     fontSize: '10px',
                   }}>
-                  {moment(
-                    content?.data?.timestamp
-                  ).format('hh:mm A DD/MM/YYYY')}
+                  {moment(content?.data?.timestamp).format(
+                    'hh:mm A DD/MM/YYYY'
+                  )}
                 </span>
               </div>
             </div>
@@ -583,9 +614,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     color: contrastText,
                     fontSize: '10px',
                   }}>
-                  {moment(
-                    content?.data?.timestamp
-                  ).format('hh:mm A DD/MM/YYYY')}
+                  {moment(content?.data?.timestamp).format(
+                    'hh:mm A DD/MM/YYYY'
+                  )}
                 </span>
               </div>
             </div>
@@ -619,9 +650,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     color: contrastText,
                     fontSize: '10px',
                   }}>
-                  {moment(
-                    content?.data?.timestamp
-                  ).format('hh:mm A DD/MM/YYYY')}
+                  {moment(content?.data?.timestamp).format(
+                    'hh:mm A DD/MM/YYYY'
+                  )}
                 </span>
               </div>
             </div>
@@ -636,10 +667,19 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <div style={{ display: 'flex' }}>
               <span className={styles.optionsText}>
                 {content?.data?.payload?.text}
-            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div style={{color: 'black', fontSize: '12px', fontWeight: 'normal'}}>
-            <br></br><span>messageId: {content?.data?.messageId}</span><br></br>
-              <span>conversationId: {content?.data?.conversationId}</span>
-            </div>}
+                {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
+                  <div
+                    style={{
+                      color: 'black',
+                      fontSize: '12px',
+                      fontWeight: 'normal',
+                    }}>
+                    <br></br>
+                    <span>messageId: {content?.data?.messageId}</span>
+                    <br></br>
+                    <span>conversationId: {content?.data?.conversationId}</span>
+                  </div>
+                )}
               </span>
             </div>
             {getLists({
@@ -652,6 +692,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     }
 
     case 'table': {
+      console.log({ table: content });
       return (
         <div
           style={{
@@ -675,7 +716,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     borderColor: `${contrastText} transparent transparent transparent`,
                   }
             }></div>
-          <Bubble type="text" style={
+          <Bubble
+            type="text"
+            style={
               content?.data?.position === 'right'
                 ? {
                     background: secondaryColor,
@@ -686,29 +729,49 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                   }
             }>
-            <div className={styles.tableContainer}>
-              {<JsonToTable json={JSON.parse(content?.text)?.table} />}
+            <div
+              className={styles.tableContainer}
+              style={{ overflowX: 'scroll' }}>
+              {
+                <JsonToTable
+                  json={parseWeatherJson(JSON.parse(content?.text)?.table)}
+                />
+              }
+              <style>
+                {`
+          div::-webkit-scrollbar-thumb {
+            background-color: #d4aa70;
+            border-radius: 10px;
+          }
+        `}
+              </style>
             </div>
             <span
               style={{
                 fontWeight: 600,
                 fontSize: '1rem',
                 color:
-                  content?.data?.position === 'right'
-                    ? contrastText
-                    : secondaryColor,
+                  content?.data?.position === 'right' ? contrastText : 'black',
               }}>
-              {`\n` +
-                JSON.parse(content?.text)?.generalAdvice || "" +
-                `\n\n` +
-                JSON.parse(content?.text)?.buttonDescription || ""}
+              {`\n` + JSON.parse(content?.text)?.generalAdvice ||
+                '' + `\n\n` + JSON.parse(content?.text)?.buttonDescription ||
+                ''}
               {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
               })}
-            {process.env.NEXT_PUBLIC_DEBUG === 'true' && <div style={{color: 'black', fontSize: '12px', fontWeight: 'normal'}}>
-            <br></br><span>messageId: {content?.data?.messageId}</span><br></br>
-              <span>conversationId: {content?.data?.conversationId}</span>
-            </div>}
+              {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
+                <div
+                  style={{
+                    color: 'black',
+                    fontSize: '12px',
+                    fontWeight: 'normal',
+                  }}>
+                  <br></br>
+                  <span>messageId: {content?.data?.messageId}</span>
+                  <br></br>
+                  <span>conversationId: {content?.data?.conversationId}</span>
+                </div>
+              )}
             </span>
           </Bubble>
         </div>

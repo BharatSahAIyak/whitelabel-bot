@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import stop from './assets/stop.gif';
 import processing from './assets/process.gif';
 import error from './assets/error.gif';
-import start from './assets/startIcon.png';
+import start from './assets/startIcon.svg';
 import styles from './styles.module.css';
 import toast from 'react-hot-toast';
 import { useLocalization } from '../../hooks';
@@ -25,6 +25,19 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   let IS_RECORDING = false;
 
   const startRecording = async () => {
+    saveTelemetryEvent(
+      '0.1',
+      'E044',
+      'micAction',
+      'micTap',
+      {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || ''
+      }
+    )
     IS_RECORDING = true;
     record();
   };
@@ -230,13 +243,16 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
     context?.sets2tMsgId((prev) => prev = s2tMsgId);
   };
 
+  if(config?.showVoiceRecorder === false){
+    return null;
+  }
   return (
     <div>
       <div>
         {mediaRecorder && mediaRecorder.state === 'recording' ? (
           <div className={styles.center}>
             <img
-              src={config?.stopIcon || stop?.src}
+              src={stop?.src}
               alt="stopIcon"
               onClick={() => {
                 stopRecording();
@@ -248,13 +264,13 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
           <div className={styles.center}>
             {apiCallStatus === 'processing' ? (
               <img
-                src={config?.processingIcon || processing?.src}
+                src={processing?.src}
                 alt="processingIcon"
                 style={{ cursor: 'pointer', width: '100%', height: '100%' }}
               />
             ) : apiCallStatus === 'error' ? (
               <img
-                src={config?.errorIcon || error?.src}
+                src={error?.src}
                 alt="errorIcon"
                 onClick={() => {
                   setUserClickedError(true);
@@ -265,7 +281,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
             ) : (
               <>
                 <img
-                  src={config?.startIcon || start?.src}
+                  src={start?.src}
                   alt="startIcon"
                   onClick={() => {
                     setUserClickedError(true);

@@ -17,6 +17,7 @@ import { IntlProvider } from 'react-intl';
 //     }
 // }
 export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => {
+   
     const defaultLang = flagsmith.getValue('default_lang', { fallback: 'en' });
     const [locale, setLocale] = useState(
         localStorage.getItem('locale') || defaultLang

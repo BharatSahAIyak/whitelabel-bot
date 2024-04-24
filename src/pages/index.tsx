@@ -7,6 +7,7 @@ import { useConfig } from "../hooks/useConfig";
 const Home: NextPage = () => {
   const t = useLocalization();
   const config = useConfig("component", "botDetails");
+  const homeConfig = useConfig("component", "homePage");
   return (
     <>
       <Head>
@@ -14,7 +15,7 @@ const Home: NextPage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="white" />
         <title>{t("label.tab_title")}</title>
-        <link rel="icon" href={config?.logo} />
+        <link rel="icon" href={config?.favicon} />
       </Head>
      
 
@@ -24,7 +25,7 @@ const Home: NextPage = () => {
             position: "fixed",
             width: "100%",
             bottom: "1vh",
-            top: "75px",
+            top: homeConfig?.topGap || "75px",
           }}
         >
           <HomePage />

@@ -102,6 +102,7 @@ const ContextProvider: FC<{
     };
   }, []);
   useEffect(() => {
+    console.log("trigger",{locale})
     //@ts-ignore
     if (config?.translation && locale) {
       onLocaleUpdate();
@@ -109,6 +110,8 @@ const ContextProvider: FC<{
   }, [config, locale]);
 
   const onLocaleUpdate = useCallback(() => {
+    //@ts-ignore
+    console.log("trigger",{trans:config?.translation,locale})
     //@ts-ignore
     setLocaleMsgs(config?.translation?.[locale]);
   }, [config, locale]);
@@ -462,7 +465,7 @@ const ContextProvider: FC<{
       console.log('s2t messageId:', messageId);
       setLastSentMsgId((prev) => (prev = messageId));
       newSocket.sendMessage({
-        text: text?.replace('&', '%26'),
+        text: text?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
         to: localStorage.getItem('userID'),
         payload: {
           messageId: messageId,
@@ -497,7 +500,7 @@ const ContextProvider: FC<{
           setMessages((prev: any) => [
             ...prev.map((prevMsg: any) => ({ ...prevMsg, disabled: true })),
             {
-              text: text,
+              text: text?.replace(/^\s+|\s+$/g, ''),
               position: 'right',
               payload: { text },
               time: Date.now(),
@@ -746,6 +749,7 @@ const ContextProvider: FC<{
       theme={config?.theme}
       //@ts-ignore
         config={config?.component?.launchPage}
+        compConfig={config}
       />
     );
   return (

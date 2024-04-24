@@ -1,103 +1,110 @@
-import React, { useCallback, useMemo, useState } from "react";
-import styles from "./index.module.css";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import _logo from "./assets/logo.png";
-import CircularProgress from "@mui/material/CircularProgress";
-import { toast } from "react-hot-toast";
-import { useColorPalates } from "../../providers/theme-provider/hooks";
-import { useLocalization } from "../../hooks";
-import { useRouter } from "next/router";
-import { useConfig } from "../../hooks/useConfig";
+import React, { useCallback, useState } from 'react'
+import styles from './index.module.css'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import _logo from './assets/logo.png'
+import CircularProgress from '@mui/material/CircularProgress'
+import { toast } from 'react-hot-toast'
+import { useColorPalates } from '../../providers/theme-provider/hooks'
+import { useLocalization } from '../../hooks'
+import { useRouter } from 'next/router'
+import { useConfig } from '../../hooks/useConfig'
 const LoginMobileAadharPage: React.FC = () => {
-  const config = useConfig('component', 'loginMobileAadharPage');
-  const { loginWithAadhaar, showSignUp, showAlternateSignIn, logo, showLogo,showSplitedView } = config;
+  const config = useConfig('component', 'loginMobileAadharPage')
+  const {
+    loginWithAadhaar,
+    showSignUp,
+    showAlternateSignIn,
+    logo,
+    showLogo,
+    showSplitedView,
+  } = config
 
-  const t = useLocalization();
-  const router = useRouter();
-  const [isAadharClicked, setIsAadharClicked] = useState<boolean>(loginWithAadhaar);
-  const [input, setInput] = useState("");
-  const [valid, setValid] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const t = useLocalization()
+  const router = useRouter()
+  const [isAadharClicked, setIsAadharClicked] =
+    useState<boolean>(loginWithAadhaar)
+  const [input, setInput] = useState('')
+  const [valid, setValid] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const theme = useColorPalates();
- 
+  const theme = useColorPalates()
+
   const handleInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      let reg;
-      let errorMessage = "";
-  
-      const inputValue = e.target.value;
-      const numericInput = inputValue.replace(/[^0-9]/g, '');
-  
+      let reg
+      let errorMessage = ''
+
+      const inputValue = e.target.value
+      const numericInput = inputValue.replace(/[^0-9]/g, '')
+
       if (isAadharClicked) {
-        reg = /^\d{12}$/; // Allow up to 12 digits for Aadhar
-        errorMessage = "Please enter a valid Aadhar number";
+        reg = /^\d{12}$/ // Allow up to 12 digits for Aadhar
+        errorMessage = 'Please enter a valid Aadhar number'
       } else {
-        reg = /^\d{10}$/; // Allow any number of digits for Phone Number
-        errorMessage = "Please enter a valid mobile number";
+        reg = /^\d{10}$/ // Allow any number of digits for Phone Number
+        errorMessage = 'Please enter a valid mobile number'
       }
-  
-      const isValid = reg.test(numericInput);
-      setValid(isValid);
-  
-      setInput(numericInput); // Update input directly
-  
+
+      const isValid = reg.test(numericInput)
+      setValid(isValid)
+
+      setInput(numericInput) // Update input directly
+
       if (!isValid) {
-        setErrorMessage(errorMessage);
+        setErrorMessage(errorMessage)
       }
     },
     [isAadharClicked]
-  );
+  )
 
   const handleAadharClick = useCallback(() => {
-    setIsAadharClicked((prop) => !prop);
-  }, []);
+    setIsAadharClicked((prop) => !prop)
+  }, [])
 
   const handleRegistration = () => {
     // Register User
-  };
+  }
 
-  const handleLogin = useCallback((e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (
-      (isAadharClicked && input.length === 12) ||
-      (!isAadharClicked && input.length === 10)
-    ) {
-      console.log("hello")
-         setLoading(true);
-          if (navigator.onLine) {
-     
-            fetch(
-              `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}api/sendOTP?phone=${input}`,
-              { method: "GET" }
-            )
-              .then((response) => {
-                setLoading(false);
-                if (response.status === 200) {
-                  // localStorage.setItem('phoneNumber',input)
-                  router.push({ pathname: "/otp", query: { state: input } });
-                } else {
-                setLoading(false);
-                  toast.error(`${t("message.otp_not_sent")}`);
-                }
-              })
-              .catch((err) => {
-                setLoading(false);
-                toast.error(err.message);
-              });
-          } else {
-            toast.error(`${t("label.no_internet")}`)
-          }
+  const handleLogin = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      if (
+        (isAadharClicked && input.length === 12) ||
+        (!isAadharClicked && input.length === 10)
+      ) {
+        console.log('hello')
+        setLoading(true)
+        if (navigator.onLine) {
+          fetch(
+            `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}api/sendOTP?phone=${input}`,
+            { method: 'GET' }
+          )
+            .then((response) => {
+              setLoading(false)
+              if (response.status === 200) {
+                // localStorage.setItem('phoneNumber',input)
+                router.push({ pathname: '/otp', query: { state: input } })
+              } else {
+                setLoading(false)
+                toast.error(`${t('message.otp_not_sent')}`)
+              }
+            })
+            .catch((err) => {
+              setLoading(false)
+              toast.error(err.message)
+            })
+        } else {
+          toast.error(`${t('label.no_internet')}`)
         }
-      
-    
-  },[isAadharClicked, input]);
-
- 
+      }
+    },
+    [isAadharClicked, input]
+  )
+console.log("debug login:",{config})
   return (
     <>
       <meta
@@ -108,12 +115,8 @@ const LoginMobileAadharPage: React.FC = () => {
         {showSplitedView && (
           <div
             className={styles.leftColumn}
-            style={{background: theme?.primary?.main}}
-          >
-            {showLogo && (<div className={styles.logo}>
-              <img src={logo} width={150} height={40} alt="" />
-            </div>)}
-          </div>
+            style={{ background: theme?.primary?.main }}
+          ></div>
         )}
 
         <div className={styles.rightColumn}>
@@ -125,19 +128,19 @@ const LoginMobileAadharPage: React.FC = () => {
                   color={theme?.primary?.main}
                   className={styles.registerText}
                 >
-                  {t("message.not_register_yet")}
+                  {t('message.not_register_yet')}
                 </Typography>
                 <Typography
                   onClick={handleRegistration}
                   variant="button"
                   sx={{
-                    textTransform: "none",
+                    textTransform: 'none',
                     color: theme.primary.main,
-                    fontWeight: "bold",
-                    cursor: "pointer",
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
                   }}
                 >
-                  {t("message.register_at_krushak")}
+                  {t('message.register_at_krushak')}
                 </Typography>
               </div>
             </div>
@@ -147,18 +150,24 @@ const LoginMobileAadharPage: React.FC = () => {
             <Typography
               component="h1"
               variant="h4"
-              fontWeight={"bold"}
+              fontWeight={'bold'}
               textAlign="center"
               width="100%"
               color={theme?.primary?.main || 'black'}
-              dangerouslySetInnerHTML={{__html: t("label.subtitle")}}
-            >
-            </Typography>
-            {config?.showLogo && config?.logo && <img src={config?.logo} alt='loginPageImg' height='250px' width='320px' />}
+              dangerouslySetInnerHTML={{ __html: t('label.subtitle') }}
+            ></Typography>
+            {showLogo && logo && (
+              <img
+                src={config?.logo}
+                alt="loginPageImg"
+                height={config.logoheight || "280px"}
+                width={config.logowidth || "280px"}
+              />
+            )}
             <Box
               component="form"
               onSubmit={handleLogin}
-              sx={{ mt: 1, width: "90%" }}
+              sx={{ mt: 1, width: "100%" }}
             >
               <TextField
                 margin="normal"
@@ -166,13 +175,15 @@ const LoginMobileAadharPage: React.FC = () => {
                 required
                 fullWidth
                 value={input}
-                helperText={!valid ? errorMessage : ""}
+                helperText={!valid ? errorMessage : ''}
                 onChange={handleInput}
                 label={
-                  isAadharClicked ? `Enter Aadhar Number` : t("message.enter_mobile")
+                  isAadharClicked
+                    ? `Enter Aadhar Number`
+                    : t('message.enter_mobile')
                 }
-                name={isAadharClicked ? "aadhar" : "phone"}
-                autoComplete={isAadharClicked ? "aadhar" : "phone"}
+                name={isAadharClicked ? 'aadhar' : 'phone'}
+                autoComplete={isAadharClicked ? 'aadhar' : 'phone'}
                 autoFocus
               />
               {
@@ -182,12 +193,12 @@ const LoginMobileAadharPage: React.FC = () => {
                   fullWidth
                   variant="contained"
                   sx={{
-                    textTransform: "none",
+                    textTransform: 'none',
                     mt: 3,
                     mb: 4,
                     p: 1,
                     background: theme?.primary?.main || 'black',
-                    borderRadius: "10px",
+                    borderRadius: '10px',
                   }}
                   onClick={handleLogin}
                   disabled={!valid || loading}
@@ -195,7 +206,7 @@ const LoginMobileAadharPage: React.FC = () => {
                   {loading ? (
                     <CircularProgress size={24} color="inherit" />
                   ) : (
-                    `${t("label.continue")}`
+                    `${t('label.continue')}`
                   )}
                 </Button>
               }
@@ -217,14 +228,16 @@ const LoginMobileAadharPage: React.FC = () => {
                   textAlign="center"
                   variant="button"
                   sx={{
-                    textTransform: "none",
-                    textDecoration: "underline",
+                    textTransform: 'none',
+                    textDecoration: 'underline',
                     color: theme.primary.light,
-                    fontWeight: "bold",
-                    cursor: "pointer",
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
                   }}
                 >
-                  {!isAadharClicked ? `Aadhar Number` : t("message.enter_mobile")}
+                  {!isAadharClicked
+                    ? `Aadhar Number`
+                    : t('message.enter_mobile')}
                 </Typography>
               </>
             )}
@@ -232,7 +245,7 @@ const LoginMobileAadharPage: React.FC = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default LoginMobileAadharPage;
+export default LoginMobileAadharPage

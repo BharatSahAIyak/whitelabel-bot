@@ -19,7 +19,6 @@ import DowntimePage from '../../pageComponents/downtime-page';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { getMsgType } from '../../utils/getMsgType';
 import { recordUserLocation } from '../../utils/location';
-import { v4 as uuidv4 } from 'uuid';
 
 const ChatUiWindow: React.FC = () => {
   const config = useConfig('component', 'chatUI');
@@ -133,11 +132,6 @@ const ChatUiWindow: React.FC = () => {
       : normalizeMsgs;
   }, [context?.loading, normalizeMsgs]);
 
-  const placeholder = useMemo(
-    () => config?.placeholder ?? 'Ask Your Question',
-    [config]
-  );
-
   if (isDown) {
     return <DowntimePage />;
   } else
@@ -147,6 +141,7 @@ const ChatUiWindow: React.FC = () => {
           btnColor={secondaryColor || 'black'}
           background="var(--bg-color)"
           disableSend={isMsgReceiving}
+          
           //@ts-ignore
           translation={t}
           showTransliteration={config?.allowTransliteration  && localStorage.getItem('locale') === config?.transliterationOutputLanguage}
@@ -167,7 +162,7 @@ const ChatUiWindow: React.FC = () => {
           )}
           onSend={handleSend}
           locale="en-US"
-          placeholder={placeholder}
+          placeholder='Ask Your Question'
         />
         <ShareButtons />
       </div>
