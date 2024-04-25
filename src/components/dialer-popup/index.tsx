@@ -1,7 +1,6 @@
 import React, {
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -10,9 +9,8 @@ import crossIcon from '../../assets/icons/crossIcon.svg';
 import styles from './index.module.css';
 import Image from 'next/image';
 import { useLocalization } from '../../hooks';
-import axios from 'axios';
-import toast from 'react-hot-toast';
 import { AppContext } from '../../context';
+import { MessageType, XMessage } from '@samagra-x/xmessage';
 
 const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
   const t = useLocalization();
@@ -23,22 +21,28 @@ const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
   const context = useContext(AppContext);
   const [review, setReview] = useState('');
   const inputRef = useRef(null);
+
   const negativeFeedbackPayload = {
-    from: localStorage.getItem('phoneNumber'),
-    appId: 'AKAI_App_Id',
-    channel: 'AKAI',
-    userId: localStorage.getItem('userID'),
-    messageType: 'FEEDBACK_NEGATIVE',
-    replyId: context?.currentQuery,
-    conversationId: sessionStorage.getItem('conversationId'),
-    botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-  };
+    app: process.env.NEXT_PUBLIC_BOT_ID || '',
+    messageType: MessageType.FEEDBACK_NEGATIVE,
+    messageId: {
+      replyId: context?.currentQuery,
+      channelMessageId: sessionStorage.getItem('conversationId'),
+    },
+    from: {
+      userID: localStorage.getItem('userID'),
+    },
+  } as Partial<XMessage>;
 
   const submitReview = useCallback(
     (r: string) => {
       context?.newSocket.sendMessage({
-        text: r,
-        payload: negativeFeedbackPayload
+        payload: {
+          payload: {
+            text: r,
+          },
+          ...negativeFeedbackPayload,
+        } as Partial<XMessage>
       });
       context?.setCurrentQuery('');
       setShowDialerPopup(false);
@@ -63,10 +67,13 @@ const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
       <div
         className={styles.crossIconBox}
         onClick={() => {
+          console.log("69");
           context?.setCurrentQuery('');
           setShowDialerPopup(false);
           context?.newSocket.sendMessage({
-            payload: negativeFeedbackPayload
+            paylod: {
+              ...negativeFeedbackPayload
+            } as Partial<XMessage>
           });
         }}>
         <Image src={crossIcon} alt="crossIcon" layout="responsive" />

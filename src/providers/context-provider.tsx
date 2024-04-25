@@ -19,6 +19,7 @@ import axios from 'axios';
 import { useFlags } from 'flagsmith/react';
 import { useCookies } from 'react-cookie';
 import { UCI } from 'socket-package';
+import { XMessage } from '@samagra-x/xmessage';
 
 import mergeConfigurations from '../utils/mergeConfigurations';
 import { FullPageLoader } from '../components/fullpage-loader';
@@ -465,24 +466,26 @@ const ContextProvider: FC<{
       console.log('s2t messageId:', messageId);
       setLastSentMsgId((prev) => (prev = messageId));
       newSocket.sendMessage({
-        text: text?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
-        to: localStorage.getItem('userID'),
         payload: {
-          messageId: messageId,
-          from: localStorage.getItem('phoneNumber'),
-          appId: 'AKAI_App_Id',
-          channel: 'AKAI',
-          metaData: {
-            latitude: sessionStorage.getItem('latitude'),
-            longitude: sessionStorage.getItem('longitude'),
-            city: sessionStorage.getItem('city'),
-            state: sessionStorage.getItem('state'),
-            ip: sessionStorage.getItem('ip'),
+          app: process.env.NEXT_PUBLIC_BOT_ID || '',
+          payload: {
+            text: text?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
+            metaData: {
+              latitude: sessionStorage.getItem('latitude'),
+              longitude: sessionStorage.getItem('longitude'),
+              city: sessionStorage.getItem('city'),
+              state: sessionStorage.getItem('state'),
+              ip: sessionStorage.getItem('ip'),
+            }
           },
-          userId: localStorage.getItem('userID'),
-          conversationId: sessionStorage.getItem('conversationId'),
-          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-        },
+          from: {
+            userID: localStorage.getItem('userID'),
+          },
+          messageId: {
+            Id: messageId,
+            channelMessageId: sessionStorage.getItem('conversationId'),
+          },
+        } as Partial<XMessage>
       });
 
       setStartTime(Date.now());
@@ -649,15 +652,18 @@ const ContextProvider: FC<{
           console.log('log:', secondLastMsg);
           if (secondLastMsg) {
             newSocket.sendMessage({
-              text: secondLastMsg.text,
-              to: localStorage.getItem('userID'),
-              from: localStorage.getItem('phoneNumber'),
-              optional: {
-                appId: 'AKAI_App_Id',
-                channel: 'AKAI',
-              },
-              userId: localStorage.getItem('userID'),
-              conversationId: sessionStorage.getItem('conversationId'),
+              payload: {
+                app: process.env.NEXT_PUBLIC_BOT_ID || '',
+                payload: {
+                  text: secondLastMsg.text,
+                },
+                from: {
+                  userID: localStorage.getItem('userID'),
+                },
+                messageId: {
+                  channelMessageId: sessionStorage.getItem('conversationId'),
+                }
+              } as Partial<XMessage>
             });
           }
         } else {

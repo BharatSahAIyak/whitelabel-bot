@@ -35,6 +35,7 @@ import axios from 'axios';
 import saveTelemetryEvent from '../../utils/telemetry';
 import BlinkingSpinner from '../blinking-spinner/index';
 import Loader from '../loader';
+import { MessageType, XMessage } from '@samagra-x/xmessage';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
@@ -71,15 +72,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       if (value === 1) {
         context?.newSocket.sendMessage({
           payload: {
-            from: localStorage.getItem('phoneNumber'),
-            appId: 'AKAI_App_Id',
-            channel: 'AKAI',
-            userId: localStorage.getItem('userID'),
-            messageType: 'FEEDBACK_POSITIVE',
-            replyId: msgId,
-            conversationId: sessionStorage.getItem('conversationId'),
-            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-          },
+            app: process.env.NEXT_PUBLIC_BOT_ID || '',
+            from: {
+              userID: localStorage.getItem('userID'),
+            },
+            messageType: MessageType.FEEDBACK_POSITIVE,
+            messageId: {
+              replyId: msgId,
+              channelMessageId: sessionStorage.getItem('conversationId'),
+            },
+          } as Partial<XMessage>
         });
       } else if (value === -1) {
         context?.setCurrentQuery(msgId);
@@ -138,6 +140,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 if (optionDisabled) {
                   toast.error(`${t('message.cannot_answer_again')}`);
                 } else {
+                  console.log("141");
                   context?.sendMessage(choice?.key);
                   setOptionDisabled(true);
                 }
