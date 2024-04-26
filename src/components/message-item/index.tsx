@@ -35,7 +35,7 @@ import axios from 'axios';
 import saveTelemetryEvent from '../../utils/telemetry';
 import Loader from '../loader';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
- 
+import BlinkingSpinner from '../blinking-spinner/index';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
@@ -385,12 +385,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 }}
               >
                 {content?.text}{' '}
-                {/* {
+                {
                   content?.data?.position === 'right'
                     ? null
                     : !content?.data?.isEnd
                   && <BlinkingSpinner />
-                } */}
+                }
                 {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                   <div
                     style={{
@@ -457,11 +457,27 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
  
             
                       <div
-                        style={{
+                        // style={{
                           // border: `1px solid ${theme?.primary?.main}`,
-                        }}
+                        // }}
                         className={styles.msgSpeaker}
                         onClick={downloadAudio}
+                         style={
+                        !content?.data?.isEnd
+                          ? {
+                              pointerEvents: 'none',
+                              filter: 'grayscale(100%)',
+                              opacity: '0.5',
+                              border: `1px solid ${secondaryColor}`,
+                            }
+                          :
+                        {
+                          pointerEvents: 'auto',
+                          opacity: '1',
+                          filter: 'grayscale(0%)',
+                          border: `1px solid ${secondaryColor}`,
+                        }
+                      }
                       >
                         {context?.clickedAudioUrl === content?.data?.audio_url ? (
                           !context?.audioPlaying ? (
