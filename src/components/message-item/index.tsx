@@ -453,7 +453,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   }}
                 >
                   {config?.allowTextToSpeech && (
-                    <div style={{ display: 'flex' }}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
  
             
                       <div
@@ -468,27 +468,31 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                               pointerEvents: 'none',
                               filter: 'grayscale(100%)',
                               opacity: '0.5',
-                              border: `1px solid ${secondaryColor}`,
+                              // border: `1px solid ${secondaryColor}`,
                             }
                           :
                         {
                           pointerEvents: 'auto',
                           opacity: '1',
                           filter: 'grayscale(0%)',
-                          border: `1px solid ${secondaryColor}`,
+                          // border: `1px solid ${secondaryColor}`,
                         }
                       }
                       >
                         {context?.clickedAudioUrl === content?.data?.audio_url ? (
                           !context?.audioPlaying ? (
                             <SpeakerIcon color={theme?.primary?.main} />
+                            
+                            
                           ) : (
-                            <SpeakerPauseIcon color={theme?.primary?.main} />
+                            <SpeakerPauseIcon color={theme?.primary?.main}     />
+ 
+                            
                           )
                         ) : ttsLoader ? (
                           <Loader />
                         ) : (
-                          <SpeakerIcon color={theme?.primary?.main} />
+                          <SpeakerIcon color={theme?.primary?.main}   />
                         )}
 
                         <p
@@ -504,7 +508,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         >
                           {/* {t('message.speaker')} */}
                         </p>
-                      </div>
+                        </div>
+                       
                     </div>
                   )}
                   {config?.allowFeedback && (

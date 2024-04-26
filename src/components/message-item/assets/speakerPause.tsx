@@ -2,9 +2,9 @@ import React from 'react';
 
 const SpeakerPauseIcon = (props: any) => (
   <svg
-    width="45"
-    height="20"
-    viewBox="0 0 54 25"
+    width="29"
+    height="29"
+    viewBox="14 8 28 11"
     fill="none"
     xmlns="http://www.w3.org/2000/svg">
     <path

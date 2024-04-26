@@ -97,19 +97,26 @@
   margin: 1px 5px;
   padding: 2px 8px;
 }
+ 
 
-.msgSpeaker {
+ .msgSpeaker {
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: space-evenly;
- 
-   position: absolute;
+  position: absolute;
   bottom: 110%;
-  right: 20px;  
+  right: 15px;
   transform: translateY(-80%);
 }
 
+ .msgSpeaker svg {
+  width: 28px; /* Adjust the size as needed */
+  height: 25px; /* Adjust the size as needed */
+}
+ 
+
+ 
 .tableContainer {
   position: relative;
   display: flex;
@@ -122,12 +129,13 @@
 
 }
 
- @media (max-width: 768px) {
+  
+@media (max-width: 768px) {
   .msgSpeaker {
-    right: 20px;  
-    bottom: auto;  
-    top: -50px; 
-    transform: translate(0, -60%);  
-     
+    /* Adjust positioning for mobile */
+    right: 20px;
+    bottom: auto;
+    top: -50px;
+    transform: translate(0, -60%);
   }
 }
