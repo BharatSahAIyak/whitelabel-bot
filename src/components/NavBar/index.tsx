@@ -5,7 +5,6 @@ import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
 import HomeIcon from '@mui/icons-material/Home'
 import Typography from '@mui/material/Typography'
-import AddCircle from '@mui/icons-material/AddCircle'
 import { useRouter } from 'next/router'
 import { useConfig } from '../../hooks/useConfig'
 import Sidebar from '../../pageComponents/sidebar'
@@ -15,6 +14,8 @@ import { AppContext } from '../../context'
 import { useLocalization, useLogin } from '../../hooks'
 import toast from 'react-hot-toast'
 import { useColorPalates } from '../../providers/theme-provider/hooks'
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+
 
 const Navbar: React.FC = () => {
   const router = useRouter()
@@ -158,7 +159,7 @@ const Navbar: React.FC = () => {
                 </button>
               </div>
             )}
-            {isAuthenticated && showHamburgerMenu && (
+             {router.pathname !== '/chat' && isAuthenticated && showHamburgerMenu && (
               <IconButton
                 size="large"
                 edge="start"
@@ -176,7 +177,7 @@ const Navbar: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexDirection: 'column',
+                  flexDirection: 'row',
                 }}
               >
                 <IconButton
@@ -189,15 +190,15 @@ const Navbar: React.FC = () => {
                     width: '28px',
                     height: '28px',
                     margin: 0,
-                  }} // Adjusted styling
+                  }}
                   onClick={newChatHandler}
                 >
-                  <AddCircle sx={{ fontSize: '30px' }} />
+                      <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
                 </IconButton>
                 <Typography
                   variant="body1"
                   color={newChatButtonColor ?? 'black'}
-                  sx={{ fontSize: '15px' }}
+                  sx={{ fontSize: '25px', marginLeft: '5px' }}
                 >
                   {t('label.new_chat')}
                 </Typography>
