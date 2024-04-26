@@ -376,12 +376,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     : secondaryColor,
               }}>
               {content?.text}{' '}
-              {/* {
+              {
                 content?.data?.position === 'right'
                   ? null
                   : !content?.data?.isEnd
                 && <BlinkingSpinner />
-              } */}
+              }
               {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                 <div
                   style={{
@@ -440,27 +440,27 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 {config?.allowTextToSpeech && (
                   <div style={{ display: 'flex' }}>
                     <div
-                      style={{
-                        border: `1px solid ${theme?.primary?.main}`,
-                      }}
+                      // style={{
+                      //   border: `1px solid ${theme?.primary?.main}`,
+                      // }}
                       className={styles.msgSpeaker}
                       onClick={downloadAudio}
-                      // style={
-                      //   !content?.data?.isEnd
-                      //     ? {
-                      //         pointerEvents: 'none',
-                      //         filter: 'grayscale(100%)',
-                      //         opacity: '0.5',
-                      //         border: `1px solid ${secondaryColor}`,
-                      //       }
-                      //     :
-                      //   {
-                      //     pointerEvents: 'auto',
-                      //     opacity: '1',
-                      //     filter: 'grayscale(0%)',
-                      //     border: `1px solid ${secondaryColor}`,
-                      //   }
-                      // }
+                      style={
+                        !content?.data?.isEnd
+                          ? {
+                              pointerEvents: 'none',
+                              filter: 'grayscale(100%)',
+                              opacity: '0.5',
+                              border: `1px solid ${secondaryColor}`,
+                            }
+                          :
+                        {
+                          pointerEvents: 'auto',
+                          opacity: '1',
+                          filter: 'grayscale(0%)',
+                          border: `1px solid ${secondaryColor}`,
+                        }
+                      }
                     >
                       {context?.clickedAudioUrl === content?.data?.audio_url ? (
                             !context?.audioPlaying
