@@ -91,6 +91,14 @@
   height: 25px;  
  
  }
+
+ .loaderContainer {
+  position: absolute;
+  bottom: 19px ;
+  right: 5px;
+  transform: translateY(-50%);
+}
+
  
 .tableContainer {
   position: relative;
@@ -113,4 +121,10 @@
     top: -50px;
     transform: translate(0, -60%);
   }
+   .loaderContainer {
+  position: absolute;
+  bottom: auto;
+  right: 5px;
+  transform: translateY(-50%);
+}
 }

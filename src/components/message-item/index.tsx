@@ -453,7 +453,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   }}
                 >
                   {config?.allowTextToSpeech && (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ display: 'flex' }}>
  
             
                       <div
@@ -481,18 +481,17 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       >
                         {context?.clickedAudioUrl === content?.data?.audio_url ? (
                           !context?.audioPlaying ? (
-                            <SpeakerIcon color={theme?.primary?.main} />
-                            
-                            
+                         <SpeakerIcon color={theme?.primary?.main} />
                           ) : (
-                            <SpeakerPauseIcon color={theme?.primary?.main}     />
- 
-                            
+                            <SpeakerPauseIcon color={theme?.primary?.main} />
                           )
                         ) : ttsLoader ? (
-                          <Loader />
+                         
+                         <div className={styles.loaderContainer}>
+    <Loader  color={theme?.primary?.main}  />  
+  </div>
                         ) : (
-                          <SpeakerIcon color={theme?.primary?.main}   />
+                          <SpeakerIcon color={theme?.primary?.main} />
                         )}
 
                         <p
@@ -508,8 +507,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         >
                           {/* {t('message.speaker')} */}
                         </p>
-                        </div>
-                       
+                      </div>
                     </div>
                   )}
                   {config?.allowFeedback && (
