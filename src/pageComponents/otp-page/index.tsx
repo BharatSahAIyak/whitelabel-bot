@@ -35,7 +35,7 @@ const OtpPage: React.FC = () => {
   const verifyOtp = async (userData: any) => {
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}api/login/otp`,
+        `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}/api/login/otp`,
         userData
       )
       console.log({ response })
@@ -54,7 +54,7 @@ const OtpPage: React.FC = () => {
     try {
       setLoading(true)
       const response = axios.get(
-        `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}api/sendOTP?phone=${router.query.state}`
+        `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}/api/sendOTP?phone=${router.query.state}`
       )
       console.log(response)
       setLoading(false)
