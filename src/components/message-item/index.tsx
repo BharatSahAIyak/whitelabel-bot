@@ -395,7 +395,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   <div
                     style={{
                       color:
-                        content?.data?.position === 'right' ? 'yellow' : 'black',
+                        content?.data?.position === 'right' ? 'black' : 'yellow',
                       fontSize: '12px',
                       fontWeight: 'normal',
                     }}
