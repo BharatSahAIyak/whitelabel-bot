@@ -1,28 +1,4 @@
-.messageTriangleRight {
-  content: ' ';
-  margin-right: 1vh;
-  position: absolute;
-  width: 0;
-  height: 0;
-  left: auto;
-  right: -20px;
-  top: 0px;
-  bottom: auto;
-  border: 20px solid;
-}
-
-.messageTriangleLeft {
-  margin-left: 1vh;
-  content: ' ';
-  position: absolute;
-  width: 0;
-  height: 0;
-  left: -20px;
-  right: auto;
-  top: 0px;
-  bottom: auto;
-  border: 22px solid;
-}
+ 
 
 .onHover {
   font-weight: bold;
@@ -111,11 +87,10 @@
 }
 
  .msgSpeaker svg {
-  width: 28px; /* Adjust the size as needed */
-  height: 25px; /* Adjust the size as needed */
-}
+  width: 28px;  
+  height: 25px;  
  
-
+ }
  
 .tableContainer {
   position: relative;
@@ -132,7 +107,7 @@
   
 @media (max-width: 768px) {
   .msgSpeaker {
-    /* Adjust positioning for mobile */
+     
     right: 20px;
     bottom: auto;
     top: -50px;
