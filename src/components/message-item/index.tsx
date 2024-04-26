@@ -332,8 +332,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       return <Typing />;
     case 'text':
       return (
+ 
         <div style={{ position: 'relative', maxWidth: '90vw' }}>
           <div className={styles.textBubble}>
+ 
             <div
               // className={
               //   content?.data?.position === 'right'
@@ -413,6 +415,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               <div
                 style={{
                   display: 'flex',
+ 
                   justifyContent: 'flex-end',
                 }}
               >
@@ -452,6 +455,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 >
                   {config?.allowTextToSpeech && (
                     <div style={{ display: 'flex' }}>
+ 
+            
                       <div
                         style={{
                           // border: `1px solid ${theme?.primary?.main}`,
