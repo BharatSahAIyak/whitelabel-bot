@@ -468,25 +468,28 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                               pointerEvents: 'none',
                               filter: 'grayscale(100%)',
                               opacity: '0.5',
-                              border: `1px solid ${secondaryColor}`,
+                              // border: `1px solid ${secondaryColor}`,
                             }
                           :
                         {
                           pointerEvents: 'auto',
                           opacity: '1',
                           filter: 'grayscale(0%)',
-                          border: `1px solid ${secondaryColor}`,
+                          // border: `1px solid ${secondaryColor}`,
                         }
                       }
                       >
                         {context?.clickedAudioUrl === content?.data?.audio_url ? (
                           !context?.audioPlaying ? (
-                            <SpeakerIcon color={theme?.primary?.main} />
+                         <SpeakerIcon color={theme?.primary?.main} />
                           ) : (
                             <SpeakerPauseIcon color={theme?.primary?.main} />
                           )
                         ) : ttsLoader ? (
-                          <Loader />
+                         
+                         <div className={styles.loaderContainer}>
+    <Loader  color={theme?.primary?.main}  />  
+  </div>
                         ) : (
                           <SpeakerIcon color={theme?.primary?.main} />
                         )}

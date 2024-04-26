@@ -1,28 +1,4 @@
-.messageTriangleRight {
-  content: ' ';
-  margin-right: 1vh;
-  position: absolute;
-  width: 0;
-  height: 0;
-  left: auto;
-  right: -20px;
-  top: 0px;
-  bottom: auto;
-  border: 20px solid;
-}
-
-.messageTriangleLeft {
-  margin-left: 1vh;
-  content: ' ';
-  position: absolute;
-  width: 0;
-  height: 0;
-  left: -20px;
-  right: auto;
-  top: 0px;
-  bottom: auto;
-  border: 22px solid;
-}
+ 
 
 .onHover {
   font-weight: bold;
@@ -97,19 +73,33 @@
   margin: 1px 5px;
   padding: 2px 8px;
 }
+ 
 
-.msgSpeaker {
+ .msgSpeaker {
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: space-evenly;
- 
-   position: absolute;
+  position: absolute;
   bottom: 110%;
-  right: 20px;  
+  right: 15px;
   transform: translateY(-80%);
 }
 
+ .msgSpeaker svg {
+  width: 28px;  
+  height: 25px;  
+ 
+ }
+
+ .loaderContainer {
+  position: absolute;
+  bottom: 19px ;
+  right: 5px;
+  transform: translateY(-50%);
+}
+
+ 
 .tableContainer {
   position: relative;
   display: flex;
@@ -122,12 +112,19 @@
 
 }
 
- @media (max-width: 768px) {
+  
+@media (max-width: 768px) {
   .msgSpeaker {
-    right: 20px;  
-    bottom: auto;  
-    top: -50px; 
-    transform: translate(0, -60%);  
      
+    right: 15px;
+    bottom: auto;
+    top: -50px;
+    transform: translate(0, -60%);
   }
+   .loaderContainer {
+  position: absolute;
+  bottom: auto;
+  right: 5px;
+  transform: translateY(-50%);
+}
 }
