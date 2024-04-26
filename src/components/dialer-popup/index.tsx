@@ -71,7 +71,7 @@ const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
           context?.setCurrentQuery('');
           setShowDialerPopup(false);
           context?.newSocket.sendMessage({
-            paylod: {
+            payload: {
               ...negativeFeedbackPayload
             } as Partial<XMessage>
           });
