@@ -108,7 +108,7 @@
 @media (max-width: 768px) {
   .msgSpeaker {
      
-    right: 20px;
+    right: 15px;
     bottom: auto;
     top: -50px;
     transform: translate(0, -60%);
