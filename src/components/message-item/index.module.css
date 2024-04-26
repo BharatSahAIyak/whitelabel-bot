@@ -126,8 +126,8 @@
   .msgSpeaker {
     right: 20px;  
     bottom: auto;  
-    top: -40px; 
-    transform: translate(0, -50%);  
+    top: -50px; 
+    transform: translate(0, -60%);  
      
   }
 }

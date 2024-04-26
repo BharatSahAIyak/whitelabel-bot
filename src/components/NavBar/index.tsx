@@ -5,7 +5,6 @@ import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
 import HomeIcon from '@mui/icons-material/Home'
 import Typography from '@mui/material/Typography'
-import AddCircle from '@mui/icons-material/AddCircle'
 import { useRouter } from 'next/router'
 import { useConfig } from '../../hooks/useConfig'
 import Sidebar from '../../pageComponents/sidebar'
@@ -191,7 +190,7 @@ const Navbar: React.FC = () => {
                     width: '28px',
                     height: '28px',
                     margin: 0,
-                  }} // Adjusted styling
+                  }}
                   onClick={newChatHandler}
                 >
                       <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />

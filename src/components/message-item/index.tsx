@@ -33,10 +33,9 @@ import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
 import axios from 'axios';
 import saveTelemetryEvent from '../../utils/telemetry';
-import BlinkingSpinner from '../blinking-spinner/index';
 import Loader from '../loader';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+ 
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
@@ -425,7 +424,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       content?.data?.position === 'right'
                         ? secondaryColor
                         : contrastText,
-                    fontSize: '10px',
+                    fontSize: '12px'
                   }}
                 >
                   {moment(content?.data?.timestamp).format('hh:mm A ')}
