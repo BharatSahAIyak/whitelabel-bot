@@ -4,7 +4,6 @@ import { Avatar, Box, Button, Typography} from '@mui/material';
 import downTimeGIF from './assets/downTimeGIF.gif'
 import CallRoundedIcon from '@mui/icons-material/Call';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
-import { useFlags } from 'flagsmith/react';
 import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
 
@@ -12,7 +11,6 @@ const DowntimePage: React.FC = () => {
   const t = useLocalization();
   const theme = useColorPalates(); 
   const config = useConfig('component', 'downtimePage');
-  const flags = useFlags(['dialer_number']);
   const handleRefreshClick = useCallback(()=>{
     window?.location.reload()
   }, [])
@@ -21,9 +19,9 @@ const DowntimePage: React.FC = () => {
   }, [])
 
   const handleContactUserClick = useCallback(()=>{
-    const phoneNumber = `tel:${flags.dialer_number.value}`;
+    const phoneNumber = `tel:${config?.downtimePhoneNumber}`;
     window.location.href = phoneNumber;
-  }, [flags])
+  }, [config?.downtimePhoneNumber])
   
   return (
     <>
@@ -36,7 +34,7 @@ const DowntimePage: React.FC = () => {
           <img src={config?.downTimeImage || downTimeGIF?.src} alt='downtimeGif' className={styles.imageContainer}/>
         </Box>
         <Box><Typography variant='h6' fontWeight={600} color={theme?.grey?.[600]}>{t('message.temporarily_down')}</Typography></Box>
-        <Box  gap={1} display={'flex'} my={2}>
+        {config?.downtimeShowCallBox && <Box gap={1} display={'flex'} my={2}>
           <Box><Avatar
             sx={{ bgcolor: theme.primary.main, width:"7vh",height:"7vh" }}
             alt="Call Icon"
@@ -46,7 +44,7 @@ const DowntimePage: React.FC = () => {
           <Button variant={"text"} sx={{textTransform: 'none'}} onClick={handleContactUserClick}>
             <Typography variant='h5' color={theme?.grey?.[600]} fontWeight={600} sx={{textDecoration: 'underline'}}>{t('label.call_amakrushi')}</Typography>
           </Button>
-        </Box>
+        </Box>}
 
         <Box display={"flex"} justifyContent={"space-around"} width={"100%"} my={4}>
           <Button

@@ -105,10 +105,6 @@ const HomePage: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputMsg, cursorPosition])
 
-  // useEffect(() => {
-  //   setMessages([getInitialMsgs(t, flags, context?.locale)]);
-  // }, [t, context?.locale, flags]);
-
   useEffect(() => {
     context?.fetchIsDown() // check if server is down
 

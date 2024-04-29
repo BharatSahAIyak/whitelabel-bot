@@ -14,13 +14,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { IntlProvider } from 'react-intl';
 import { useLocalization } from '../hooks';
 import toast from 'react-hot-toast';
-import flagsmith from 'flagsmith/isomorphic';
 import axios from 'axios';
-import { useFlags } from 'flagsmith/react';
 import { useCookies } from 'react-cookie';
 import { UCI } from 'socket-package';
 import { XMessage } from '@samagra-x/xmessage';
-
 import mergeConfigurations from '../utils/mergeConfigurations';
 import { FullPageLoader } from '../components/fullpage-loader';
 import LaunchPage from '../pageComponents/launch-page';
@@ -37,7 +34,6 @@ const ContextProvider: FC<{
   setLocaleMsgs: any;
 }> = ({ locale, children, localeMsgs, setLocale, setLocaleMsgs }) => {
   const t = useLocalization();
-  const flags = useFlags(['health_check_time']);
   const [loading, setLoading] = useState(false);
   const [isMsgReceiving, setIsMsgReceiving] = useState(false);
   const [messages, setMessages] = useState<Array<any>>([]);
@@ -46,11 +42,6 @@ const ContextProvider: FC<{
   const [conversationId, setConversationId] = useState<string | null>(
     sessionStorage.getItem('conversationId')
   );
-  const timer1 = flagsmith.getValue('timer1', { fallback: 30000 });
-  const timer2 = flagsmith.getValue('timer2', { fallback: 45000 });
-  const audio_playback = flagsmith.getValue('audio_playback', {
-    fallback: 1.5,
-  });
   const [isDown, setIsDown] = useState(false);
   const [showDialerPopup, setShowDialerPopup] = useState(false);
   const [currentQuery, setCurrentQuery] = useState('');
@@ -66,10 +57,8 @@ const ContextProvider: FC<{
   const [lastSentMsgId, setLastSentMsgId] = useState('');
   const [lastText, setLastText] = useState('');
   const [kaliaClicked, setKaliaClicked] = useState(false);
-  const [config, setConfig] = useState(null);
+  const [config, setConfig] = useState<any>(null);
   const themeContext = useContext(ThemeContext);
-  // const configs = useMergeConfigurations();
-  // console.log("hola:",{configs})
 
   useEffect(() => {
     mergeConfigurations().then((res) => {
@@ -175,7 +164,7 @@ const ContextProvider: FC<{
       setClickedAudioUrl(url);
       // setTtsLoader(true);
       const audio = new Audio(url);
-      audio.playbackRate = audio_playback;
+      audio.playbackRate = config?.component?.botDetails?.audioPlayback || 1.5;
       audio.addEventListener('ended', () => {
         setAudioElement(null);
         setAudioPlaying(false);
@@ -198,7 +187,7 @@ const ContextProvider: FC<{
           console.error('Error playing audio:', error);
         });
     };
-  }, [audioElement, audio_playback]);
+  }, [audioElement, config?.component?.botDetails?.audioPlayback]);
 
   const checkInternetConnection = () => {
     if (!navigator.onLine) {
@@ -534,22 +523,22 @@ const ContextProvider: FC<{
   );
 
   const fetchIsDown = useCallback(async () => {
-    // try {
-    //   const res = await axios.get(
-    //     `${process.env.NEXT_PUBLIC_BFF_API_URL}/health/${flags?.health_check_time?.value}`
-    //   );
-    //   const status = res.data.status;
-    //   console.log('hie', status);
-    //   if (status === 'OK') {
-    //     setIsDown(false);
-    //   } else {
-    //     setIsDown(true);
-    //     console.log('Server status is not OK');
-    //   }
-    // } catch (error: any) {
-    //   console.error(error);
-    // }
-  }, [flags?.health_check_time?.value]);
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_BFF_API_URL}/health/${config?.component?.botDetails?.healthCheckTime || 5}`
+      );
+      const status = res.data.status;
+      console.log('hie', status);
+      if (status === 'OK') {
+        setIsDown(false);
+      } else {
+        setIsDown(true);
+        console.log('Server status is not OK');
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+  }, [config?.component?.botDetails?.healthCheckTime]);
 
   const normalizedChat = (chats: any): any => {
     console.log('in normalized', chats);
@@ -670,15 +659,15 @@ const ContextProvider: FC<{
           setLoading(false);
           setIsMsgReceiving(false);
         }
-      }, timer2);
-    }, timer1);
+      }, config?.component?.botDetails?.timer2 || 45000);
+    }, config?.component?.botDetails?.timer1 || 30000);
 
     return () => {
       clearTimeout(timer);
       clearTimeout(secondTimer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDown, isMsgReceiving, loading, t, timer1, timer2]);
+  }, [isDown, isMsgReceiving, loading, t, config?.component?.botDetails?.timer1, config?.component?.botDetails?.timer2]);
 
   const values = useMemo(
     () => ({
