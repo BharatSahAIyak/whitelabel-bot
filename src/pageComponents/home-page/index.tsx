@@ -274,6 +274,10 @@ const HomePage: NextPage = () => {
     }
   }, [handleKeyDown])
 
+  const sendGuidedMsg = (type: string) => {
+    sendMessage(`Guided: ${t('label.' + type)}`)
+  }
+
   if (context?.isDown) {
     return <DowntimePage />
   } else
@@ -314,9 +318,7 @@ const HomePage: NextPage = () => {
                     {config?.showWeatherAdvisory && (
                       <div
                         className={styles.imgBtn}
-                        onClick={() => {
-                          sendMessage('Guided: weather')
-                        }}
+                        onClick={() => sendGuidedMsg('weather')}
                       >
                         <p>{t('label.weather_advisory')}</p>
                         <img
@@ -333,9 +335,7 @@ const HomePage: NextPage = () => {
                     {config?.showPlantProtection && (
                       <div
                         className={styles.imgBtn}
-                        onClick={() => {
-                          sendMessage(t('Guided: pest'))
-                        }}
+                        onClick={() => sendGuidedMsg('pest')}
                       >
                         <p>{t('label.plant_protection')}</p>
                         <img

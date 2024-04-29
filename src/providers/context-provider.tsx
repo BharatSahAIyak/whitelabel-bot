@@ -503,7 +503,7 @@ const ContextProvider: FC<{
           setMessages((prev: any) => [
             ...prev.map((prevMsg: any) => ({ ...prevMsg, disabled: true })),
             {
-              text: text?.replace(/^\s+|\s+$/g, ''),
+              text: text?.replace(/^\s+|\s+$/g, '')?.replace(/^Guided:/, ''),
               position: 'right',
               payload: { text },
               time: Date.now(),
