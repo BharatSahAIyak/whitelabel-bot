@@ -28,7 +28,7 @@ const ShareButtons = () => {
       process.env.NEXT_PUBLIC_BFF_API_URL
     }/history/generate-pdf/${sessionStorage.getItem('conversationId')}`
 
-    return axios.post(url, null, {
+    return axios.get(url, {
       headers: {
         botId: process.env.NEXT_PUBLIC_BOT_ID || '',
         userId: localStorage.getItem('userID'),
