@@ -461,7 +461,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           // border: `1px solid ${theme?.primary?.main}`,
                         // }}
                         className={styles.msgSpeaker}
-                        onClick={downloadAudio}
+                        onClick={!ttsLoader ? downloadAudio : () => {}}
                          style={
                         !content?.data?.isEnd
                           ? {
@@ -488,8 +488,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         ) : ttsLoader ? (
                          
                          <div className={styles.loaderContainer}>
-    <Loader  color={theme?.primary?.main}  />  
-  </div>
+                          <Loader  color={theme?.primary?.main}  />  
+                        </div>
                         ) : (
                           <SpeakerIcon color={theme?.primary?.main} />
                         )}
