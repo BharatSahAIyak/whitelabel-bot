@@ -36,6 +36,7 @@ const HistoryPage: FC = () => {
 
   const config = useConfig('component', 'historyPage');
   const handleClick = useCallback((activeItem: ChatItem) => {
+    sessionStorage.setItem('tags', JSON.stringify(activeItem?.tags || '[]'));
     sessionStorage.setItem(
       'conversationId',
       activeItem?.conversationId || 'null'
@@ -146,6 +147,7 @@ const HistoryPage: FC = () => {
             label: label,
             conversationId: chatItem?.channelMessageId,
             userId: chatItem?.from,
+            tags: chatItem?.tags,
             secondaryLabel: moment(chatItem?.timestamp).format(
               'hh:mm A DD/MM/YYYY'
             ),

@@ -467,6 +467,7 @@ const ContextProvider: FC<{
               ip: sessionStorage.getItem('ip'),
             }
           },
+          tags: JSON.parse(sessionStorage.getItem('tags') || '[]') || [],
           from: {
             userID: localStorage.getItem('userID'),
           },

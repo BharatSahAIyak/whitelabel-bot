@@ -132,8 +132,6 @@ const HomePage: NextPage = () => {
           context?.sendMessage(
             'Aadhaar number - ' + msg,
             null,
-            true,
-            null,
             true
           )
         } else context?.sendMessage(msg)
@@ -271,6 +269,9 @@ const HomePage: NextPage = () => {
   }, [handleKeyDown])
 
   const sendGuidedMsg = (type: string) => {
+    // convert the string type into stringified array
+    const tags = [type]
+    sessionStorage.setItem('tags', JSON.stringify(tags))
     sendMessage(`Guided: ${t('label.' + type)}`)
   }
 

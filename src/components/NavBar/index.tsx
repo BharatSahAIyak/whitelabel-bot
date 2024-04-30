@@ -75,6 +75,7 @@ const Navbar: React.FC = () => {
 
     const newConversationId = uuidv4()
     sessionStorage.setItem('conversationId', newConversationId)
+    sessionStorage.removeItem('tags')
     if (context?.audioElement) context?.audioElement.pause()
     if (context?.setAudioPlaying) context?.setAudioPlaying(false)
     context?.setConversationId(newConversationId)
