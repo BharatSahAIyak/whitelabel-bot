@@ -401,6 +401,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 showClose={false}
                 height={'150px'}
                 bgColor='transparent'
+                title={content?.data?.text}
               >
                 {content?.data?.choices?.map((item: any) => 
                 {
