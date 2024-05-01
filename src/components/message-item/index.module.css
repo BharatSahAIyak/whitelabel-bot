@@ -69,19 +69,7 @@
   display: flex;
 }
 
-.messageContent {
-  /* Styles for chat bubble content */
-  padding: 10px 15px; /* Example padding */
-}
-
-.messageActions {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end; /* Align items to the bottom */
-  margin-top: auto; /* Push the actions to the bottom */
-  padding: 5px 15px; /* Example padding */
-}
-
+ 
 .offlineBtns button {
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
     rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
@@ -95,7 +83,7 @@
   
   bottom: -100%;
   transform: translateY(-50%);
-  right: 0px; /* Adjust as needed */
+  right: 0px;  
 }
 
 
