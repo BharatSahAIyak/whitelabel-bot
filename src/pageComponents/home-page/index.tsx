@@ -273,7 +273,11 @@ const HomePage: NextPage = () => {
     context?.setGuidedFlow(true);
     const tags = [type]
     sessionStorage.setItem('tags', JSON.stringify(tags))
-    sendMessage(`Guided: ${t('label.' + type)}`)
+    if(type === 'weather'){
+      sendMessage(`Guided: ${t('label.' + type)}`)
+    }else{
+      sendMessage(`Guided: Pest`)
+    }
   }
 
   if (context?.isDown) {
