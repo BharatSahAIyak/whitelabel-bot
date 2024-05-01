@@ -95,10 +95,13 @@ const HistoryPage: FC = () => {
   const fetchHistory = () => {
     setIsFetching(true);
     axios
-      .get(
+      .post(
         `${
           process.env.NEXT_PUBLIC_BFF_API_URL
-        }/history/conversations?userId=${localStorage.getItem('userID')}`,
+        }/history/conversations`,
+        {
+          userId: localStorage.getItem('userID')
+        },
         {
           headers: {
             botId: process.env.NEXT_PUBLIC_BOT_ID || '',
