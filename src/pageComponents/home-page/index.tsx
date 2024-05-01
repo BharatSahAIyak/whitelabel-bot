@@ -270,6 +270,7 @@ const HomePage: NextPage = () => {
 
   const sendGuidedMsg = (type: string) => {
     // convert the string type into stringified array
+    context?.setGuidedFlow(true);
     const tags = [type]
     sessionStorage.setItem('tags', JSON.stringify(tags))
     sendMessage(`Guided: ${t('label.' + type)}`)

@@ -6,6 +6,7 @@ import {
   ListItem,
   FileCard,
   Typing,
+  Popup,
 } from '@samagra-x/chatui';
 import {
   FC,
@@ -38,6 +39,7 @@ import { MessageType, XMessage } from '@samagra-x/xmessage';
 import BlinkingSpinner from '../blinking-spinner/index';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
+  const { content, type } = message;
   const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
   const [reaction, setReaction] = useState(
@@ -48,6 +50,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   );
   const [audioFetched, setAudioFetched] = useState(false);
   const [ttsLoader, setTtsLoader] = useState(false);
+  const [popupActive, setPopupActive] = useState(false);
+  useEffect(() => {
+    if(content?.data?.choices?.length > 0){
+      setPopupActive(true);
+    }
+  }, [content])
+  
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -81,7 +90,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               replyId: msgId,
               channelMessageId: sessionStorage.getItem('conversationId'),
             },
-          } as Partial<XMessage>
+          } as Partial<XMessage>,
         });
       } else if (value === -1) {
         context?.setCurrentQuery(msgId);
@@ -140,7 +149,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 if (optionDisabled) {
                   toast.error(`${t('message.cannot_answer_again')}`);
                 } else {
-                  console.log("141");
+                  console.log('141');
                   context?.sendMessage(choice?.key);
                   setOptionDisabled(true);
                 }
@@ -172,8 +181,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     },
     [context, t]
   );
-
-  const { content, type } = message;
 
   console.log('here', content);
 
@@ -298,17 +305,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     }
   }, [handleAudio, content?.data, content?.text, t]);
 
-  const getFormattedDate = (datestr: string) => {
-    const today = new Date(datestr);
-    const yyyy = today.getFullYear();
-    let mm: any = today.getMonth() + 1; // Months start at 0!
-    let dd: any = today.getDate();
-
-    if (dd < 10) dd = '0' + dd;
-    if (mm < 10) mm = '0' + mm;
-
-    return dd + '/' + mm + '/' + yyyy;
-  };
   const parseWeatherJson = (data: any) => {
     const result = Object.keys(data[0]).reduce((acc: any, key) => {
       if (key !== 'datetime') {
@@ -331,10 +327,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       return <Typing />;
     case 'text':
       return (
- 
         <div style={{ position: 'relative', maxWidth: '90vw' }}>
           <div className={styles.textBubble}>
- 
             <div
               // className={
               //   content?.data?.position === 'right'
@@ -349,8 +343,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   : {
                       borderColor: `${contrastText} transparent transparent transparent`,
                     }
-              }
-            ></div>
+              }></div>
 
             <Bubble
               type="text"
@@ -359,21 +352,18 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   ? {
                       background: contrastText,
                       boxShadow: '0 3px 8px rgba(0,0,0,.24)',
-                         borderRadius: '15px 15px 0px 15px',
-                         padding: '10px, 15px, 10px, 15px',
-                         gap: '10px'
-
+                      borderRadius: '15px 15px 0px 15px',
+                      padding: '10px, 15px, 10px, 15px',
+                      gap: '10px',
                     }
                   : {
                       background: secondaryColor,
                       boxShadow: '0 3px 8px rgba(0,0,0,.24)',
-                        borderRadius: '15px 15px 15px 0px',
-                        padding: '10px, 15px, 10px, 15px',
-                        gap: '10px'
-
+                      borderRadius: '15px 15px 15px 0px',
+                      padding: '10px, 15px, 10px, 15px',
+                      gap: '10px',
                     }
-              }
-            >
+              }>
               <span
                 style={{
                   fontWeight: 600,
@@ -382,24 +372,21 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     content?.data?.position === 'right'
                       ? secondaryColor
                       : contrastText,
-                }}
-              >
+                }}>
                 {content?.text}{' '}
-                {
-                  content?.data?.position === 'right'
-                    ? null
-                    : !content?.data?.isEnd
-                  && <BlinkingSpinner />
-                }
+                {content?.data?.position === 'right'
+                  ? null
+                  : !content?.data?.isEnd && <BlinkingSpinner />}
                 {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                   <div
                     style={{
                       color:
-                        content?.data?.position === 'right' ? 'black' : 'yellow',
+                        content?.data?.position === 'right'
+                          ? 'black'
+                          : 'yellow',
                       fontSize: '12px',
                       fontWeight: 'normal',
-                    }}
-                  >
+                    }}>
                     <br></br>
                     <span>messageId: {content?.data?.messageId}</span>
                     <br></br>
@@ -407,26 +394,61 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   </div>
                 )}
               </span>
-              {getLists({
+              <Popup
+                onClose={() => {}}
+                active={popupActive}
+                backdrop={false}
+                showClose={false}
+                height={'150px'}
+                bgColor='transparent'
+              >
+                {content?.data?.choices?.map((item: any) => 
+                {
+                  console.log({item})
+                  return (
+                    <div
+                      key={item?.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '10px',
+                        color: 'black',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #DDDDDD'
+                      }}
+                      onClick={
+                        () => {
+                          context?.sendMessage(item?.text)
+                          setPopupActive(false)
+                        }
+                      }
+                      >
+                        {item?.text}
+                        </div>
+                  )}
+                  )}
+              </Popup>
+              {/* {getLists({
                 choices:
-                  content?.data?.payload?.buttonChoices ?? content?.data?.choices,
-              })}
+                  content?.data?.payload?.buttonChoices ??
+                  content?.data?.choices,
+              })} */}
               <div
                 style={{
                   display: 'flex',
- 
+
                   justifyContent: 'flex-end',
-                }}
-              >
+                }}>
                 <span
                   style={{
                     color:
                       content?.data?.position === 'right'
                         ? secondaryColor
                         : contrastText,
-                    fontSize: '12px'
-                  }}
-                >
+                    fontSize: '12px',
+                  }}>
                   {moment(content?.data?.timestamp).format('hh:mm A ')}
                 </span>
               </div>
@@ -437,8 +459,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   onClick={() => window?.location?.reload()}
                   style={{
                     border: `2px solid ${secondaryColor}`,
-                  }}
-                >
+                  }}>
                   Refresh
                 </button>
               </div>
@@ -450,46 +471,41 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     position: 'relative',
                     top: '-10px',
                     justifyContent: 'space-between',
-                  }}
-                >
+                  }}>
                   {config?.allowTextToSpeech && (
                     <div style={{ display: 'flex' }}>
- 
-            
                       <div
                         // style={{
-                          // border: `1px solid ${theme?.primary?.main}`,
+                        // border: `1px solid ${theme?.primary?.main}`,
                         // }}
                         className={styles.msgSpeaker}
                         onClick={!ttsLoader ? downloadAudio : () => {}}
-                         style={
-                        !content?.data?.isEnd
-                          ? {
-                              pointerEvents: 'none',
-                              filter: 'grayscale(100%)',
-                              opacity: '0.5',
-                              // border: `1px solid ${secondaryColor}`,
-                            }
-                          :
-                        {
-                          pointerEvents: 'auto',
-                          opacity: '1',
-                          filter: 'grayscale(0%)',
-                          // border: `1px solid ${secondaryColor}`,
-                        }
-                      }
-                      >
-                        {context?.clickedAudioUrl === content?.data?.audio_url ? (
+                        style={
+                          !content?.data?.isEnd
+                            ? {
+                                pointerEvents: 'none',
+                                filter: 'grayscale(100%)',
+                                opacity: '0.5',
+                                // border: `1px solid ${secondaryColor}`,
+                              }
+                            : {
+                                pointerEvents: 'auto',
+                                opacity: '1',
+                                filter: 'grayscale(0%)',
+                                // border: `1px solid ${secondaryColor}`,
+                              }
+                        }>
+                        {context?.clickedAudioUrl ===
+                        content?.data?.audio_url ? (
                           !context?.audioPlaying ? (
-                         <SpeakerIcon color={theme?.primary?.main} />
+                            <SpeakerIcon color={theme?.primary?.main} />
                           ) : (
                             <SpeakerPauseIcon color={theme?.primary?.main} />
                           )
                         ) : ttsLoader ? (
-                         
-                         <div className={styles.loaderContainer}>
-                          <Loader  color={theme?.primary?.main}  />  
-                        </div>
+                          <div className={styles.loaderContainer}>
+                            <Loader color={theme?.primary?.main} />
+                          </div>
                         ) : (
                           <SpeakerIcon color={theme?.primary?.main} />
                         )}
@@ -503,8 +519,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             alignItems: 'flex-end',
                             marginRight: '1px',
                             padding: '0 5px',
-                          }}
-                        >
+                          }}>
                           {/* {t('message.speaker')} */}
                         </p>
                       </div>
@@ -519,15 +534,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                               like: 1,
                               msgId: content?.data?.messageId,
                             })
-                          }
-                        >
+                          }>
                           <MsgThumbsUp fill={reaction === 1} width="25px" />
                           <p
                             style={{
                               fontSize: '11px',
                               fontFamily: 'Mulish-bold',
-                            }}
-                          >
+                            }}>
                             {/* {t('label.helpful')} */}
                           </p>
                         </div>
@@ -537,8 +550,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             width: '1px',
 
                             margin: '6px 0',
-                          }}
-                        ></div>
+                          }}></div>
 
                         <div
                           style={{
@@ -551,15 +563,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                               like: -1,
                               msgId: content?.data?.messageId,
                             })
-                          }
-                        >
+                          }>
                           <MsgThumbsDown fill={reaction === -1} width="25px" />
                           <p
                             style={{
                               fontSize: '11px',
                               fontFamily: 'Mulish-bold',
-                            }}
-                          >
+                            }}>
                             {/* {t('label.not_helpful')} */}
                           </p>
                         </div>

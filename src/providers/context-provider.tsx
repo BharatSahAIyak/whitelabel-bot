@@ -59,6 +59,7 @@ const ContextProvider: FC<{
   const [kaliaClicked, setKaliaClicked] = useState(false);
   const [config, setConfig] = useState<any>(null);
   const themeContext = useContext(ThemeContext);
+  const [guidedFlow, setGuidedFlow] = useState(false);
 
   useEffect(() => {
     mergeConfigurations().then((res) => {
@@ -702,6 +703,8 @@ const ContextProvider: FC<{
       setKaliaClicked,
       s2tMsgId,
       sets2tMsgId,
+      guidedFlow,
+      setGuidedFlow,
     }),
     [
       locale,
@@ -733,6 +736,8 @@ const ContextProvider: FC<{
       setKaliaClicked,
       s2tMsgId,
       sets2tMsgId,
+      guidedFlow,
+      setGuidedFlow,
     ]
   );
 

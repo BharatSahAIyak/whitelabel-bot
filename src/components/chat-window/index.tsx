@@ -82,7 +82,8 @@ const ChatUiWindow: React.FC = () => {
             audio_url: item?.audioURL,
             isEnd: true,
             optionClicked: true,
-            choices: item?.payload?.buttonChoices,
+            // choices: item?.payload?.buttonChoices,
+            choices: [],
             conversationId: item?.channelMessageId
           })
       ).sort(
@@ -132,6 +133,8 @@ const ChatUiWindow: React.FC = () => {
       : normalizeMsgs;
   }, [context?.loading, normalizeMsgs]);
 
+  console.log({guidedFlow: context?.guidedFlow});
+
   if (isDown) {
     return <DowntimePage />;
   } else
@@ -141,7 +144,7 @@ const ChatUiWindow: React.FC = () => {
           btnColor={secondaryColor || 'black'}
           background="var(--bg-color)"
           disableSend={isMsgReceiving}
-          
+          showInput={!context?.guidedFlow}
           //@ts-ignore
           translation={t}
           showTransliteration={config?.allowTransliteration  && localStorage.getItem('locale') === config?.transliterationOutputLanguage}
