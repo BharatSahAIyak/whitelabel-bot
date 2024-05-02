@@ -470,8 +470,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   style={{
                     display: 'flex',
                     position: 'relative',
-                    top: '-10px',
-                    justifyContent: 'space-between',
+                    // top: '-10px',
+                    // justifyContent: 'space-between',
                   }}>
                   {config?.allowTextToSpeech && (
                     <div style={{ display: 'flex' }}>
@@ -528,7 +528,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   )}
                   {config?.allowFeedback && (
                     <div className={styles.msgFeedback}>
-                      <div className={styles.msgFeedbackIcons}>
                         <div
                           onClick={() =>
                             feedbackHandler({
@@ -574,7 +573,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             {/* {t('label.not_helpful')} */}
                           </p>
                         </div>
-                      </div>
                     </div>
                   )}
                 </div>
