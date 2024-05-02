@@ -150,7 +150,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   toast.error(`${t('message.cannot_answer_again')}`);
                 } else {
                   console.log('141');
-                  context?.sendMessage(choice?.key);
+                  context?.sendMessage(choice?.text);
                   setOptionDisabled(true);
                 }
               }}>
