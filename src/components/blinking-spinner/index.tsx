@@ -5,8 +5,8 @@ import { useColorPalates } from '../../providers/theme-provider/hooks';
 const BlinkingSpinner = () => {
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
-    return theme?.primary?.light;
-  }, [theme?.primary?.light]);
+    return theme?.primary?.contrastText;
+  }, [theme?.primary?.contrastText]);
   
   return (
     <p
