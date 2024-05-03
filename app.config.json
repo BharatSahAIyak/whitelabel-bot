@@ -34,12 +34,12 @@
     "chatUI": {
       "allowFeedback": true,
       "allowTextToSpeech": true,
-      "transliterationApi": "https://ai-tools-proxy.staging.bhasai.samagra.io",
-      "allowTransliteration": true,
-      "transliterationProvider": "bhashini",
-      "transliterationSuggestions": "3",
-      "transliterationInputLanguage": "en",
-      "transliterationOutputLanguage": "or"
+      "transliterationApi": "",
+      "allowTransliteration": false,
+      "transliterationProvider": "",
+      "transliterationSuggestions": "",
+      "transliterationInputLanguage": "",
+      "transliterationOutputLanguage": ""
     },
     "navbar": {
       "showNavbar": true,
