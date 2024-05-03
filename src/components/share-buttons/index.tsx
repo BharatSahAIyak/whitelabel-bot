@@ -26,11 +26,13 @@ const ShareButtons = () => {
   const downloadChat = async () => {
     const url = `${
       process.env.NEXT_PUBLIC_BFF_API_URL
-    }/user/chathistory/generate-pdf/${sessionStorage.getItem('conversationId')}`
+    }/history/generate-pdf/${sessionStorage.getItem('conversationId')}`
 
-    return axios.post(url, null, {
+    return axios.get(url, {
       headers: {
-        authorization: `Bearer ${localStorage.getItem('auth')}`,
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        userId: localStorage.getItem('userID'),
+        template: process.env.NEXT_PUBLIC_BOT_NAME?.startsWith('kmai') ? 'kmai' : 'akai'
       },
     })
   }

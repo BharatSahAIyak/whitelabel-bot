@@ -17,7 +17,6 @@ import { ChatItem, HistoryItem } from './index.d';
 import { map } from 'lodash';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { FullPageLoader } from '../../components/fullpage-loader';
-import { useFlags } from 'flagsmith/react';
 import { useLocalization } from '../../hooks';
 import axios from 'axios';
 import ComingSoonPage from '../coming-soon-page';
@@ -32,12 +31,12 @@ const HistoryPage: FC = () => {
   const [isFetching, setIsFetching] = useState(true);
   const theme = useColorPalates();
   const [conversations, setConversations] = useState([]);
-  const flags = useFlags(['show_chat_history_page']);
   const context = useContext(AppContext);
   const t = useLocalization();
 
   const config = useConfig('component', 'historyPage');
   const handleClick = useCallback((activeItem: ChatItem) => {
+    sessionStorage.setItem('tags', JSON.stringify(activeItem?.tags || '[]'));
     sessionStorage.setItem(
       'conversationId',
       activeItem?.conversationId || 'null'
@@ -96,10 +95,13 @@ const HistoryPage: FC = () => {
   const fetchHistory = () => {
     setIsFetching(true);
     axios
-      .get(
+      .post(
         `${
           process.env.NEXT_PUBLIC_BFF_API_URL
-        }/history/conversations?userId=${localStorage.getItem('userID')}`,
+        }/history/conversations`,
+        {
+          userId: localStorage.getItem('userID')
+        },
         {
           headers: {
             botId: process.env.NEXT_PUBLIC_BOT_ID || '',
@@ -148,6 +150,7 @@ const HistoryPage: FC = () => {
             label: label,
             conversationId: chatItem?.channelMessageId,
             userId: chatItem?.from,
+            tags: chatItem?.tags,
             secondaryLabel: moment(chatItem?.timestamp).format(
               'hh:mm A DD/MM/YYYY'
             ),
@@ -175,7 +178,7 @@ const HistoryPage: FC = () => {
       });
   };
 
-  if (!flags?.show_chat_history_page?.enabled) {
+  if (!config?.historyShowHistoryPage) {
     return <ComingSoonPage />;
   }
   return (

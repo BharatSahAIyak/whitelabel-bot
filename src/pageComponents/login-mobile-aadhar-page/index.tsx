@@ -80,7 +80,7 @@ const LoginMobileAadharPage: React.FC = () => {
         setLoading(true)
         if (navigator.onLine) {
           fetch(
-            `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}api/sendOTP?phone=${input}`,
+            `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}/api/sendOTP?phone=${input}`,
             { method: 'GET' }
           )
             .then((response) => {

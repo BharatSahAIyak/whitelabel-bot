@@ -13,8 +13,7 @@ import FeaturePopup from '../components/FeaturePopup';
 import Provider from '../providers';
 import { InstallModal } from '../components/install-modal';
 import { FullPageLoader } from '../components/fullpage-loader';
-import flagsmith from 'flagsmith/isomorphic';
-import { AppContext } from '../context';
+import {v4 as uuidv4} from 'uuid';
 
 const NavBar = dynamic(() => import('../components/NavBar'), {
   ssr: false,
@@ -32,21 +31,11 @@ const App = ({ Component, pageProps }: AppProps) => {
   const { isAuthenticated, login } = useLogin();
   const [cookie] = useCookies();
  
-  const context =useContext(AppContext);
-
-  // useEffect(() => {
-  //   const getFlagSmithState = async () => {
-  //     await flagsmith.init({
-  //       // api: process.env.NEXT_PUBLIC_FLAGSMITH_API,
-  //       environmentID: process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID || '',
-  //     });
-  //     if (flagsmith.getState()) {
-  //       //@ts-ignore
-  //       setflagsmithState(flagsmith.getState());
-  //     }
-  //   };
-  //   getFlagSmithState();
-  // }, []);
+  useEffect(() => {
+    if(!sessionStorage.getItem('sessionId')){
+      sessionStorage.setItem('sessionId', uuidv4());
+    }
+  }, []);
 
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {

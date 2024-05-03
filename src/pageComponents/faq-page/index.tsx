@@ -6,96 +6,119 @@ import Typography from '@mui/material/Typography';
 import CallRoundedIcon from '@mui/icons-material/Call';
 import { Avatar } from '@mui/material';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
-import { useFlags } from 'flagsmith/react';
 import ComingSoonPage from '../coming-soon-page';
 import { useLocalization } from '../../hooks';
+import { useConfig } from '../../hooks/useConfig';
 
 const FAQPage: React.FC = () => {
   const t = useLocalization();
-  const theme = useColorPalates(); 
-  const flags = useFlags([
-    'show_faq_page',
-    'show_dialer',
-    'dialer_number',
-    'show_pdf_buttons',
-    'manual_pdf_link',
-  ]);
+  const theme = useColorPalates();
+  const config = useConfig('component', 'faqPage');
 
-  
-  const downloadPDFHandler=useCallback(()=>{
-    const link: any = flags?.[`manual_pdf_link`]?.value;
-      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+  const downloadPDFHandler = useCallback(() => {
+    const link: any = config?.faqManualPdfLink;
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
-      // window.open(link);
+    // window.open(link);
 
-      fetch(proxyUrl + link, {
-        method: 'GET',
-        headers: {},
+    fetch(proxyUrl + link, {
+      method: 'GET',
+      headers: {},
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = link;
+        a.download = `User_Manual_For_VAWs.pdf`;
+
+        document.body.appendChild(a);
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
       })
-        .then((response) => response.blob())
-        .then((blob) => {
-          const url = window.URL.createObjectURL(new Blob([blob]));
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          a.href = link;
-          a.download = `User_Manual_For_VAWs.pdf`;
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [config?.faqManualPdfLink]);
 
-          document.body.appendChild(a);
-          a.click();
-
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-  },[flags])
-
-  const handleContactClick=useCallback(()=>{
-    const phoneNumber = `tel:${flags.dialer_number.value}`;
+  const handleContactClick = useCallback(() => {
+    const phoneNumber = `tel:${config?.faqPhoneNumber}`;
     window.location.href = phoneNumber;
-  },[flags])
+  }, [config?.faqPhoneNumber]);
 
-  if (!flags?.show_faq_page?.enabled) {
+  if (!config?.showFaqPage) {
     return <ComingSoonPage />;
   } else
-  return (
-    <>
-      <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"></meta>
-      <Box className={styles.main}>
-          <Box m={3}><Typography variant='h4' sx={{fontWeight:"600", color: theme?.primary?.main}}>{t('label.faqs')}</Typography></Box>
+    return (
+      <>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"></meta>
+        <Box className={styles.main}>
+          <Box m={3}>
+            <Typography
+              variant="h4"
+              sx={{ fontWeight: '600', color: theme?.primary?.main }}>
+              {t('label.faqs')}
+            </Typography>
+          </Box>
           <Box>
-            {flags?.show_pdf_buttons?.enabled && (
+            {config?.faqShowPdfButton && (
               <Box className={styles.manualButtons} m={3}>
                 <Button
                   onClick={downloadPDFHandler}
-                  variant='contained' sx={{textTransform:'none', backgroundColor:theme?.primary?.main, "&:hover":{backgroundColor:theme?.primary?.main}}}>
+                  variant="contained"
+                  sx={{
+                    textTransform: 'none',
+                    backgroundColor: theme?.primary?.main,
+                    '&:hover': { backgroundColor: theme?.primary?.main },
+                  }}>
                   {t('label.manual')}
                 </Button>
               </Box>
             )}
-            {flags?.show_dialer?.enabled && (
+            {config?.faqShowCallBox && (
               <Box className={styles.dialerBox} m={3}>
-                <Box p={1.5}><Typography variant='body1' sx={{fontWeight:"bold"}}>{t('message.dial_description')}</Typography>
+                <Box p={1.5}>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                    {t('message.dial_description')}
+                  </Typography>
                 </Box>
-                <Box px={2} display={'flex'} alignItems={"center"}>
-                  <Box><Avatar
-            sx={{ bgcolor: theme.primary.main, width:"5vh",height:"5vh" }}
-            alt="Call Icon"
-           >
-           <CallRoundedIcon fontSize='medium'/>
-           </Avatar></Box>
-                  <Button variant='text' size="large" onClick={handleContactClick} sx={{textTransform:'none',color:theme?.primary?.main, "&:hover":{color:theme?.primary?.main}}}>
-                    <Typography variant='h5' fontWeight={600}>{`${t('label.dial')} ${flags.dialer_number.value}`}</Typography></Button>
+                <Box px={2} display={'flex'} alignItems={'center'}>
+                  <Box>
+                    <Avatar
+                      sx={{
+                        bgcolor: theme.primary.main,
+                        width: '5vh',
+                        height: '5vh',
+                      }}
+                      alt="Call Icon">
+                      <CallRoundedIcon fontSize="medium" />
+                    </Avatar>
+                  </Box>
+                  <Button
+                    variant="text"
+                    size="large"
+                    onClick={handleContactClick}
+                    sx={{
+                      textTransform: 'none',
+                      color: theme?.primary?.main,
+                      '&:hover': { color: theme?.primary?.main },
+                    }}>
+                    <Typography variant="h5" fontWeight={600}>{`${t(
+                      'label.dial'
+                    )} ${config?.faqPhoneNumber}`}</Typography>
+                  </Button>
                 </Box>
               </Box>
             )}
           </Box>
-      </Box>
-    </>
-  );
+        </Box>
+      </>
+    );
 };
 
 export default FAQPage;

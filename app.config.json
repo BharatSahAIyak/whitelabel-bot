@@ -12,7 +12,12 @@
   "component": {
     "botDetails": {
       "favicon": "http://cdn-api.staging.bhasai.samagra.io:443/deployer/favicon.ico",
-      "scrollbarColor": "#030311"
+      "scrollbarColor": "#030311",
+      "healthCheckTime": 5,
+      "timer1": 30000,
+      "timer2": 45000,
+      "audioPlayback": 1.5,
+      "defaultLanguage": "en"
     },
     "homePage": {
       "showKalia": false,
@@ -84,7 +89,16 @@
     "resendOtpTimer": "30"
   },
   "downtimePage": {
-    "downTimeImage": ""
+    "downTimeImage": "",
+    "downtimeShowCallBox": false,
+    "downtimePhoneNumber": ""
+  },
+  "faqPage": {
+    "showFaqPage": true,
+    "faqManualPdfLink": "",
+    "faqShowPdfButton": false,
+    "faqShowCallBox": false,
+    "faqPhoneNumber": ""
   },
   "voiceRecorder": {
     "showVoiceRecorder": true,
@@ -106,6 +120,7 @@
   },
   "historyPage": {
     "allowOverride": false,
+    "historyShowHistoryPage": true,
     "allowDelete": true,
     "showTimestamp": true
   },

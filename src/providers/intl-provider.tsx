@@ -1,9 +1,9 @@
 'use client';
-import flagsmith from 'flagsmith/isomorphic';
-import React, { FC, ReactElement, useEffect, useState } from 'react'
+import React, { FC, ReactElement, useState } from 'react'
 import { FullPageLoader } from '../components/fullpage-loader';
 import ContextProvider from './context-provider';
 import { IntlProvider } from 'react-intl';
+import { useConfig } from '../hooks/useConfig';
 
 
 // function loadMessages(locale: string) {
@@ -17,8 +17,8 @@ import { IntlProvider } from 'react-intl';
 //     }
 // }
 export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => {
-   
-    const defaultLang = flagsmith.getValue('default_lang', { fallback: 'en' });
+   const config = useConfig('component', 'botDetails');
+    const defaultLang = config?.defaultLanguage || "en";
     const [locale, setLocale] = useState(
         localStorage.getItem('locale') || defaultLang
     );

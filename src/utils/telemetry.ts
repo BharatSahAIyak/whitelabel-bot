@@ -30,6 +30,7 @@ const saveTelemetryEvent = async (
       deviceType: window.navigator?.userAgentData?.mobile
         ? 'mobile'
         : 'desktop',
+      sessionId: sessionStorage.getItem('sessionId') || '',
       eventData,
     };
 

@@ -11,6 +11,7 @@ export type HistoryItem ={
     
 export type ChatItem = {
     id: string;
+    tags?: string[];
     createdAt: string;
     updatedAt: string;
     responseTime: number;
