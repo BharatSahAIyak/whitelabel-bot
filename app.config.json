@@ -44,10 +44,10 @@
     "navbar": {
       "showNavbar": true,
       "showLanguageToggle": true,
-      "languageCode1": "en",
+      "languageCode_1": "en",
       "languageLabel1": "ENG",
       "languageLabel2": "ଓଡିଆ",
-      "languageCode2": "or",
+      "languageCode_2": "or",
       "showHamburgerMenu": true,
       "showHomeIcon": true,
       "showCenterLogo": false,
