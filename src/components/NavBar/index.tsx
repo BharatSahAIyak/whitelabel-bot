@@ -116,7 +116,7 @@ const Navbar: React.FC = () => {
               >
                 <button
                   className={`Sidemenu_button ${
-                    activeLanguage === config?.languageCode1 ? 'active' : ''
+                    activeLanguage === config?.languageCode_1 ? 'active' : ''
                   }`}
                   style={{
                     borderTopLeftRadius: '10px',
@@ -124,7 +124,7 @@ const Navbar: React.FC = () => {
                     borderTopRightRadius: '0',
                     borderBottomRightRadius: '0',
                     backgroundColor:
-                      activeLanguage === config?.languageCode1
+                      activeLanguage === config?.languageCode_1
                         ? theme.primary.main
                         : 'lightgray',
                     border: 'none',
@@ -132,14 +132,14 @@ const Navbar: React.FC = () => {
                     height: '30px',
                     padding: '5px',
                   }}
-                  onClick={() => handleLanguageClick(config?.languageCode1)}
+                  onClick={() => handleLanguageClick(config?.languageCode_1)}
                 >
                   {config?.languageLabel1}
                 </button>
 
                 <button
                   className={`Sidemenu_button ${
-                    activeLanguage === config?.languageCode2 ? 'active' : ''
+                    activeLanguage === config?.languageCode_2 ? 'active' : ''
                   }`}
                   style={{
                     borderTopLeftRadius: '0',
@@ -147,7 +147,7 @@ const Navbar: React.FC = () => {
                     borderTopRightRadius: '10px',
                     borderBottomRightRadius: '10px',
                     backgroundColor:
-                      config?.languageCode2 === activeLanguage
+                      config?.languageCode_2 === activeLanguage
                         ? theme.primary.main
                         : 'lightgray',
                     border: 'none',
@@ -155,7 +155,7 @@ const Navbar: React.FC = () => {
                     height: '30px',
                     padding: '5px',
                   }}
-                  onClick={() => handleLanguageClick(config?.languageCode2)}
+                  onClick={() => handleLanguageClick(config?.languageCode_2)}
                 >
                   {config?.languageLabel2}
                 </button>
