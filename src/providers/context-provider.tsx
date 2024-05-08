@@ -54,8 +54,6 @@ const ContextProvider: FC<{
   const [startTime, setStartTime] = useState(Date.now());
   const [endTime, setEndTime] = useState(Date.now());
   const [s2tMsgId, sets2tMsgId] = useState('');
-  const [lastSentMsgId, setLastSentMsgId] = useState('');
-  const [lastText, setLastText] = useState('');
   const [kaliaClicked, setKaliaClicked] = useState(false);
   const [config, setConfig] = useState<any>(null);
   const themeContext = useContext(ThemeContext);
@@ -266,23 +264,6 @@ const ContextProvider: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStorage.getItem('userID')]);
 
-  useEffect(() => {
-    if (lastText === '') return;
-    try {
-      saveTelemetryEvent('0.1', 'E017', 'userQuery', 'responseAt', {
-        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-        userId: localStorage.getItem('userID') || '',
-        phoneNumber: localStorage.getItem('phoneNumber') || '',
-        conversationId: sessionStorage.getItem('conversationId') || '',
-        messageId: lastSentMsgId,
-        text: lastText,
-        timeTaken: 0,
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }, [lastText]);
 
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
@@ -290,7 +271,8 @@ const ContextProvider: FC<{
       if (
         msg?.payload?.text &&
         msg?.messageId?.Id &&
-        msg?.messageId?.channelMessageId
+        msg?.messageId?.channelMessageId &&
+        msg?.messageId?.replyId
       ) {
         if (
           sessionStorage.getItem('conversationId') ===
@@ -333,7 +315,20 @@ const ContextProvider: FC<{
 
               updatedMessages.push(newMsg);
               // console.log('useeffect', newMsg.text);
-              setLastText((prev) => (prev = newMsg.text));
+              try {
+                saveTelemetryEvent('0.1', 'E017', 'userQuery', 'responseAt', {
+                  botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+                  orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+                  userId: localStorage.getItem('userID') || '',
+                  phoneNumber: localStorage.getItem('phoneNumber') || '',
+                  conversationId: sessionStorage.getItem('conversationId') || '',
+                  messageId: msg.messageId.replyId,
+                  text: "",
+                  timeTaken: 0,
+                });
+              } catch (err) {
+                console.error(err);
+              }
             }
             return updatedMessages;
           });
@@ -364,7 +359,8 @@ const ContextProvider: FC<{
               userId: localStorage.getItem('userID') || '',
               phoneNumber: localStorage.getItem('phoneNumber') || '',
               conversationId: sessionStorage.getItem('conversationId') || '',
-              messageId: messages[messages.length - 1]?.messageId,
+              replyId: messages?.[messages.length - 2]?.messageId,
+              messageId: messages?.[messages.length - 1]?.messageId,
               text: messages[messages.length - 1]?.text,
               createdAt: Math.floor(new Date().getTime() / 1000),
               timeTaken: endTime - startTime,
@@ -454,7 +450,6 @@ const ContextProvider: FC<{
       console.log('s2tMsgId:', s2tMsgId);
       const messageId = s2tMsgId ? s2tMsgId : uuidv4();
       console.log('s2t messageId:', messageId);
-      setLastSentMsgId((prev) => (prev = messageId));
       newSocket.sendMessage({
         payload: {
           app: process.env.NEXT_PUBLIC_BOT_ID || '',
