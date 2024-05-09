@@ -1,10 +1,11 @@
 'use client';
-import React, { FC, ReactElement, useState } from 'react'
+import React, { FC, ReactElement, useState, useEffect, useContext } from 'react'
 import { FullPageLoader } from '../components/fullpage-loader';
 import ContextProvider from './context-provider';
 import { IntlProvider } from 'react-intl';
 import { useConfig } from '../hooks/useConfig';
-
+import mergeConfigurations from '../utils/mergeConfigurations';
+import { ThemeContext } from './theme-provider/theme-context';
 
 // function loadMessages(locale: string) {
 //     switch (locale) {
@@ -17,11 +18,20 @@ import { useConfig } from '../hooks/useConfig';
 //     }
 // }
 export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => {
-   const config = useConfig('component', 'botDetails');
-    const defaultLang = config?.defaultLanguage || "en";
+  const themeContext = useContext(ThemeContext);
+    const [config, setConfig] = useState<any>(null);
+    useEffect(() => {
+        mergeConfigurations().then((res) => {
+          setConfig(res);
+          themeContext?.modifyPaletes(res?.theme?.palette);
+        });
+    }, []);
+    const defaultLang = config?.component?.botDetails?.defaultLanguage || "en";
     const [locale, setLocale] = useState(
         localStorage.getItem('locale') || defaultLang
     );
+    (!localStorage.getItem('locale') && defaultLang!=="en") ? localStorage.setItem('locale', defaultLang) : '';
+    
     const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
         null
     );
@@ -38,6 +48,7 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => 
         //@ts-ignore
         <IntlProvider locale={locale} messages={localeMsgs}>
             <ContextProvider
+                config={config}
                 locale={locale}
                 setLocale={setLocale}
                 localeMsgs={localeMsgs}

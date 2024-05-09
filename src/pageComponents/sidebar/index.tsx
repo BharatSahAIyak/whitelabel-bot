@@ -75,7 +75,7 @@ export const Sidebar = ({
         sx={{
           '& .MuiDrawer-paper': {
             width: 300,
-            height: '100vh',
+            height: '100dvh',
             borderTopRightRadius: '15px',
             borderBottomRightRadius: '15px',
             backgroundColor: config?.sidebarBackground ?? theme.primary.main,
@@ -83,7 +83,7 @@ export const Sidebar = ({
         }}
       >
         <Box
-          style={{ background: config?.sidebarBackground ?? theme.primary.main }}
+          style={{ background: config?.sidebarBackground ?? theme.primary.main, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
           role="presentation"
         >
           {config && (
@@ -311,10 +311,7 @@ export const Sidebar = ({
               style={{
                 background: 'var(--bg-color)',
                 flexDirection: 'column',
-                fontSize: '12px',
-                position: 'absolute',
-                top: 'auto',
-                bottom: '10px',
+                fontSize: '12px'
               }}>
               <div
                 style={{
