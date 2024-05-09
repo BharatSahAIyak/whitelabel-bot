@@ -11,28 +11,26 @@ import {
 import { AppContext } from '../context';
 import _ from 'underscore';
 import { v4 as uuidv4 } from 'uuid';
-import { IntlProvider } from 'react-intl';
 import { useLocalization } from '../hooks';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { UCI } from 'socket-package';
 import { XMessage } from '@samagra-x/xmessage';
-import mergeConfigurations from '../utils/mergeConfigurations';
 import { FullPageLoader } from '../components/fullpage-loader';
 import LaunchPage from '../pageComponents/launch-page';
-import { ThemeContext } from './theme-provider/theme-context';
 import saveTelemetryEvent from '../utils/telemetry';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
 
 const ContextProvider: FC<{
+  config: any;
   locale: any;
   localeMsgs: any;
   setLocale: any;
   children: ReactElement;
   setLocaleMsgs: any;
-}> = ({ locale, children, localeMsgs, setLocale, setLocaleMsgs }) => {
+}> = ({ config, locale, children, localeMsgs, setLocale, setLocaleMsgs }) => {
   const t = useLocalization();
   const [loading, setLoading] = useState(false);
   const [isMsgReceiving, setIsMsgReceiving] = useState(false);
@@ -55,16 +53,7 @@ const ContextProvider: FC<{
   const [endTime, setEndTime] = useState(Date.now());
   const [s2tMsgId, sets2tMsgId] = useState('');
   const [kaliaClicked, setKaliaClicked] = useState(false);
-  const [config, setConfig] = useState<any>(null);
-  const themeContext = useContext(ThemeContext);
   const [guidedFlow, setGuidedFlow] = useState(false);
-
-  useEffect(() => {
-    mergeConfigurations().then((res) => {
-      setConfig(res);
-      themeContext?.modifyPaletes(res?.theme?.palette);
-    });
-  }, []);
 
   useEffect(() => {
     if (

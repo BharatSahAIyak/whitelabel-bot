@@ -231,42 +231,47 @@ const HomePage: NextPage = () => {
   )
 
   const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
+    (e: any) => {
+      if (e.keyCode === 229) return;
+      // console.log(e);
       if (suggestions.length > 0) {
-        if (e.key === 'ArrowUp') {
-          e.preventDefault()
+        if (e.code === 'ArrowUp') {
+          e.preventDefault();
           setActiveSuggestion((prevActiveSuggestion) =>
             prevActiveSuggestion > 0
               ? prevActiveSuggestion - 1
               : prevActiveSuggestion
-          )
-        } else if (e.key === 'ArrowDown') {
-          e.preventDefault()
+          );
+        } else if (e.code === 'ArrowDown') {
+          e.preventDefault();
           setActiveSuggestion((prevActiveSuggestion) =>
             prevActiveSuggestion < suggestions.length - 1
               ? prevActiveSuggestion + 1
               : prevActiveSuggestion
-          )
-        } else if (e.key === ' ') {
-          e.preventDefault()
+          );
+        } else if (e.data === ' ') {
+          e.preventDefault && e.preventDefault();
           if (activeSuggestion >= 0 && activeSuggestion < suggestions?.length) {
-            suggestionClickHandler(suggestions[activeSuggestion])
+            suggestionClickHandler(suggestions[activeSuggestion]);
           } else {
-            setInputMsg((prevInputMsg) => prevInputMsg + ' ')
+            setInputMsg((prevInputMsg) => prevInputMsg + ' ');
           }
         }
       }
     },
     [activeSuggestion, suggestionClickHandler, suggestions]
-  )
+  );
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('keydown', handleKeyDown);
+    let input = document.getElementById('inputBox');
+    input?.addEventListener('textInput', handleKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [handleKeyDown])
+      document.removeEventListener('keydown', handleKeyDown);
+      input?.removeEventListener('textInput', handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   const sendGuidedMsg = (type: string) => {
     // TEMPORARILY DISABLED PEST FLOW
@@ -414,6 +419,13 @@ const HomePage: NextPage = () => {
                 })}
               </div>
               <textarea
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage(inputMsg);
+                  }
+                }}
+                id="inputBox"
                 ref={inputRef}
                 rows={1}
                 value={inputMsg}
