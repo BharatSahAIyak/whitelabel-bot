@@ -75,7 +75,7 @@ export const Sidebar = ({
         sx={{
           '& .MuiDrawer-paper': {
             width: 300,
-            height: '100vh',
+            height: '100dvh',
             borderTopRightRadius: '15px',
             borderBottomRightRadius: '15px',
             backgroundColor: config?.sidebarBackground ?? theme.primary.main,
