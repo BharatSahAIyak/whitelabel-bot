@@ -6,7 +6,6 @@ import {
   ListItem,
   FileCard,
   Typing,
-  Popup,
 } from '@samagra-x/chatui';
 import {
   FC,
@@ -34,12 +33,11 @@ import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
 import axios from 'axios';
 import saveTelemetryEvent from '../../utils/telemetry';
+import BlinkingSpinner from '../blinking-spinner/index';
 import Loader from '../loader';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
-import BlinkingSpinner from '../blinking-spinner/index';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
-  const { content, type } = message;
   const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
   const [reaction, setReaction] = useState(
@@ -50,13 +48,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   );
   const [audioFetched, setAudioFetched] = useState(false);
   const [ttsLoader, setTtsLoader] = useState(false);
-  const [popupActive, setPopupActive] = useState(false);
-  useEffect(() => {
-    if(content?.data?.choices?.length > 0){
-      setPopupActive(true);
-    }
-  }, [content])
-  
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -90,7 +81,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               replyId: msgId,
               channelMessageId: sessionStorage.getItem('conversationId'),
             },
-          } as Partial<XMessage>,
+          } as Partial<XMessage>
         });
       } else if (value === -1) {
         context?.setCurrentQuery(msgId);
@@ -125,7 +116,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   );
 
   const getLists = useCallback(
-    ({ choices, isWeather = false }: { choices: any; isWeather: Boolean }) => {
+    ({ choices }: { choices: any }) => {
+      console.log('qwer12:', { choices, optionDisabled });
       return (
         <List className={`${styles.list}`}>
           {choices?.map((choice: any, index: string) => (
@@ -133,52 +125,24 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <ListItem
               key={`${index}_${choice?.key}`}
               className={`${styles.onHover} ${styles.listItem}`}
-              // @ts-ignore
+              //@ts-ignore
               style={
                 optionDisabled
                   ? {
-                    background: 'var(--lightgrey)',
-                    color: 'var(--font)',
-                    boxShadow: 'none',
-                  }
-                  : null
+                      background: 'var(--lightgrey)',
+                      color: 'var(--font)',
+                      boxShadow: 'none',
+                    }
+                  : { cursor: 'pointer' }
               }
               onClick={(e: any): void => {
                 e.preventDefault();
-                console.log("Option Disabled", optionDisabled)
                 if (optionDisabled) {
-                  toast.error(
-                    `${isWeather
-                      ? t('message.wait_before_choosing')
-                      : t('message.cannot_answer_again')
-                    }`
-                  );
+                  toast.error(`${t('message.cannot_answer_again')}`);
                 } else {
-                  if (context?.messages?.[0]?.exampleOptions) {
-                    console.log('clearing chat');
-                    context?.setMessages([]);
-                  }
-                  if (isWeather)
-                    context?.sendMessage(choice?.text, false, true, choice);
-                  else context?.sendMessage(choice);
+                  console.log("141");
+                  context?.sendMessage(choice?.key);
                   setOptionDisabled(true);
-                  if (isWeather)
-                    setTimeout(
-                      () =>
-                        document
-                          .getElementsByClassName('PullToRefresh')?.[0]
-                          ?.scrollTo({
-                            top: 999999,
-                            left: 0,
-                            behavior: 'smooth',
-                          }),
-                      500
-                    );
-                  console.log("Outside setTimeout", { isWeather })
-                  setTimeout(() => {
-                    console.log("Enabling options again")
-                    setOptionDisabled(false);
-                  }, 4001);
                 }
               }}>
               <div
@@ -190,27 +154,26 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     content?.data?.position === 'right'
                       ? 'white'
                       : optionDisabled
-                        ? 'var(--font)'
-                        : 'var(--secondarygreen)',
+                      ? 'var(--font)'
+                      : secondaryColor,
                 }}>
-                <div>{isWeather ? choice?.text : choice}</div>
+                <div>{choice?.text}</div>
                 <div style={{ marginLeft: 'auto' }}>
                   <RightIcon
                     width="30px"
-                    color={
-                      optionDisabled ? 'var(--font)' : 'var(--secondarygreen)'
-                    }
+                    color={optionDisabled ? 'var(--font)' : secondaryColor}
                   />
                 </div>
               </div>
             </ListItem>
-          ))
-          }
-        </List >
+          ))}
+        </List>
       );
     },
-    [context, t, optionDisabled]
+    [context, t]
   );
+
+  const { content, type } = message;
 
   console.log('here', content);
 
@@ -335,25 +298,31 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     }
   }, [handleAudio, content?.data, content?.text, t]);
 
+  const getFormattedDate = (datestr: string) => {
+    const today = new Date(datestr);
+    const yyyy = today.getFullYear();
+    let mm: any = today.getMonth() + 1; // Months start at 0!
+    let dd: any = today.getDate();
+
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+
+    return dd + '/' + mm + '/' + yyyy;
+  };
   const parseWeatherJson = (data: any) => {
-    if (!data || data.length === 0) {
-      console.error("Data is undefined or empty.");
-      return [];
-    }
-    const firstKey = Object.keys(data[0])[0] || 'datetime';
     const result = Object.keys(data[0]).reduce((acc: any, key) => {
-      if (key !== firstKey) {
+      if (key !== 'datetime') {
         acc.push({
-          [firstKey]: key,
+          datetime: key,
           ...data.reduce((obj: any, item: any) => {
-            obj[item[firstKey]] = item[key];
+            obj[item.datetime] = item[key];
             return obj;
           }, {}),
         });
       }
       return acc;
     }, []);
-    console.log({ result, data });
+    console.log({ result });
     return result;
   };
 
@@ -362,258 +331,226 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       return <Typing />;
     case 'text':
       return (
-        <div style={{ position: 'relative', maxWidth: '90vw' }}>
-          <div className={styles.textBubble}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative',
+            maxWidth: '90vw',
+          }}>
+          <div
+            className={
+              content?.data?.position === 'right'
+                ? styles.messageTriangleRight
+                : styles.messageTriangleLeft
+            }
+            style={
+              content?.data?.position === 'right'
+                ? {
+                    borderColor: `${secondaryColor} transparent transparent transparent`,
+                  }
+                : {
+                    borderColor: `${contrastText} transparent transparent transparent`,
+                  }
+            }></div>
+          <Bubble
+            type="text"
+            style={
+              content?.data?.position === 'right'
+                ? {
+                    background: secondaryColor,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                  }
+                : {
+                    background: contrastText,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                  }
+            }>
+            <span
+              style={{
+                // fontWeight: 600,
+                fontSize: '1rem',
+                color:
+                  content?.data?.position === 'right'
+                    ? contrastText
+                    : secondaryColor,
+              }}>
+              {content?.text}{' '}
+              {
+                content?.data?.position === 'right'
+                  ? null
+                  : !content?.data?.isEnd
+                && <BlinkingSpinner />
+              }
+              {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
+                <div
+                  style={{
+                    color:
+                      content?.data?.position === 'right' ? 'yellow' : 'black',
+                    fontSize: '12px',
+                    fontWeight: 'normal',
+                  }}>
+                  <br></br>
+                  <span>messageId: {content?.data?.messageId}</span>
+                  <br></br>
+                  <span>conversationId: {content?.data?.conversationId}</span>
+                </div>
+              )}
+            </span>
+            {getLists({
+              choices:
+                content?.data?.payload?.buttonChoices ?? content?.data?.choices,
+            })}
             <div
-              // className={
-              //   content?.data?.position === 'right'
-              //     ? styles.messageTriangleRight
-              //     : styles.messageTriangleLeft
-              // }
-              style={
-                content?.data?.position === 'right'
-                  ? {
-                      borderColor: `${secondaryColor} transparent transparent transparent`,
-                    }
-                  : {
-                      borderColor: `${contrastText} transparent transparent transparent`,
-                    }
-              }></div>
-
-            <Bubble
-              type="text"
-              style={
-                content?.data?.position === 'right'
-                  ? {
-                      background: contrastText,
-                      boxShadow: '0 3px 8px rgba(0,0,0,.24)',
-                      borderRadius: '15px 15px 0px 15px',
-                      padding: '10px, 15px, 10px, 15px',
-                      gap: '10px',
-                    }
-                  : {
-                      background: secondaryColor,
-                      boxShadow: '0 3px 8px rgba(0,0,0,.24)',
-                      borderRadius: '15px 15px 15px 0px',
-                      padding: '10px, 15px, 10px, 15px',
-                      gap: '10px',
-                    }
-              }>
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+              }}>
               <span
                 style={{
-                  fontWeight: 600,
-                  fontSize: '1rem',
                   color:
                     content?.data?.position === 'right'
-                      ? secondaryColor
-                      : contrastText,
+                      ? contrastText
+                      : secondaryColor,
+                  fontSize: '10px',
                 }}>
-                {content?.text}{' '}
-                {content?.data?.position === 'right'
-                  ? null
-                  : !content?.data?.isEnd && <BlinkingSpinner />}
-                {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
-                  <div
-                    style={{
-                      color:
-                        content?.data?.position === 'right'
-                          ? 'black'
-                          : 'yellow',
-                      fontSize: '12px',
-                      fontWeight: 'normal',
-                    }}>
-                    <br></br>
-                    <span>messageId: {content?.data?.messageId}</span>
-                    <br></br>
-                    <span>conversationId: {content?.data?.conversationId}</span>
-                  </div>
-                )}
+                {moment(content?.data?.timestamp).format('hh:mm A DD/MM/YYYY')}
               </span>
-              <Popup
-                onClose={() => {}}
-                active={popupActive}
-                backdrop={false}
-                showClose={false}
-                height={'150px'}
-                bgColor='transparent'
-                title={content?.data?.text}
-              >
-                {content?.data?.choices?.map((item: any) => 
-                {
-                  console.log({item})
-                  return (
-                    <div
-                      key={item?.id}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '10px',
-                        padding: '10px',
-                        color: 'black',
-                        cursor: 'pointer',
-                        borderBottom: '2px solid #DDDDDD'
-                      }}
-                      onClick={
-                        () => {
-                          context?.sendMessage(item?.text)
-                          setPopupActive(false)
-                        }
-                      }
-                      >
-                        {item?.text}
-                        </div>
-                  )}
-                  )}
-              </Popup>
-              {/* {getLists({
-                choices:
-                  content?.data?.payload?.buttonChoices ??
-                  content?.data?.choices,
-              })} */}
+            </div>
+          </Bubble>
+          {content?.data?.btns ? (
+            <div className={styles.offlineBtns}>
+              <button
+                onClick={() => window?.location?.reload()}
+                style={{
+                  border: `2px solid ${secondaryColor}`,
+                }}>
+                Refresh
+              </button>
+            </div>
+          ) : (
+            content?.data?.position === 'left' && (
               <div
                 style={{
                   display: 'flex',
-
-                  justifyContent: 'flex-end',
+                  position: 'relative',
+                  top: '-10px',
+                  justifyContent: 'space-between',
                 }}>
-                <span
-                  style={{
-                    color:
-                      content?.data?.position === 'right'
-                        ? secondaryColor
-                        : contrastText,
-                    fontSize: '12px',
-                  }}>
-                  {moment(content?.data?.timestamp).format('hh:mm A ')}
-                </span>
-              </div>
-            </Bubble>
-            {content?.data?.btns ? (
-              <div className={styles.offlineBtns}>
-                <button
-                  onClick={() => window?.location?.reload()}
-                  style={{
-                    border: `2px solid ${secondaryColor}`,
-                  }}>
-                  Refresh
-                </button>
-              </div>
-            ) : (
-              content?.data?.position === 'left' && (
-                <div
-                  style={{
-                    display: 'flex',
-                    position: 'relative',
-                    // top: '-10px',
-                    // justifyContent: 'space-between',
-                  }}>
-                  {config?.allowTextToSpeech && (
-                    <div style={{ display: 'flex' }}>
-                      <div
-                        // style={{
-                        // border: `1px solid ${theme?.primary?.main}`,
-                        // }}
-                        className={styles.msgSpeaker}
-                        onClick={!ttsLoader ? downloadAudio : () => {}}
-                        style={
-                          !content?.data?.isEnd
-                            ? {
-                                pointerEvents: 'none',
-                                filter: 'grayscale(100%)',
-                                opacity: '0.5',
-                                // border: `1px solid ${secondaryColor}`,
-                              }
-                            : {
-                                pointerEvents: 'auto',
-                                opacity: '1',
-                                filter: 'grayscale(0%)',
-                                // border: `1px solid ${secondaryColor}`,
-                              }
-                        }>
-                        {context?.clickedAudioUrl ===
-                        content?.data?.audio_url ? (
-                          !context?.audioPlaying ? (
-                            <SpeakerIcon color={theme?.primary?.main} />
-                          ) : (
-                            <SpeakerPauseIcon color={theme?.primary?.main} />
-                          )
-                        ) : ttsLoader ? (
-                          <div className={styles.loaderContainer}>
-                            <Loader color={theme?.primary?.main} />
-                          </div>
-                        ) : (
-                          <SpeakerIcon color={theme?.primary?.main} />
-                        )}
+                {config?.allowTextToSpeech && (
+                  <div style={{ display: 'flex' }}>
+                    <div
+                      // style={{
+                      //   border: `1px solid ${theme?.primary?.main}`,
+                      // }}
+                      className={styles.msgSpeaker}
+                      onClick={downloadAudio}
+                      style={
+                        !content?.data?.isEnd
+                          ? {
+                              pointerEvents: 'none',
+                              filter: 'grayscale(100%)',
+                              opacity: '0.5',
+                              border: `1px solid ${theme?.primary?.main}`,
+                            }
+                          :
+                        {
+                          pointerEvents: 'auto',
+                          opacity: '1',
+                          filter: 'grayscale(0%)',
+                          border: `1px solid ${theme?.primary?.main}`,
+                        }
+                      }
+                    >
+                      {context?.clickedAudioUrl === content?.data?.audio_url ? (
+                            !context?.audioPlaying
+                              ? <SpeakerIcon color={theme?.primary?.main} />
+                              : <SpeakerPauseIcon color={theme?.primary?.main} />
+                      ) : ttsLoader ? (
+                        <Loader color={theme?.primary?.main} />
+                      ) : (
+                        <SpeakerIcon color={theme?.primary?.main} />
+                      )}
 
+                      <p
+                        style={{
+                          fontSize: '11px',
+                          // color: contrastText,
+                          // fontFamily: 'Mulish-bold',
+                          display: 'flex',
+                          alignItems: 'flex-end',
+                          marginRight: '1px',
+                          padding: '0 5px',
+                        }}>
+                        {t('message.speaker')}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {config?.allowFeedback && (
+                  <div className={styles.msgFeedback}>
+                    <div
+                      className={styles.msgFeedbackIcons}
+                      style={{
+                        border: `1px solid ${theme?.primary?.main}`,
+                      }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          flexDirection: 'column',
+                          paddingRight: '6px',
+                        }}
+                        onClick={() =>
+                          feedbackHandler({
+                            like: 1,
+                            msgId: content?.data?.messageId,
+                          })
+                        }>
+                        <MsgThumbsUp fill={reaction === 1} width="20px" />
                         <p
                           style={{
                             fontSize: '11px',
-                            // color: contrastText,
-                            fontFamily: 'Mulish-bold',
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            marginRight: '1px',
-                            padding: '0 5px',
+                            // fontFamily: 'Mulish-bold',
                           }}>
-                          {/* {t('message.speaker')} */}
+                          {t('label.helpful')}
+                        </p>
+                      </div>
+                      <div
+                        style={{
+                          height: '32px',
+                          width: '1px',
+                          backgroundColor: theme?.primary?.main,
+                          margin: '6px 0',
+                        }}></div>
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          flexDirection: 'column',
+                        }}
+                        onClick={() =>
+                          feedbackHandler({
+                            like: -1,
+                            msgId: content?.data?.messageId,
+                          })
+                        }>
+                        <MsgThumbsDown fill={reaction === -1} width="20px" />
+                        <p
+                          style={{
+                            fontSize: '11px',
+                            // fontFamily: 'Mulish-bold',
+                          }}>
+                          {t('label.not_helpful')}
                         </p>
                       </div>
                     </div>
-                  )}
-                  {config?.allowFeedback && (
-                    <div className={styles.msgFeedback}>
-                        <div
-                          onClick={() =>
-                            feedbackHandler({
-                              like: 1,
-                              msgId: content?.data?.messageId,
-                            })
-                          }>
-                          <MsgThumbsUp fill={reaction === 1} width="25px" />
-                          <p
-                            style={{
-                              fontSize: '11px',
-                              fontFamily: 'Mulish-bold',
-                            }}>
-                            {/* {t('label.helpful')} */}
-                          </p>
-                        </div>
-                        <div
-                          style={{
-                            height: '32px',
-                            width: '1px',
-
-                            margin: '6px 0',
-                          }}></div>
-
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexDirection: 'column',
-                          }}
-                          onClick={() =>
-                            feedbackHandler({
-                              like: -1,
-                              msgId: content?.data?.messageId,
-                            })
-                          }>
-                          <MsgThumbsDown fill={reaction === -1} width="25px" />
-                          <p
-                            style={{
-                              fontSize: '11px',
-                              fontFamily: 'Mulish-bold',
-                            }}>
-                            {/* {t('label.not_helpful')} */}
-                          </p>
-                        </div>
-                    </div>
-                  )}
-                </div>
-              )
-            )}
-          </div>
+                  </div>
+                )}
+              </div>
+            )
+          )}
         </div>
       );
 
@@ -751,7 +688,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             {getLists({
               choices:
                 content?.data?.payload?.buttonChoices ?? content?.data?.choices,
-                isWeather: true,
             })}
           </Bubble>
         </>
@@ -815,7 +751,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             </div>
             <span
               style={{
-                fontWeight: 600,
+                // fontWeight: 600,
                 fontSize: '1rem',
                 color:
                   content?.data?.position === 'right' ? contrastText : 'black',
@@ -825,7 +761,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 ''}
               {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
-                isWeather: true,
               })}
               {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                 <div

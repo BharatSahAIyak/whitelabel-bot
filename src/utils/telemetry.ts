@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
 const saveTelemetryEvent = async (
   version: string,
@@ -9,6 +10,10 @@ const saveTelemetryEvent = async (
 ) => {
   const telemetryApi =
     process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+
+    if(!sessionStorage.getItem('sessionId')) {
+      sessionStorage.setItem('sessionId', uuidv4());
+    }
 
   try {
     const telemetryData = {
