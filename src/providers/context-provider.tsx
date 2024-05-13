@@ -93,6 +93,7 @@ const ContextProvider: FC<{
     //@ts-ignore
     setLocaleMsgs(config?.translation?.[locale]);
   }, [config, locale]);
+
   const shareChat = useMemo(() => {
     return (e: string) => {
       try {
@@ -177,13 +178,12 @@ const ContextProvider: FC<{
     };
   }, [audioElement, config?.component?.botDetails?.audioPlayback]);
 
-  const checkInternetConnection = () => {
-    if (!navigator.onLine) {
-      setIsOnline(false);
+  useEffect(() => {
+    if(!isOnline){
       setMessages((prev) => [
         ...prev,
         {
-          text: `${t('message.no_signal')}`,
+          text: t('message.no_signal'),
           choices: [],
           position: 'left',
           reaction: 0,
@@ -194,6 +194,13 @@ const ContextProvider: FC<{
           audio_url: '',
         },
       ]);
+    }
+  }, [isOnline])
+  
+
+  const checkInternetConnection = () => {
+    if (!navigator.onLine) {
+      setIsOnline(false);
       setLoading(false);
       setIsMsgReceiving(false);
     } else {

@@ -20,8 +20,7 @@ const LaunchPage: FC<{ theme: any; config: any; compConfig: any }> = ({
         width={220}
         height={233}
       />}
-      <span style={{ color: theme?.palette?.primary?.main }}>
-        {t('label.title')}
+      <span style={{ color: theme?.palette?.primary?.main }} dangerouslySetInnerHTML={{ __html: t('label.title') }}>
       </span>
     </div>
   )

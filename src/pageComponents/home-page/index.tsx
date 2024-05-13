@@ -10,7 +10,7 @@ import React, {
 import { NextPage } from 'next'
 import axios from 'axios'
 import { AppContext } from '../../context'
-import SendIcon from './assets/sendButton.svg'
+import SendButton from './assets/sendButton'
 import { useLocalization } from '../../hooks'
 import router from 'next/router'
 import Image from 'next/image'
@@ -276,7 +276,7 @@ const HomePage: NextPage = () => {
   const sendGuidedMsg = (type: string) => {
     // TEMPORARILY DISABLED PEST FLOW
     if(type === 'pest'){
-      toast.error(t('message.coming_soon'));
+      toast(t('message.coming_soon'));
       return;
     }
     // convert the string type into stringified array
@@ -439,13 +439,12 @@ const HomePage: NextPage = () => {
               <button
                 type="submit"
                 className={styles.sendButton}
+                onClick={() => sendMessage(inputMsg)}
               >
-                <Image
-                  src={SendIcon}
-                  width={50}
-                  height={50}
-                  alt="sendIcon"
-                  onClick={() => sendMessage(inputMsg)}
+                <SendButton
+                  width={40}
+                  height={40}
+                  color={theme?.primary?.main}
                 />
               </button>
             </div>
