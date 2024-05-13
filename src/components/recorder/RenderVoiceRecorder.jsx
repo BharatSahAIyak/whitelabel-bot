@@ -313,8 +313,8 @@ const RecorderControl = ({
     classPulse = styles.pulseRing;
   } else if (status === 'recording') {
     customStylesPulse = {
-      background: `${theme?.primary?.main}`,
-      border: `5px solid ${theme?.primary?.main}`,
+      background: `${theme?.primary?.light}`,
+      border: `5px solid ${theme?.primary?.light}`,
     };
     classPulse = styles.pulseRing;
   } else if (status === 'processing') {
@@ -332,8 +332,8 @@ const RecorderControl = ({
         className={styles.btn}
         style={{
           cursor: 'pointer',
-          backgroundColor: theme?.primary?.main,
-          border: `1px solid ${theme?.primary?.main}`,
+          backgroundColor: theme?.primary?.light,
+          border: `1px solid ${theme?.primary?.light}`,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -369,8 +369,8 @@ const RecorderControl = ({
       className={styles.btn}
       style={{
         cursor: 'pointer',
-        background: theme?.primary?.main,
-        border: `1px solid ${theme?.primary?.main}`,
+        background: theme?.primary?.light,
+        border: `1px solid ${theme?.primary?.light}`,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
