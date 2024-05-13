@@ -341,19 +341,24 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     return dd + '/' + mm + '/' + yyyy;
   };
   const parseWeatherJson = (data: any) => {
+    if (!data || data.length === 0) {
+      console.error("Data is undefined or empty.");
+      return [];
+    }
+    const firstKey = Object.keys(data[0])[0] || 'datetime';
     const result = Object.keys(data[0]).reduce((acc: any, key) => {
-      if (key !== 'datetime') {
+      if (key !== firstKey) {
         acc.push({
-          datetime: key,
+          [firstKey]: key,
           ...data.reduce((obj: any, item: any) => {
-            obj[item.datetime] = item[key];
+            obj[item[firstKey]] = item[key];
             return obj;
           }, {}),
         });
       }
       return acc;
     }, []);
-    console.log({ result });
+    console.log({ result, data });
     return result;
   };
 
@@ -364,10 +369,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       return (
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
             position: 'relative',
-            maxWidth: '90vw',
+            maxWidth: '90vw'
           }}>
           <div
             className={
@@ -431,6 +434,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             {getLists({
               choices:
                 content?.data?.payload?.buttonChoices ?? content?.data?.choices,
+                isWeather: true
             })}
             <div
               style={{

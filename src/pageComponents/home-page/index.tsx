@@ -276,7 +276,7 @@ const HomePage: NextPage = () => {
   const sendGuidedMsg = (type: string) => {
     // TEMPORARILY DISABLED PEST FLOW
     if(type === 'pest'){
-      toast.error(t('message.coming_soon'));
+      toast(t('message.coming_soon'));
       return;
     }
     // convert the string type into stringified array
