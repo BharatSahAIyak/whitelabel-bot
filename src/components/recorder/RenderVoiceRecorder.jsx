@@ -1,8 +1,5 @@
 import { useState, useContext } from 'react';
-import stop from './assets/stop.gif';
-import processing from './assets/process.gif';
-import error from './assets/error.gif';
-import start from './assets/startIcon.svg';
+import MicIcon from '@mui/icons-material/Mic';
 import styles from './styles.module.css';
 import toast from 'react-hot-toast';
 import { useLocalization } from '../../hooks';
@@ -10,12 +7,17 @@ import { useConfig } from '../../hooks/useConfig';
 import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
 import saveTelemetryEvent from '../../utils/telemetry';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
-const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
+const RenderVoiceRecorder = ({
+  setInputMsg,
+  tapToSpeak,
+  includeDiv = false,
+}) => {
   const t = useLocalization();
   const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [apiCallStatus, setApiCallStatus] = useState('idle');
-  const [userClickedError, setUserClickedError] = useState(false);
+  const [recorderStatus, setRecorderStatus] = useState('idle');
+  const [isErrorClicked, setIsErrorClicked] = useState(false);
   const config = useConfig('component', 'voiceRecorder');
   const context = useContext(AppContext);
 
@@ -25,19 +27,13 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   let IS_RECORDING = false;
 
   const startRecording = async () => {
-    saveTelemetryEvent(
-      '0.1',
-      'E044',
-      'micAction',
-      'micTap',
-      {
-        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-        userId: localStorage.getItem('userID') || '',
-        phoneNumber: localStorage.getItem('phoneNumber') || '',
-        conversationId: sessionStorage.getItem('conversationId') || ''
-      }
-    )
+    saveTelemetryEvent('0.1', 'E044', 'micAction', 'micTap', {
+      botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+      orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+      userId: localStorage.getItem('userID') || '',
+      phoneNumber: localStorage.getItem('phoneNumber') || '',
+      conversationId: sessionStorage.getItem('conversationId') || '',
+    });
     IS_RECORDING = true;
     record();
   };
@@ -130,9 +126,9 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   const makeComputeAPICall = async (blob) => {
     const startTime = Date.now();
     const s2tMsgId = uuidv4();
-    console.log("s2tMsgId:", s2tMsgId)
+    console.log('s2tMsgId:', s2tMsgId);
     try {
-      setApiCallStatus('processing');
+      setRecorderStatus('processing');
       console.log('base', blob);
       toast.success(`${t('message.recorder_wait')}`);
 
@@ -153,7 +149,10 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
       // Append the WAV file to the FormData object
       formData.append('file', blob, 'audio.wav');
       formData.append('messageId', s2tMsgId);
-      formData.append('conversationId', sessionStorage.getItem('conversationId') || '');
+      formData.append(
+        'conversationId',
+        sessionStorage.getItem('conversationId') || ''
+      );
       formData.append('language', localStorage.getItem('locale') || 'en');
 
       // Send the WAV data to the API
@@ -188,30 +187,30 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
             conversationId: sessionStorage.getItem('conversationId') || '',
             timeTaken: latency,
             messageId: s2tMsgId,
-            createdAt: Math.floor(startTime / 1000)
+            createdAt: Math.floor(startTime / 1000),
           }
         );
       } else {
         toast.error(`${t('message.recorder_error')}`);
         console.log(resp);
-        // Set userClickedError to true when an error occurs
-        setUserClickedError(false);
+        // Set isErrorClicked to true when an error occurs
+        setIsErrorClicked(false);
 
         // Automatically change back to startIcon after 3 seconds
         setTimeout(() => {
           // Check if the user has not clicked the error icon again
-          if (!userClickedError) {
-            setApiCallStatus('idle');
+          if (!isErrorClicked) {
+            setRecorderStatus('idle');
           }
         }, 2500);
       }
-      setApiCallStatus('idle');
+      setRecorderStatus('idle');
     } catch (error) {
       console.error(error);
-      setApiCallStatus('error');
+      setRecorderStatus('error');
       toast.error(`${t('message.recorder_error')}`);
-      // Set userClickedError to true when an error occurs
-      setUserClickedError(false);
+      // Set isErrorClicked to true when an error occurs
+      setIsErrorClicked(false);
       const endTime = Date.now();
       const latency = endTime - startTime;
       await saveTelemetryEvent(
@@ -228,86 +227,173 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
           timeTaken: latency,
           messageId: s2tMsgId,
           createdAt: Math.floor(startTime / 1000),
-          error: error?.message || t('message.recorder_error')
+          error: error?.message || t('message.recorder_error'),
         }
       );
 
       // Automatically change back to startIcon after 3 seconds
       setTimeout(() => {
         // Check if the user has not clicked the error icon again
-        if (!userClickedError) {
-          setApiCallStatus('idle');
+        if (!isErrorClicked) {
+          setRecorderStatus('idle');
         }
       }, 2500);
     }
-    context?.sets2tMsgId((prev) => prev = s2tMsgId);
+    context?.sets2tMsgId((prev) => (prev = s2tMsgId));
   };
 
-  if(config?.showVoiceRecorder === false){
+  if (config?.showVoiceRecorder === false) {
     return null;
   }
   return (
-    <div>
-      <div>
+      <>
         {mediaRecorder && mediaRecorder.state === 'recording' ? (
           <div className={styles.center}>
-            <img
-              src={stop?.src}
-              alt="stopIcon"
-              onClick={() => {
-                stopRecording();
-              }}
-              style={{ cursor: 'pointer', width: '100%', height: '100%' }}
+            <RecorderControl
+              status={'recording'}
+              onClick={stopRecording}
+              includeDiv={includeDiv}
             />
           </div>
         ) : (
           <div className={styles.center}>
-            {apiCallStatus === 'processing' ? (
-              <img
-                src={processing?.src}
-                alt="processingIcon"
-                style={{ cursor: 'pointer', width: '100%', height: '100%' }}
-              />
-            ) : apiCallStatus === 'error' ? (
-              <img
-                src={error?.src}
-                alt="errorIcon"
+            {recorderStatus === 'processing' ? (
+              <RecorderControl status={'processing'} onClick={() => {}} />
+            ) : recorderStatus === 'error' ? (
+              <RecorderControl
+                status={'error'}
                 onClick={() => {
-                  setUserClickedError(true);
+                  setIsErrorClicked(true);
                   startRecording();
                 }}
-                style={{ cursor: 'pointer', width: '100%', height: '100%' }}
+                includeDiv={includeDiv}
               />
             ) : (
-              <>
-                <img
-                  src={start?.src}
-                  alt="startIcon"
+              <div className={styles.center}>
+                <RecorderControl
+                  status={'start'}
                   onClick={() => {
-                    setUserClickedError(true);
+                    setIsErrorClicked(true);
                     startRecording();
                   }}
-                  style={{ cursor: 'pointer', width: '100%', height: '100%' }}
+                  includeDiv={includeDiv}
+                  tapToSpeak={tapToSpeak}
                 />
-                {tapToSpeak ? (
-                  <p
-                    style={{
-                      color: 'black',
-                      fontSize: '12px',
-                      marginTop: '4px',
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: t('label.tap_to_speak'),
-                    }}></p>
-                ) : (
-                  <></>
-                )}
-              </>
+              </div>
             )}
           </div>
         )}
-      </div>
-    </div>
+      </>
+  );
+};
+
+// includeDiv is being checked in render Function
+const RecorderControl = ({
+  status,
+  onClick,
+  includeDiv = true,
+  tapToSpeak = false,
+}) => {
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+  const theme = useColorPalates();
+  let customStylesPulse = null;
+  let customStylesProcess = null;
+  let classPulse = '';
+  let classProcess = '';
+
+  if (status === 'error') {
+    customStylesPulse = {
+      background: 'red',
+      border: '5px solid red',
+    };
+    classPulse = styles.pulseRing;
+  } else if (status === 'recording') {
+    customStylesPulse = {
+      background: `${theme?.primary?.main}`,
+      border: `5px solid ${theme?.primary?.main}`,
+    };
+    classPulse = styles.pulseRing;
+  } else if (status === 'processing') {
+    // processing
+    customStylesProcess = {
+      borderColor: `transparent transparent ${theme?.primary?.dark} ${theme?.primary?.dark}`,
+    };
+    classProcess = styles.loader;
+  }
+
+  return includeDiv ? (
+    <>
+      <button
+        onClick={handleClick}
+        className={styles.btn}
+        style={{
+          cursor: 'pointer',
+          backgroundColor: theme?.primary?.main,
+          border: `1px solid ${theme?.primary?.main}`,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <div
+          className={`${classPulse}`}
+          style={{
+            ...customStylesPulse,
+          }}></div>
+        <MicIcon
+          sx={{
+            height: '70%',
+            width: '70%',
+            color: 'white',
+            display: 'block',
+          }}
+        />
+        <div
+          className={`${classProcess}`}
+          style={{
+            ...customStylesProcess,
+          }}></div>
+      </button>
+      {tapToSpeak && (
+        <p style={{ color: 'black', fontSize: '12px', marginTop: '4px' }}>
+          {'label.tap_to_speak'}
+        </p>
+      )}
+    </>
+  ) : (
+    <button
+      onClick={handleClick}
+      className={styles.btn}
+      style={{
+        cursor: 'pointer',
+        background: theme?.primary?.main,
+        border: `1px solid ${theme?.primary?.main}`,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <div
+        className={`${classPulse}`}
+        style={{
+          ...customStylesPulse,
+        }}></div>
+      <MicIcon
+        sx={{
+          height: '70%',
+          width: '70%',
+          color: 'white',
+          display: 'block',
+        }}
+      />
+      <div
+        className={`${classProcess}`}
+        style={{
+          ...customStylesProcess,
+        }}></div>
+    </button>
   );
 };
 

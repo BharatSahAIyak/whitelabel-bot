@@ -24,8 +24,8 @@ const ChatUiWindow: React.FC = () => {
   const config = useConfig('component', 'chatUI');
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
-    return theme?.primary?.light;
-  }, [theme?.primary?.light]);
+    return theme?.primary?.main;
+  }, [theme?.primary?.main]);
   const t = useLocalization();
   const context = useContext(AppContext);
   const { isDown, isMsgReceiving } = context;
