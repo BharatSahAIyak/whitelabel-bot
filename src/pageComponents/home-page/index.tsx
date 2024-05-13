@@ -439,12 +439,12 @@ const HomePage: NextPage = () => {
               <button
                 type="submit"
                 className={styles.sendButton}
+                onClick={() => sendMessage(inputMsg)}
               >
                 <SendButton
                   width={40}
                   height={40}
                   color={theme?.primary?.main}
-                  onClick={() => sendMessage(inputMsg)}
                 />
               </button>
             </div>
