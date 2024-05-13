@@ -10,7 +10,7 @@ import React, {
 import { NextPage } from 'next'
 import axios from 'axios'
 import { AppContext } from '../../context'
-import SendIcon from './assets/sendButton.svg'
+import SendButton from './assets/sendButton'
 import { useLocalization } from '../../hooks'
 import router from 'next/router'
 import Image from 'next/image'
@@ -440,11 +440,10 @@ const HomePage: NextPage = () => {
                 type="submit"
                 className={styles.sendButton}
               >
-                <Image
-                  src={SendIcon}
-                  width={50}
-                  height={50}
-                  alt="sendIcon"
+                <SendButton
+                  width={40}
+                  height={40}
+                  color={theme?.primary?.main}
                   onClick={() => sendMessage(inputMsg)}
                 />
               </button>
