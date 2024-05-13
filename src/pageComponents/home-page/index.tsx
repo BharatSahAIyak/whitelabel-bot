@@ -444,7 +444,7 @@ const HomePage: NextPage = () => {
                 <SendButton
                   width={40}
                   height={40}
-                  color={theme?.primary?.main}
+                  color={theme?.primary?.light}
                 />
               </button>
             </div>
