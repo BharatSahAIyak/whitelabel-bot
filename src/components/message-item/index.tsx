@@ -116,8 +116,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   );
 
   const getLists = useCallback(
-    ({ choices }: { choices: any }) => {
-      console.log('qwer12:', { choices, optionDisabled });
+    ({ choices, isWeather = false }: { choices: any; isWeather: Boolean }) => {
       return (
         <List className={`${styles.list}`}>
           {choices?.map((choice: any, index: string) => (
@@ -125,24 +124,53 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <ListItem
               key={`${index}_${choice?.key}`}
               className={`${styles.onHover} ${styles.listItem}`}
-              //@ts-ignore
+              // @ts-ignore
               style={
                 optionDisabled
                   ? {
-                      background: 'var(--lightgrey)',
-                      color: 'var(--font)',
-                      boxShadow: 'none',
-                    }
-                  : { cursor: 'pointer' }
+                    background: 'var(--lightgrey)',
+                    color: 'var(--font)',
+                    boxShadow: 'none',
+                  }
+                  : null
               }
               onClick={(e: any): void => {
                 e.preventDefault();
+                console.log("Option Disabled", optionDisabled)
                 if (optionDisabled) {
-                  toast.error(`${t('message.cannot_answer_again')}`);
+                  toast.error(
+                    `${isWeather
+                      ? t('message.wait_before_choosing')
+                      : t('message.cannot_answer_again')
+                    }`
+                  );
                 } else {
-                  console.log("141");
-                  context?.sendMessage(choice?.key);
+                  if (context?.messages?.[0]?.exampleOptions) {
+                    console.log('clearing chat');
+                    context?.setMessages([]);
+                  }
+                  if (isWeather)
+                    context?.sendMessage(choice?.text, false, true, choice);
+                  else context?.sendMessage(choice);
+
                   setOptionDisabled(true);
+                  if (isWeather)
+                    setTimeout(
+                      () =>
+                        document
+                          .getElementsByClassName('PullToRefresh')?.[0]
+                          ?.scrollTo({
+                            top: 999999,
+                            left: 0,
+                            behavior: 'smooth',
+                          }),
+                      500
+                    );
+                  console.log("Outside setTimeout", { isWeather })
+                  setTimeout(() => {
+                    console.log("Enabling options again")
+                    setOptionDisabled(false);
+                  }, 4001);
                 }
               }}>
               <div
@@ -154,23 +182,26 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     content?.data?.position === 'right'
                       ? 'white'
                       : optionDisabled
-                      ? 'var(--font)'
-                      : secondaryColor,
+                        ? 'var(--font)'
+                        : 'var(--secondarygreen)',
                 }}>
-                <div>{choice?.text}</div>
+                <div>{isWeather ? choice?.text : choice}</div>
                 <div style={{ marginLeft: 'auto' }}>
                   <RightIcon
                     width="30px"
-                    color={optionDisabled ? 'var(--font)' : secondaryColor}
+                    color={
+                      optionDisabled ? 'var(--font)' : 'var(--secondarygreen)'
+                    }
                   />
                 </div>
               </div>
             </ListItem>
-          ))}
-        </List>
+          ))
+          }
+        </List >
       );
     },
-    [context, t]
+    [context, t, optionDisabled]
   );
 
   const { content, type } = message;
@@ -688,6 +719,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             {getLists({
               choices:
                 content?.data?.payload?.buttonChoices ?? content?.data?.choices,
+                isWeather: true,
             })}
           </Bubble>
         </>
@@ -761,6 +793,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 ''}
               {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
+                isWeather: true,
               })}
               {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                 <div
