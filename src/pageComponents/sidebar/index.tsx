@@ -306,7 +306,7 @@ export const Sidebar = ({
               )}
             </List>
           )}
-            {config?.showBhashiniLogo && <div
+            {(config?.showBhashiniLogo || config?.showDarshanLogo) && <div
               className={styles.user}
               style={{
                 background: 'var(--bg-color)',
@@ -327,8 +327,8 @@ export const Sidebar = ({
                   justifyContent: 'space-between',
                   width: '100%',
                 }}>
-                <Image src={BhashiniImg} alt="" width={180} height={45} />
-                <Image src={darshanLogo} alt="" width={55} height={45} />
+                {config?.showBhashiniLogo && <Image src={BhashiniImg} alt="" width={180} height={45} />}
+                {config?.showDarshanLogo && <Image src={darshanLogo} alt="" width={55} height={45} />}
               </div>
             </div>}
         </Box>
