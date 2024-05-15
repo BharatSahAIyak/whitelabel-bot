@@ -77,7 +77,8 @@
       "languageName2": "ଓଡିଆ",
       "showProfileIcon": true,
       "showLogoutButton": true,
-      "showBhashiniLogo": false
+      "showBhashiniLogo": false,
+      "showDarshanLogo": false
     },
     "otpPage": {
       "showLogo": false,
