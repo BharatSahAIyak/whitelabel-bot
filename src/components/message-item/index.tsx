@@ -145,14 +145,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     }`
                   );
                 } else {
-                  if (context?.messages?.[0]?.exampleOptions) {
-                    console.log('clearing chat');
-                    context?.setMessages([]);
-                  }
-                  if (isWeather)
-                    context?.sendMessage(choice?.text, false, true, choice);
-                  else context?.sendMessage(choice);
-
+                  context?.sendMessage(choice?.key, false, true, choice);
                   setOptionDisabled(true);
                   if (isWeather)
                     setTimeout(
@@ -185,7 +178,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         ? 'var(--font)'
                         : 'var(--secondarygreen)',
                 }}>
-                <div>{isWeather ? choice?.text : choice}</div>
+                <div>{choice?.text}</div>
                 <div style={{ marginLeft: 'auto' }}>
                   <RightIcon
                     width="30px"
@@ -434,7 +427,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             {getLists({
               choices:
                 content?.data?.payload?.buttonChoices ?? content?.data?.choices,
-                isWeather: true
+                isWeather: false
             })}
             <div
               style={{
@@ -723,7 +716,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             {getLists({
               choices:
                 content?.data?.payload?.buttonChoices ?? content?.data?.choices,
-                isWeather: true,
+                isWeather: false,
             })}
           </Bubble>
         </>
