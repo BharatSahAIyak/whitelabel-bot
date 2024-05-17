@@ -471,7 +471,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 backdrop={false}
                 showClose={false}
                 bgColor="transparent"
-                title={content?.data?.text}>
+                title={content?.text}>
                 {content?.data?.choices?.choices?.map((item: any) => {
                   return (
                     <div
@@ -487,7 +487,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       }}
                       onClick={() => {
                         setPopupActive(false);
-                        context?.sendMessage(item.key);
+                        if(item?.showTextInput){
+                          context?.setGuidedFlow(false);
+                        }
+                        context?.sendMessage(item?.key);
                       }}>
                       {item.text}
                     </div>
