@@ -309,6 +309,10 @@ const ContextProvider: FC<{
                 ...media,
               };
 
+              if(msg?.payload?.buttonChoices){
+                setGuidedFlow(true);
+              }
+
               updatedMessages.push(newMsg);
               // console.log('useeffect', newMsg.text);
               try {
