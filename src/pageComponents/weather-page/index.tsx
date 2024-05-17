@@ -114,7 +114,7 @@ const WeatherPage: React.FC = () => {
           </div>
           <div style={{ textAlign: 'right' }}>
             <h1>{weather?.currentConditions?.conditions}</h1>
-            {sessionStorage.getItem('city') && <p>
+            {sessionStorage.getItem('city') && <p style={{display: 'flex', alignItems: 'center'}}>
               <LocationOnRoundedIcon style={{ fontSize: '1rem' }} />
               {sessionStorage.getItem('city')}
             </p>}
