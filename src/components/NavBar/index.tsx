@@ -1,34 +1,33 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-import AppBar from '@mui/material/AppBar'
-import Toolbar from '@mui/material/Toolbar'
-import IconButton from '@mui/material/IconButton'
-import MenuIcon from '@mui/icons-material/Menu'
-import HomeIcon from '@mui/icons-material/Home'
-import Typography from '@mui/material/Typography'
-import { useRouter } from 'next/router'
-import { useConfig } from '../../hooks/useConfig'
-import Sidebar from '../../pageComponents/sidebar'
-import { recordUserLocation } from '../../utils/location'
-import { v4 as uuidv4 } from 'uuid'
-import { AppContext } from '../../context'
-import { useLocalization, useLogin } from '../../hooks'
-import toast from 'react-hot-toast'
-import { useColorPalates } from '../../providers/theme-provider/hooks'
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import HomeIcon from '@mui/icons-material/Home';
+import Typography from '@mui/material/Typography';
+import { useRouter } from 'next/router';
+import { useConfig } from '../../hooks/useConfig';
+import Sidebar from '../../pageComponents/sidebar';
+import { recordUserLocation } from '../../utils/location';
+import { v4 as uuidv4 } from 'uuid';
+import { AppContext } from '../../context';
+import { useLocalization, useLogin } from '../../hooks';
+import toast from 'react-hot-toast';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
-
 const Navbar: React.FC = () => {
-  const router = useRouter()
-  const config = useConfig('component', 'navbar')
-  const botConfig = useConfig('component', 'botDetails')
-  const context = useContext(AppContext)
+  const router = useRouter();
+  const config = useConfig('component', 'navbar');
+  const botConfig = useConfig('component', 'botDetails');
+  const context = useContext(AppContext);
   const [activeLanguage, setActiveLanguage] = useState<string>(() => {
-    const storedLang = localStorage.getItem('locale')
-    return storedLang || 'en'
-  })
-  const t = useLocalization()
-  const theme = useColorPalates()
-  const { isAuthenticated } = useLogin()
+    const storedLang = localStorage.getItem('locale');
+    return storedLang || 'en';
+  });
+  const t = useLocalization();
+  const theme = useColorPalates();
+  const { isAuthenticated } = useLogin();
   const {
     showHamburgerMenu,
     showHomeIcon,
@@ -42,51 +41,54 @@ const Navbar: React.FC = () => {
     rightLogo3Src,
     centerLogoSize,
     logoTitleColor,
-    newChatButtonColor
-  } = config
+    newChatButtonColor,
+  } = config;
 
-  const [isSidebarOpen, setSidebarOpen] = useState(false)
-  document.documentElement.style.setProperty('--scrollbar-thumb-color', botConfig?.scrollbarColor || '#030311');
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  document.documentElement.style.setProperty(
+    '--scrollbar-thumb-color',
+    botConfig?.scrollbarColor || '#030311'
+  );
 
   const toggleSidebar = () => {
     if (context?.isMsgReceiving) {
-      toast.error(`${t('error.wait_new_chat')}`)
-      return
+      toast.error(`${t('error.wait_new_chat')}`);
+      return;
     }
-    setSidebarOpen(!isSidebarOpen)
-  }
+    setSidebarOpen(!isSidebarOpen);
+  };
 
   const handleLanguageClick = (langCode: string) => {
-    setActiveLanguage(langCode)
-    localStorage.setItem('locale', langCode)
-  }
+    setActiveLanguage(langCode);
+    localStorage.setItem('locale', langCode);
+  };
   useEffect(() => {
     if (router.pathname == '/login' || router.pathname == '/otp')
-      context?.setLocale(activeLanguage)
-  }, [activeLanguage, context])
+      context?.setLocale(activeLanguage);
+  }, [activeLanguage, context]);
 
   const newChatHandler = useCallback(() => {
     if (context?.isMsgReceiving) {
-      toast.error(`${t('error.wait_new_chat')}`)
-      return
+      toast.error(`${t('error.wait_new_chat')}`);
+      return;
     }
 
-    recordUserLocation()
+    recordUserLocation();
 
-    const newConversationId = uuidv4()
-    sessionStorage.setItem('conversationId', newConversationId)
-    sessionStorage.removeItem('tags')
+    const newConversationId = uuidv4();
+    sessionStorage.setItem('conversationId', newConversationId);
+    sessionStorage.removeItem('tags');
     context?.setGuidedFlow(false);
-    if (context?.audioElement) context?.audioElement.pause()
-    if (context?.setAudioPlaying) context?.setAudioPlaying(false)
-    context?.setConversationId(newConversationId)
-    context?.setMessages([])
-    context?.setIsMsgReceiving(false)
-    context?.setLoading(false)
-    router.push('/')
-  }, [context, t, router])
+    if (context?.audioElement) context?.audioElement.pause();
+    if (context?.setAudioPlaying) context?.setAudioPlaying(false);
+    context?.setConversationId(newConversationId);
+    context?.setMessages([]);
+    context?.setIsMsgReceiving(false);
+    context?.setLoading(false);
+    router.push('/');
+  }, [context, t, router]);
 
-  console.log({ activeLanguage, config, path: router.pathname })
+  console.log({ activeLanguage, config, path: router.pathname });
   return (
     <>
       <AppBar
@@ -96,15 +98,13 @@ const Navbar: React.FC = () => {
           boxShadow: 'none',
           borderBottom: '1px solid lightgray',
           height: router.pathname === '/login' ? '120px' : '80px',
-        }}
-      >
+        }}>
         <Toolbar
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             height: '100%',
-          }}
-        >
+          }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {(router.pathname == '/login' || router.pathname == '/otp') && (
               <div
@@ -112,8 +112,7 @@ const Navbar: React.FC = () => {
                   display: 'flex',
                   justifyContent: 'flex-end',
                   width: '100%',
-                }}
-              >
+                }}>
                 <button
                   className={`Sidemenu_button ${
                     activeLanguage === config?.languageCode_1 ? 'active' : ''
@@ -132,8 +131,7 @@ const Navbar: React.FC = () => {
                     height: '30px',
                     padding: '5px',
                   }}
-                  onClick={() => handleLanguageClick(config?.languageCode_1)}
-                >
+                  onClick={() => handleLanguageClick(config?.languageCode_1)}>
                   {config?.languageLabel1}
                 </button>
 
@@ -155,33 +153,33 @@ const Navbar: React.FC = () => {
                     height: '30px',
                     padding: '5px',
                   }}
-                  onClick={() => handleLanguageClick(config?.languageCode_2)}
-                >
+                  onClick={() => handleLanguageClick(config?.languageCode_2)}>
                   {config?.languageLabel2}
                 </button>
               </div>
             )}
-             {router.pathname !== '/chat' && isAuthenticated && showHamburgerMenu && (
-              <IconButton
-                size="large"
-                edge="start"
-                color="primary"
-                aria-label="open drawer"
-                sx={{ mr: 2, width: '50px', height: '50px' }}
-                onClick={toggleSidebar}
-              >
-                <MenuIcon sx={{ fontSize: '50px' }} />
-              </IconButton>
-            )}
-            {router.pathname === '/chat' && (
+            {router.pathname !== '/chat' &&
+            router.pathname !== '/weather' &&
+              isAuthenticated &&
+              showHamburgerMenu && (
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="primary"
+                  aria-label="open drawer"
+                  sx={{ mr: 2, width: '50px', height: '50px' }}
+                  onClick={toggleSidebar}>
+                  <MenuIcon sx={{ fontSize: '50px' }} />
+                </IconButton>
+              )}
+            {router.pathname === '/weather' && (
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexDirection: 'row',
-                }}
-              >
+                }}>
                 <IconButton
                   color="primary"
                   size="large"
@@ -193,15 +191,37 @@ const Navbar: React.FC = () => {
                     height: '28px',
                     margin: 0,
                   }}
-                  onClick={newChatHandler}
-                >
-                      <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
+                  onClick={() => router.push('/')}>
+                  <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
+                </IconButton>
+              </div>
+            )}
+            {router.pathname === '/chat' && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                }}>
+                <IconButton
+                  color="primary"
+                  size="large"
+                  edge="start"
+                  aria-label="home"
+                  style={{
+                    fontSize: '2rem',
+                    width: '28px',
+                    height: '28px',
+                    margin: 0,
+                  }}
+                  onClick={newChatHandler}>
+                  <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
                 </IconButton>
                 <Typography
                   variant="body1"
                   color={newChatButtonColor ?? 'black'}
-                  sx={{ fontSize: '25px', marginLeft: '5px' }}
-                >
+                  sx={{ fontSize: '25px', marginLeft: '5px' }}>
                   {t('label.new_chat')}
                 </Typography>
               </div>
@@ -210,6 +230,7 @@ const Navbar: React.FC = () => {
             {isAuthenticated &&
               showHomeIcon &&
               router.pathname !== '/' &&
+              router.pathname !== '/weather' &&
               router.pathname !== '/chat' && (
                 <IconButton
                   color="primary"
@@ -217,8 +238,7 @@ const Navbar: React.FC = () => {
                   edge="start"
                   aria-label="home"
                   style={{ fontSize: '2rem', height: '48px' }}
-                  onClick={() => router.push('/')}
-                >
+                  onClick={() => router.push('/')}>
                   <HomeIcon sx={{ fontSize: '50px' }} />
                 </IconButton>
               )}
@@ -231,8 +251,7 @@ const Navbar: React.FC = () => {
               transform: 'translateX(-50%)',
               textAlign: 'center',
               marginTop: '20px',
-            }}
-          >
+            }}>
             {showCenterLogo && (
               <div>
                 <img
@@ -243,7 +262,7 @@ const Navbar: React.FC = () => {
               </div>
             )}
 
-            {router.pathname === '/login' && showCenterLogo &&(
+            {router.pathname === '/login' && showCenterLogo && (
               <div
                 style={{
                   fontSize: '10px',
@@ -284,7 +303,7 @@ const Navbar: React.FC = () => {
 
       <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
     </>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
