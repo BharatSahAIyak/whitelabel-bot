@@ -274,11 +274,6 @@ const HomePage: NextPage = () => {
   }, [handleKeyDown]);
 
   const sendGuidedMsg = (type: string) => {
-    // TEMPORARILY DISABLED PEST FLOW
-    if(type === 'pest'){
-      toast(t('message.coming_soon'));
-      return;
-    }
     // convert the string type into stringified array
     context?.setGuidedFlow(true);
     const tags = [type]

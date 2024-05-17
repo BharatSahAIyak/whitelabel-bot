@@ -265,7 +265,6 @@ const ContextProvider: FC<{
     async ({ msg, media }: { msg: any; media: any }) => {
       console.log('updatemsgstate:', msg);
       if (
-        msg?.payload?.text &&
         msg?.messageId?.Id &&
         msg?.messageId?.channelMessageId &&
         msg?.messageId?.replyId
@@ -301,6 +300,7 @@ const ContextProvider: FC<{
                 messageId: msg?.messageId.Id,
                 conversationId: msg.messageId.channelMessageId,
                 sentTimestamp: Date.now(),
+                card: msg?.payload?.card,
                 // btns: msg?.payload?.buttonChoices,
                 // audio_url: msg?.content?.audio_url,
                 // metaData: msg.payload?.metaData
