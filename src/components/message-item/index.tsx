@@ -465,6 +465,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             
             {content?.data?.choices?.choices?.length > 0 && (
               <Popup
+                isCollapsed={content?.data?.choices?.isCollapsed ?? false}
                 height={'100px'}
                 onClose={() => {}}
                 active={popupActive}
