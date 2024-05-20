@@ -77,7 +77,8 @@
       "languageName2": "ଓଡିଆ",
       "showProfileIcon": true,
       "showLogoutButton": true,
-      "showBhashiniLogo": false
+      "showBhashiniLogo": false,
+      "showDarshanLogo": false
     },
     "otpPage": {
       "showLogo": false,
@@ -118,19 +119,16 @@
       "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
     },
     "historyPage": {
-      "allowOverride": false,
       "historyShowHistoryPage": true,
       "allowDelete": true,
       "showTimestamp": true
     },
     "launchPage": {
-      "allowOverride": false,
       "logo": "src/pages/launch-page/krushak_odisha.png",
       "showLaunchPage": true,
       "launchPageColor": ""
     },
     "share-buttons": {
-      "allowOverride": false,
       "allowDownloadChat": true,
       "allowShareChat": true,
       "shareButtonColor": "orange",

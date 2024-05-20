@@ -6,6 +6,7 @@ import {
   ListItem,
   FileCard,
   Typing,
+  Popup,
 } from '@samagra-x/chatui';
 import {
   FC,
@@ -36,6 +37,8 @@ import saveTelemetryEvent from '../../utils/telemetry';
 import BlinkingSpinner from '../blinking-spinner/index';
 import Loader from '../loader';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
+import { divide } from 'lodash';
+import { borderRadius } from '@mui/system';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
@@ -48,6 +51,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   );
   const [audioFetched, setAudioFetched] = useState(false);
   const [ttsLoader, setTtsLoader] = useState(false);
+  const [popupActive, setPopupActive] = useState(false);
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -81,7 +85,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               replyId: msgId,
               channelMessageId: sessionStorage.getItem('conversationId'),
             },
-          } as Partial<XMessage>
+          } as Partial<XMessage>,
         });
       } else if (value === -1) {
         context?.setCurrentQuery(msgId);
@@ -128,49 +132,43 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               style={
                 optionDisabled
                   ? {
-                    background: 'var(--lightgrey)',
-                    color: 'var(--font)',
-                    boxShadow: 'none',
-                  }
+                      background: 'var(--lightgrey)',
+                      color: 'var(--font)',
+                      boxShadow: 'none',
+                    }
                   : null
               }
               onClick={(e: any): void => {
                 e.preventDefault();
-                console.log("Option Disabled", optionDisabled)
+                console.log('Option Disabled', optionDisabled);
                 if (optionDisabled) {
                   toast.error(
-                    `${isWeather
-                      ? t('message.wait_before_choosing')
-                      : t('message.cannot_answer_again')
+                    `${
+                      isWeather
+                        ? t('message.wait_before_choosing')
+                        : t('message.cannot_answer_again')
                     }`
                   );
                 } else {
-                  if (context?.messages?.[0]?.exampleOptions) {
-                    console.log('clearing chat');
-                    context?.setMessages([]);
-                  }
-                  if (isWeather)
-                    context?.sendMessage(choice?.text, false, true, choice);
-                  else context?.sendMessage(choice);
-
+                  context?.sendMessage(choice?.key, false, true, choice);
                   setOptionDisabled(true);
-                  if (isWeather)
-                    setTimeout(
-                      () =>
-                        document
-                          .getElementsByClassName('PullToRefresh')?.[0]
-                          ?.scrollTo({
-                            top: 999999,
-                            left: 0,
-                            behavior: 'smooth',
-                          }),
-                      500
-                    );
-                  console.log("Outside setTimeout", { isWeather })
-                  setTimeout(() => {
-                    console.log("Enabling options again")
-                    setOptionDisabled(false);
-                  }, 4001);
+                  setTimeout(
+                    () =>
+                      document
+                        .getElementsByClassName('PullToRefresh')?.[0]
+                        ?.scrollTo({
+                          top: 999999,
+                          left: 0,
+                          behavior: 'smooth',
+                        }),
+                    500
+                  );
+                  if (isWeather) {
+                    setTimeout(() => {
+                      console.log('Enabling options again');
+                      setOptionDisabled(false);
+                    }, 4001);
+                  }
                 }
               }}>
               <div
@@ -182,10 +180,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     content?.data?.position === 'right'
                       ? 'white'
                       : optionDisabled
-                        ? 'var(--font)'
-                        : 'var(--secondarygreen)',
+                      ? 'var(--font)'
+                      : 'var(--secondarygreen)',
                 }}>
-                <div>{isWeather ? choice?.text : choice}</div>
+                <div>{choice?.text}</div>
                 <div style={{ marginLeft: 'auto' }}>
                   <RightIcon
                     width="30px"
@@ -196,15 +194,20 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 </div>
               </div>
             </ListItem>
-          ))
-          }
-        </List >
+          ))}
+        </List>
       );
     },
     [context, t, optionDisabled]
   );
 
   const { content, type } = message;
+
+  useEffect(() => {
+    if (content?.data?.choices?.choices?.length > 0) {
+      setPopupActive(true);
+    }
+  }, [content]);
 
   console.log('here', content);
 
@@ -342,7 +345,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   };
   const parseWeatherJson = (data: any) => {
     if (!data || data.length === 0) {
-      console.error("Data is undefined or empty.");
+      console.error('Data is undefined or empty.');
       return [];
     }
     const firstKey = Object.keys(data[0])[0] || 'datetime';
@@ -370,23 +373,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         <div
           style={{
             position: 'relative',
-            maxWidth: '90vw'
+            maxWidth: '90vw',
           }}>
-          <div
-            className={
-              content?.data?.position === 'right'
-                ? styles.messageTriangleRight
-                : styles.messageTriangleLeft
-            }
-            style={
-              content?.data?.position === 'right'
-                ? {
-                    borderColor: `${secondaryColor} transparent transparent transparent`,
-                  }
-                : {
-                    borderColor: `${contrastText} transparent transparent transparent`,
-                  }
-            }></div>
           <Bubble
             type="text"
             style={
@@ -400,7 +388,52 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                   }
             }>
-            <span
+              {content?.data?.card ? (
+              <div>
+                <div
+                  style={{
+                    background: '#EDEDF1',
+                    padding: '10px',
+                    fontWeight: 600,
+                    color: theme?.primary?.main,
+                    textAlign: 'center'
+                  }}>
+                  <div>{content?.data?.card?.header?.title}</div>
+                  <div>{content?.data?.card?.header?.description}</div>
+                </div>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))'
+                  }}>
+                  {content?.data?.card?.content?.cells?.map((cell: any) => {
+                    return (
+                      <div
+                        style={{
+                          border: '1px solid #EDEDF1',
+                          padding: '10px',
+                          textAlign: 'center'
+                        }}>
+                        <div
+                          style={{
+                            color: theme?.primary?.main,
+                            fontWeight: 600
+                          }}>
+                          {cell.header}
+                        </div>
+                        <div>{cell.footer}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div
+                  style={{ padding: '20px', borderTop: '1px solid #EDEDF1' }}>
+                  {content?.data?.card?.footer?.title}
+                  {content?.data?.card?.footer?.description}
+                </div>
+              </div>
+            ): (
+              <span
               style={{
                 // fontWeight: 600,
                 fontSize: '1rem',
@@ -409,13 +442,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     ? contrastText
                     : secondaryColor,
               }}>
-              {content?.text}{' '}
-              {
-                content?.data?.position === 'right'
-                  ? null
-                  : !content?.data?.isEnd
-                && <BlinkingSpinner />
-              }
+                {content?.text}{' '}
+              {content?.data?.position === 'right'
+                ? null
+                : !content?.data?.isEnd && <BlinkingSpinner />}
               {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                 <div
                   style={{
@@ -431,11 +461,133 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 </div>
               )}
             </span>
-            {getLists({
+            )}
+            
+            {content?.data?.choices?.choices?.length > 0 && (
+              <Popup
+                height={'100px'}
+                onClose={() => {}}
+                active={popupActive}
+                backdrop={false}
+                showClose={false}
+                bgColor="transparent"
+                title={content?.text}>
+                {content?.data?.choices?.choices?.map((item: any) => {
+                  return (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '3px',
+                        color: 'black',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #DDDDDD',
+                      }}
+                      onClick={() => {
+                        setPopupActive(false);
+                        if(item?.showTextInput){
+                          context?.setGuidedFlow(false);
+                        }
+                        context?.sendMessage(item?.key);
+                      }}>
+                      {item.text}
+                    </div>
+                  );
+                })}
+                {/* {
+                  arrayCrop
+                    .filter(item => item.action)
+                    .map((item: any) => {
+                      return (
+                        !searchView ? (
+                          <div
+                            key={item.id}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '10px',
+                              padding: '3px',
+                              color: 'black',
+                              cursor: 'pointer',
+                              borderBottom: '2px solid #DDDDDD'
+                            }}
+                            onClick={() => setSearchView(true)}
+                          >
+                            {item?.text}
+                          </div>
+                        ) : (
+                          <div
+                            key={item.id}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '10px',
+                              padding: '3px',
+                              color: 'black',
+                              cursor: 'pointer',
+                              borderBottom: '2px solid #DDDDDD'
+                            }}
+                          >
+                          <input
+                            rows={1}
+                            value={searchTerm}
+                            onChange={handleSearch}
+                            placeholder="Search..."
+                            style={{
+                              width: "100%",
+                              margin: "0 5px",
+                              padding: '10px',
+                              border: '1px solid #D0D0D0',
+                              borderRadius: '10px'
+                            }}
+                          />
+                          <button
+                            type="submit"
+                            className="sendButton"
+                          >
+                            Send
+                          </button>
+                          </div>
+                        )
+                      );
+                    })
+                } */}
+                {/* {searchResults.map((item: any) => 
+                  {
+                    // console.log({item})
+                    return (
+                      <div
+                        key={item?.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '10px',
+                          padding: '3px',
+                          color: 'black',
+                          cursor: 'pointer',
+                          borderBottom: '2px solid #DDDDDD'
+                        }}
+          
+                        onClick={() => {
+                            setSearchView(false)
+                        }}
+                      >
+                        {item?.text}
+                      </div>
+                    )} */}
+                {/* )} */}
+              </Popup>
+            )}
+            {/* {getLists({
               choices:
                 content?.data?.payload?.buttonChoices ?? content?.data?.choices,
-                isWeather: true
-            })}
+                isWeather: false
+            })} */}
             <div
               style={{
                 display: 'flex',
@@ -488,19 +640,19 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                               opacity: '0.5',
                               border: `1px solid ${theme?.primary?.main}`,
                             }
-                          :
-                        {
-                          pointerEvents: 'auto',
-                          opacity: '1',
-                          filter: 'grayscale(0%)',
-                          border: `1px solid ${theme?.primary?.main}`,
-                        }
-                      }
-                    >
+                          : {
+                              pointerEvents: 'auto',
+                              opacity: '1',
+                              filter: 'grayscale(0%)',
+                              border: `1px solid ${theme?.primary?.main}`,
+                            }
+                      }>
                       {context?.clickedAudioUrl === content?.data?.audio_url ? (
-                            !context?.audioPlaying
-                              ? <SpeakerIcon color={theme?.primary?.main} />
-                              : <SpeakerPauseIcon color={theme?.primary?.main} />
+                        !context?.audioPlaying ? (
+                          <SpeakerIcon color={theme?.primary?.main} />
+                        ) : (
+                          <SpeakerPauseIcon color={theme?.primary?.main} />
+                        )
                       ) : ttsLoader ? (
                         <Loader color={theme?.primary?.main} />
                       ) : (
@@ -721,9 +873,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </span>
             </div>
             {getLists({
-              choices:
-                content?.data?.payload?.buttonChoices ?? content?.data?.choices,
-                isWeather: true,
+              choices: content?.data?.choices?.choices,
+              isWeather: false,
             })}
           </Bubble>
         </>
