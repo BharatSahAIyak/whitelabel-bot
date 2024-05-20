@@ -128,7 +128,7 @@ const WeatherPage: React.FC = () => {
                   label={getClosestDirection(weather?.days?.[0]?.winddir)}
                   size="medium"
                   sx={{
-                    fontSize: '16px',
+                    fontSize: '14px',
                     fontWeight: '600',
                     minWidth: '70px',
                     background: null
@@ -150,7 +150,7 @@ const WeatherPage: React.FC = () => {
                   label={weather?.days?.[0]?.windspeed + ' km/h'}
                   size="medium"
                   sx={{
-                    fontSize: '16px',
+                    fontSize: '14px',
                     fontWeight: '600',
                     minWidth: '70px',
                     background: '#101860',
@@ -173,7 +173,7 @@ const WeatherPage: React.FC = () => {
                   label={weather?.days?.[0]?.humidity + '%' }
                   size="medium"
                   sx={{
-                    fontSize: '16px',
+                    fontSize: '14px',
                     fontWeight: '600',
                     minWidth: '70px',
                     background: '#4CC3CB',
@@ -204,7 +204,6 @@ const WeatherPage: React.FC = () => {
               <p
                 style={{
                   width: '15%',
-                  fontSize: '14px',
                   fontWeight: 600,
                   margin: '0 0 0 10px',
                 }}>
@@ -228,7 +227,7 @@ const WeatherPage: React.FC = () => {
                         flex: '1',
                       }}>
                       <div>
-                        <p style={{ fontSize: '14px', fontWeight: 600 }}>
+                        <p style={{ fontWeight: 600 }}>
                           {getDayAbbreviation(ele.datetime)}
                         </p>
                         <Image
@@ -236,7 +235,7 @@ const WeatherPage: React.FC = () => {
                           alt=""
                           height={'32px'}
                         />
-                        <p style={{ fontSize: '16px', fontWeight: 400 }}>
+                        <p style={{ fontWeight: 400 }}>
                           {ele.temp+'°C'}
                         </p>
                       </div>
