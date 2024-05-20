@@ -41,7 +41,7 @@ const ContextProvider: FC<{
     sessionStorage.getItem('conversationId')
   );
   const [isDown, setIsDown] = useState(false);
-  const [showDialerPopup, setShowDialerPopup] = useState(false);
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [currentQuery, setCurrentQuery] = useState('');
   // const [isConnected, setIsConnected] = useState(newSocket?.connected || false);
   const [cookie, setCookie, removeCookie] = useCookies();
@@ -682,8 +682,8 @@ const ContextProvider: FC<{
       newSocket,
       isDown,
       fetchIsDown,
-      showDialerPopup,
-      setShowDialerPopup,
+      showFeedbackPopup,
+      setShowFeedbackPopup,
       currentQuery,
       setCurrentQuery,
       playAudio,
@@ -715,8 +715,8 @@ const ContextProvider: FC<{
       newSocket,
       isDown,
       fetchIsDown,
-      showDialerPopup,
-      setShowDialerPopup,
+      showFeedbackPopup,
+      setShowFeedbackPopup,
       currentQuery,
       setCurrentQuery,
       playAudio,

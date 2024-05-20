@@ -4,8 +4,8 @@ import dynamic from "next/dynamic";
 import { useLocalization } from "../hooks/useLocalization";
 import { useContext } from "react";
 import { AppContext } from "../context";
-import styles from "../components/dialer-popup/index.module.css";
-import DialerPopUp from "../components/dialer-popup";
+import styles from "../components/feedback-popup/index.module.css";
+import FeedbackPopup from "../components/feedback-popup";
 import { useConfig } from "../hooks/useConfig";
 
 const ChatUi = dynamic(() => import("../components/chat-window"), {
@@ -24,14 +24,13 @@ const Chat: NextPage = () => {
         <link rel="icon" href={config?.favicon} />
         
       </Head>
-      {context?.showDialerPopup && (
+      {context?.showFeedbackPopup && (
         <div
           className={styles.overlay}
-          // onClick={() => context?.setShowDialerPopup(false)}
+          // onClick={() => context?.setShowFeedbackPopup(false)}
         >
-          {/* Only render the DialerPopup component when showDialerPopup is true */}
-          {context?.showDialerPopup && (
-            <DialerPopUp setShowDialerPopup={context?.setShowDialerPopup} />
+          {context?.showFeedbackPopup && (
+            <FeedbackPopup setShowFeedbackPopup={context?.setShowFeedbackPopup} />
           )}
         </div>
       )}

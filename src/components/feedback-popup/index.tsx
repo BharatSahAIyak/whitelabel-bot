@@ -12,7 +12,7 @@ import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
 
-const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
+const FeedbackPopup: React.FC<any> = ({ setShowFeedbackPopup }) => {
   const t = useLocalization();
   const [reviewSubmitted, reviewSubmitError] = useMemo(
     () => [t('message.review_submitted'), t('error.fail_to_submit_review')],
@@ -45,9 +45,9 @@ const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
         } as Partial<XMessage>
       });
       context?.setCurrentQuery('');
-      setShowDialerPopup(false);
+      setShowFeedbackPopup(false);
     },
-    [reviewSubmitError, reviewSubmitted, setShowDialerPopup]
+    [reviewSubmitError, reviewSubmitted, setShowFeedbackPopup]
   );
 
   const handleInputChange = (e: any) => {
@@ -67,9 +67,8 @@ const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
       <div
         className={styles.crossIconBox}
         onClick={() => {
-          console.log("69");
           context?.setCurrentQuery('');
-          setShowDialerPopup(false);
+          setShowFeedbackPopup(false);
           context?.newSocket.sendMessage({
             payload: {
               ...negativeFeedbackPayload
@@ -79,7 +78,7 @@ const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
         <Image src={crossIcon} alt="crossIcon" layout="responsive" />
       </div>
       <p>{t('label.comment')}</p>
-      <div className={styles.dialerBox}>
+      <div className={styles.feedbackBox}>
         <textarea
           ref={inputRef}
           value={review}
@@ -98,4 +97,4 @@ const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
   );
 };
 
-export default DialerPopup;
+export default FeedbackPopup;
