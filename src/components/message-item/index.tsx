@@ -41,17 +41,20 @@ import { divide } from 'lodash';
 import { borderRadius } from '@mui/system';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
+  const { content, type } = message;
   const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
   const [reaction, setReaction] = useState(
-    message?.content?.data?.reaction?.type
+    content?.data?.reaction?.type
   );
   const [optionDisabled, setOptionDisabled] = useState(
-    message?.content?.data?.optionClicked || false
+    content?.data?.optionClicked || false
   );
   const [audioFetched, setAudioFetched] = useState(false);
   const [ttsLoader, setTtsLoader] = useState(false);
   const [popupActive, setPopupActive] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredChoices, setFilteredChoices] = useState([]);
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -67,9 +70,25 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   //   return t('toast.reaction_reset');
   // };
 
+  const handleSearchChange = (e: any) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    if (query) {
+      const results = content?.data?.choices?.choices.filter((item: any) =>
+        item.text.toLowerCase().includes(query)
+      ).slice(0, 3);
+      setFilteredChoices(results);
+    } else {
+      setFilteredChoices([]);
+    }
+  };
+
+  const displayedChoices = searchQuery ? filteredChoices : content?.data?.choices?.choices.slice(0, content?.data?.choices?.isSearchable ? 3 : undefined);
+
   useEffect(() => {
-    setReaction(message?.content?.data?.reaction);
-  }, [message?.content?.data?.reaction]);
+    setReaction(content?.data?.reaction);
+  }, [content?.data?.reaction]);
 
   const onLikeDislike = useCallback(
     ({ value, msgId }: { value: 0 | 1 | -1; msgId: string }) => {
@@ -200,8 +219,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     },
     [context, t, optionDisabled]
   );
-
-  const { content, type } = message;
 
   useEffect(() => {
     if (content?.data?.choices?.choices?.length > 0) {
@@ -388,7 +405,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                   }
             }>
-              {content?.data?.card ? (
+            {content?.data?.card ? (
               <div>
                 <div
                   style={{
@@ -396,7 +413,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     padding: '10px',
                     fontWeight: 600,
                     color: theme?.primary?.main,
-                    textAlign: 'center'
+                    textAlign: 'center',
                   }}>
                   <div>{content?.data?.card?.header?.title}</div>
                   <div>{content?.data?.card?.header?.description}</div>
@@ -404,7 +421,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))'
+                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
                   }}>
                   {content?.data?.card?.content?.cells?.map((cell: any) => {
                     return (
@@ -412,12 +429,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         style={{
                           border: '1px solid #EDEDF1',
                           padding: '10px',
-                          textAlign: 'center'
+                          textAlign: 'center',
                         }}>
                         <div
                           style={{
                             color: theme?.primary?.main,
-                            fontWeight: 600
+                            fontWeight: 600,
                           }}>
                           {cell.header}
                         </div>
@@ -432,37 +449,39 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   {content?.data?.card?.footer?.description}
                 </div>
               </div>
-            ): (
+            ) : (
               <span
-              style={{
-                // fontWeight: 600,
-                fontSize: '1rem',
-                color:
-                  content?.data?.position === 'right'
-                    ? contrastText
-                    : secondaryColor,
-              }}>
+                style={{
+                  // fontWeight: 600,
+                  fontSize: '1rem',
+                  color:
+                    content?.data?.position === 'right'
+                      ? contrastText
+                      : secondaryColor,
+                }}>
                 {content?.text}{' '}
-              {content?.data?.position === 'right'
-                ? null
-                : !content?.data?.isEnd && <BlinkingSpinner />}
-              {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
-                <div
-                  style={{
-                    color:
-                      content?.data?.position === 'right' ? 'yellow' : 'black',
-                    fontSize: '12px',
-                    fontWeight: 'normal',
-                  }}>
-                  <br></br>
-                  <span>messageId: {content?.data?.messageId}</span>
-                  <br></br>
-                  <span>conversationId: {content?.data?.conversationId}</span>
-                </div>
-              )}
-            </span>
+                {content?.data?.position === 'right'
+                  ? null
+                  : !content?.data?.isEnd && <BlinkingSpinner />}
+                {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
+                  <div
+                    style={{
+                      color:
+                        content?.data?.position === 'right'
+                          ? 'yellow'
+                          : 'black',
+                      fontSize: '12px',
+                      fontWeight: 'normal',
+                    }}>
+                    <br></br>
+                    <span>messageId: {content?.data?.messageId}</span>
+                    <br></br>
+                    <span>conversationId: {content?.data?.conversationId}</span>
+                  </div>
+                )}
+              </span>
             )}
-            
+
             {content?.data?.choices?.choices?.length > 0 && (
               <Popup
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
@@ -473,96 +492,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 showClose={false}
                 bgColor="transparent"
                 title={content?.text}>
-                {content?.data?.choices?.choices?.map((item: any) => {
-                  return (
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '10px',
-                        padding: '3px',
-                        color: 'black',
-                        cursor: 'pointer',
-                        borderBottom: '2px solid #DDDDDD',
-                      }}
-                      onClick={() => {
-                        setPopupActive(false);
-                        if(item?.showTextInput){
-                          context?.setGuidedFlow(false);
-                        }
-                        context?.sendMessage(item?.key);
-                      }}>
-                      {item.text}
-                    </div>
-                  );
-                })}
-                {/* {
-                  arrayCrop
-                    .filter(item => item.action)
-                    .map((item: any) => {
-                      return (
-                        !searchView ? (
-                          <div
-                            key={item.id}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              gap: '10px',
-                              padding: '3px',
-                              color: 'black',
-                              cursor: 'pointer',
-                              borderBottom: '2px solid #DDDDDD'
-                            }}
-                            onClick={() => setSearchView(true)}
-                          >
-                            {item?.text}
-                          </div>
-                        ) : (
-                          <div
-                            key={item.id}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              gap: '10px',
-                              padding: '3px',
-                              color: 'black',
-                              cursor: 'pointer',
-                              borderBottom: '2px solid #DDDDDD'
-                            }}
-                          >
-                          <input
-                            rows={1}
-                            value={searchTerm}
-                            onChange={handleSearch}
-                            placeholder="Search..."
-                            style={{
-                              width: "100%",
-                              margin: "0 5px",
-                              padding: '10px',
-                              border: '1px solid #D0D0D0',
-                              borderRadius: '10px'
-                            }}
-                          />
-                          <button
-                            type="submit"
-                            className="sendButton"
-                          >
-                            Send
-                          </button>
-                          </div>
-                        )
-                      );
-                    })
-                } */}
-                {/* {searchResults.map((item: any) => 
-                  {
-                    // console.log({item})
+                {displayedChoices.map((item: any) => {
                     return (
                       <div
-                        key={item?.id}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -571,17 +503,36 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           padding: '3px',
                           color: 'black',
                           cursor: 'pointer',
-                          borderBottom: '2px solid #DDDDDD'
+                          borderBottom: '2px solid #DDDDDD',
                         }}
-          
                         onClick={() => {
-                            setSearchView(false)
-                        }}
-                      >
-                        {item?.text}
+                          setPopupActive(false);
+                          if (item?.showTextInput) {
+                            context?.setGuidedFlow(false);
+                          }
+                          context?.sendMessage(item?.key);
+                        }}>
+                        {item.text}
                       </div>
-                    )} */}
-                {/* )} */}
+                    );
+                  })}
+                {content?.data?.choices?.isSearchable && (
+                  <input
+                    placeholder='Search'
+                    value={searchQuery}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      padding: '8px',
+                      color: 'black',
+                      cursor: 'pointer',
+                      border: 'none',
+                      outline: 'none'
+                    }}
+                    onChange={handleSearchChange} />
+                )}
               </Popup>
             )}
             {/* {getLists({
