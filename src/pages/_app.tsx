@@ -1,23 +1,22 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
-
-import { ReactElement, useCallback, useContext, useEffect, useState } from 'react';
-
+import { ReactElement, useCallback, useEffect } from 'react';
 import '@samagra-x/chatui/dist/index.css';
 import { Toaster } from 'react-hot-toast';
 import { useCookies } from 'react-cookie';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { useLogin } from '../hooks';
-import FeaturePopup from '../components/FeaturePopup';
+import FeaturePopup from '../components/feature-popup';
 import Provider from '../providers';
 import { InstallModal } from '../components/install-modal';
 import { FullPageLoader } from '../components/fullpage-loader';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
-const NavBar = dynamic(() => import('../components/NavBar'), {
+const NavBar = dynamic(() => import('../components/navbar'), {
   ssr: false,
 });
+
 function SafeHydrate({ children }: { children: ReactElement }) {
   return (
     <div suppressHydrationWarning>
@@ -30,9 +29,9 @@ const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const { isAuthenticated, login } = useLogin();
   const [cookie] = useCookies();
- 
+
   useEffect(() => {
-    if(!sessionStorage.getItem('sessionId')){
+    if (!sessionStorage.getItem('sessionId')) {
       sessionStorage.setItem('sessionId', uuidv4());
     }
   }, []);

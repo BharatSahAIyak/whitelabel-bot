@@ -17,7 +17,7 @@
   text-align: center;
 }
 
-.dialerBox {
+.feedbackBox {
   display: flex;
   flex-direction: column;
   margin: 1vh auto;
@@ -49,12 +49,12 @@
   color: white;
 }
 
-.dialerBox textarea {
+.feedbackBox textarea {
   padding: 10px;
   outline: 1px solid var(--secondary);
 }
 
-.dialerBox button {
+.feedbackBox button {
   font-weight: 700 ;
   font-size: 14px;
   color: white ;

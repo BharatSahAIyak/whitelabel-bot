@@ -7,7 +7,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
 import { useConfig } from '../../hooks/useConfig';
-import Sidebar from '../../pageComponents/sidebar';
+import Sidebar from '../sidebar';
 import { recordUserLocation } from '../../utils/location';
 import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';

@@ -89,7 +89,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         });
       } else if (value === -1) {
         context?.setCurrentQuery(msgId);
-        context?.setShowDialerPopup(true);
+        context?.setShowFeedbackPopup(true);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
