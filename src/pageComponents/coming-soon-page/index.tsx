@@ -22,7 +22,7 @@ const ComingSoonPage: React.FC = () => {
         <Box my={15} className={styles.container}>
           <Box mt={5}><Typography variant='h4' sx={{color: theme?.primary?.main, fontWeight: "700"}}>{t("message.coming_soon")}</Typography></Box>
           <Box><Hourglass fillColor={theme?.primary?.main}/></Box>
-          <Box><Typography variant='body1' sx={{fontWeight:"600"}}>{t("message.coming_soon_description")}</Typography></Box>
+          <Box><Typography variant='body1' sx={{fontWeight:"600", textAlign: 'center'}}>{t("message.coming_soon_description")}</Typography></Box>
           <Box my={5}><Button variant='contained' className={styles.backButton} size='large' style={{backgroundColor: theme?.primary?.main}} onClick={handleBack}>{t("label.back")}</Button></Box>
         </Box>
     </>

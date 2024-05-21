@@ -36,11 +36,11 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => 
         null
     );
     
-    useEffect(() => {
-            //@ts-ignore
-            if(config?.translation?.en)
-            setLocaleMsgs(config.translation.en);
-    }, [config]);
+    // useEffect(() => {
+    //         //@ts-ignore
+    //         if(config?.translation?.en)
+    //         setLocaleMsgs(config.translation.en);
+    // }, [config]);
 
     if (typeof window === 'undefined') return <FullPageLoader loading label='Fetching Locale' /> ;
     return (
