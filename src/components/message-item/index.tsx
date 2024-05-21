@@ -487,7 +487,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 backdrop={false}
                 showClose={false}
                 bgColor="transparent"
-                title={content?.text}>
+                // title={content?.text}
+                >
                 {displayedChoices.map((item: any) => {
                     return (
                       <div
