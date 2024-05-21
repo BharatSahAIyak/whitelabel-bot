@@ -274,7 +274,6 @@ const HomePage: NextPage = () => {
   }, [handleKeyDown]);
 
   const sendGuidedMsg = (type: string) => {
-    // convert the string type into stringified array
     context?.setGuidedFlow(true);
     const tags = [type]
     sessionStorage.setItem('tags', JSON.stringify(tags))
@@ -321,7 +320,13 @@ const HomePage: NextPage = () => {
                     {config?.showWeatherAdvisory && (
                       <div
                         className={styles.imgBtn}
-                        onClick={() => router.push('/weather')}
+                        onClick={() => {
+                          if(config?.showWeatherPage){
+                            router.push('/weather')
+                          }else{
+                            sendGuidedMsg('weather')
+                          }
+                        }}
                       >
                         <p>{t('label.weather_advisory')}</p>
                         <img
