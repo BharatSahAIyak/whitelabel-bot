@@ -97,7 +97,7 @@ const HomePage: NextPage = () => {
         })
         .catch((err) => {
           console.log(err)
-          toast.error('Bhashini transliteration failed')
+          toast.error('Transliteration failed')
         })
     } else {
       setSuggestions([])
