@@ -3,8 +3,7 @@
   border-radius: 5px;
   position: relative;
   z-index: 1;
-  height: 20vw;
-  min-height: 350px;
+  height: 350px;
   width: 100vw;
 }
 
@@ -30,4 +29,14 @@
   margin: 10px;
   padding: 5px;
   font-size: 14px;
+}
+
+.cropContainer {
+  border-radius: 5px;
+  height: calc(100dvh - 430px);
+  width: 100vw;
+}
+
+.heading {
+  padding: 10px;
 }
