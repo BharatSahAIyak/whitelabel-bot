@@ -131,10 +131,11 @@ const HomePage: NextPage = () => {
         if (context?.kaliaClicked) {
           context?.sendMessage(
             'Aadhaar number - ' + msg,
+            'Aadhaar number - ' + msg,
             null,
             true
           )
-        } else context?.sendMessage(msg)
+        } else context?.sendMessage(msg, msg)
       } else {
         toast.error(t('error.disconnected'))
         return
