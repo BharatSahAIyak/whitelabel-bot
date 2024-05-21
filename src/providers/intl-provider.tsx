@@ -7,16 +7,16 @@ import { useConfig } from '../hooks/useConfig';
 import mergeConfigurations from '../utils/mergeConfigurations';
 import { ThemeContext } from './theme-provider/theme-context';
 
-function loadMessages(locale: string) {
-    switch (locale) {
-        case 'en':
-            return import('../lang/en.json');
-        // case 'or':
-        //     return import('../../lang/or.json');
-        default:
-            return import('../lang/en.json');
-    }
-}
+// function loadMessages(locale: string) {
+//     switch (locale) {
+//         case 'en':
+//             return import('../lang/en.json');
+//         // case 'or':
+//         //     return import('../../lang/or.json');
+//         default:
+//             return import('../lang/en.json');
+//     }
+// }
 export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => {
   const themeContext = useContext(ThemeContext);
     const [config, setConfig] = useState<any>(null);
@@ -35,13 +35,12 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => 
     const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
         null
     );
-   
+    
     useEffect(() => {
-        loadMessages(locale).then((res) => {
             //@ts-ignore
-            setLocaleMsgs(res);
-        });
-    }, [locale]);
+            if(config?.translation?.en)
+            setLocaleMsgs(config.translation.en);
+    }, [config]);
 
     if (typeof window === 'undefined') return <FullPageLoader loading label='Fetching Locale' /> ;
     return (
