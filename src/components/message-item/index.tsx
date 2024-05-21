@@ -45,9 +45,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
   const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
-  const [reaction, setReaction] = useState(
-    content?.data?.reaction?.type
-  );
+  const [reaction, setReaction] = useState(content?.data?.reaction?.type);
   const [optionDisabled, setOptionDisabled] = useState(
     content?.data?.optionClicked || false
   );
@@ -76,16 +74,21 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     setSearchQuery(query);
 
     if (query) {
-      const results = content?.data?.choices?.choices.filter((item: any) =>
-        item.text.toLowerCase().includes(query)
-      ).slice(0, 3);
+      const results = content?.data?.choices?.choices
+        .filter((item: any) => item.text.toLowerCase().includes(query))
+        .slice(0, 3);
       setFilteredChoices(results);
     } else {
       setFilteredChoices([]);
     }
   };
 
-  const displayedChoices = searchQuery ? filteredChoices : content?.data?.choices?.choices?.slice(0, content?.data?.choices?.isSearchable ? 3 : undefined);
+  const displayedChoices = searchQuery
+    ? filteredChoices
+    : content?.data?.choices?.choices?.slice(
+        0,
+        content?.data?.choices?.isSearchable ? 3 : undefined
+      );
 
   useEffect(() => {
     setReaction(content?.data?.reaction);
@@ -323,16 +326,15 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     };
 
     const fetchData = async () => {
-      if (
-        !content?.data?.audio_url &&
-        content?.data?.position === 'left'
-      ) {
+      if (!content?.data?.audio_url && content?.data?.position === 'left') {
         const toastId = toast.loading(`${t('message.download_audio')}`);
         setTimeout(() => {
           toast.dismiss(toastId);
         }, 1500);
-        const text = content?.data?.card ? content?.data?.card?.footer?.title : content?.text;
-        const audioUrl = await fetchAudio(text ?? "No text found");
+        const text = content?.data?.card
+          ? content?.data?.card?.footer?.title
+          : content?.text;
+        const audioUrl = await fetchAudio(text ?? 'No text found');
 
         setTtsLoader(false);
         if (audioUrl) {
@@ -420,24 +422,27 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         <div
                           style={{
                             color: theme?.primary?.main,
-                            fontWeight: 600,
                           }}>
-                          {cell.header}
+                          <RichText content={cell?.header} />
                         </div>
-                        <div>{cell.footer}</div>
+                        <div>
+                          <RichText content={cell?.footer} />
+                        </div>
                       </div>
                     );
                   })}
                 </div>
-                <div
+                {content?.data?.card?.footer && <div
                   style={{ padding: '20px', borderTop: '1px solid #EDEDF1' }}>
                   <div>
                     <RichText content={content?.data?.card?.footer?.title} />
                   </div>
                   <div>
-                    <RichText content={content?.data?.card?.footer?.description} />
+                    <RichText
+                      content={content?.data?.card?.footer?.description}
+                    />
                   </div>
-                </div>
+                </div>}
               </div>
             ) : (
               <span
@@ -475,59 +480,60 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             {content?.data?.choices?.choices?.length > 0 && (
               <Popup
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={content?.data?.choices?.isSearchable ? "70vh" : "15vh"}
+                height={content?.data?.choices?.isSearchable ? '70vh' : '15vh'}
                 onClose={() => {}}
                 active={popupActive}
                 backdrop={false}
                 showClose={false}
                 bgColor="transparent"
-                title={content?.data?.choices?.header}
-                >
+                title={content?.data?.choices?.header}>
                 {displayedChoices.map((item: any) => {
-                    return (
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '10px',
-                          padding: '3px',
-                          color: 'black',
-                          cursor: 'pointer',
-                          borderBottom: '2px solid #DDDDDD',
-                        }}
-                        onClick={() => {
-                          setPopupActive(false);
-                          if (item?.showTextInput) {
-                            context?.setGuidedFlow(false);
-                          }
-                          context?.sendMessage(item?.key, item?.text);
-                        }}>
-                        {item.text}
-                      </div>
-                    );
-                  })}
+                  return (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '3px',
+                        color: 'black',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #DDDDDD',
+                      }}
+                      onClick={() => {
+                        setPopupActive(false);
+                        if (item?.showTextInput) {
+                          context?.setGuidedFlow(false);
+                        }
+                        context?.sendMessage(item?.key, item?.text);
+                      }}>
+                      {item.text}
+                    </div>
+                  );
+                })}
                 {content?.data?.choices?.isSearchable && (
-                  <div style={{
-                    padding: '10px',
-                    background: '#F4F4F4'
-                  }}>
-                    <input
-                    placeholder='Search'
-                    value={searchQuery}
+                  <div
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '100%',
                       padding: '10px',
-                      color: 'black',
-                      cursor: 'pointer',
-                      border: 'none',
-                      outline: 'none',
-                      borderRadius: '10px'
-                    }}
-                    onChange={handleSearchChange} />
+                      background: '#F4F4F4',
+                    }}>
+                    <input
+                      placeholder="Search"
+                      value={searchQuery}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        padding: '10px',
+                        color: 'black',
+                        cursor: 'pointer',
+                        border: 'none',
+                        outline: 'none',
+                        borderRadius: '10px',
+                      }}
+                      onChange={handleSearchChange}
+                    />
                   </div>
                 )}
               </Popup>
@@ -623,67 +629,68 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     </div>
                   </div>
                 )}
-                {config?.allowFeedback && (!context?.guidedFlow || content?.data?.card) && (
-                  <div className={styles.msgFeedback}>
-                    <div
-                      className={styles.msgFeedbackIcons}
-                      style={{
-                        border: `1px solid ${theme?.primary?.main}`,
-                      }}>
+                {config?.allowFeedback &&
+                  (!context?.guidedFlow || content?.data?.card) && (
+                    <div className={styles.msgFeedback}>
                       <div
+                        className={styles.msgFeedbackIcons}
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          flexDirection: 'column',
-                          paddingRight: '6px',
-                        }}
-                        onClick={() =>
-                          feedbackHandler({
-                            like: 1,
-                            msgId: content?.data?.messageId,
-                          })
-                        }>
-                        <MsgThumbsUp fill={reaction === 1} width="20px" />
-                        <p
+                          border: `1px solid ${theme?.primary?.main}`,
+                        }}>
+                        <div
                           style={{
-                            fontSize: '11px',
-                            // fontFamily: 'Mulish-bold',
-                          }}>
-                          {t('label.helpful')}
-                        </p>
-                      </div>
-                      <div
-                        style={{
-                          height: '32px',
-                          width: '1px',
-                          backgroundColor: theme?.primary?.main,
-                          margin: '6px 0',
-                        }}></div>
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexDirection: 'column',
+                            paddingRight: '6px',
+                          }}
+                          onClick={() =>
+                            feedbackHandler({
+                              like: 1,
+                              msgId: content?.data?.messageId,
+                            })
+                          }>
+                          <MsgThumbsUp fill={reaction === 1} width="20px" />
+                          <p
+                            style={{
+                              fontSize: '11px',
+                              // fontFamily: 'Mulish-bold',
+                            }}>
+                            {t('label.helpful')}
+                          </p>
+                        </div>
+                        <div
+                          style={{
+                            height: '32px',
+                            width: '1px',
+                            backgroundColor: theme?.primary?.main,
+                            margin: '6px 0',
+                          }}></div>
 
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          flexDirection: 'column',
-                        }}
-                        onClick={() =>
-                          feedbackHandler({
-                            like: -1,
-                            msgId: content?.data?.messageId,
-                          })
-                        }>
-                        <MsgThumbsDown fill={reaction === -1} width="20px" />
-                        <p
+                        <div
                           style={{
-                            fontSize: '11px',
-                            // fontFamily: 'Mulish-bold',
-                          }}>
-                          {t('label.not_helpful')}
-                        </p>
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexDirection: 'column',
+                          }}
+                          onClick={() =>
+                            feedbackHandler({
+                              like: -1,
+                              msgId: content?.data?.messageId,
+                            })
+                          }>
+                          <MsgThumbsDown fill={reaction === -1} width="20px" />
+                          <p
+                            style={{
+                              fontSize: '11px',
+                              // fontFamily: 'Mulish-bold',
+                            }}>
+                            {t('label.not_helpful')}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             )
           )}
