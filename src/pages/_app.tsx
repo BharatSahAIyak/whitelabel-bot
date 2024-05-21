@@ -28,7 +28,7 @@ function SafeHydrate({ children }: { children: ReactElement }) {
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const { isAuthenticated, login } = useLogin();
-  const [cookie] = useCookies();
+  const [cookie, setCookie, removeCookie] = useCookies();
 
   useEffect(() => {
     if (!sessionStorage.getItem('sessionId')) {
@@ -47,6 +47,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       if (!cookie['access_token'] || !localStorage.getItem('userID')) {
         localStorage.clear();
         sessionStorage.clear();
+        removeCookie('access_token', { path: '/' })
         router.push('/login');
       }
     }

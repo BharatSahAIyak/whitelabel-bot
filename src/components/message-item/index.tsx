@@ -84,7 +84,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     }
   };
 
-  const displayedChoices = searchQuery ? filteredChoices : content?.data?.choices?.choices.slice(0, content?.data?.choices?.isSearchable ? 3 : undefined);
+  const displayedChoices = searchQuery ? filteredChoices : content?.data?.choices?.choices?.slice(0, content?.data?.choices?.isSearchable ? 3 : undefined);
 
   useEffect(() => {
     setReaction(content?.data?.reaction);
@@ -324,14 +324,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     const fetchData = async () => {
       if (
         !content?.data?.audio_url &&
-        content?.data?.position === 'left' &&
-        content?.text
+        content?.data?.position === 'left'
       ) {
         const toastId = toast.loading(`${t('message.download_audio')}`);
         setTimeout(() => {
           toast.dismiss(toastId);
         }, 1500);
-        const audioUrl = await fetchAudio(content?.text);
+        const text = content?.data?.card ? content?.data?.card?.footer?.description : content?.text;
+        const audioUrl = await fetchAudio(text ?? "No text found");
 
         setTtsLoader(false);
         if (audioUrl) {
@@ -418,11 +418,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   <div>{content?.data?.card?.header?.title}</div>
                   <div>{content?.data?.card?.header?.description}</div>
                 </div>
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-                  }}>
+                <div>
                   {content?.data?.card?.content?.cells?.map((cell: any) => {
                     return (
                       <div
@@ -485,7 +481,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             {content?.data?.choices?.choices?.length > 0 && (
               <Popup
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={'100px'}
+                height={content?.data?.choices?.isSearchable ? "70vh" : "15vh"}
                 onClose={() => {}}
                 active={popupActive}
                 backdrop={false}
@@ -517,7 +513,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     );
                   })}
                 {content?.data?.choices?.isSearchable && (
-                  <input
+                  <div style={{
+                    padding: '10px',
+                    background: '#F4F4F4'
+                  }}>
+                    <input
                     placeholder='Search'
                     value={searchQuery}
                     style={{
@@ -525,13 +525,15 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       width: '100%',
-                      padding: '8px',
+                      padding: '10px',
                       color: 'black',
                       cursor: 'pointer',
                       border: 'none',
-                      outline: 'none'
+                      outline: 'none',
+                      borderRadius: '10px'
                     }}
                     onChange={handleSearchChange} />
+                  </div>
                 )}
               </Popup>
             )}
@@ -626,7 +628,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     </div>
                   </div>
                 )}
-                {config?.allowFeedback && (
+                {config?.allowFeedback && (!context?.guidedFlow || content?.data?.card) && (
                   <div className={styles.msgFeedback}>
                     <div
                       className={styles.msgFeedbackIcons}
