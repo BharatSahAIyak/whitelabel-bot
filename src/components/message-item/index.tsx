@@ -7,6 +7,7 @@ import {
   FileCard,
   Typing,
   Popup,
+  RichText,
 } from '@samagra-x/chatui';
 import {
   FC,
@@ -330,7 +331,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         setTimeout(() => {
           toast.dismiss(toastId);
         }, 1500);
-        const text = content?.data?.card ? content?.data?.card?.footer?.description : content?.text;
+        const text = content?.data?.card ? content?.data?.card?.footer?.title : content?.text;
         const audioUrl = await fetchAudio(text ?? "No text found");
 
         setTtsLoader(false);
@@ -349,17 +350,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     }
   }, [handleAudio, content?.data, content?.text, t]);
 
-  const getFormattedDate = (datestr: string) => {
-    const today = new Date(datestr);
-    const yyyy = today.getFullYear();
-    let mm: any = today.getMonth() + 1; // Months start at 0!
-    let dd: any = today.getDate();
-
-    if (dd < 10) dd = '0' + dd;
-    if (mm < 10) mm = '0' + mm;
-
-    return dd + '/' + mm + '/' + yyyy;
-  };
   const parseWeatherJson = (data: any) => {
     if (!data || data.length === 0) {
       console.error('Data is undefined or empty.');
@@ -441,8 +431,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 </div>
                 <div
                   style={{ padding: '20px', borderTop: '1px solid #EDEDF1' }}>
-                  {content?.data?.card?.footer?.title}
-                  {content?.data?.card?.footer?.description}
+                  <div>
+                    <RichText content={content?.data?.card?.footer?.title} />
+                  </div>
+                  <div>
+                    <RichText content={content?.data?.card?.footer?.description} />
+                  </div>
                 </div>
               </div>
             ) : (
@@ -487,7 +481,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 backdrop={false}
                 showClose={false}
                 bgColor="transparent"
-                // title={content?.text}
+                title={content?.data?.choices?.header}
                 >
                 {displayedChoices.map((item: any) => {
                     return (
