@@ -170,7 +170,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     }`
                   );
                 } else {
-                  context?.sendMessage(choice?.key, false, true, choice);
+                  context?.sendMessage(choice?.key, choice?.text);
                   setOptionDisabled(true);
                   setTimeout(
                     () =>
@@ -501,7 +501,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           if (item?.showTextInput) {
                             context?.setGuidedFlow(false);
                           }
-                          context?.sendMessage(item?.key);
+                          context?.sendMessage(item?.key, item?.text);
                         }}>
                         {item.text}
                       </div>

@@ -429,7 +429,8 @@ const ContextProvider: FC<{
   console.log('config:', { config });
   //@ts-ignore
   const sendMessage = useCallback(
-    async (text: string, media: any, isVisibile = true) => {
+    async (textToSend: string, textToShow: string, media: any, isVisibile = true) => {
+      if(!textToShow) textToShow = textToSend;
       if (!sessionStorage.getItem('conversationId')) {
         const cId = uuidv4();
         console.log('convId', cId);
@@ -446,7 +447,7 @@ const ContextProvider: FC<{
       // console.log('mssgs:', messages)
       setLoading(true);
       setIsMsgReceiving(true);
-      console.log('my mssg:', text);
+      console.log('my mssg:', textToSend, textToShow);
       console.log('s2tMsgId:', s2tMsgId);
       const messageId = s2tMsgId ? s2tMsgId : uuidv4();
       console.log('s2t messageId:', messageId);
@@ -454,7 +455,7 @@ const ContextProvider: FC<{
         payload: {
           app: process.env.NEXT_PUBLIC_BOT_ID || '',
           payload: {
-            text: text?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
+            text: textToSend?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
             metaData: {
               latitude: sessionStorage.getItem('latitude'),
               longitude: sessionStorage.getItem('longitude'),
@@ -489,9 +490,9 @@ const ContextProvider: FC<{
           setMessages((prev: any) => [
             ...prev.map((prevMsg: any) => ({ ...prevMsg, disabled: true })),
             {
-              text: text?.replace(/^\s+|\s+$/g, '')?.replace(/^Guided:/, ''),
+              text: textToShow?.replace(/^\s+|\s+$/g, '')?.replace(/^Guided:/, ''),
               position: 'right',
-              payload: { text },
+              payload: { textToShow },
               time: Date.now(),
               disabled: true,
               messageId: messageId,
@@ -508,7 +509,7 @@ const ContextProvider: FC<{
           phoneNumber: localStorage.getItem('phoneNumber') || '',
           conversationId: sessionStorage.getItem('conversationId') || '',
           messageId: messageId,
-          text: text,
+          text: textToSend,
           createdAt: Math.floor(new Date().getTime() / 1000),
         });
       } catch (err) {

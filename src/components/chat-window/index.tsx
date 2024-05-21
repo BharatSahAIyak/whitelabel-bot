@@ -105,7 +105,7 @@ const ChatUiWindow: React.FC = () => {
       }
       console.log('mssgs:', context?.messages);
       if (type === 'text' && msg.trim()) {
-        context?.sendMessage(msg.trim());
+        context?.sendMessage(msg.trim(), msg.trim());
       }
     },
     [context, t]
