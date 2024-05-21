@@ -1,29 +1,22 @@
-import * as React from 'react'
-import Backdrop from '@mui/material/Backdrop'
-import Modal from '@mui/material/Modal'
-import Fade from '@mui/material/Fade'
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded'
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
-import { Button, List, Typography } from '@mui/material'
-import { useColorPalates } from '../../providers/theme-provider/hooks'
-const style = {
-  position: 'absolute' as const,
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '95vw',
-  maxWidth: '500px',
-  backgroundColor: '#fff',
-  padding: '20px',
-  border: 'none',
-  borderRadius: '5px',
-}
+import * as React from 'react';
+import styles from './index.module.css';
+import Backdrop from '@mui/material/Backdrop';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import { Button, List, Typography } from '@mui/material';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
-const WeatherAdvisoryPopup = () => {
-  const [open, setOpen] = React.useState(true)
+const WeatherAdvisoryPopup = (props: any) => {
+  const [open, setOpen] = React.useState(true);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-  const handleClose = () => setOpen(false)
+  const handleClose = () => {
+    setOpen(false);
+    props?.setShowWeatherAdvisoryPopup(false);
+  };
 
   const weatherDetails = [
     {
@@ -35,9 +28,9 @@ const WeatherAdvisoryPopup = () => {
       id: 2,
       label: 'तूफ़ान गुज़रने तक उन्हें शांत और सुरक्षित स्थान पर रखें।',
     },
-  ]
+  ];
 
-  const theme = useColorPalates()
+  const theme = useColorPalates();
   return (
     <div>
       <Modal
@@ -51,10 +44,9 @@ const WeatherAdvisoryPopup = () => {
           backdrop: {
             timeout: 500,
           },
-        }}
-      >
+        }}>
         <Fade in={open}>
-          <div style={style}>
+          <div className={styles.container}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <p
                 style={{
@@ -62,9 +54,8 @@ const WeatherAdvisoryPopup = () => {
                   color: '#023035',
                   fontWeight: 600,
                   fontSize: '20px',
-                }}
-              >
-                मंगलवार को आंधी आने की अनुमान
+                }}>
+                फ़सल सलाह - {props?.cropName}
               </p>
               <CloseRoundedIcon onClick={handleClose} />
             </div>
@@ -74,8 +65,7 @@ const WeatherAdvisoryPopup = () => {
                 height: '1px',
                 borderColor: 'black',
                 backgroundColor: '#B4B9C5',
-              }}
-            ></div>
+              }}></div>
             <div className="text-center p-3">
               <List dense>
                 {weatherDetails.map((item) => (
@@ -84,24 +74,21 @@ const WeatherAdvisoryPopup = () => {
                       display: 'flex',
                       alignItems: 'flex-start',
                       textAlign: 'start',
-                    }}
-                  >
+                    }}>
                     <span
                       style={{
                         marginRight: '8px',
                         color: 'black',
                         fontSize: '16px',
                         fontWeight: 500,
-                      }}
-                    >{`${item.id}.`}</span>
+                      }}>{`${item.id}.`}</span>
                     <Typography
                       color="black"
                       style={{
                         wordBreak: 'break-word',
                         fontSize: '16px',
                         fontWeight: 500,
-                      }}
-                    >
+                      }}>
                       {item.label}
                     </Typography>
                   </div>
@@ -109,22 +96,22 @@ const WeatherAdvisoryPopup = () => {
               </List>
               <p
                 style={{
-                  color: theme.primary.dark,
+                  color: theme.primary.main,
                   fontSize: '13px',
                   fontWeight: 600,
-                }}
-              >
+                  display: 'flex',
+                  alignItems: 'center',
+                }}>
                 <span
-                  className="rounded-circle "
+                  className="rounded-circle"
                   style={{
                     width: '20px',
                     height: '20px',
                     marginRight: '4px',
-                  }}
-                >
+                  }}>
                   <CheckCircleRoundedIcon
                     color="success"
-                    style={{ fontSize: '14px' }}
+                    style={{ fontSize: '16px' }}
                   />
                 </span>
                 वेरिफ़िएड बय ओडिशा कृषि एवं प्रौद्योगिकी विश्वविद्यालय
@@ -135,17 +122,18 @@ const WeatherAdvisoryPopup = () => {
                 style={{
                   marginTop: '30px',
                   backgroundColor: `${theme.primary.dark}`,
+                  color: theme.primary.main,
                   padding: '8px 0',
                 }}
-              >
-                जानिए इसके बारे में
+                startIcon={<VolumeUpIcon />}>
+                सुनने के लिए यहां क्लिक करें
               </Button>
             </div>
           </div>
         </Fade>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default WeatherAdvisoryPopup
+export default WeatherAdvisoryPopup;

@@ -25,6 +25,7 @@ const WeatherPage: React.FC = () => {
   const [weather, setWeather] = useState<any>(null);
   const [isNight, setIsNight] = useState(false);
   const [showWeatherAdvisoryPopup, setShowWeatherAdvisoryPopup] = useState(false);
+  const [selectedCrop, setSelectedCrop] = useState<string>('');
   console.log({ config });
   const theme = useColorPalates();
 
@@ -117,11 +118,7 @@ const WeatherPage: React.FC = () => {
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"></meta>
-        {
-          showWeatherAdvisoryPopup && (
-            <WeatherAdvisoryPopup/>
-          )
-        }
+      {showWeatherAdvisoryPopup && <WeatherAdvisoryPopup cropName={selectedCrop} setShowWeatherAdvisoryPopup={setShowWeatherAdvisoryPopup} />}
       <div className={styles.container}>
         <Image src={isNight ? NightBg : SunnyBg} layout="fill" />
         <div className={styles.weatherText}>
@@ -267,7 +264,12 @@ const WeatherPage: React.FC = () => {
         <div className={styles.heading} style={{ background: '#DFF6D1' }}>
           आज की फ़सल सलाह
         </div>
-        <Grid container columns={3} overflow={'auto'} height={'calc(100% - 50px)'} justifyContent={'center'}>
+        <Grid
+          container
+          columns={3}
+          overflow={'auto'}
+          height={'calc(100% - 50px)'}
+          justifyContent={'center'}>
           {[
             'banana',
             'Arhar',
@@ -288,10 +290,9 @@ const WeatherPage: React.FC = () => {
                   boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
                   borderRadius: '5px',
                   margin: '5px',
-                  width: '29%'
+                  width: '29%',
                 }}
-                onClick={() => setShowWeatherAdvisoryPopup(true)}
-                >
+                onClick={() => {setShowWeatherAdvisoryPopup(true); setSelectedCrop(ele)}}>
                 <Image
                   src={`/crops/${ele}.jpeg`}
                   alt=""
