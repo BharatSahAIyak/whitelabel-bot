@@ -10,11 +10,11 @@ import { ThemeContext } from './theme-provider/theme-context';
 // function loadMessages(locale: string) {
 //     switch (locale) {
 //         case 'en':
-//             return import('../../lang/en.json');
+//             return import('../lang/en.json');
 //         // case 'or':
 //         //     return import('../../lang/or.json');
 //         default:
-//             return import('../../lang/en.json');
+//             return import('../lang/en.json');
 //     }
 // }
 export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => {
@@ -35,13 +35,12 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => 
     const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
         null
     );
-   
-    // useEffect(() => {
-    //     loadMessages(locale).then((res) => {
-    //         //@ts-ignore
-    //         setLocaleMsgs(res);
-    //     });
-    // }, [locale]);
+    
+    useEffect(() => {
+            //@ts-ignore
+            if(config?.translation?.en)
+            setLocaleMsgs(config.translation.en);
+    }, [config]);
 
     if (typeof window === 'undefined') return <FullPageLoader loading label='Fetching Locale' /> ;
     return (
