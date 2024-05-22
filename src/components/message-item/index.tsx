@@ -331,8 +331,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         setTimeout(() => {
           toast.dismiss(toastId);
         }, 1500);
-        const text = content?.data?.card
-          ? content?.data?.card?.footer?.title
+        const text = content?.data?.card?.content?.cells
+          ? content?.data?.card?.content?.cells?.map((cell: any) => {
+            const texts = [];
+            if (cell.header) texts.push(cell.header);
+            if (cell.footer) texts.push(cell.footer);
+            return texts.join(' ');
+          })
+          .join(' ')
           : content?.text;
         const audioUrl = await fetchAudio(text ?? 'No text found');
 
