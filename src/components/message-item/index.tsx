@@ -518,7 +518,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       background: '#F4F4F4',
                     }}>
                     <input
-                      placeholder="Search"
+                      placeholder={t("label.buttons_search_placeholder") || "Search"}
                       value={searchQuery}
                       style={{
                         display: 'flex',
