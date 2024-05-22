@@ -167,6 +167,7 @@
       "label.feedback": "Feedback",
       "label.new_chat": "New chat",
       "label.subtitle": "Ama Krushi AI Chatbot",
+      "label.buttons_search_placeholder": "Please type your crop name",
       "message.rating": "Did you find this useful?",
       "message.review": "Write your review (optional)",
       "error.empty_msg": "Please type or select a message to send.",
