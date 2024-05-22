@@ -11,7 +11,7 @@
   },
   "component": {
     "botDetails": {
-      "favicon": "http://cdn-api.staging.bhasai.samagra.io:443/deployer/favicon.ico",
+      "favicon": "",
       "scrollbarColor": "#1e6231",
       "healthCheckTime": 5,
       "timer1": 30000,
@@ -21,8 +21,8 @@
     },
     "homePage": {
       "showKalia": false,
-      "showWeatherAdvisory": true,
-      "showPlantProtection": true,
+      "showWeatherAdvisory": false,
+      "showPlantProtection": false,
       "weatherAdvisoryImg": "",
       "plantProtectionImg": "",
       "kaliaStatusImg": "",
@@ -46,27 +46,26 @@
       "showLanguageToggle": true,
       "languageCode_1": "en",
       "languageLabel1": "ENG",
-      "languageLabel2": "ଓଡିଆ",
-      "languageCode_2": "or",
+      "languageLabel2": "ENG",
+      "languageCode_2": "",
       "showHamburgerMenu": true,
       "showHomeIcon": true,
       "showCenterLogo": false,
-      "centerLogoSrc": "https://www.amakrushi.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=64&q=75",
-      "showRightLogo1": true,
-      "rightLogo1Src": "https://app.staging.akai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo-green.db3a25d1.png&w=128&q=75",
-      "showRightLogo2": true,
-      "rightLogo2Src": "https://app.staging.akai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fphone.50753eec.png&w=128&q=75",
-      "showRightLogo3": true,
-      "rightLogo3Src": "https://app.staging.akai.samagra.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fkrushak_odisha.ebf64370.png&w=128&q=75",
+      "centerLogoSrc": "",
+      "showRightLogo1": false,
+      "rightLogo1Src": "",
+      "showRightLogo2": false,
+      "rightLogo2Src": "",
+      "showRightLogo3": false,
+      "rightLogo3Src": "",
       "centerLogoSize": "60px",
-      "logoTitleColor": "green",
-      "newChatButtonColor": "orange"
+      "logoTitleColor": "#1e6231",
+      "newChatButtonColor": "#1e6231"
     },
     "sidebar": {
-      "backgroudColor": "green",
       "showLangSwitcher": true,
       "languageToggleColor": "#209653",
-      "sidebarBackground": "#1D6231",
+      "sidebarBackground": "#1e6231",
       "faqPage": true,
       "feedbackPage": true,
       "historyPage": true,
@@ -116,6 +115,7 @@
       "showSplitedView": true,
       "logowidth": "320px",
       "logoheight": "280px",
+      "showLogo": false,
       "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png"
     },
     "historyPage": {
@@ -124,15 +124,15 @@
       "showTimestamp": true
     },
     "launchPage": {
-      "logo": "src/pages/launch-page/krushak_odisha.png",
-      "showLaunchPage": true,
+      "logo": "",
+      "showLaunchPage": false,
       "launchPageColor": "#d2f4df"
     },
     "share-buttons": {
       "allowDownloadChat": true,
       "allowShareChat": true,
-      "shareButtonColor": "orange",
-      "downloadButtonColor": "orange"
+      "shareButtonColor": "#1e6231",
+      "downloadButtonColor": "#1e6231"
     }
   },
   "translation":{
@@ -148,7 +148,7 @@
       "label.click": "Reload",
       "label.share": "Share",
       "label.speak": "Speak",
-      "label.title": "Ama Krushi AI Chatbot",
+      "label.title": "Stencil Bot",
       "label.ask_me": "Ask me anything about farming",
       "label.farmer": "Farmer",
       "label.logout": "Logout",
@@ -166,12 +166,12 @@
       "label.download": "Download",
       "label.feedback": "Feedback",
       "label.new_chat": "New chat",
-      "label.subtitle": "Ama Krushi AI Chatbot",
+      "label.subtitle": "Stencil Bot",
       "label.buttons_search_placeholder": "Please type your crop name",
       "message.rating": "Did you find this useful?",
       "message.review": "Write your review (optional)",
       "error.empty_msg": "Please type or select a message to send.",
-      "label.tab_title": "Ama Krushi AI Chatbot",
+      "label.tab_title": "Stencil Bot",
       "message.helpful": "Was this helpful?",
       "message.no_link": "Something went wrong, please try later.",
       "message.options": "To know the advisory for your crop, please click on the relevant button below:",
@@ -251,7 +251,7 @@
       "message.comment_description": "Let us know your issue with the response",
       "message.register_at_krushak": "Register at Krushak Odisha",
       "message.wait_before_choosing": "Please wait before choosing again",
-      "message.return_to_home_screen": "Return to Ama Krushi AI Chatbot",
+      "message.return_to_home_screen": "Return to Stencil Bot",
       "message.socket_disconnect_msg": "to connect again.",
       "message.shareUrl_android_error": "Share feature coming soon, please download pdf to share",
       "message.coming_soon_description": "We are going to launch this feature very soon. Stay tuned!",
