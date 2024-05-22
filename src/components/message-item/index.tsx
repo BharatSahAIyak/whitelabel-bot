@@ -509,7 +509,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       onClick={() => {
                         setPopupActive(false);
                         if (item?.showTextInput) {
-                          context?.setGuidedFlow(false);
+                          context?.setShowInputBox(true);
                         }
                         context?.sendMessage(item?.key, item?.text);
                       }}>
@@ -636,7 +636,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   </div>
                 )}
                 {config?.allowFeedback &&
-                  (!context?.guidedFlow || content?.data?.card) && (
+                  (!content?.data?.isGuided || content?.data?.card) && (
                     <div className={styles.msgFeedback}>
                       <div
                         className={styles.msgFeedbackIcons}
@@ -908,10 +908,71 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               {`\n` + JSON.parse(content?.text)?.generalAdvice ||
                 '' + `\n\n` + JSON.parse(content?.text)?.buttonDescription ||
                 ''}
-              {getLists({
+                {content?.data?.choices?.choices?.length > 0 && (
+              <Popup
+                isCollapsed={content?.data?.choices?.isCollapsed ?? false}
+                height={content?.data?.choices?.isSearchable ? '70vh' : '15vh'}
+                onClose={() => {}}
+                active={popupActive}
+                backdrop={false}
+                showClose={false}
+                bgColor="transparent"
+                title={content?.data?.choices?.header}>
+                {displayedChoices.map((item: any) => {
+                  return (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '3px',
+                        color: 'black',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #DDDDDD',
+                      }}
+                      onClick={() => {
+                        setPopupActive(false);
+                        if (item?.showTextInput) {
+                          context?.setShowInputBox(true);
+                        }
+                        context?.sendMessage(item?.key, item?.text);
+                      }}>
+                      {item.text}
+                    </div>
+                  );
+                })}
+                {content?.data?.choices?.isSearchable && (
+                  <div
+                    style={{
+                      padding: '10px',
+                      background: '#F4F4F4',
+                    }}>
+                    <input
+                      placeholder={t("label.buttons_search_placeholder") || "Search"}
+                      value={searchQuery}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        padding: '10px',
+                        color: 'black',
+                        cursor: 'pointer',
+                        border: 'none',
+                        outline: 'none',
+                        borderRadius: '10px',
+                      }}
+                      onChange={handleSearchChange}
+                    />
+                  </div>
+                )}
+              </Popup>
+            )}
+              {/* {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
                 isWeather: true,
-              })}
+              })} */}
               {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                 <div
                   style={{

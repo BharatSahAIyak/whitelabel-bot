@@ -133,8 +133,6 @@ const ChatUiWindow: React.FC = () => {
       : normalizeMsgs;
   }, [context?.loading, normalizeMsgs]);
 
-  console.log({guidedFlow: context?.guidedFlow});
-
   if (isDown) {
     return <DowntimePage />;
   } else
@@ -144,7 +142,7 @@ const ChatUiWindow: React.FC = () => {
           btnColor={secondaryColor || 'black'}
           background="var(--bg-color)"
           disableSend={isMsgReceiving}
-          showInput={!context?.guidedFlow}
+          showInput={context?.showInputBox}
           //@ts-ignore
           translation={t}
           showTransliteration={config?.allowTransliteration  && localStorage.getItem('locale') === config?.transliterationOutputLanguage}

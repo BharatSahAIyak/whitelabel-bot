@@ -78,7 +78,7 @@ const Navbar: React.FC = () => {
     const newConversationId = uuidv4();
     sessionStorage.setItem('conversationId', newConversationId);
     sessionStorage.removeItem('tags');
-    context?.setGuidedFlow(false);
+    context?.setShowInputBox(true);
     if (context?.audioElement) context?.audioElement.pause();
     if (context?.setAudioPlaying) context?.setAudioPlaying(false);
     context?.setConversationId(newConversationId);
@@ -159,8 +159,9 @@ const Navbar: React.FC = () => {
               </div>
             )}
             {router.pathname !== '/chat' &&
-            router.pathname !== '/weather' &&
-              isAuthenticated &&
+            router.pathname !== '/weather' && 
+            router.pathname !== '/login' &&
+            router.pathname !== 'otp' &&
               showHamburgerMenu && (
                 <IconButton
                   size="large"

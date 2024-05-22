@@ -53,7 +53,7 @@ const ContextProvider: FC<{
   const [endTime, setEndTime] = useState(Date.now());
   const [s2tMsgId, sets2tMsgId] = useState('');
   const [kaliaClicked, setKaliaClicked] = useState(false);
-  const [guidedFlow, setGuidedFlow] = useState(false);
+  const [showInputBox, setShowInputBox] = useState(true);
 
   useEffect(() => {
     if (
@@ -301,6 +301,7 @@ const ContextProvider: FC<{
                 conversationId: msg.messageId.channelMessageId,
                 sentTimestamp: Date.now(),
                 card: msg?.payload?.card,
+                isGuided: msg?.transformer?.metaData?.isGuided || false,
                 // btns: msg?.payload?.buttonChoices,
                 // audio_url: msg?.content?.audio_url,
                 // metaData: msg.payload?.metaData
@@ -308,10 +309,6 @@ const ContextProvider: FC<{
                 //     : null,
                 ...media,
               };
-
-              if(msg?.payload?.buttonChoices){
-                setGuidedFlow(true);
-              }
 
               updatedMessages.push(newMsg);
               // console.log('useeffect', newMsg.text);
@@ -699,8 +696,8 @@ const ContextProvider: FC<{
       setKaliaClicked,
       s2tMsgId,
       sets2tMsgId,
-      guidedFlow,
-      setGuidedFlow,
+      showInputBox,
+      setShowInputBox,
     }),
     [
       locale,
@@ -732,8 +729,8 @@ const ContextProvider: FC<{
       setKaliaClicked,
       s2tMsgId,
       sets2tMsgId,
-      guidedFlow,
-      setGuidedFlow,
+      showInputBox,
+      setShowInputBox,
     ]
   );
 

@@ -29,7 +29,8 @@
       "showMic": true,
       "micHeight": "143px",
       "micWidth": "143px",
-      "topGap": "75px"
+      "topGap": "75px",
+      "showTapToSpeakText": false
     },
     "chatUI": {
       "allowFeedback": true,

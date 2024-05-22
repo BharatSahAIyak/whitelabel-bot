@@ -276,7 +276,7 @@ const HomePage: NextPage = () => {
 
   const sendGuidedMsg = (type: string) => {
     // convert the string type into stringified array
-    context?.setGuidedFlow(true);
+    context?.setShowInputBox(false);
     const tags = [type]
     sessionStorage.setItem('tags', JSON.stringify(tags))
     sendMessage(`Guided: ${t('label.' + type)}`)
@@ -382,7 +382,7 @@ const HomePage: NextPage = () => {
                 >
                   <RenderVoiceRecorder
                     setInputMsg={setInputMsg}
-                    tapToSpeak={true}
+                    tapToSpeak={config?.showTapToSpeakText}
                   />
                 </div>
               )}
