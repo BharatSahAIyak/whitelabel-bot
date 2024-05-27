@@ -229,7 +229,8 @@ const Navbar: React.FC = () => {
               </div>
             )}
 
-            {showHomeIcon &&
+            {isAuthenticated &&
+            showHomeIcon &&
               router.pathname !== '/' &&
               router.pathname !== '/weather' &&
               router.pathname !== '/chat' && (
