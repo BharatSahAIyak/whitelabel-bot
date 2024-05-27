@@ -98,6 +98,7 @@ const Navbar: React.FC = () => {
           boxShadow: 'none',
           borderBottom: '1px solid lightgray',
           height: router.pathname === '/login' ? '120px' : '80px',
+          fontFamily: 'NotoSans-Regular'
         }}>
         <Toolbar
           style={{
@@ -161,7 +162,7 @@ const Navbar: React.FC = () => {
             {router.pathname !== '/chat' &&
             router.pathname !== '/weather' && 
             router.pathname !== '/login' &&
-            router.pathname !== 'otp' &&
+            router.pathname !== '/otp' &&
               showHamburgerMenu && (
                 <IconButton
                   size="large"
@@ -222,14 +223,13 @@ const Navbar: React.FC = () => {
                 <Typography
                   variant="body1"
                   color={newChatButtonColor ?? 'black'}
-                  sx={{ fontSize: '25px', marginLeft: '5px' }}>
+                  sx={{ fontSize: '26px', marginLeft: '5px', fontFamily: 'NotoSans-Medium', fontWeight: '500' }}>
                   {t('label.new_chat')}
                 </Typography>
               </div>
             )}
 
-            {isAuthenticated &&
-              showHomeIcon &&
+            {showHomeIcon &&
               router.pathname !== '/' &&
               router.pathname !== '/weather' &&
               router.pathname !== '/chat' && (
