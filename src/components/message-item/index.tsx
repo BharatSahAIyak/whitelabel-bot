@@ -355,6 +355,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     }
   }, [handleAudio, content?.data, content?.text, t]);
 
+  // Hide input box if there are buttons
+  useEffect(() => {
+    if(content?.data?.choices?.choices?.length > 0){
+      context?.setShowInputBox(false);
+    }
+  }, [content?.data?.choices?.choices])
+
   const parseWeatherJson = (data: any) => {
     if (!data || data.length === 0) {
       console.error('Data is undefined or empty.');
@@ -401,7 +408,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     gap: '10px'
                   }
                 : {
-                    background: secondaryColor,
+                    background: content?.data?.card ? contrastText: secondaryColor,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                     borderRadius: '15px 15px 15px 0px',
                     padding: '10px, 15px, 10px, 15px',
@@ -436,7 +443,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           }}>
                           <RichText content={cell?.header} />
                         </div>
-                        <div>
+                        <div style={{color: 'var(--font)'}}>
                           <RichText content={cell?.footer} />
                         </div>
                       </div>
@@ -459,7 +466,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               <span
                 style={{
                   // fontWeight: 600,
-                  fontSize: '20px',
+                  fontSize: '16px',
                   color:
                     content?.data?.position === 'right'
                       ? 'var(--font)'
@@ -488,74 +495,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </span>
             )}
 
-            {content?.data?.choices?.choices?.length > 0 && (
-              <Popup
-                isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={content?.data?.choices?.isSearchable ? '70vh' : '15vh'}
-                onClose={() => {}}
-                active={popupActive}
-                backdrop={false}
-                showClose={false}
-                bgColor="transparent"
-                title={content?.data?.choices?.header}
-                titleColor="var(--font)">
-                {displayedChoices.map((item: any) => {
-                  return (
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '10px',
-                        padding: '14px',
-                        color: 'var(--font)',
-                        fontSize: '20px',
-                        fontWeight: '500',
-                        cursor: 'pointer',
-                        borderBottom: '2px solid #DDDDDD',
-                      }}
-                      onClick={() => {
-                        setPopupActive(false);
-                        if (item?.showTextInput) {
-                          context?.setShowInputBox(true);
-                        }
-                        context?.sendMessage(item?.key, item?.text);
-                      }}>
-                      {item.text}
-                    </div>
-                  );
-                })}
-                {content?.data?.choices?.isSearchable && (
-                  <div
-                    style={{
-                      padding: '10px',
-                      background: '#F4F4F4',
-                    }}>
-                    <input
-                      placeholder={t("label.buttons_search_placeholder") || "Search"}
-                      value={searchQuery}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '100%',
-                        height: '45px',
-                        padding: '4px',
-                        color: 'var(--font)',
-                        fontFamily: 'NotoSans-Medium',
-                        fontWeight: '500',
-                        fontSize: '14px',
-                        cursor: 'pointer',
-                        border: 'none',
-                        outline: 'none',
-                        borderRadius: '10px',
-                      }}
-                      onChange={handleSearchChange}
-                    />
-                  </div>
-                )}
-              </Popup>
-            )}
+            
             {/* {getLists({
               choices:
                 content?.data?.payload?.buttonChoices ?? content?.data?.choices,
@@ -712,6 +652,75 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </div>
             )
           )}
+          {content?.data?.choices?.choices?.length > 0 && (
+              <Popup
+                isCollapsed={content?.data?.choices?.isCollapsed ?? false}
+                height={content?.data?.choices?.isSearchable ? '70vh' : '25vh'}
+                onClose={() => {}}
+                active={popupActive}
+                backdrop={false}
+                showClose={false}
+                bgColor="transparent"
+                title={content?.data?.choices?.header}
+                titleColor="var(--font)"
+                titleSize='16px'>
+                {displayedChoices.map((item: any) => {
+                  return (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '14px',
+                        color: 'var(--font)',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #DDDDDD',
+                      }}
+                      onClick={() => {
+                        setPopupActive(false);
+                        if (item?.showTextInput) {
+                          context?.setShowInputBox(true);
+                        }
+                        context?.sendMessage(item?.key, item?.text);
+                      }}>
+                      {item.text}
+                    </div>
+                  );
+                })}
+                {content?.data?.choices?.isSearchable && (
+                  <div
+                    style={{
+                      padding: '10px',
+                      background: '#F4F4F4',
+                    }}>
+                    <input
+                      placeholder={t("label.buttons_search_placeholder") || "Search"}
+                      value={searchQuery}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        height: '45px',
+                        padding: '4px',
+                        color: 'var(--font)',
+                        fontFamily: 'NotoSans-Medium',
+                        fontWeight: '500',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        border: 'none',
+                        outline: 'none',
+                        borderRadius: '10px',
+                      }}
+                      onChange={handleSearchChange}
+                    />
+                  </div>
+                )}
+              </Popup>
+            )}
         </div>
       );
 
@@ -905,7 +914,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <span
               style={{
                 // fontWeight: 600,
-                fontSize: '20px',
+                fontSize: '16px',
                 color:
                   content?.data?.position === 'right' ? contrastText : 'var(--font)',
               }}>
@@ -915,7 +924,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 {content?.data?.choices?.choices?.length > 0 && (
               <Popup
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={content?.data?.choices?.isSearchable ? '70vh' : '15vh'}
+                height={content?.data?.choices?.isSearchable ? '70vh' : '25vh'}
                 onClose={() => {}}
                 active={popupActive}
                 backdrop={false}
