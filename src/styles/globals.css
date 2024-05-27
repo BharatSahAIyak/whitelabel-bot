@@ -10,23 +10,18 @@ body{
 }
 
 @font-face {
-  font-family: Mulish-bold;
-  src: url("../assets/fonts/Mulish-Bold.ttf");
+  font-family: NotoSans-Bold;
+  src: url("../assets/fonts/NotoSans-Bold.ttf");
   font-display: swap;
 }
 @font-face {
-  font-family: Mulish-demi;
-  src: url("../assets/fonts/Mulish-Demi.ttf");
+  font-family: NotoSans-Medium;
+  src: url("../assets/fonts/NotoSans-Medium.ttf");
   font-display: swap;
 }
 @font-face {
-  font-family: Mulish-medium;
-  src: url("../assets/fonts/Mulish-Medium.ttf");
-  font-display: swap;
-}
-@font-face {
-  font-family: Mulish-regular;
-  src: url("../assets/fonts/Mulish-Regular.ttf");
+  font-family: NotoSans-Regular;
+  src: url("../assets/fonts/NotoSans-Regular.ttf");
   font-display: swap;
 }
 ::-webkit-scrollbar {
@@ -44,7 +39,7 @@ body{
 }
 
 :root{
-  --font: #000000B5;
+  --font: #474C5D;
   --lightgrey: #D0D0D0;
   --grey: #828282;
   --darkgrey: #333232;
@@ -57,14 +52,10 @@ body{
 
 body {
   margin: 0;
-  font-family: Mulish-regular !important;
   transition: opacity 200ms;
   position: relative;
-  font-family: Mulish-medium;
+  font-family: NotoSans-Medium !important;
   scroll-behavior: smooth;
-}
-
-body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;

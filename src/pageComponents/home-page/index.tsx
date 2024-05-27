@@ -417,6 +417,7 @@ const HomePage: NextPage = () => {
                     sendMessage(inputMsg);
                   }
                 }}
+                style={{fontFamily: 'NotoSans-Regular'}}
                 id="inputBox"
                 ref={inputRef}
                 rows={1}

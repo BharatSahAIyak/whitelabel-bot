@@ -18,7 +18,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-import Image from 'next/image';
 import { toast } from 'react-hot-toast';
 import styles from './index.module.css';
 import RightIcon from './assets/right';
@@ -38,8 +37,6 @@ import saveTelemetryEvent from '../../utils/telemetry';
 import BlinkingSpinner from '../blinking-spinner/index';
 import Loader from '../loader';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
-import { divide } from 'lodash';
-import { borderRadius } from '@mui/system';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
@@ -57,8 +54,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
-    return theme?.primary?.light;
-  }, [theme?.primary?.light]);
+    return theme?.primary?.main;
+  }, [theme?.primary?.main]);
 
   const contrastText = useMemo(() => {
     return theme?.primary?.contrastText;
@@ -389,18 +386,26 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           style={{
             position: 'relative',
             maxWidth: '90vw',
+            fontFamily: 'NotoSans-Medium'
           }}>
+            
           <Bubble
             type="text"
             style={
               content?.data?.position === 'right'
                 ? {
-                    background: secondaryColor,
-                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
-                  }
-                : {
                     background: contrastText,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 0px 15px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px'
+                  }
+                : {
+                    background: secondaryColor,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 15px 0px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px'
                   }
             }>
             {content?.data?.card ? (
@@ -454,11 +459,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               <span
                 style={{
                   // fontWeight: 600,
-                  fontSize: '1rem',
+                  fontSize: '20px',
                   color:
                     content?.data?.position === 'right'
-                      ? contrastText
-                      : secondaryColor,
+                      ? 'var(--font)'
+                      : contrastText,
                 }}>
                 {content?.text}{' '}
                 {content?.data?.position === 'right'
@@ -469,8 +474,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     style={{
                       color:
                         content?.data?.position === 'right'
-                          ? 'yellow'
-                          : 'black',
+                          ? 'var(--font)'
+                          : 'yellow',
                       fontSize: '12px',
                       fontWeight: 'normal',
                     }}>
@@ -492,7 +497,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 backdrop={false}
                 showClose={false}
                 bgColor="transparent"
-                title={content?.data?.choices?.header}>
+                title={content?.data?.choices?.header}
+                titleColor="var(--font)">
                 {displayedChoices.map((item: any) => {
                   return (
                     <div
@@ -501,8 +507,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '10px',
-                        padding: '3px',
-                        color: 'black',
+                        padding: '14px',
+                        color: 'var(--font)',
+                        fontSize: '20px',
+                        fontWeight: '500',
                         cursor: 'pointer',
                         borderBottom: '2px solid #DDDDDD',
                       }}
@@ -531,8 +539,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         width: '100%',
-                        padding: '10px',
-                        color: 'black',
+                        height: '45px',
+                        padding: '4px',
+                        color: 'var(--font)',
+                        fontFamily: 'NotoSans-Medium',
+                        fontWeight: '500',
+                        fontSize: '14px',
                         cursor: 'pointer',
                         border: 'none',
                         outline: 'none',
@@ -554,16 +566,17 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 display: 'flex',
                 justifyContent: 'flex-end',
               }}>
-              <span
-                style={{
-                  color:
-                    content?.data?.position === 'right'
-                      ? contrastText
-                      : secondaryColor,
-                  fontSize: '10px',
-                }}>
-                {moment(content?.data?.timestamp).format('hh:mm A DD/MM/YYYY')}
-              </span>
+             <span
+                  style={{
+                    color:
+                      content?.data?.position === 'right'
+                        ? 'var(--font)'
+                        : contrastText,
+                    fontSize: '12px'
+                  }}
+                >
+                  {moment(content?.data?.timestamp).format('hh:mma ')}
+                </span>
             </div>
           </Bubble>
           {content?.data?.btns ? (
@@ -622,9 +635,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
                       <p
                         style={{
-                          fontSize: '11px',
+                          fontSize: '12px',
                           // color: contrastText,
-                          // fontFamily: 'Mulish-bold',
+                          fontFamily: 'NotoSans-Bold',
                           display: 'flex',
                           alignItems: 'flex-end',
                           marginRight: '1px',
@@ -648,7 +661,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             display: 'flex',
                             alignItems: 'center',
                             flexDirection: 'column',
-                            paddingRight: '6px',
                           }}
                           onClick={() =>
                             feedbackHandler({
@@ -659,8 +671,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           <MsgThumbsUp fill={reaction === 1} width="20px" />
                           <p
                             style={{
-                              fontSize: '11px',
-                              // fontFamily: 'Mulish-bold',
+                              fontSize: '12px',
+                              fontFamily: 'NotoSans-Bold',
                             }}>
                             {t('label.helpful')}
                           </p>
@@ -688,8 +700,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           <MsgThumbsDown fill={reaction === -1} width="20px" />
                           <p
                             style={{
-                              fontSize: '11px',
-                              // fontFamily: 'Mulish-bold',
+                              fontSize: '12px',
+                              fontFamily: 'NotoSans-Bold',
                             }}>
                             {t('label.not_helpful')}
                           </p>
@@ -706,7 +718,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     case 'image': {
       const url = content?.data?.payload?.media?.url || content?.data?.imageUrl;
       return (
-        <>
+        <div style={{fontFamily: 'NotoSans-Regular'}}>
           {content?.data?.position === 'left' && (
             <div
               style={{
@@ -736,14 +748,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </div>
             </div>
           </Bubble>
-        </>
+        </div>
       );
     }
 
     case 'file': {
       const url = content?.data?.payload?.media?.url || content?.data?.fileUrl;
       return (
-        <>
+        <div style={{fontFamily: 'NotoSans-Regular'}}>
           {content?.data?.position === 'left' && (
             <div
               style={{
@@ -773,7 +785,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </div>
             </div>
           </Bubble>
-        </>
+        </div>
       );
     }
 
@@ -781,7 +793,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       const url = content?.data?.payload?.media?.url || content?.data?.videoUrl;
       const videoId = url.split('=')[1];
       return (
-        <>
+        <div style={{fontFamily: 'NotoSans-Regular'}}>
           <Bubble type="image">
             <div style={{ padding: '7px' }}>
               <iframe
@@ -809,12 +821,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </div>
             </div>
           </Bubble>
-        </>
+        </div>
       );
     }
     case 'options': {
       return (
-        <>
+        <div style={{fontFamily: 'NotoSans-Regular'}}>
           <Bubble type="text" className={styles.textBubble}>
             <div style={{ display: 'flex' }}>
               <span className={styles.optionsText}>
@@ -822,7 +834,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                   <div
                     style={{
-                      color: 'black',
+                      color: 'var(--font)',
                       fontSize: '12px',
                       fontWeight: 'normal',
                     }}>
@@ -839,7 +851,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               isWeather: false,
             })}
           </Bubble>
-        </>
+        </div>
       );
     }
 
@@ -852,22 +864,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             flexDirection: 'column',
             position: 'relative',
             maxWidth: '90vw',
+            fontFamily: 'NotoSans-Regular'
           }}>
-          <div
-            className={
-              content?.data?.position === 'right'
-                ? styles.messageTriangleRight
-                : styles.messageTriangleLeft
-            }
-            style={
-              content?.data?.position === 'right'
-                ? {
-                    borderColor: `${secondaryColor} transparent transparent transparent`,
-                  }
-                : {
-                    borderColor: `${contrastText} transparent transparent transparent`,
-                  }
-            }></div>
           <Bubble
             type="text"
             style={
@@ -875,10 +873,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 ? {
                     background: secondaryColor,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 0px 15px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px'
                   }
                 : {
                     background: contrastText,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 15px 0px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px'
                   }
             }>
             <div
@@ -901,9 +905,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <span
               style={{
                 // fontWeight: 600,
-                fontSize: '1rem',
+                fontSize: '20px',
                 color:
-                  content?.data?.position === 'right' ? contrastText : 'black',
+                  content?.data?.position === 'right' ? contrastText : 'var(--font)',
               }}>
               {`\n` + JSON.parse(content?.text)?.generalAdvice ||
                 '' + `\n\n` + JSON.parse(content?.text)?.buttonDescription ||
@@ -927,7 +931,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         justifyContent: 'center',
                         gap: '10px',
                         padding: '3px',
-                        color: 'black',
+                        color: 'var(--font)',
                         cursor: 'pointer',
                         borderBottom: '2px solid #DDDDDD',
                       }}
@@ -957,7 +961,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         justifyContent: 'center',
                         width: '100%',
                         padding: '10px',
-                        color: 'black',
+                        color: 'var(--font)',
                         cursor: 'pointer',
                         border: 'none',
                         outline: 'none',
@@ -976,7 +980,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                 <div
                   style={{
-                    color: 'black',
+                    color: 'var(--font)',
                     fontSize: '12px',
                     fontWeight: 'normal',
                   }}>

@@ -24,6 +24,7 @@ import BhashiniImg from '../../assets/images/bhashinilogo.png';
 import darshanLogo from '../../assets/images/darshan-logo.png';
 import styles from './style.module.css'
 import Image from 'next/image'
+import { Button } from '@mui/material'
 
 export const Sidebar = ({
   isOpen,
@@ -106,7 +107,7 @@ export const Sidebar = ({
                         width: '100%',
                       }}
                     >
-                      <button
+                      <Button
                         className={`Sidemenu_button ${
                           activeLanguage === config?.languageCode1
                             ? 'active'
@@ -131,9 +132,9 @@ export const Sidebar = ({
                         }
                       >
                         {config?.languageName1}
-                      </button>
+                      </Button>
 
-                      <button
+                      <Button
                         className={`Sidemenu_button ${
                           activeLanguage === config?.languageCode2
                             ? 'active'
@@ -158,7 +159,7 @@ export const Sidebar = ({
                         }
                       >
                         {config?.languageName2}
-                      </button>
+                      </Button>
                     </div>
                   </ListItemButton>
                 </ListItem>
