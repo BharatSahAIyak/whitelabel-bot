@@ -14,11 +14,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useConfig } from "../../hooks/useConfig";
 import { useColorPalates } from "../../providers/theme-provider/hooks";
 import LocationPermissionModal from "./LocationPermissionModal";
+import { useLocalization } from "../../hooks";
 
 const LocationInput = (props: any) => {
+  const t = useLocalization();
   const [inputValue, setInputValue] = React.useState("");
   const [location, setLocation] = React.useState<any>(null);
-  const config = useConfig("component", "locationInputPage");
   const theme = useColorPalates();
 
   useEffect(() => {
@@ -56,7 +57,7 @@ const LocationInput = (props: any) => {
               margin: 0
             }}
           >
-            {config?.topText}
+            {t('label.current_location')}
           </p>
         </div>
       </div>
@@ -90,7 +91,7 @@ const LocationInput = (props: any) => {
               }
             }}
             variant="outlined"
-            placeholder={config?.searchBarPlaceholder}
+            placeholder={t('label.enter_location')}
             size="medium"
           />
         </div>
@@ -120,7 +121,7 @@ const LocationInput = (props: any) => {
                 }}
                 endIcon={<ArrowForwardIcon/>}
               >
-               {config?.btnText}
+               {t('label.confirm')}
               </Button>
             </Box>
           </div>

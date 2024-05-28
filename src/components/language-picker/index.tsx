@@ -7,7 +7,7 @@ import { useColorPalates } from "../../providers/theme-provider/hooks";
 import { useConfig } from "../../hooks/useConfig";
 import { AppContext } from "../../context";
 const LanguagePicker = () => {
-  const [activeLanguage, setActiveLanguage] = React.useState("en");
+  const [activeLanguage, setActiveLanguage] = React.useState(localStorage.getItem('locale') || "en");
   const config = useConfig('component', 'sidebar');
   const context = useContext(AppContext);
 

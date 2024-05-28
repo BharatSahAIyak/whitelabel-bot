@@ -1,12 +1,10 @@
-import farmer from "./assets/farmer.jpeg";
-import user from "./assets/user.svg";
-import farmer2 from "./assets/farmer-op.svg";
 import { useColorPalates } from "../../providers/theme-provider/hooks";
 import LanguagePicker from "../language-picker";
 import { useConfig } from "../../hooks/useConfig";
-import Image from "next/image";
+import { useLocalization } from "../../hooks";
 
 const UserTypeSelector = (props: any) => {
+  const t = useLocalization();
   const theme = useColorPalates();
   const config = useConfig("component", "userTypeSelectorPage");
 
@@ -48,11 +46,10 @@ const UserTypeSelector = (props: any) => {
             style={{
               marginTop: "24px",
               fontSize: "24px",
-              fontWeight: "400",
               color: "#51586B",
             }}
           >
-            {config?.title}
+            {t('label.who_are_you')}
           </p>
           <div
             style={{
@@ -60,6 +57,7 @@ const UserTypeSelector = (props: any) => {
               justifyContent: "space-around",
               alignItems: 'center',
               marginTop: "32px",
+              // height: '180px'
             }}
           >
             {/* Two cards/buttons */}
@@ -67,7 +65,7 @@ const UserTypeSelector = (props: any) => {
               onClick={() => {
                 props?.setOnboardingData((prev: any) => ({
                   ...prev,
-                  userType: config?.user1Text,
+                  userType: t('label.user1'),
                 }))
                 props?.handleNext();
               }}
@@ -80,19 +78,19 @@ const UserTypeSelector = (props: any) => {
                 textAlign: "center",
               }}
             >
-              <Image
-                src={config?.user1Image || farmer2}
-                alt="Farmer"
+              <img
+                src={config?.user1Image}
+                alt="user1"
                 style={{ maxWidth: "100%", height: "auto" }}
               />
-              <p>{config?.user1Text} </p>
+              <p className="m-0 mt-2">{t('label.user1')}</p>
             </div>
-            <p className="m-0">या</p>
+            <p className="m-0">{t('label.or')}</p>
             <div
               onClick={() => {
                 props?.setOnboardingData((prev: any) => ({
                   ...prev,
-                  userType: config?.user2Text,
+                  userType: t('label.user2'),
                 }))
                 props?.handleNext();
               }}
@@ -105,21 +103,21 @@ const UserTypeSelector = (props: any) => {
                 textAlign: "center",
               }}
             >
-              <Image
-                src={config?.user2Image || user}
-                alt="Worker"
+              <img
+                src={config?.user2Image}
+                alt="user2"
                 style={{ maxWidth: "100%", height: "auto" }}
               />
-              <p>{config?.user2Text}</p>
+              <p className="m-0 mt-2">{t('label.user2')}</p>
             </div>
           </div>
         </div>
       </div>
-        <div style={{height: '400px', width: '100%', overflow: 'hidden'}}>
-          <Image
-            src={config?.backgroundImage || farmer}
-            alt="Farmer with vegetables"
-            layout="responsive"
+        <div style={{height: '400px', overflow: 'hidden', objectFit: 'cover'}}>
+          <img
+            src={config?.backgroundImage}
+            alt="bgImage"
+            width={'100%'}
           />
         </div>
     </div>

@@ -8,7 +8,7 @@ import {
   Fade,
   CircularProgress
 } from '@mui/material';
-
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -74,19 +74,19 @@ const LocationPermissionModal = (props: any) => {
       >
         <Fade in={open}>
           <Box sx={style}>
-            <Typography id="location-permission-modal-title" variant="h6" component="h2">
-              Location Permission Needed
+            <div className='d-flex align-items-center justify-content-center'>
+              <LocationOnOutlinedIcon sx={{width: '35px', height: '35px'}}/>
+            </div>
+            <Typography id="location-permission-modal-title" variant="h6" component="h2" className='text-center mt-2 font-weight-bold'>
+              Allow Maps to access this device’s precise location?
             </Typography>
-            <Typography id="location-permission-modal-description" sx={{ mt: 2 }}>
-              We need your location to provide better service. Please allow us to access your location.
-            </Typography>
-            <div style={{display: 'flex', gap: '10px'}}>
+            <div style={{display: 'flex', flexDirection: 'column', marginTop: '20px', gap: '10px'}}>
             <Button
               variant="contained"
               color="primary"
               onClick={requestLocationPermission}
               disabled={loading} // Disable button while loading
-              sx={{ mt: 3, width: '50%' }}
+              sx={{padding: '12px'}}
             >
               {loading ? <CircularProgress size={24} color="inherit" /> : 'Allow Location Access'}
             </Button>
@@ -94,7 +94,8 @@ const LocationPermissionModal = (props: any) => {
               variant="contained"
               color="primary"
               onClick={handleClose}
-              sx={{ mt: 3, width: '50%'}}
+              disabled={loading} // Disable button while loading
+              sx={{padding: '12px'}}
             >
               Don't Allow
             </Button>
