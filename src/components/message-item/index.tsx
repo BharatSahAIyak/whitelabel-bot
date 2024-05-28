@@ -48,7 +48,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   );
   const [audioFetched, setAudioFetched] = useState(false);
   const [ttsLoader, setTtsLoader] = useState(false);
-  const [popupActive, setPopupActive] = useState(false);
+  const [popupActive, setPopupActive] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredChoices, setFilteredChoices] = useState([]);
   const t = useLocalization();
@@ -221,11 +221,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     [context, t, optionDisabled]
   );
 
-  useEffect(() => {
-    if (content?.data?.choices?.choices?.length > 0) {
-      setPopupActive(true);
-    }
-  }, [content]);
+  // useEffect(() => {
+  //   if (content?.data?.choices?.choices?.length > 0) {
+  //     setPopupActive(true);
+  //   }
+  // }, [content]);
 
   console.log('here', content);
 
@@ -383,6 +383,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     console.log({ result, data });
     return result;
   };
+
+  useEffect(() => {
+    console.log({popupActive, msg: content?.text})
+  }, [popupActive])
 
   switch (type) {
     case 'loader':
@@ -580,7 +584,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           fontFamily: 'NotoSans-Bold',
                           display: 'flex',
                           alignItems: 'flex-end',
-                          marginRight: '1px',
+                          margin: '0 1px 0 0',
                           padding: '0 5px',
                         }}>
                         {t('message.speaker')}
@@ -613,6 +617,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             style={{
                               fontSize: '12px',
                               fontFamily: 'NotoSans-Bold',
+                              margin: 0
                             }}>
                             {t('label.helpful')}
                           </p>
@@ -642,6 +647,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             style={{
                               fontSize: '12px',
                               fontFamily: 'NotoSans-Bold',
+                              margin: 0
                             }}>
                             {t('label.not_helpful')}
                           </p>
@@ -655,8 +661,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {content?.data?.choices?.choices?.length > 0 && (
               <Popup
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={content?.data?.choices?.isSearchable ? '70vh' : '25vh'}
-                onClose={() => {}}
+                height={content?.data?.choices?.isSearchable ? '70vh' : '20vh'}
+                onClose={() => {setPopupActive(false)}}
                 active={popupActive}
                 backdrop={false}
                 showClose={false}
@@ -721,6 +727,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 )}
               </Popup>
             )}
+            {content?.data?.choices?.choices?.length > 0 && <div style={{height: popupActive ? '200px' : '0px', width: '100vw'}}></div>}
         </div>
       );
 
@@ -921,78 +928,17 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               {`\n` + JSON.parse(content?.text)?.generalAdvice ||
                 '' + `\n\n` + JSON.parse(content?.text)?.buttonDescription ||
                 ''}
-                {content?.data?.choices?.choices?.length > 0 && (
-              <Popup
-                isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={content?.data?.choices?.isSearchable ? '70vh' : '25vh'}
-                onClose={() => {}}
-                active={popupActive}
-                backdrop={false}
-                showClose={false}
-                bgColor="transparent"
-                title={content?.data?.choices?.header}>
-                {displayedChoices.map((item: any) => {
-                  return (
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '10px',
-                        padding: '3px',
-                        color: 'var(--font)',
-                        cursor: 'pointer',
-                        borderBottom: '2px solid #DDDDDD',
-                      }}
-                      onClick={() => {
-                        setPopupActive(false);
-                        if (item?.showTextInput) {
-                          context?.setShowInputBox(true);
-                        }
-                        context?.sendMessage(item?.key, item?.text);
-                      }}>
-                      {item.text}
-                    </div>
-                  );
-                })}
-                {content?.data?.choices?.isSearchable && (
-                  <div
-                    style={{
-                      padding: '10px',
-                      background: '#F4F4F4',
-                    }}>
-                    <input
-                      placeholder={t("label.buttons_search_placeholder") || "Search"}
-                      value={searchQuery}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '100%',
-                        padding: '10px',
-                        color: 'var(--font)',
-                        cursor: 'pointer',
-                        border: 'none',
-                        outline: 'none',
-                        borderRadius: '10px',
-                      }}
-                      onChange={handleSearchChange}
-                    />
-                  </div>
-                )}
-              </Popup>
-            )}
               {/* {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
                 isWeather: true,
               })} */}
               {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                 <div
-                  style={{
-                    color: 'var(--font)',
-                    fontSize: '12px',
-                    fontWeight: 'normal',
-                  }}>
+                style={{
+                  color: 'var(--font)',
+                  fontSize: '12px',
+                  fontWeight: 'normal',
+                }}>
                   <br></br>
                   <span>messageId: {content?.data?.messageId}</span>
                   <br></br>
@@ -1001,6 +947,76 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               )}
             </span>
           </Bubble>
+          {content?.data?.choices?.choices?.length > 0 && (
+        <Popup
+          isCollapsed={content?.data?.choices?.isCollapsed ?? false}
+          height={content?.data?.choices?.isSearchable ? '70vh' : '20vh'}
+          onClose={() => {setPopupActive(false)}}
+          active={popupActive}
+          backdrop={false}
+          showClose={false}
+          bgColor="transparent"
+          title={content?.data?.choices?.header}
+          titleColor="var(--font)"
+          titleSize='16px'>
+          {displayedChoices.map((item: any) => {
+            return (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  padding: '14px',
+                  color: 'var(--font)',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  borderBottom: '2px solid #DDDDDD',
+                }}
+                onClick={() => {
+                  setPopupActive(false);
+                  if (item?.showTextInput) {
+                    context?.setShowInputBox(true);
+                  }
+                  context?.sendMessage(item?.key, item?.text);
+                }}>
+                {item.text}
+              </div>
+            );
+          })}
+          {content?.data?.choices?.isSearchable && (
+            <div
+              style={{
+                padding: '10px',
+                background: '#F4F4F4',
+              }}>
+              <input
+                placeholder={t("label.buttons_search_placeholder") || "Search"}
+                value={searchQuery}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  height: '45px',
+                  padding: '4px',
+                  color: 'var(--font)',
+                  fontFamily: 'NotoSans-Medium',
+                  fontWeight: '500',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  border: 'none',
+                  outline: 'none',
+                  borderRadius: '10px',
+                }}
+                onChange={handleSearchChange}
+              />
+            </div>
+          )}
+        </Popup>
+      )}
+      {content?.data?.choices?.choices?.length > 0 && <div style={{height: popupActive ? '200px' : '0px', width: '100vw'}}></div>}
         </div>
       );
     }

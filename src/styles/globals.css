@@ -85,3 +85,13 @@ input::-webkit-inner-spin-button {
 .ChatFooter {
   border-top: 1px solid lightgray !important;
 }
+
+.Popup {
+  overflow: auto;
+  scrollbar-width: auto;
+  -ms-overflow-style: auto;
+  -webkit-overflow-scrolling: auto;
+}
+::-webkit-scrollbar {
+  display: block !important;
+}  
