@@ -1,14 +1,12 @@
-import logo from "./assets/main.png";
-import cm from "./assets/cm.png";
-import bottom from "./assets/bottom.png";
 import LanguagePicker from "../../components/language-picker";
 import { Container, IconButton } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useConfig } from "../../hooks/useConfig";
 import { useColorPalates } from "../../providers/theme-provider/hooks";
-import Image from "next/image";
+import { useLocalization } from "../../hooks";
 
 const WelcomePage = (props: any) => {
+  const t = useLocalization();
   const config = useConfig('component', 'welcomePage');
   const theme = useColorPalates();
   return (
@@ -25,16 +23,21 @@ const WelcomePage = (props: any) => {
         style={{
           display: "flex",
           justifyContent: "space-between",
+          alignItems: 'center',
           width: "100%",
         }}
         className="p-2"
       >
-       {config?.showTopLeftLogo && <Image src={config?.topLeftLogo || logo} height={ config?.topLeftLogoHeight } width={ config?.topLeftLogoWidth } />}
+       <div style={{height: config?.topLeftContainerHeight, width: config?.topLeftContainerWidth, display: 'flex', justifyContent: 'space-evenly'}}>
+       {config?.showTopLeftLogo1 && <img src={config?.topLeftLogo1} height="100%" width="30%" />}
+       {config?.showTopLeftLogo2 && <img src={config?.topLeftLogo2} height="100%" width="30%" />}
+       {config?.showTopLeftLogo3 && <img src={config?.topLeftLogo3} height="100%" width="30%" />}
+       </div>
         <LanguagePicker />
       </div>
       <div className="text-center">
         <div className="mt-4">
-         {config?.showCenterImage && <Image src={cm} alt="" width={config?.centerImageWidth} height={config?.centerImageHeight}  />}
+         {config?.showCenterImage && <img src={config?.centerImage} width={config?.centerImageWidth} height={config?.centerImageHeight} />}
         </div>
         <div style={{
               marginTop: '8px'
@@ -42,20 +45,33 @@ const WelcomePage = (props: any) => {
           <text
             style={{
               fontSize: "32px",
-              color: theme.primary.main,
+              color: theme?.primary?.main,
               lineHeight: "42px",
               fontWeight: "600",
             }}
           >
-           {config?.centerText}
+           {t("label.subtitle")}
           </text>
         </div>
-      {config?.showCenterBottomImage &&  <div style={{marginTop: '8px'}}><Image src={config?.centerBottomImage || bottom} height={config?.centerBottomImageHeight} width={config?.centerBottomImageWidth } /></div>}
+      {config?.showCenterBottomImage &&  <div style={{marginTop: '8px'}}><img src={config?.centerBottomImage} height={config?.centerBottomImageHeight} width={config?.centerBottomImageWidth} /></div>}
+        <div style={{
+              marginTop: '8px'
+        }}>
+          <text
+            style={{
+              fontSize: "24px",
+              color: 'var(--font)',
+              fontWeight: "600",
+            }}
+          >
+           {t("label.connect_with_us")}
+          </text>
+        </div>
       </div>
-     {config?.showProceedBtn && <div className="text-center mt-4">
+     {<div className="text-center mt-4">
         <IconButton
           aria-label="fingerprint"
-          style={{ background: config?.proceedBtnColor || theme.primary.main, height: '76px', width: '76px' }}
+          style={{ background: theme?.primary?.main, height: '76px', width: '76px' }}
           onClick={props?.handleNext}
         >
           <ArrowForwardIcon style={{ color: "white", height: '36px', width: '36px' }} />

@@ -7,7 +7,7 @@ import { useColorPalates } from "../../providers/theme-provider/hooks";
 import { useConfig } from "../../hooks/useConfig";
 import { AppContext } from "../../context";
 const LanguagePicker = () => {
-  const [activeLanguage, setActiveLanguage] = React.useState("en");
+  const [activeLanguage, setActiveLanguage] = React.useState(localStorage.getItem('locale') || "en");
   const config = useConfig('component', 'sidebar');
   const context = useContext(AppContext);
 
@@ -26,7 +26,7 @@ const LanguagePicker = () => {
     <FormControl
       sx={{
         m: 1,
-        background: theme?.primary?.light,
+        background: theme?.primary?.main,
         border: "none",
         borderRadius: "10px",
         height:'36px'
@@ -39,7 +39,7 @@ const LanguagePicker = () => {
         displayEmpty
         inputProps={{ "aria-label": "Without label" }}
         sx={{
-          color: theme.primary.dark,
+          color: theme?.primary?.contrastText,
           border: "none",
           borderRadius: "10px",
           width: "85px",

@@ -8,7 +8,8 @@ import {
   Fade,
   CircularProgress
 } from '@mui/material';
-
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import { useLocalization } from '../../hooks';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -22,6 +23,7 @@ const style = {
 };
 
 const LocationPermissionModal = (props: any) => {
+  const t = useLocalization();
   const [open, setOpen] = useState(true);
   // const [location, setLocation] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -44,9 +46,9 @@ const LocationPermissionModal = (props: any) => {
       (error) => {
         setLoading(false);
         if (error.code === error.PERMISSION_DENIED) {
-          setErrorMessage('Location access denied. Please enable location permissions in your browser settings.');
+          setErrorMessage(t('error.location_disabled'));
         } else {
-          setErrorMessage('Error occurred while getting location.');
+          setErrorMessage(t('error.location_error'));
           console.error('Error occurred while getting location:', error);
         }
         props?.setLocation(null);
@@ -74,29 +76,30 @@ const LocationPermissionModal = (props: any) => {
       >
         <Fade in={open}>
           <Box sx={style}>
-            <Typography id="location-permission-modal-title" variant="h6" component="h2">
-              Location Permission Needed
+            <div className='d-flex align-items-center justify-content-center'>
+              <LocationOnOutlinedIcon sx={{width: '35px', height: '35px'}}/>
+            </div>
+            <Typography id="location-permission-modal-title" variant="h6" component="h2" className='text-center mt-2 font-weight-bold'>
+              {t('message.allow_location')}
             </Typography>
-            <Typography id="location-permission-modal-description" sx={{ mt: 2 }}>
-              We need your location to provide better service. Please allow us to access your location.
-            </Typography>
-            <div style={{display: 'flex', gap: '10px'}}>
+            <div style={{display: 'flex', flexDirection: 'column', marginTop: '20px', gap: '10px'}}>
             <Button
               variant="contained"
               color="primary"
               onClick={requestLocationPermission}
               disabled={loading} // Disable button while loading
-              sx={{ mt: 3, width: '50%' }}
+              sx={{padding: '12px'}}
             >
-              {loading ? <CircularProgress size={24} color="inherit" /> : 'Allow Location Access'}
+              {loading ? <CircularProgress size={24} color="inherit" /> : t('label.allow_location_access')}
             </Button>
             <Button
               variant="contained"
               color="primary"
               onClick={handleClose}
-              sx={{ mt: 3, width: '50%'}}
+              disabled={loading} // Disable button while loading
+              sx={{padding: '12px'}}
             >
-              Don't Allow
+              {t('label.dont_allow_location_access')}
             </Button>
             </div>
             {/* {location && (
