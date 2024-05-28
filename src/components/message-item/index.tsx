@@ -48,7 +48,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   );
   const [audioFetched, setAudioFetched] = useState(false);
   const [ttsLoader, setTtsLoader] = useState(false);
-  const [popupActive, setPopupActive] = useState(false);
+  const [popupActive, setPopupActive] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredChoices, setFilteredChoices] = useState([]);
   const t = useLocalization();
@@ -221,11 +221,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     [context, t, optionDisabled]
   );
 
-  useEffect(() => {
-    if (content?.data?.choices?.choices?.length > 0) {
-      setPopupActive(true);
-    }
-  }, [content]);
+  // useEffect(() => {
+  //   if (content?.data?.choices?.choices?.length > 0) {
+  //     setPopupActive(true);
+  //   }
+  // }, [content]);
 
   console.log('here', content);
 
@@ -383,6 +383,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     console.log({ result, data });
     return result;
   };
+
+  useEffect(() => {
+    console.log({popupActive, msg: content?.text})
+  }, [popupActive])
 
   switch (type) {
     case 'loader':
@@ -580,7 +584,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           fontFamily: 'NotoSans-Bold',
                           display: 'flex',
                           alignItems: 'flex-end',
-                          marginRight: '1px',
+                          margin: '0 1px 0 0',
                           padding: '0 5px',
                         }}>
                         {t('message.speaker')}
@@ -613,6 +617,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             style={{
                               fontSize: '12px',
                               fontFamily: 'NotoSans-Bold',
+                              margin: 0
                             }}>
                             {t('label.helpful')}
                           </p>
@@ -642,6 +647,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             style={{
                               fontSize: '12px',
                               fontFamily: 'NotoSans-Bold',
+                              margin: 0
                             }}>
                             {t('label.not_helpful')}
                           </p>
@@ -655,8 +661,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {content?.data?.choices?.choices?.length > 0 && (
               <Popup
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={content?.data?.choices?.isSearchable ? '70vh' : '25vh'}
-                onClose={() => {}}
+                height={content?.data?.choices?.isSearchable ? '70vh' : '20vh'}
+                onClose={() => {setPopupActive(false)}}
                 active={popupActive}
                 backdrop={false}
                 showClose={false}
@@ -721,6 +727,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 )}
               </Popup>
             )}
+            {content?.data?.choices?.choices?.length > 0 && <div style={{height: popupActive ? '200px' : '0px', width: '100vw'}}></div>}
         </div>
       );
 
@@ -924,7 +931,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 {content?.data?.choices?.choices?.length > 0 && (
               <Popup
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={content?.data?.choices?.isSearchable ? '70vh' : '25vh'}
+                height={content?.data?.choices?.isSearchable ? '70vh' : '20vh'}
                 onClose={() => {}}
                 active={popupActive}
                 backdrop={false}

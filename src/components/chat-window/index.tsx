@@ -73,7 +73,7 @@ const ChatUiWindow: React.FC = () => {
           conversationId === 'null' || item?.channelMessageId === conversationId
       )
       .map((item: any) => ({
-            text: item.payload.text.replace(/<end\/>/g, ""),
+            text: item?.payload?.text?.replace(/<end\/>/g, "")?.replace(/^Guided:/, ''),
             position: item.to === 'admin' ? 'right' : 'left',
             timestamp: item.timestamp,
             reaction: item?.feedback?.type === 'FEEDBACK_POSITIVE' ? 1 : item?.feedback?.type === 'FEEDBACK_NEGATIVE' ? -1 : 0,
@@ -83,6 +83,8 @@ const ChatUiWindow: React.FC = () => {
             isEnd: true,
             optionClicked: true,
             // choices: item?.payload?.buttonChoices,
+            isGuided: item?.metaData?.isGuided,
+            card: item?.payload?.card,
             choices: [],
             conversationId: item?.channelMessageId
           })
