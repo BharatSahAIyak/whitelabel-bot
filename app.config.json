@@ -42,6 +42,45 @@
       "transliterationInputLanguage": "",
       "transliterationOutputLanguage": ""
     },
+    "welcomePage": {
+      "showTopLeftLogo": true,
+      "topLeftLogo": null,
+      "topLeftLogoHeight": "40px",
+      "topLeftLogoWidth": "150px",
+      "showCenterImage": true,
+      "centerImageHeight": "210px",
+      "centerImageWidth": "148px",
+      "centerImage": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
+      "centerText": "आमा कृषी ए.आई चैटबॉटै",
+      "centerTextColor": "green",
+      "showCenterBottomImage": true,
+      "centerBottomImage": null,
+      "centerBottomImageHeight": "90px",
+      "centerBottomImageWidth": "350px",
+      "showProceedBtn": true,
+      "proceedBtnColor": null
+    },
+    "userTypeSelectorPage": {
+      "backgroundImage": null,
+      "title": "कृपया बताएं आप कौन हैं?",
+      "user1Text": "किसान",
+      "user1Image": null,
+      "user2Text": "विस्तार कार्यकर्ता",
+      "user2Image": null
+    },
+    "optionSelectorPage": {
+      "topText": "अपनी फसलें चुनें",
+      "topTextColor": null,
+      "optionSelectLength": 4,
+      "centerText": "कृपया नीचे से 4 फसलें चुनें",
+      "btnText": "आगे बढ़ें",
+      "helpingText1": "अभी के लिए छोड़ दें"
+    },
+    "locationInputPage": {
+      "topText": "वर्तमान स्थान",
+      "searchBarPlaceholder": "स्थान मैन्युअल रूप से दर्ज करें",
+      "btnText": "पुष्टि करे"
+    },
     "navbar": {
       "showNavbar": true,
       "showLanguageToggle": true,

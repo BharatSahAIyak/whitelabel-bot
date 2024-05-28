@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -19,6 +20,7 @@ const style = {
 };
 
 export const InstallModal: React.FC = () => {
+  const theme = useColorPalates()
   const [open, setOpen] = React.useState(
     localStorage.getItem('installPwa') !== 'true' ?? false
   );
@@ -91,7 +93,7 @@ export const InstallModal: React.FC = () => {
               onClick={handleOpen}
               style={{
                 marginTop: '20px',
-                backgroundColor: 'var(--secondary)',
+                backgroundColor: theme?.primary?.main,
                 color: 'white',
               }}>
               Install

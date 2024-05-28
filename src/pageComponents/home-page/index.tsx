@@ -113,7 +113,7 @@ const HomePage: NextPage = () => {
       sessionStorage.setItem('conversationId', newConversationId)
       context?.setConversationId(newConversationId)
     }
-    recordUserLocation()
+    // recordUserLocation()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
