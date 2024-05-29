@@ -2,11 +2,12 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import { useLocalization } from "../hooks/useLocalization";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AppContext } from "../context";
-import styles from "../components/dialer-popup/index.module.css";
-import DialerPopUp from "../components/dialer-popup";
+import styles from "../components/feedback-popup/index.module.css";
+import FeedbackPopup from "../components/feedback-popup";
 import { useConfig } from "../hooks/useConfig";
+import { useRouter } from 'next/router';
 
 const ChatUi = dynamic(() => import("../components/chat-window"), {
   ssr: false,
@@ -17,6 +18,19 @@ const Chat: NextPage = () => {
   const context = useContext(AppContext);
   const config = useConfig("component", "botDetails");
   console.log("hola",{config})
+  const router = useRouter();
+  const { message } = router.query;
+
+  useEffect(() => {
+    if (message) {
+      router.replace('/chat', '', { shallow: true });
+      setTimeout(() => {
+        console.log("here")
+        context?.sendMessage(message as string, message as string);
+      }, 2000);
+    }
+  }, [])
+  
   return (
     <>
       <Head>
@@ -24,14 +38,13 @@ const Chat: NextPage = () => {
         <link rel="icon" href={config?.favicon} />
         
       </Head>
-      {context?.showDialerPopup && (
+      {context?.showFeedbackPopup && (
         <div
           className={styles.overlay}
-          // onClick={() => context?.setShowDialerPopup(false)}
+          // onClick={() => context?.setShowFeedbackPopup(false)}
         >
-          {/* Only render the DialerPopup component when showDialerPopup is true */}
-          {context?.showDialerPopup && (
-            <DialerPopUp setShowDialerPopup={context?.setShowDialerPopup} />
+          {context?.showFeedbackPopup && (
+            <FeedbackPopup setShowFeedbackPopup={context?.setShowFeedbackPopup} />
           )}
         </div>
       )}

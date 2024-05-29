@@ -41,7 +41,7 @@ const ContextProvider: FC<{
     sessionStorage.getItem('conversationId')
   );
   const [isDown, setIsDown] = useState(false);
-  const [showDialerPopup, setShowDialerPopup] = useState(false);
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [currentQuery, setCurrentQuery] = useState('');
   // const [isConnected, setIsConnected] = useState(newSocket?.connected || false);
   const [cookie, setCookie, removeCookie] = useCookies();
@@ -53,7 +53,7 @@ const ContextProvider: FC<{
   const [endTime, setEndTime] = useState(Date.now());
   const [s2tMsgId, sets2tMsgId] = useState('');
   const [kaliaClicked, setKaliaClicked] = useState(false);
-  const [guidedFlow, setGuidedFlow] = useState(false);
+  const [showInputBox, setShowInputBox] = useState(true);
 
   useEffect(() => {
     if (
@@ -301,6 +301,7 @@ const ContextProvider: FC<{
                 conversationId: msg.messageId.channelMessageId,
                 sentTimestamp: Date.now(),
                 card: msg?.payload?.card,
+                isGuided: msg?.transformer?.metaData?.isGuided || false,
                 // btns: msg?.payload?.buttonChoices,
                 // audio_url: msg?.content?.audio_url,
                 // metaData: msg.payload?.metaData
@@ -308,10 +309,6 @@ const ContextProvider: FC<{
                 //     : null,
                 ...media,
               };
-
-              if(msg?.payload?.buttonChoices){
-                setGuidedFlow(true);
-              }
 
               updatedMessages.push(newMsg);
               // console.log('useeffect', newMsg.text);
@@ -429,7 +426,8 @@ const ContextProvider: FC<{
   console.log('config:', { config });
   //@ts-ignore
   const sendMessage = useCallback(
-    async (text: string, media: any, isVisibile = true) => {
+    async (textToSend: string, textToShow: string, media: any, isVisibile = true) => {
+      if(!textToShow) textToShow = textToSend;
       if (!sessionStorage.getItem('conversationId')) {
         const cId = uuidv4();
         console.log('convId', cId);
@@ -446,7 +444,7 @@ const ContextProvider: FC<{
       // console.log('mssgs:', messages)
       setLoading(true);
       setIsMsgReceiving(true);
-      console.log('my mssg:', text);
+      console.log('my mssg:', textToSend, textToShow);
       console.log('s2tMsgId:', s2tMsgId);
       const messageId = s2tMsgId ? s2tMsgId : uuidv4();
       console.log('s2t messageId:', messageId);
@@ -454,7 +452,7 @@ const ContextProvider: FC<{
         payload: {
           app: process.env.NEXT_PUBLIC_BOT_ID || '',
           payload: {
-            text: text?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
+            text: textToSend?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
             metaData: {
               latitude: sessionStorage.getItem('latitude'),
               longitude: sessionStorage.getItem('longitude'),
@@ -489,9 +487,9 @@ const ContextProvider: FC<{
           setMessages((prev: any) => [
             ...prev.map((prevMsg: any) => ({ ...prevMsg, disabled: true })),
             {
-              text: text?.replace(/^\s+|\s+$/g, '')?.replace(/^Guided:/, ''),
+              text: textToShow?.replace(/^\s+|\s+$/g, '')?.replace(/^Guided:/, ''),
               position: 'right',
-              payload: { text },
+              payload: { textToShow },
               time: Date.now(),
               disabled: true,
               messageId: messageId,
@@ -508,7 +506,7 @@ const ContextProvider: FC<{
           phoneNumber: localStorage.getItem('phoneNumber') || '',
           conversationId: sessionStorage.getItem('conversationId') || '',
           messageId: messageId,
-          text: text,
+          text: textToSend,
           createdAt: Math.floor(new Date().getTime() / 1000),
         });
       } catch (err) {
@@ -682,8 +680,8 @@ const ContextProvider: FC<{
       newSocket,
       isDown,
       fetchIsDown,
-      showDialerPopup,
-      setShowDialerPopup,
+      showFeedbackPopup,
+      setShowFeedbackPopup,
       currentQuery,
       setCurrentQuery,
       playAudio,
@@ -698,8 +696,8 @@ const ContextProvider: FC<{
       setKaliaClicked,
       s2tMsgId,
       sets2tMsgId,
-      guidedFlow,
-      setGuidedFlow,
+      showInputBox,
+      setShowInputBox,
     }),
     [
       locale,
@@ -715,8 +713,8 @@ const ContextProvider: FC<{
       newSocket,
       isDown,
       fetchIsDown,
-      showDialerPopup,
-      setShowDialerPopup,
+      showFeedbackPopup,
+      setShowFeedbackPopup,
       currentQuery,
       setCurrentQuery,
       playAudio,
@@ -731,8 +729,8 @@ const ContextProvider: FC<{
       setKaliaClicked,
       s2tMsgId,
       sets2tMsgId,
-      guidedFlow,
-      setGuidedFlow,
+      showInputBox,
+      setShowInputBox,
     ]
   );
 

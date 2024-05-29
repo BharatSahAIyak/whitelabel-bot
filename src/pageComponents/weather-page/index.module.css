@@ -4,7 +4,7 @@
   position: relative;
   z-index: 1;
   height: 20vw;
-  min-height: 350px;
+  min-height: 370px;
   width: 100vw;
 }
 
@@ -29,4 +29,5 @@
   bottom: 0;
   margin: 10px;
   padding: 5px;
+  font-size: 14px;
 }

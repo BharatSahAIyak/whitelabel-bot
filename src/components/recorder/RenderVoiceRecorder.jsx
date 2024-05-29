@@ -9,11 +9,7 @@ import { AppContext } from '../../context';
 import saveTelemetryEvent from '../../utils/telemetry';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 
-const RenderVoiceRecorder = ({
-  setInputMsg,
-  tapToSpeak,
-  includeDiv = false,
-}) => {
+const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   const t = useLocalization();
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [recorderStatus, setRecorderStatus] = useState('idle');
@@ -246,54 +242,43 @@ const RenderVoiceRecorder = ({
     return null;
   }
   return (
-      <>
-        {mediaRecorder && mediaRecorder.state === 'recording' ? (
-          <div className={styles.center}>
+    <>
+      {mediaRecorder && mediaRecorder.state === 'recording' ? (
+        <div className={styles.center}>
+          <RecorderControl status={'recording'} onClick={stopRecording} />
+        </div>
+      ) : (
+        <div className={styles.center}>
+          {recorderStatus === 'processing' ? (
+            <RecorderControl status={'processing'} onClick={() => {}} />
+          ) : recorderStatus === 'error' ? (
             <RecorderControl
-              status={'recording'}
-              onClick={stopRecording}
-              includeDiv={includeDiv}
+              status={'error'}
+              onClick={() => {
+                setIsErrorClicked(true);
+                startRecording();
+              }}
             />
-          </div>
-        ) : (
-          <div className={styles.center}>
-            {recorderStatus === 'processing' ? (
-              <RecorderControl status={'processing'} onClick={() => {}} />
-            ) : recorderStatus === 'error' ? (
+          ) : (
+            <div className={styles.center}>
               <RecorderControl
-                status={'error'}
+                status={'start'}
                 onClick={() => {
                   setIsErrorClicked(true);
                   startRecording();
                 }}
-                includeDiv={includeDiv}
+                tapToSpeak={tapToSpeak}
               />
-            ) : (
-              <div className={styles.center}>
-                <RecorderControl
-                  status={'start'}
-                  onClick={() => {
-                    setIsErrorClicked(true);
-                    startRecording();
-                  }}
-                  includeDiv={includeDiv}
-                  tapToSpeak={tapToSpeak}
-                />
-              </div>
-            )}
-          </div>
-        )}
-      </>
+            </div>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 
-// includeDiv is being checked in render Function
-const RecorderControl = ({
-  status,
-  onClick,
-  includeDiv = true,
-  tapToSpeak = false,
-}) => {
+const RecorderControl = ({ status, onClick, tapToSpeak = false }) => {
+  const t = useLocalization();
   const handleClick = () => {
     if (onClick) {
       onClick();
@@ -325,7 +310,7 @@ const RecorderControl = ({
     classProcess = styles.loader;
   }
 
-  return includeDiv ? (
+  return (
     <>
       <button
         onClick={handleClick}
@@ -358,42 +343,11 @@ const RecorderControl = ({
           }}></div>
       </button>
       {tapToSpeak && (
-        <p style={{ color: 'black', fontSize: '12px', marginTop: '4px' }}>
-          {'label.tap_to_speak'}
-        </p>
+        <p
+          style={{ color: 'black', fontSize: '13px', marginTop: '4px' }}
+          dangerouslySetInnerHTML={{ __html: t('label.tap_to_speak') }}></p>
       )}
     </>
-  ) : (
-    <button
-      onClick={handleClick}
-      className={styles.btn}
-      style={{
-        cursor: 'pointer',
-        background: theme?.primary?.light,
-        border: `1px solid ${theme?.primary?.light}`,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <div
-        className={`${classPulse}`}
-        style={{
-          ...customStylesPulse,
-        }}></div>
-      <MicIcon
-        sx={{
-          height: '70%',
-          width: '70%',
-          color: 'white',
-          display: 'block',
-        }}
-      />
-      <div
-        className={`${classProcess}`}
-        style={{
-          ...customStylesProcess,
-        }}></div>
-    </button>
   );
 };
 

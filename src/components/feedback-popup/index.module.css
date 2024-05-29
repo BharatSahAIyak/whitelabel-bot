@@ -13,11 +13,11 @@
   padding: 0 2vh;
   font-weight: 700;
   color: var(--font);
-  font-family: Mulish-bold;
+  font-family: NotoSans-Bold;
   text-align: center;
 }
 
-.dialerBox {
+.feedbackBox {
   display: flex;
   flex-direction: column;
   margin: 1vh auto;
@@ -49,17 +49,17 @@
   color: white;
 }
 
-.dialerBox textarea {
+.feedbackBox textarea {
   padding: 10px;
   outline: 1px solid var(--secondary);
 }
 
-.dialerBox button {
+.feedbackBox button {
   font-weight: 700 ;
   font-size: 14px;
   color: white ;
   margin: 1vh auto 0 auto;
-  font-family: 'Mulish-regular';
+  font-family: 'NotoSans-Regular';
   padding: 10px ;
   border: none ;
   border-radius: 40px !important;
@@ -84,7 +84,7 @@
   align-items: center;
   margin-top: 2vh;
   margin-left: 2vh;
-  font-family: 'Mulish-Bold';
+  font-family: 'NotoSans-Bold';
   font-size: 3vh;
   font-weight: 700;
   color: var(--secondary);

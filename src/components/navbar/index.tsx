@@ -7,7 +7,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
 import { useConfig } from '../../hooks/useConfig';
-import Sidebar from '../../pageComponents/sidebar';
+import Sidebar from '../sidebar';
 import { recordUserLocation } from '../../utils/location';
 import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
@@ -78,7 +78,7 @@ const Navbar: React.FC = () => {
     const newConversationId = uuidv4();
     sessionStorage.setItem('conversationId', newConversationId);
     sessionStorage.removeItem('tags');
-    context?.setGuidedFlow(false);
+    context?.setShowInputBox(true);
     if (context?.audioElement) context?.audioElement.pause();
     if (context?.setAudioPlaying) context?.setAudioPlaying(false);
     context?.setConversationId(newConversationId);
@@ -98,6 +98,7 @@ const Navbar: React.FC = () => {
           boxShadow: 'none',
           borderBottom: '1px solid lightgray',
           height: router.pathname === '/login' ? '120px' : '80px',
+          fontFamily: 'NotoSans-Regular'
         }}>
         <Toolbar
           style={{
@@ -159,8 +160,9 @@ const Navbar: React.FC = () => {
               </div>
             )}
             {router.pathname !== '/chat' &&
-            router.pathname !== '/weather' &&
-              isAuthenticated &&
+            router.pathname !== '/weather' && 
+            router.pathname !== '/login' &&
+            router.pathname !== '/otp' &&
               showHamburgerMenu && (
                 <IconButton
                   size="large"
@@ -221,14 +223,14 @@ const Navbar: React.FC = () => {
                 <Typography
                   variant="body1"
                   color={newChatButtonColor ?? 'black'}
-                  sx={{ fontSize: '25px', marginLeft: '5px' }}>
+                  sx={{ fontSize: '26px', marginLeft: '5px', fontFamily: 'NotoSans-Medium', fontWeight: '500' }}>
                   {t('label.new_chat')}
                 </Typography>
               </div>
             )}
 
             {isAuthenticated &&
-              showHomeIcon &&
+            showHomeIcon &&
               router.pathname !== '/' &&
               router.pathname !== '/weather' &&
               router.pathname !== '/chat' && (

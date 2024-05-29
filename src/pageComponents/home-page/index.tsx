@@ -97,7 +97,7 @@ const HomePage: NextPage = () => {
         })
         .catch((err) => {
           console.log(err)
-          toast.error('Bhashini transliteration failed')
+          toast.error('Transliteration failed')
         })
     } else {
       setSuggestions([])
@@ -131,10 +131,11 @@ const HomePage: NextPage = () => {
         if (context?.kaliaClicked) {
           context?.sendMessage(
             'Aadhaar number - ' + msg,
+            'Aadhaar number - ' + msg,
             null,
             true
           )
-        } else context?.sendMessage(msg)
+        } else context?.sendMessage(msg, msg)
       } else {
         toast.error(t('error.disconnected'))
         return
@@ -275,14 +276,10 @@ const HomePage: NextPage = () => {
 
   const sendGuidedMsg = (type: string) => {
     // convert the string type into stringified array
-    context?.setGuidedFlow(true);
+    context?.setShowInputBox(false);
     const tags = [type]
     sessionStorage.setItem('tags', JSON.stringify(tags))
-    if(type === 'weather'){
-      sendMessage(`Guided: ${t('label.' + type)}`)
-    }else{
-      sendMessage(`Guided: Pest`)
-    }
+    sendMessage(`Guided: ${t('label.' + type)}`)
   }
 
   if (context?.isDown) {
@@ -325,7 +322,8 @@ const HomePage: NextPage = () => {
                     {config?.showWeatherAdvisory && (
                       <div
                         className={styles.imgBtn}
-                        onClick={() => router.push('/weather')}
+                        // onClick={() => router.push('/weather')}
+                        onClick={() => sendGuidedMsg('weather')}
                       >
                         <p>{t('label.weather_advisory')}</p>
                         <img
@@ -385,7 +383,7 @@ const HomePage: NextPage = () => {
                 >
                   <RenderVoiceRecorder
                     setInputMsg={setInputMsg}
-                    tapToSpeak={true}
+                    tapToSpeak={config?.showTapToSpeakText}
                   />
                 </div>
               )}
@@ -420,6 +418,7 @@ const HomePage: NextPage = () => {
                     sendMessage(inputMsg);
                   }
                 }}
+                style={{fontFamily: 'NotoSans-Regular'}}
                 id="inputBox"
                 ref={inputRef}
                 rows={1}

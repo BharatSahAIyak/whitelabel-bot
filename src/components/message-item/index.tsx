@@ -7,6 +7,7 @@ import {
   FileCard,
   Typing,
   Popup,
+  RichText,
 } from '@samagra-x/chatui';
 import {
   FC,
@@ -17,7 +18,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-import Image from 'next/image';
 import { toast } from 'react-hot-toast';
 import styles from './index.module.css';
 import RightIcon from './assets/right';
@@ -37,26 +37,25 @@ import saveTelemetryEvent from '../../utils/telemetry';
 import BlinkingSpinner from '../blinking-spinner/index';
 import Loader from '../loader';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
-import { divide } from 'lodash';
-import { borderRadius } from '@mui/system';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
+  const { content, type } = message;
   const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
-  const [reaction, setReaction] = useState(
-    message?.content?.data?.reaction?.type
-  );
+  const [reaction, setReaction] = useState(content?.data?.reaction?.type);
   const [optionDisabled, setOptionDisabled] = useState(
-    message?.content?.data?.optionClicked || false
+    content?.data?.optionClicked || false
   );
   const [audioFetched, setAudioFetched] = useState(false);
   const [ttsLoader, setTtsLoader] = useState(false);
-  const [popupActive, setPopupActive] = useState(false);
+  const [popupActive, setPopupActive] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredChoices, setFilteredChoices] = useState([]);
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
-    return theme?.primary?.light;
-  }, [theme?.primary?.light]);
+    return theme?.primary?.main;
+  }, [theme?.primary?.main]);
 
   const contrastText = useMemo(() => {
     return theme?.primary?.contrastText;
@@ -67,9 +66,30 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   //   return t('toast.reaction_reset');
   // };
 
+  const handleSearchChange = (e: any) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    if (query) {
+      const results = content?.data?.choices?.choices
+        .filter((item: any) => item.text.toLowerCase().includes(query))
+        .slice(0, 3);
+      setFilteredChoices(results);
+    } else {
+      setFilteredChoices([]);
+    }
+  };
+
+  const displayedChoices = searchQuery
+    ? filteredChoices
+    : content?.data?.choices?.choices?.slice(
+        0,
+        content?.data?.choices?.isSearchable ? 3 : undefined
+      );
+
   useEffect(() => {
-    setReaction(message?.content?.data?.reaction);
-  }, [message?.content?.data?.reaction]);
+    setReaction(content?.data?.reaction);
+  }, [content?.data?.reaction]);
 
   const onLikeDislike = useCallback(
     ({ value, msgId }: { value: 0 | 1 | -1; msgId: string }) => {
@@ -89,7 +109,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         });
       } else if (value === -1) {
         context?.setCurrentQuery(msgId);
-        context?.setShowDialerPopup(true);
+        context?.setShowFeedbackPopup(true);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -150,7 +170,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     }`
                   );
                 } else {
-                  context?.sendMessage(choice?.key, false, true, choice);
+                  context?.sendMessage(choice?.key, choice?.text);
                   setOptionDisabled(true);
                   setTimeout(
                     () =>
@@ -201,13 +221,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     [context, t, optionDisabled]
   );
 
-  const { content, type } = message;
-
-  useEffect(() => {
-    if (content?.data?.choices?.choices?.length > 0) {
-      setPopupActive(true);
-    }
-  }, [content]);
+  // useEffect(() => {
+  //   if (content?.data?.choices?.choices?.length > 0) {
+  //     setPopupActive(true);
+  //   }
+  // }, [content]);
 
   console.log('here', content);
 
@@ -305,16 +323,21 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     };
 
     const fetchData = async () => {
-      if (
-        !content?.data?.audio_url &&
-        content?.data?.position === 'left' &&
-        content?.text
-      ) {
+      if (!content?.data?.audio_url && content?.data?.position === 'left') {
         const toastId = toast.loading(`${t('message.download_audio')}`);
         setTimeout(() => {
           toast.dismiss(toastId);
         }, 1500);
-        const audioUrl = await fetchAudio(content?.text);
+        const text = content?.data?.card?.content?.cells
+          ? content?.data?.card?.content?.cells?.map((cell: any) => {
+            const texts = [];
+            if (cell.header) texts.push(cell.header);
+            if (cell.footer) texts.push(cell.footer);
+            return texts.join(' ');
+          })
+          .join(' ')
+          : content?.text;
+        const audioUrl = await fetchAudio(text ?? 'No text found');
 
         setTtsLoader(false);
         if (audioUrl) {
@@ -332,17 +355,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     }
   }, [handleAudio, content?.data, content?.text, t]);
 
-  const getFormattedDate = (datestr: string) => {
-    const today = new Date(datestr);
-    const yyyy = today.getFullYear();
-    let mm: any = today.getMonth() + 1; // Months start at 0!
-    let dd: any = today.getDate();
+  // Hide input box if there are buttons
+  useEffect(() => {
+    if(content?.data?.choices?.choices?.length > 0){
+      context?.setShowInputBox(false);
+    }
+  }, [content?.data?.choices?.choices])
 
-    if (dd < 10) dd = '0' + dd;
-    if (mm < 10) mm = '0' + mm;
-
-    return dd + '/' + mm + '/' + yyyy;
-  };
   const parseWeatherJson = (data: any) => {
     if (!data || data.length === 0) {
       console.error('Data is undefined or empty.');
@@ -365,6 +384,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     return result;
   };
 
+  useEffect(() => {
+    console.log({popupActive, msg: content?.text})
+  }, [popupActive])
+
   switch (type) {
     case 'loader':
       return <Typing />;
@@ -374,21 +397,29 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           style={{
             position: 'relative',
             maxWidth: '90vw',
+            fontFamily: 'NotoSans-Medium'
           }}>
+            
           <Bubble
             type="text"
             style={
               content?.data?.position === 'right'
                 ? {
-                    background: secondaryColor,
-                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
-                  }
-                : {
                     background: contrastText,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 0px 15px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px'
+                  }
+                : {
+                    background: content?.data?.card ? contrastText: secondaryColor,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 15px 0px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px'
                   }
             }>
-              {content?.data?.card ? (
+            {content?.data?.card ? (
               <div>
                 <div
                   style={{
@@ -396,193 +427,79 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     padding: '10px',
                     fontWeight: 600,
                     color: theme?.primary?.main,
-                    textAlign: 'center'
+                    textAlign: 'center',
                   }}>
                   <div>{content?.data?.card?.header?.title}</div>
                   <div>{content?.data?.card?.header?.description}</div>
                 </div>
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))'
-                  }}>
+                <div>
                   {content?.data?.card?.content?.cells?.map((cell: any) => {
                     return (
                       <div
                         style={{
                           border: '1px solid #EDEDF1',
                           padding: '10px',
-                          textAlign: 'center'
+                          textAlign: 'center',
                         }}>
                         <div
                           style={{
                             color: theme?.primary?.main,
-                            fontWeight: 600
                           }}>
-                          {cell.header}
+                          <RichText content={cell?.header} />
                         </div>
-                        <div>{cell.footer}</div>
+                        <div style={{color: 'var(--font)'}}>
+                          <RichText content={cell?.footer} />
+                        </div>
                       </div>
                     );
                   })}
                 </div>
-                <div
+                {content?.data?.card?.footer && <div
                   style={{ padding: '20px', borderTop: '1px solid #EDEDF1' }}>
-                  {content?.data?.card?.footer?.title}
-                  {content?.data?.card?.footer?.description}
-                </div>
+                  <div>
+                    <RichText content={content?.data?.card?.footer?.title} />
+                  </div>
+                  <div>
+                    <RichText
+                      content={content?.data?.card?.footer?.description}
+                    />
+                  </div>
+                </div>}
               </div>
-            ): (
+            ) : (
               <span
-              style={{
-                // fontWeight: 600,
-                fontSize: '1rem',
-                color:
-                  content?.data?.position === 'right'
-                    ? contrastText
-                    : secondaryColor,
-              }}>
+                style={{
+                  // fontWeight: 600,
+                  fontSize: '16px',
+                  color:
+                    content?.data?.position === 'right'
+                      ? 'var(--font)'
+                      : contrastText,
+                }}>
                 {content?.text}{' '}
-              {content?.data?.position === 'right'
-                ? null
-                : !content?.data?.isEnd && <BlinkingSpinner />}
-              {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
-                <div
-                  style={{
-                    color:
-                      content?.data?.position === 'right' ? 'yellow' : 'black',
-                    fontSize: '12px',
-                    fontWeight: 'normal',
-                  }}>
-                  <br></br>
-                  <span>messageId: {content?.data?.messageId}</span>
-                  <br></br>
-                  <span>conversationId: {content?.data?.conversationId}</span>
-                </div>
-              )}
-            </span>
+                {content?.data?.position === 'right'
+                  ? null
+                  : !content?.data?.isEnd && <BlinkingSpinner />}
+                {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
+                  <div
+                    style={{
+                      color:
+                        content?.data?.position === 'right'
+                          ? 'var(--font)'
+                          : 'yellow',
+                      fontSize: '12px',
+                      fontWeight: 'normal',
+                    }}>
+                    <br></br>
+                    <span>messageId: {content?.data?.messageId}</span>
+                    <br></br>
+                    <span>conversationId: {content?.data?.conversationId}</span>
+                  </div>
+                )}
+              </span>
             )}
+
             
-            {content?.data?.choices?.choices?.length > 0 && (
-              <Popup
-                height={'100px'}
-                onClose={() => {}}
-                active={popupActive}
-                backdrop={false}
-                showClose={false}
-                bgColor="transparent"
-                title={content?.text}>
-                {content?.data?.choices?.choices?.map((item: any) => {
-                  return (
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '10px',
-                        padding: '3px',
-                        color: 'black',
-                        cursor: 'pointer',
-                        borderBottom: '2px solid #DDDDDD',
-                      }}
-                      onClick={() => {
-                        setPopupActive(false);
-                        if(item?.showTextInput){
-                          context?.setGuidedFlow(false);
-                        }
-                        context?.sendMessage(item?.key);
-                      }}>
-                      {item.text}
-                    </div>
-                  );
-                })}
-                {/* {
-                  arrayCrop
-                    .filter(item => item.action)
-                    .map((item: any) => {
-                      return (
-                        !searchView ? (
-                          <div
-                            key={item.id}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              gap: '10px',
-                              padding: '3px',
-                              color: 'black',
-                              cursor: 'pointer',
-                              borderBottom: '2px solid #DDDDDD'
-                            }}
-                            onClick={() => setSearchView(true)}
-                          >
-                            {item?.text}
-                          </div>
-                        ) : (
-                          <div
-                            key={item.id}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              gap: '10px',
-                              padding: '3px',
-                              color: 'black',
-                              cursor: 'pointer',
-                              borderBottom: '2px solid #DDDDDD'
-                            }}
-                          >
-                          <input
-                            rows={1}
-                            value={searchTerm}
-                            onChange={handleSearch}
-                            placeholder="Search..."
-                            style={{
-                              width: "100%",
-                              margin: "0 5px",
-                              padding: '10px',
-                              border: '1px solid #D0D0D0',
-                              borderRadius: '10px'
-                            }}
-                          />
-                          <button
-                            type="submit"
-                            className="sendButton"
-                          >
-                            Send
-                          </button>
-                          </div>
-                        )
-                      );
-                    })
-                } */}
-                {/* {searchResults.map((item: any) => 
-                  {
-                    // console.log({item})
-                    return (
-                      <div
-                        key={item?.id}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '10px',
-                          padding: '3px',
-                          color: 'black',
-                          cursor: 'pointer',
-                          borderBottom: '2px solid #DDDDDD'
-                        }}
-          
-                        onClick={() => {
-                            setSearchView(false)
-                        }}
-                      >
-                        {item?.text}
-                      </div>
-                    )} */}
-                {/* )} */}
-              </Popup>
-            )}
             {/* {getLists({
               choices:
                 content?.data?.payload?.buttonChoices ?? content?.data?.choices,
@@ -593,16 +510,17 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 display: 'flex',
                 justifyContent: 'flex-end',
               }}>
-              <span
-                style={{
-                  color:
-                    content?.data?.position === 'right'
-                      ? contrastText
-                      : secondaryColor,
-                  fontSize: '10px',
-                }}>
-                {moment(content?.data?.timestamp).format('hh:mm A DD/MM/YYYY')}
-              </span>
+             <span
+                  style={{
+                    color:
+                      content?.data?.position === 'right'
+                        ? 'var(--font)'
+                        : contrastText,
+                    fontSize: '12px'
+                  }}
+                >
+                  {moment(content?.data?.timestamp).format('hh:mma ')}
+                </span>
             </div>
           </Bubble>
           {content?.data?.btns ? (
@@ -661,12 +579,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
                       <p
                         style={{
-                          fontSize: '11px',
+                          fontSize: '12px',
                           // color: contrastText,
-                          // fontFamily: 'Mulish-bold',
+                          fontFamily: 'NotoSans-Bold',
                           display: 'flex',
                           alignItems: 'flex-end',
-                          marginRight: '1px',
+                          margin: '0 1px 0 0',
                           padding: '0 5px',
                         }}>
                         {t('message.speaker')}
@@ -674,77 +592,149 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     </div>
                   </div>
                 )}
-                {config?.allowFeedback && (
-                  <div className={styles.msgFeedback}>
-                    <div
-                      className={styles.msgFeedbackIcons}
-                      style={{
-                        border: `1px solid ${theme?.primary?.main}`,
-                      }}>
+                {config?.allowFeedback &&
+                  (!content?.data?.isGuided || content?.data?.card) && (
+                    <div className={styles.msgFeedback}>
                       <div
+                        className={styles.msgFeedbackIcons}
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          flexDirection: 'column',
-                          paddingRight: '6px',
-                        }}
-                        onClick={() =>
-                          feedbackHandler({
-                            like: 1,
-                            msgId: content?.data?.messageId,
-                          })
-                        }>
-                        <MsgThumbsUp fill={reaction === 1} width="20px" />
-                        <p
+                          border: `1px solid ${theme?.primary?.main}`,
+                        }}>
+                        <div
                           style={{
-                            fontSize: '11px',
-                            // fontFamily: 'Mulish-bold',
-                          }}>
-                          {t('label.helpful')}
-                        </p>
-                      </div>
-                      <div
-                        style={{
-                          height: '32px',
-                          width: '1px',
-                          backgroundColor: theme?.primary?.main,
-                          margin: '6px 0',
-                        }}></div>
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexDirection: 'column',
+                          }}
+                          onClick={() =>
+                            feedbackHandler({
+                              like: 1,
+                              msgId: content?.data?.messageId,
+                            })
+                          }>
+                          <MsgThumbsUp fill={reaction === 1} width="20px" />
+                          <p
+                            style={{
+                              fontSize: '12px',
+                              fontFamily: 'NotoSans-Bold',
+                              margin: 0
+                            }}>
+                            {t('label.helpful')}
+                          </p>
+                        </div>
+                        <div
+                          style={{
+                            height: '32px',
+                            width: '1px',
+                            backgroundColor: theme?.primary?.main,
+                            margin: '6px 0',
+                          }}></div>
 
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          flexDirection: 'column',
-                        }}
-                        onClick={() =>
-                          feedbackHandler({
-                            like: -1,
-                            msgId: content?.data?.messageId,
-                          })
-                        }>
-                        <MsgThumbsDown fill={reaction === -1} width="20px" />
-                        <p
+                        <div
                           style={{
-                            fontSize: '11px',
-                            // fontFamily: 'Mulish-bold',
-                          }}>
-                          {t('label.not_helpful')}
-                        </p>
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexDirection: 'column',
+                          }}
+                          onClick={() =>
+                            feedbackHandler({
+                              like: -1,
+                              msgId: content?.data?.messageId,
+                            })
+                          }>
+                          <MsgThumbsDown fill={reaction === -1} width="20px" />
+                          <p
+                            style={{
+                              fontSize: '12px',
+                              fontFamily: 'NotoSans-Bold',
+                              margin: 0
+                            }}>
+                            {t('label.not_helpful')}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             )
           )}
+          {content?.data?.choices?.choices?.length > 0 && (
+              <Popup
+                isCollapsed={content?.data?.choices?.isCollapsed ?? false}
+                height={content?.data?.choices?.isSearchable ? '70vh' : '20vh'}
+                onClose={() => {setPopupActive(false)}}
+                active={popupActive}
+                backdrop={false}
+                showClose={false}
+                bgColor="transparent"
+                title={content?.data?.choices?.header}
+                titleColor="var(--font)"
+                titleSize='16px'>
+                {displayedChoices.map((item: any) => {
+                  return (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '14px',
+                        color: 'var(--font)',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #DDDDDD',
+                      }}
+                      onClick={() => {
+                        setPopupActive(false);
+                        if (item?.showTextInput) {
+                          context?.setShowInputBox(true);
+                        }
+                        context?.sendMessage(item?.key, item?.text);
+                      }}>
+                      {item.text}
+                    </div>
+                  );
+                })}
+                {content?.data?.choices?.isSearchable && (
+                  <div
+                    style={{
+                      padding: '10px',
+                      background: '#F4F4F4',
+                    }}>
+                    <input
+                      placeholder={t("label.buttons_search_placeholder") || "Search"}
+                      value={searchQuery}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        height: '45px',
+                        padding: '4px',
+                        color: 'var(--font)',
+                        fontFamily: 'NotoSans-Medium',
+                        fontWeight: '500',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        border: 'none',
+                        outline: 'none',
+                        borderRadius: '10px',
+                      }}
+                      onChange={handleSearchChange}
+                    />
+                  </div>
+                )}
+              </Popup>
+            )}
+            {content?.data?.choices?.choices?.length > 0 && <div style={{height: popupActive ? '200px' : '0px', width: '100vw'}}></div>}
         </div>
       );
 
     case 'image': {
       const url = content?.data?.payload?.media?.url || content?.data?.imageUrl;
       return (
-        <>
+        <div style={{fontFamily: 'NotoSans-Regular'}}>
           {content?.data?.position === 'left' && (
             <div
               style={{
@@ -774,14 +764,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </div>
             </div>
           </Bubble>
-        </>
+        </div>
       );
     }
 
     case 'file': {
       const url = content?.data?.payload?.media?.url || content?.data?.fileUrl;
       return (
-        <>
+        <div style={{fontFamily: 'NotoSans-Regular'}}>
           {content?.data?.position === 'left' && (
             <div
               style={{
@@ -811,7 +801,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </div>
             </div>
           </Bubble>
-        </>
+        </div>
       );
     }
 
@@ -819,7 +809,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       const url = content?.data?.payload?.media?.url || content?.data?.videoUrl;
       const videoId = url.split('=')[1];
       return (
-        <>
+        <div style={{fontFamily: 'NotoSans-Regular'}}>
           <Bubble type="image">
             <div style={{ padding: '7px' }}>
               <iframe
@@ -847,12 +837,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </div>
             </div>
           </Bubble>
-        </>
+        </div>
       );
     }
     case 'options': {
       return (
-        <>
+        <div style={{fontFamily: 'NotoSans-Regular'}}>
           <Bubble type="text" className={styles.textBubble}>
             <div style={{ display: 'flex' }}>
               <span className={styles.optionsText}>
@@ -860,7 +850,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                   <div
                     style={{
-                      color: 'black',
+                      color: 'var(--font)',
                       fontSize: '12px',
                       fontWeight: 'normal',
                     }}>
@@ -877,7 +867,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               isWeather: false,
             })}
           </Bubble>
-        </>
+        </div>
       );
     }
 
@@ -890,22 +880,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             flexDirection: 'column',
             position: 'relative',
             maxWidth: '90vw',
+            fontFamily: 'NotoSans-Regular'
           }}>
-          <div
-            className={
-              content?.data?.position === 'right'
-                ? styles.messageTriangleRight
-                : styles.messageTriangleLeft
-            }
-            style={
-              content?.data?.position === 'right'
-                ? {
-                    borderColor: `${secondaryColor} transparent transparent transparent`,
-                  }
-                : {
-                    borderColor: `${contrastText} transparent transparent transparent`,
-                  }
-            }></div>
           <Bubble
             type="text"
             style={
@@ -913,10 +889,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 ? {
                     background: secondaryColor,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 0px 15px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px'
                   }
                 : {
                     background: contrastText,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 15px 0px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px'
                   }
             }>
             <div
@@ -939,24 +921,24 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <span
               style={{
                 // fontWeight: 600,
-                fontSize: '1rem',
+                fontSize: '16px',
                 color:
-                  content?.data?.position === 'right' ? contrastText : 'black',
+                  content?.data?.position === 'right' ? contrastText : 'var(--font)',
               }}>
               {`\n` + JSON.parse(content?.text)?.generalAdvice ||
                 '' + `\n\n` + JSON.parse(content?.text)?.buttonDescription ||
                 ''}
-              {getLists({
+              {/* {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
                 isWeather: true,
-              })}
+              })} */}
               {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                 <div
-                  style={{
-                    color: 'black',
-                    fontSize: '12px',
-                    fontWeight: 'normal',
-                  }}>
+                style={{
+                  color: 'var(--font)',
+                  fontSize: '12px',
+                  fontWeight: 'normal',
+                }}>
                   <br></br>
                   <span>messageId: {content?.data?.messageId}</span>
                   <br></br>
@@ -965,6 +947,76 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               )}
             </span>
           </Bubble>
+          {content?.data?.choices?.choices?.length > 0 && (
+        <Popup
+          isCollapsed={content?.data?.choices?.isCollapsed ?? false}
+          height={content?.data?.choices?.isSearchable ? '70vh' : '20vh'}
+          onClose={() => {setPopupActive(false)}}
+          active={popupActive}
+          backdrop={false}
+          showClose={false}
+          bgColor="transparent"
+          title={content?.data?.choices?.header}
+          titleColor="var(--font)"
+          titleSize='16px'>
+          {displayedChoices.map((item: any) => {
+            return (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  padding: '14px',
+                  color: 'var(--font)',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  borderBottom: '2px solid #DDDDDD',
+                }}
+                onClick={() => {
+                  setPopupActive(false);
+                  if (item?.showTextInput) {
+                    context?.setShowInputBox(true);
+                  }
+                  context?.sendMessage(item?.key, item?.text);
+                }}>
+                {item.text}
+              </div>
+            );
+          })}
+          {content?.data?.choices?.isSearchable && (
+            <div
+              style={{
+                padding: '10px',
+                background: '#F4F4F4',
+              }}>
+              <input
+                placeholder={t("label.buttons_search_placeholder") || "Search"}
+                value={searchQuery}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  height: '45px',
+                  padding: '4px',
+                  color: 'var(--font)',
+                  fontFamily: 'NotoSans-Medium',
+                  fontWeight: '500',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  border: 'none',
+                  outline: 'none',
+                  borderRadius: '10px',
+                }}
+                onChange={handleSearchChange}
+              />
+            </div>
+          )}
+        </Popup>
+      )}
+      {content?.data?.choices?.choices?.length > 0 && <div style={{height: popupActive ? '200px' : '0px', width: '100vw'}}></div>}
         </div>
       );
     }
