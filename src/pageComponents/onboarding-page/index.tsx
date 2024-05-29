@@ -12,10 +12,10 @@ const OnBoardingPage = (props: any) => {
   const t = useLocalization();
   const config = useConfig("component", "botDetails");
   const [activeStep, setActiveStep] = useState(-1);
-  const [steps] = useState(3);
+  const [steps] = useState(4);
   const [onboardingData, setOnboardingData] = useState<any>({});
   const [cropList, setCropList] = useState<any>(null);
-  const [animalList, setAnimalList] = useState<any>([]);
+  const [animalList, setAnimalList] = useState<any>(null);
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
@@ -28,7 +28,7 @@ const OnBoardingPage = (props: any) => {
     try {
       const res = await axios.post(
         process.env.NEXT_PUBLIC_DATASET_URL +
-          '/dataset/execute/a656e812-224c-4e5b-b903-3113b3a25927',
+          '/dataset/execute/' + process.env.NEXT_PUBLIC_ENTITY_DATASET_ID,
         {
          sqlQuery: `SELECT * from "commodity" where "type"='${type}'`, 
         },
@@ -52,7 +52,7 @@ const OnBoardingPage = (props: any) => {
 
   useEffect(() => {
     fetchList('crop');
-    // fetchList('animal');
+    fetchList('animal');
   }, []);
 
   useEffect(() => {
@@ -108,7 +108,7 @@ const OnBoardingPage = (props: any) => {
               entityList={cropList}
             />
           )}
-          {/* {activeStep === 3 && (
+          {activeStep === 3 && (
             <OptionSelector
               handleNext={handleNext}
               handleBack={handleBack}
@@ -116,7 +116,7 @@ const OnBoardingPage = (props: any) => {
               commodityType="animal"
               entityList={animalList}
             />
-          )} */}
+          )}
         </OnBoarding>
       )}
     </div>

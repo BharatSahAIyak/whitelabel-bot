@@ -14,7 +14,7 @@ import { InstallModal } from '../components/install-modal';
 import { FullPageLoader } from '../components/fullpage-loader';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
-// import OnBoardingPage from '../pageComponents/onboarding-page';
+import OnBoardingPage from '../pageComponents/onboarding-page';
 
 const NavBar = dynamic(() => import('../components/navbar'), {
   ssr: false,
@@ -83,7 +83,7 @@ const App = ({ Component, pageProps }: AppProps) => {
     if (!isAuthenticated) {
       login();
     }else{
-      // fetchUser()
+      fetchUser()
     }
   }, [isAuthenticated, login]);
 
@@ -92,13 +92,13 @@ const App = ({ Component, pageProps }: AppProps) => {
   }
 
   if (typeof window === 'undefined') return <FullPageLoader loading />;
-  // if(isAuthenticated && user && !user?.data?.profile){
-  //   return (
-  //     <Provider>
-  //     <OnBoardingPage setUser={setUser}/>
-  //     </Provider>
-  //   )
-  // }
+  if(isAuthenticated && user && !user?.data?.profile){
+    return (
+      <Provider>
+      <OnBoardingPage setUser={setUser}/>
+      </Provider>
+    )
+  }
     return (
       <Provider>
         <>
