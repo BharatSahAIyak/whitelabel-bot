@@ -1,34 +1,59 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
   Container,
   IconButton,
-  InputAdornment,
   TextField
 } from "@mui/material";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import SearchIcon from "@mui/icons-material/Search";
 import { useConfig } from "../../hooks/useConfig";
 import { useColorPalates } from "../../providers/theme-provider/hooks";
 import LocationPermissionModal from "./LocationPermissionModal";
 import { useLocalization } from "../../hooks";
+import { usePlacesWidget } from "react-google-autocomplete";
 
 const LocationInput = (props: any) => {
   const t = useLocalization();
-  const [inputValue, setInputValue] = React.useState("");
-  const [location, setLocation] = React.useState<any>(null);
+  const [inputValue, setInputValue] = useState<any>(null);
+  const [location, setLocation] = useState<any>(null);
   const theme = useColorPalates();
+
+  const { ref: materialRef } = usePlacesWidget({
+    apiKey: process.env.NEXT_PUBLIC_GOOGLE_KEY,
+    onPlaceSelected: (place) => {
+      console.log(place)
+      setInputValue(place)
+    },
+    inputAutocompleteValue: "country",
+    options: {
+      componentRestrictions: { country: "in" },
+    },
+  });
+
+  const fetchLocation = async (lat: any, long: any) => {
+    try{
+      let res: any = await fetch(`https://geoip.samagra.io/georev?lat=${lat}&lon=${long}`);
+      res = await res.json();
+      console.log(res);
+      props?.setOnboardingData((prev: any) => ({
+        ...prev,
+        location: {
+          district: res?.district,
+          block: res?.subDistrict,
+          state: res?.state
+        },
+      }))
+      props?.handleNext();
+    }catch(err){
+      console.log(err);
+    }
+  }
 
   useEffect(() => {
     if (location) {
-      props?.setOnboardingData((prev: any) => ({
-        ...prev,
-        location,
-      }))
-      props?.handleNext();
+      fetchLocation(location.latitude, location.longitude)
     }
   }, [location])
 
@@ -71,28 +96,11 @@ const LocationInput = (props: any) => {
             height: "70dvh",
           }}
         >
-          <TextField
-            id="search-bar"
-            className="text"
-            onInput={(e) => {
-              setInputValue((e.target as HTMLInputElement).value);
-            }}
-            value={inputValue}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{width: '36px', height: '36px'}}/>
-                </InputAdornment>
-              ),
-              sx: {
-                fontSize: '20px',
-                fontWeight: '400',
-                fontFamily: 'NotoSans-Regular',
-              }
-            }}
+         <TextField
+            fullWidth
+            color="secondary"
             variant="outlined"
-            placeholder={t('label.enter_location')}
-            size="medium"
+            inputRef={materialRef}
           />
         </div>
         <div>
@@ -116,7 +124,11 @@ const LocationInput = (props: any) => {
                 onClick={() => {
                   props?.setOnboardingData((prev: any) => ({
                     ...prev,
-                    location: inputValue,
+                    location: {
+                      district: inputValue?.address_components?.[0]?.long_name,
+                      block: inputValue?.address_components?.[1]?.long_name,
+                      state: inputValue?.address_components?.[3]?.long_name
+                    },
                   }))
                   props?.handleNext();
                 }}

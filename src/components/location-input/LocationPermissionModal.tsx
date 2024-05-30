@@ -67,7 +67,7 @@ const LocationPermissionModal = (props: any) => {
         aria-labelledby="location-permission-modal-title"
         aria-describedby="location-permission-modal-description"
         open={open}
-        onClose={handleClose}
+        // onClose={handleClose}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
