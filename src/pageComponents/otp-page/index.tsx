@@ -151,6 +151,7 @@ const OtpPage: React.FC = () => {
           <div className={styles.form}>
             {/* Form */}
             <Typography
+              data-testid="otp-page-title"
               component="h1"
               variant="h4"
               fontWeight={'bold'}
@@ -160,6 +161,7 @@ const OtpPage: React.FC = () => {
               dangerouslySetInnerHTML={{ __html: t('label.subtitle') }}
             ></Typography>
             <Typography
+              data-testid="otp-verification-line1"
               variant="h4"
               textAlign="center"
               width="90%"
@@ -168,6 +170,14 @@ const OtpPage: React.FC = () => {
             >
               {t('message.otp_verification')}
             </Typography>
+            <Typography
+              data-testid="otp-verification-line2"
+              variant="body1"
+              textAlign="center"
+              width="90%"
+              color="#1E232C"
+              sx={{ m: 2 }}
+            >
             <FormattedMessage
               id="message.otp_message"
               defaultMessage="We will send you a 4 digit one time password on this mobile number <br><b>{mobile}</b>"
@@ -177,6 +187,7 @@ const OtpPage: React.FC = () => {
                 b: (chunks) => <b>{chunks}</b>,
               }}
             />
+            </Typography>
             <Box
               component="form"
               onSubmit={handleLogin}
@@ -202,7 +213,7 @@ const OtpPage: React.FC = () => {
                   length={otpLength}
                 />
               </Box>
-              <div style={{ marginTop: '10px' }}>
+              <div style={{ marginTop: '10px' }} data-testid="resend-otp">
                 {countdown > 0 ? (
                   <span>
                     <FormattedMessage
@@ -239,6 +250,7 @@ const OtpPage: React.FC = () => {
                 }}
               >
                 <Button
+                  data-testid="otp-back-button"
                   variant="contained"
                   type="button"
                   onClick={() => router.push('/login')}
@@ -256,6 +268,7 @@ const OtpPage: React.FC = () => {
                   {t('label.back')}
                 </Button>
                 <Button
+                  data-testid="otp-submit-button"
                   variant="contained"
                   sx={{
                     textTransform: 'none',

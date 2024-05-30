@@ -84,7 +84,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     ? filteredChoices
     : content?.data?.choices?.choices?.slice(
         0,
-        content?.data?.choices?.isSearchable ? 3 : undefined
+        content?.data?.choices?.isSearchable
+          ? content?.data?.choices?.choices?.length
+          : undefined
       );
 
   useEffect(() => {
@@ -329,13 +331,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           toast.dismiss(toastId);
         }, 1500);
         const text = content?.data?.card?.content?.cells
-          ? content?.data?.card?.content?.cells?.map((cell: any) => {
-            const texts = [];
-            if (cell.header) texts.push(cell.header);
-            if (cell.footer) texts.push(cell.footer);
-            return texts.join(' ');
-          })
-          .join(' ')
+          ? content?.data?.card?.content?.cells
+              ?.map((cell: any) => {
+                const texts = [];
+                if (cell.header) texts.push(cell.header);
+                if (cell.footer) texts.push(cell.footer);
+                return texts.join(' ');
+              })
+              .join(' ')
           : content?.text;
         const audioUrl = await fetchAudio(text ?? 'No text found');
 
@@ -357,10 +360,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   // Hide input box if there are buttons
   useEffect(() => {
-    if(content?.data?.choices?.choices?.length > 0){
+    if (content?.data?.choices?.choices?.length > 0) {
       context?.setShowInputBox(false);
     }
-  }, [content?.data?.choices?.choices])
+  }, [content?.data?.choices?.choices]);
 
   const parseWeatherJson = (data: any) => {
     if (!data || data.length === 0) {
@@ -385,8 +388,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   };
 
   useEffect(() => {
-    console.log({popupActive, msg: content?.text})
-  }, [popupActive])
+    console.log({ popupActive, msg: content?.text });
+  }, [popupActive]);
 
   switch (type) {
     case 'loader':
@@ -397,9 +400,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           style={{
             position: 'relative',
             maxWidth: '90vw',
-            fontFamily: 'NotoSans-Medium'
+            fontFamily: 'NotoSans-Medium',
           }}>
-            
           <Bubble
             type="text"
             style={
@@ -409,14 +411,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                     borderRadius: '15px 15px 0px 15px',
                     padding: '10px, 15px, 10px, 15px',
-                    gap: '10px'
+                    gap: '10px',
                   }
                 : {
-                    background: content?.data?.card ? contrastText: secondaryColor,
+                    background: content?.data?.card
+                      ? contrastText
+                      : secondaryColor,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                     borderRadius: '15px 15px 15px 0px',
                     padding: '10px, 15px, 10px, 15px',
-                    gap: '10px'
+                    gap: '10px',
                   }
             }>
             {content?.data?.card ? (
@@ -447,24 +451,26 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           }}>
                           <RichText content={cell?.header} />
                         </div>
-                        <div style={{color: 'var(--font)'}}>
+                        <div style={{ color: 'var(--font)' }}>
                           <RichText content={cell?.footer} />
                         </div>
                       </div>
                     );
                   })}
                 </div>
-                {content?.data?.card?.footer && <div
-                  style={{ padding: '20px', borderTop: '1px solid #EDEDF1' }}>
-                  <div>
-                    <RichText content={content?.data?.card?.footer?.title} />
+                {content?.data?.card?.footer && (
+                  <div
+                    style={{ padding: '20px', borderTop: '1px solid #EDEDF1' }}>
+                    <div>
+                      <RichText content={content?.data?.card?.footer?.title} />
+                    </div>
+                    <div>
+                      <RichText
+                        content={content?.data?.card?.footer?.description}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <RichText
-                      content={content?.data?.card?.footer?.description}
-                    />
-                  </div>
-                </div>}
+                )}
               </div>
             ) : (
               <span
@@ -499,7 +505,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </span>
             )}
 
-            
             {/* {getLists({
               choices:
                 content?.data?.payload?.buttonChoices ?? content?.data?.choices,
@@ -510,17 +515,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 display: 'flex',
                 justifyContent: 'flex-end',
               }}>
-             <span
-                  style={{
-                    color:
-                      content?.data?.position === 'right'
-                        ? 'var(--font)'
-                        : contrastText,
-                    fontSize: '12px'
-                  }}
-                >
-                  {moment(content?.data?.timestamp).format('hh:mma ')}
-                </span>
+              <span
+                style={{
+                  color:
+                    content?.data?.position === 'right'
+                      ? 'var(--font)'
+                      : contrastText,
+                  fontSize: '12px',
+                }}>
+                {moment(content?.data?.timestamp).format('hh:mma ')}
+              </span>
             </div>
           </Bubble>
           {content?.data?.btns ? (
@@ -548,6 +552,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       // style={{
                       //   border: `1px solid ${theme?.primary?.main}`,
                       // }}
+                      data-testid="message-speaker-button"
                       className={styles.msgSpeaker}
                       onClick={downloadAudio}
                       style={
@@ -606,6 +611,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             alignItems: 'center',
                             flexDirection: 'column',
                           }}
+                          data-testid="message-like-button"
                           onClick={() =>
                             feedbackHandler({
                               like: 1,
@@ -617,7 +623,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             style={{
                               fontSize: '12px',
                               fontFamily: 'NotoSans-Bold',
-                              margin: 0
+                              margin: 0,
                             }}>
                             {t('label.helpful')}
                           </p>
@@ -636,6 +642,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             alignItems: 'center',
                             flexDirection: 'column',
                           }}
+                          data-testid="message-dislike-button"
                           onClick={() =>
                             feedbackHandler({
                               like: -1,
@@ -647,7 +654,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             style={{
                               fontSize: '12px',
                               fontFamily: 'NotoSans-Bold',
-                              margin: 0
+                              margin: 0,
                             }}>
                             {t('label.not_helpful')}
                           </p>
@@ -659,17 +666,21 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             )
           )}
           {content?.data?.choices?.choices?.length > 0 && (
+            <>
               <Popup
+                bottom={content?.data?.choices?.isSearchable ? '65px' : '0px'}
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={content?.data?.choices?.isSearchable ? '70vh' : '20vh'}
-                onClose={() => {setPopupActive(false)}}
+                height={'20vh'}
+                onClose={() => {
+                  setPopupActive(false);
+                }}
                 active={popupActive}
                 backdrop={false}
                 showClose={false}
                 bgColor="transparent"
                 title={content?.data?.choices?.header}
                 titleColor="var(--font)"
-                titleSize='16px'>
+                titleSize="16px">
                 {displayedChoices.map((item: any) => {
                   return (
                     <div
@@ -696,45 +707,58 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     </div>
                   );
                 })}
-                {content?.data?.choices?.isSearchable && (
-                  <div
-                    style={{
-                      padding: '10px',
-                      background: '#F4F4F4',
-                    }}>
-                    <input
-                      placeholder={t("label.buttons_search_placeholder") || "Search"}
-                      value={searchQuery}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '100%',
-                        height: '45px',
-                        padding: '4px',
-                        color: 'var(--font)',
-                        fontFamily: 'NotoSans-Medium',
-                        fontWeight: '500',
-                        fontSize: '14px',
-                        cursor: 'pointer',
-                        border: 'none',
-                        outline: 'none',
-                        borderRadius: '10px',
-                      }}
-                      onChange={handleSearchChange}
-                    />
-                  </div>
-                )}
               </Popup>
-            )}
-            {content?.data?.choices?.choices?.length > 0 && <div style={{height: popupActive ? '200px' : '0px', width: '100vw'}}></div>}
+              {content?.data?.choices?.isSearchable && popupActive && (
+                <div
+                  style={{
+                    padding: '10px',
+                    background: '#F4F4F4',
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                  }}>
+                  <input
+                    placeholder={
+                      t('label.buttons_search_placeholder') || 'Search'
+                    }
+                    value={searchQuery}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      height: '45px',
+                      padding: '4px',
+                      color: 'var(--font)',
+                      fontFamily: 'NotoSans-Medium',
+                      fontWeight: '500',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      border: 'none',
+                      outline: 'none',
+                      borderRadius: '10px',
+                    }}
+                    onChange={handleSearchChange}
+                  />
+                </div>
+              )}
+            </>
+          )}
+          {content?.data?.choices?.choices?.length > 0 && (
+            <div
+              style={{
+                height: popupActive ? '200px' : '0px',
+                width: '100vw',
+              }}></div>
+          )}
         </div>
       );
 
     case 'image': {
       const url = content?.data?.payload?.media?.url || content?.data?.imageUrl;
       return (
-        <div style={{fontFamily: 'NotoSans-Regular'}}>
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
           {content?.data?.position === 'left' && (
             <div
               style={{
@@ -771,7 +795,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     case 'file': {
       const url = content?.data?.payload?.media?.url || content?.data?.fileUrl;
       return (
-        <div style={{fontFamily: 'NotoSans-Regular'}}>
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
           {content?.data?.position === 'left' && (
             <div
               style={{
@@ -809,7 +833,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       const url = content?.data?.payload?.media?.url || content?.data?.videoUrl;
       const videoId = url.split('=')[1];
       return (
-        <div style={{fontFamily: 'NotoSans-Regular'}}>
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
           <Bubble type="image">
             <div style={{ padding: '7px' }}>
               <iframe
@@ -842,7 +866,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     }
     case 'options': {
       return (
-        <div style={{fontFamily: 'NotoSans-Regular'}}>
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
           <Bubble type="text" className={styles.textBubble}>
             <div style={{ display: 'flex' }}>
               <span className={styles.optionsText}>
@@ -880,7 +904,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             flexDirection: 'column',
             position: 'relative',
             maxWidth: '90vw',
-            fontFamily: 'NotoSans-Regular'
+            fontFamily: 'NotoSans-Regular',
           }}>
           <Bubble
             type="text"
@@ -891,14 +915,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                     borderRadius: '15px 15px 0px 15px',
                     padding: '10px, 15px, 10px, 15px',
-                    gap: '10px'
+                    gap: '10px',
                   }
                 : {
                     background: contrastText,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                     borderRadius: '15px 15px 15px 0px',
                     padding: '10px, 15px, 10px, 15px',
-                    gap: '10px'
+                    gap: '10px',
                   }
             }>
             <div
@@ -923,7 +947,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 // fontWeight: 600,
                 fontSize: '16px',
                 color:
-                  content?.data?.position === 'right' ? contrastText : 'var(--font)',
+                  content?.data?.position === 'right'
+                    ? contrastText
+                    : 'var(--font)',
               }}>
               {`\n` + JSON.parse(content?.text)?.generalAdvice ||
                 '' + `\n\n` + JSON.parse(content?.text)?.buttonDescription ||
@@ -934,11 +960,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               })} */}
               {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                 <div
-                style={{
-                  color: 'var(--font)',
-                  fontSize: '12px',
-                  fontWeight: 'normal',
-                }}>
+                  style={{
+                    color: 'var(--font)',
+                    fontSize: '12px',
+                    fontWeight: 'normal',
+                  }}>
                   <br></br>
                   <span>messageId: {content?.data?.messageId}</span>
                   <br></br>
@@ -948,75 +974,88 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             </span>
           </Bubble>
           {content?.data?.choices?.choices?.length > 0 && (
-        <Popup
-          isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-          height={content?.data?.choices?.isSearchable ? '70vh' : '20vh'}
-          onClose={() => {setPopupActive(false)}}
-          active={popupActive}
-          backdrop={false}
-          showClose={false}
-          bgColor="transparent"
-          title={content?.data?.choices?.header}
-          titleColor="var(--font)"
-          titleSize='16px'>
-          {displayedChoices.map((item: any) => {
-            return (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '10px',
-                  padding: '14px',
-                  color: 'var(--font)',
-                  fontSize: '16px',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  borderBottom: '2px solid #DDDDDD',
-                }}
-                onClick={() => {
+            <>
+              <Popup
+                bottom={content?.data?.choices?.isSearchable ? '65px' : '0px'}
+                isCollapsed={content?.data?.choices?.isCollapsed ?? false}
+                height={'20vh'}
+                onClose={() => {
                   setPopupActive(false);
-                  if (item?.showTextInput) {
-                    context?.setShowInputBox(true);
-                  }
-                  context?.sendMessage(item?.key, item?.text);
-                }}>
-                {item.text}
-              </div>
-            );
-          })}
-          {content?.data?.choices?.isSearchable && (
+                }}
+                active={popupActive}
+                backdrop={false}
+                showClose={false}
+                bgColor="transparent"
+                title={content?.data?.choices?.header}
+                titleColor="var(--font)"
+                titleSize="16px">
+                {displayedChoices.map((item: any) => {
+                  return (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '14px',
+                        color: 'var(--font)',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #DDDDDD',
+                      }}
+                      onClick={() => {
+                        setPopupActive(false);
+                        if (item?.showTextInput) {
+                          context?.setShowInputBox(true);
+                        }
+                        context?.sendMessage(item?.key, item?.text);
+                      }}>
+                      {item.text}
+                    </div>
+                  );
+                })}
+              </Popup>
+              {content?.data?.choices?.isSearchable && (
+                <div
+                  style={{
+                    padding: '10px',
+                    background: '#F4F4F4',
+                  }}>
+                  <input
+                    placeholder={
+                      t('label.buttons_search_placeholder') || 'Search'
+                    }
+                    value={searchQuery}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      height: '45px',
+                      padding: '4px',
+                      color: 'var(--font)',
+                      fontFamily: 'NotoSans-Medium',
+                      fontWeight: '500',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      border: 'none',
+                      outline: 'none',
+                      borderRadius: '10px',
+                    }}
+                    onChange={handleSearchChange}
+                  />
+                </div>
+              )}
+            </>
+          )}
+          {content?.data?.choices?.choices?.length > 0 && (
             <div
               style={{
-                padding: '10px',
-                background: '#F4F4F4',
-              }}>
-              <input
-                placeholder={t("label.buttons_search_placeholder") || "Search"}
-                value={searchQuery}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '100%',
-                  height: '45px',
-                  padding: '4px',
-                  color: 'var(--font)',
-                  fontFamily: 'NotoSans-Medium',
-                  fontWeight: '500',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  border: 'none',
-                  outline: 'none',
-                  borderRadius: '10px',
-                }}
-                onChange={handleSearchChange}
-              />
-            </div>
+                height: popupActive ? '200px' : '0px',
+                width: '100vw',
+              }}></div>
           )}
-        </Popup>
-      )}
-      {content?.data?.choices?.choices?.length > 0 && <div style={{height: popupActive ? '200px' : '0px', width: '100vw'}}></div>}
         </div>
       );
     }

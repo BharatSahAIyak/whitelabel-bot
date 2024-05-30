@@ -88,7 +88,7 @@ export const Sidebar = ({
           role="presentation"
         >
           {config && (
-            <List>
+            <List data-testid="sidebar-list">
               {config.showLangSwitcher && (
                 <ListItem disablePadding>
                   <ListItemButton onClick={handleItemClick}>
@@ -101,6 +101,7 @@ export const Sidebar = ({
                       />
                     </ListItemIcon>
                     <div
+                      data-testid="sidebar-language-toggle"
                       style={{
                         display: 'flex',
                         justifyContent: 'flex-end',
@@ -178,6 +179,7 @@ export const Sidebar = ({
                         />
                       </ListItemIcon>
                       <ListItemText
+                        data-testid="sidebar-welcome-text"
                         primary={t('label.welcome')}
                         secondary={
                           config?.showPhoneNumber &&
@@ -195,6 +197,7 @@ export const Sidebar = ({
               {config?.historyPage && (
                 <div>
                   <ListItem
+                    data-testid="sidebar-history-button"
                     disablePadding
                     sx={{
                       paddingTop: '10px',
@@ -225,6 +228,7 @@ export const Sidebar = ({
               {config?.faqPage && (
                 <div>
                   <ListItem
+                    data-testid="sidebar-faq-button"
                     disablePadding
                     sx={{
                       paddingTop: '10px',
@@ -255,6 +259,7 @@ export const Sidebar = ({
               {config?.feedbackPage && (
                 <div>
                   <ListItem
+                    data-testid="sidebar-feedback-button"
                     disablePadding
                     sx={{
                       paddingTop: '10px',
@@ -284,7 +289,7 @@ export const Sidebar = ({
               )}
 
               {config.showLogoutButton && (
-                <ListItem disablePadding>
+                <ListItem disablePadding data-testid="sidebar-logout-button">
                   <ListItemButton
                     sx={{
                       color: theme.primary.contrastText,

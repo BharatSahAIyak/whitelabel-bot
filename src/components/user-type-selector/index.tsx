@@ -65,7 +65,7 @@ const UserTypeSelector = (props: any) => {
               onClick={() => {
                 props?.setOnboardingData((prev: any) => ({
                   ...prev,
-                  userType: t('label.user1'),
+                  userType: 'user1',
                 }))
                 props?.handleNext();
               }}
@@ -90,7 +90,7 @@ const UserTypeSelector = (props: any) => {
               onClick={() => {
                 props?.setOnboardingData((prev: any) => ({
                   ...prev,
-                  userType: t('label.user2'),
+                  userType: 'user2',
                 }))
                 props?.handleNext();
               }}

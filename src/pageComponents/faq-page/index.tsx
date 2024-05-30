@@ -60,6 +60,7 @@ const FAQPage: React.FC = () => {
         <Box className={styles.main}>
           <Box m={3}>
             <Typography
+              data-testid="faq-page-title"
               variant="h4"
               sx={{ fontWeight: '600', color: theme?.primary?.main }}>
               {t('label.faqs')}
@@ -69,6 +70,7 @@ const FAQPage: React.FC = () => {
             {config?.faqShowPdfButton && (
               <Box className={styles.manualButtons} m={3}>
                 <Button
+                  data-testid="faq-page-manual-button"
                   onClick={downloadPDFHandler}
                   variant="contained"
                   sx={{
@@ -81,7 +83,7 @@ const FAQPage: React.FC = () => {
               </Box>
             )}
             {config?.faqShowCallBox && (
-              <Box className={styles.dialerBox} m={3}>
+              <Box className={styles.dialerBox} m={3} data-testid="faq-page-call-box">
                 <Box p={1.5}>
                   <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                     {t('message.dial_description')}

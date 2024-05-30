@@ -148,6 +148,7 @@ console.log("debug login:",{config})
           <div className={styles.form}>
             {/* Form */}
             <Typography
+              data-testid="login-page-title"
               component="h1"
               variant="h4"
               fontWeight={'bold'}
@@ -158,6 +159,7 @@ console.log("debug login:",{config})
             ></Typography>
             {showLogo && logo && (
               <img
+                data-testid="login-page-img"
                 src={config?.logo}
                 alt="loginPageImg"
                 height={config.logoheight || "280px"}
@@ -170,6 +172,7 @@ console.log("debug login:",{config})
               sx={{ mt: 1, width: "100%" }}
             >
               <TextField
+                data-testid="mobile-input"
                 margin="normal"
                 error={!valid}
                 required
@@ -190,6 +193,7 @@ console.log("debug login:",{config})
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 //@ts-ignore
                 <Button
+                  data-testid="login-button"
                   fullWidth
                   variant="contained"
                   sx={{

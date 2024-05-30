@@ -76,6 +76,7 @@ const FeedbackPage: React.FC = () => {
       <Box className={styles.main}>
         <Box>
           <Typography
+            data-testid="feedback-title"
             sx={{
               fontSize: '5vh',
               fontWeight: 'bold',
@@ -88,6 +89,7 @@ const FeedbackPage: React.FC = () => {
         {config?.ratingBox && (
           <Box className={styles.section}>
             <Typography
+              data-testid="feedback-rating-title"
               sx={{
                 fontWeight: 'bold',
                 fontSize: '3vh',
@@ -96,7 +98,7 @@ const FeedbackPage: React.FC = () => {
             </Typography>
 
             <Rating
-              data-testid="ratingComponent"
+              data-testid="feedback-rating-component"
               name="simple-controlled"
               value={star}
               max={config?.ratingMaxStars || 5}
@@ -109,6 +111,7 @@ const FeedbackPage: React.FC = () => {
               }}
             />
             <Typography
+              data-testid="feedback-rating-description"
               sx={{
                 textAlign: 'center',
                 fontSize: '2vh',
@@ -116,9 +119,8 @@ const FeedbackPage: React.FC = () => {
               {t('message.rating_description')}
             </Typography>
             <Button
-              id="ratingBtn"
+              data-testid="feedback-rating-button"
               variant="contained"
-              data-testid="ratingBtn"
               sx={{
                 mt: 2,
                 backgroundColor: `${theme.primary.main}`,
@@ -139,6 +141,7 @@ const FeedbackPage: React.FC = () => {
         {config?.reviewBox && (
           <Box className={styles.section}>
             <Typography
+              data-testid="feedback-review-title"
               sx={{
                 m: '1rem',
                 fontWeight: 'bold',
@@ -147,6 +150,7 @@ const FeedbackPage: React.FC = () => {
               {t('message.review')}
             </Typography>
             <textarea
+              data-testid="feedback-review-component"
               placeholder={t('message.review_description')}
               value={review}
               className={styles.textBlock}
@@ -161,7 +165,7 @@ const FeedbackPage: React.FC = () => {
             <Button
               id="reviewBtn"
               variant="contained"
-              data-testid="reviewBtn"
+              data-testid="feedback-review-button"
               sx={{
                 mt: 2,
                 backgroundColor: `${theme.primary.main}`,

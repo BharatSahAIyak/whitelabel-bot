@@ -14,7 +14,7 @@ import { InstallModal } from '../components/install-modal';
 import { FullPageLoader } from '../components/fullpage-loader';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
-// import OnBoardingPage from '../pageComponents/onboarding-page';
+import OnBoardingPage from '../pageComponents/onboarding-page';
 
 const NavBar = dynamic(() => import('../components/navbar'), {
   ssr: false,
