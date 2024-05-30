@@ -189,10 +189,10 @@ const HistoryPage: FC = () => {
           color={theme?.primary?.main}
           label="Fetching History"
         />
-        <div className={styles.title} style={{ color: theme?.primary?.main }}>
+        <div className={styles.title} style={{ color: theme?.primary?.main }} data-testid="history-title">
           {t('label.chats') ?? 'No Label Provided'}
         </div>
-        <div className={styles.chatList}>
+        <div className={styles.chatList} data-testid="history-list">
           <List
             items={conversations}
             noItem={{

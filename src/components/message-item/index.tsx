@@ -548,6 +548,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       // style={{
                       //   border: `1px solid ${theme?.primary?.main}`,
                       // }}
+                      data-testid="message-speaker-button"
                       className={styles.msgSpeaker}
                       onClick={downloadAudio}
                       style={
@@ -606,6 +607,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             alignItems: 'center',
                             flexDirection: 'column',
                           }}
+                          data-testid="message-like-button"
                           onClick={() =>
                             feedbackHandler({
                               like: 1,
@@ -636,6 +638,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             alignItems: 'center',
                             flexDirection: 'column',
                           }}
+                          data-testid="message-dislike-button"
                           onClick={() =>
                             feedbackHandler({
                               like: -1,

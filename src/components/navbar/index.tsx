@@ -109,6 +109,7 @@ const Navbar: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {(router.pathname == '/login' || router.pathname == '/otp') && (
               <div
+                data-testid="navbar-language-toggle"
                 style={{
                   display: 'flex',
                   justifyContent: 'flex-end',
@@ -165,6 +166,7 @@ const Navbar: React.FC = () => {
             router.pathname !== '/otp' &&
               showHamburgerMenu && (
                 <IconButton
+                  data-testid="navbar-hamburger-menu"
                   size="large"
                   edge="start"
                   color="primary"
@@ -221,6 +223,7 @@ const Navbar: React.FC = () => {
                   <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
                 </IconButton>
                 <Typography
+                  data-testid="navbar-new-chat"
                   variant="body1"
                   color={newChatButtonColor ?? 'black'}
                   sx={{ fontSize: '26px', marginLeft: '5px', fontFamily: 'NotoSans-Medium', fontWeight: '500' }}>
@@ -235,6 +238,7 @@ const Navbar: React.FC = () => {
               router.pathname !== '/weather' &&
               router.pathname !== '/chat' && (
                 <IconButton
+                  data-testid="navbar-home-button"
                   color="primary"
                   size="large"
                   edge="start"
@@ -257,6 +261,7 @@ const Navbar: React.FC = () => {
             {showCenterLogo && (
               <div>
                 <img
+                  data-testid="navbar-center-img"
                   src={centerLogoSrc}
                   alt="Center Logo"
                   style={{ maxHeight: centerLogoSize }}
@@ -277,7 +282,7 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          <div>
+          <div data-testid="navbar-right-logos">
             {showRightLogo1 && (
               <img
                 src={rightLogo1Src}

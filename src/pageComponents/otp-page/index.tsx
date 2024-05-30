@@ -151,6 +151,7 @@ const OtpPage: React.FC = () => {
           <div className={styles.form}>
             {/* Form */}
             <Typography
+              data-testid="otp-page-title"
               component="h1"
               variant="h4"
               fontWeight={'bold'}
@@ -160,6 +161,7 @@ const OtpPage: React.FC = () => {
               dangerouslySetInnerHTML={{ __html: t('label.subtitle') }}
             ></Typography>
             <Typography
+              data-testid="otp-verification-line1"
               variant="h4"
               textAlign="center"
               width="90%"
@@ -169,6 +171,7 @@ const OtpPage: React.FC = () => {
               {t('message.otp_verification')}
             </Typography>
             <FormattedMessage
+              data-testid="otp-verification-line2"
               id="message.otp_message"
               defaultMessage="We will send you a 4 digit one time password on this mobile number <br><b>{mobile}</b>"
               values={{
@@ -196,13 +199,14 @@ const OtpPage: React.FC = () => {
                 }}
               >
                 <OTPInput
+                  data-testid="otp-input-field"
                   separator={<></>}
                   value={otp}
                   onChange={setOtp}
                   length={otpLength}
                 />
               </Box>
-              <div style={{ marginTop: '10px' }}>
+              <div style={{ marginTop: '10px' }} data-testid="resend-otp">
                 {countdown > 0 ? (
                   <span>
                     <FormattedMessage
@@ -239,6 +243,7 @@ const OtpPage: React.FC = () => {
                 }}
               >
                 <Button
+                  data-testid="otp-back-button"
                   variant="contained"
                   type="button"
                   onClick={() => router.push('/login')}
@@ -256,6 +261,7 @@ const OtpPage: React.FC = () => {
                   {t('label.back')}
                 </Button>
                 <Button
+                  data-testid="otp-submit-button"
                   variant="contained"
                   sx={{
                     textTransform: 'none',

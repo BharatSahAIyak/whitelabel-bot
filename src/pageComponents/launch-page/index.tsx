@@ -14,6 +14,7 @@ const LaunchPage: FC<{ theme: any; config: any; compConfig: any }> = ({
       style={{ background: config?.launchPageColor || theme?.palette?.primary?.light }}
     >
       {config?.logo && <img
+        data-testid="launch-page-logo"
         className={styles.loginImage}
         src={config?.logo}
         alt="launchPageLogo"

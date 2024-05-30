@@ -136,6 +136,7 @@ const ShareButtons = () => {
         >
           {config?.allowShareChat && (
             <div
+              data-testid="share-button"
               onClick={() => downloadShareHandler('share')}
               style={{
                 display: 'flex',
@@ -190,6 +191,7 @@ const ShareButtons = () => {
           {config?.allowDownloadChat && config?.allowShareChat && <Divider />}
           {config?.allowDownloadChat && (
             <div
+              data-testid="download-button"
               onClick={() => downloadShareHandler('download')}
               style={{
                 display: 'flex',

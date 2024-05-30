@@ -73,6 +73,7 @@ export const InstallModal: React.FC = () => {
         <>
           <Box sx={style}>
             <IconButton
+              data-testid="install-app-close-button"
               aria-label="close"
               onClick={handleClose}
               sx={{
@@ -83,13 +84,14 @@ export const InstallModal: React.FC = () => {
               }}>
               <CloseIcon />
             </IconButton>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
+            <Typography id="modal-modal-title" variant="h6" component="h2" data-testid="install-app-text">
               Install App
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
               Click the button to install the app.
             </Typography>
             <Button
+              data-testid="install-app-button"
               onClick={handleOpen}
               style={{
                 marginTop: '20px',
