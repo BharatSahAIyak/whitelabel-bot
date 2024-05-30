@@ -170,8 +170,15 @@ const OtpPage: React.FC = () => {
             >
               {t('message.otp_verification')}
             </Typography>
-            <FormattedMessage
+            <Typography
               data-testid="otp-verification-line2"
+              variant="body1"
+              textAlign="center"
+              width="90%"
+              color="#1E232C"
+              sx={{ m: 2 }}
+            >
+            <FormattedMessage
               id="message.otp_message"
               defaultMessage="We will send you a 4 digit one time password on this mobile number <br><b>{mobile}</b>"
               values={{
@@ -180,6 +187,7 @@ const OtpPage: React.FC = () => {
                 b: (chunks) => <b>{chunks}</b>,
               }}
             />
+            </Typography>
             <Box
               component="form"
               onSubmit={handleLogin}
@@ -199,7 +207,6 @@ const OtpPage: React.FC = () => {
                 }}
               >
                 <OTPInput
-                  data-testid="otp-input-field"
                   separator={<></>}
                   value={otp}
                   onChange={setOtp}

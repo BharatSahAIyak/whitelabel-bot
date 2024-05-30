@@ -88,7 +88,7 @@ export const Sidebar = ({
           role="presentation"
         >
           {config && (
-            <List>
+            <List data-testid="sidebar-list">
               {config.showLangSwitcher && (
                 <ListItem disablePadding>
                   <ListItemButton onClick={handleItemClick}>

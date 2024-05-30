@@ -252,6 +252,7 @@ const FeedbackPopup: React.FC<any> = ({ setShowFeedbackPopup }) => {
           })}
         </div>
         <textarea
+          data-testid="feedback-popup-box"
           ref={inputRef}
           value={review}
           onChange={handleInputChange}
@@ -261,7 +262,7 @@ const FeedbackPopup: React.FC<any> = ({ setShowFeedbackPopup }) => {
           rows={5}
           placeholder={t('message.comment_description')}></textarea>
 
-        <button onClick={() => submitReview(review)}>
+        <button onClick={() => submitReview(review)} data-testid="feedback-popup-button">
           {t('label.submit_feedback')}
         </button>
       </div>
