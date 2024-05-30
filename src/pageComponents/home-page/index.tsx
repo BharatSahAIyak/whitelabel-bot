@@ -310,7 +310,7 @@ const HomePage: NextPage = () => {
               {(config?.showKalia ||
                 config?.showWeatherAdvisory ||
                 config?.showPlantProtection) && (
-                <div className={styles.imgButtons}>
+                <div className={styles.imgButtons} data-testid="homepage-action-buttons">
                   <div
                     style={{
                       display: 'flex',
@@ -412,6 +412,7 @@ const HomePage: NextPage = () => {
                 })}
               </div>
               <textarea
+                data-testid="homepage-input-field"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
@@ -431,6 +432,7 @@ const HomePage: NextPage = () => {
                 }
               />
               <button
+                data-testid="homepage-send-button"
                 type="submit"
                 className={styles.sendButton}
                 onClick={() => sendMessage(inputMsg)}

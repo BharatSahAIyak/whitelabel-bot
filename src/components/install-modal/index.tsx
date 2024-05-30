@@ -83,7 +83,7 @@ export const InstallModal: React.FC = () => {
               }}>
               <CloseIcon />
             </IconButton>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
+            <Typography id="modal-modal-title" variant="h6" component="h2" data-testid="install-app-text">
               Install App
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
