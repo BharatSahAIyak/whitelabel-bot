@@ -48,8 +48,8 @@ const OptionSelector = (props: any) => {
   );
 
   const selectedLabels = activeElements.map(id => {
-    const commodity = props?.commodityList?.find((v: any) => v.id === id);
-    return commodity ? commodity.name : null;
+    const entity = props?.entityList?.find((v: any) => v.id === id);
+    return entity ? entity.name : null;
   }).filter(name => name !== null);
   
   return (
@@ -76,14 +76,14 @@ const OptionSelector = (props: any) => {
               margin: 0
             }}
           >
-            {t(`label.choose_${props?.commodityType}`)}
+            {t('label.choose_crops')}
           </p>
         </div>
       </div>
 
       <div className="text-center mt-4">
-        <p style={{ color: "#51586B", fontSize: "20px", margin: 0 }}>
-          {t(`label.select_${props?.commodityType}_from_below`)}
+        <p style={{ color: "#51586B", fontSize: "24px", margin: 0 }}>
+          {t('label.select_crops_from_below')}
         </p>
         <div
           style={{
@@ -100,12 +100,12 @@ const OptionSelector = (props: any) => {
             columns={{ xs: 3, sm: 6, md: 12 }}
             style={{ marginTop: "10px" }}
           >
-            {props?.commodityList?.map((commodity: any) => (
+            {props?.entityList?.map((entity: any) => (
               <Grid item xs={1} sm={2} md={3}>
                 <Item
-                  onClick={onItemClick(commodity)}
+                  onClick={onItemClick(entity)}
                   style={{
-                    border: includes(activeElements, commodity?.id)
+                    border: includes(activeElements, entity?.id)
                       ? `1px solid ${theme?.primary?.main}`
                       : "1px solid #B0B0B0",
                       height: '130px',
@@ -113,7 +113,7 @@ const OptionSelector = (props: any) => {
                       padding: '5px'
                   }}
                 >
-                  {includes(activeElements, commodity?.id) && (
+                  {includes(activeElements, entity?.id) && (
                     <div
                       className="rounded-circle position-absolute "
                       style={{
@@ -134,13 +134,13 @@ const OptionSelector = (props: any) => {
                     margin: 'auto',
                   }}>
                   <img
-                    src={commodity?.image}
+                    src={entity?.image}
                     height='100%'
                     width="100%"
                   />
                   </div>
                   <p style={{ fontSize: "16px", wordWrap: "break-word" }} className="mt-2 mb-0">
-                    {localStorage.getItem('locale') === 'en' ?  commodity?.name : commodity.translation}
+                    {localStorage.getItem('locale') === 'en' ?  entity?.name : entity.translation}
                   </p>
                 </Item>
               </Grid>
@@ -152,7 +152,7 @@ const OptionSelector = (props: any) => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                disabled={!(activeElements.length <= (config?.optionSelectLength ?? 4 ) && activeElements.length > 0)}
+                disabled={!(activeElements.length == (config?.optionSelectLength ?? 4 ))}
                 sx={{
                   textTransform: "none",
                   mt: 2,

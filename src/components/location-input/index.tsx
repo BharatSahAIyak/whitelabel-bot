@@ -98,6 +98,7 @@ const LocationInput = (props: any) => {
         >
          <TextField
             fullWidth
+            color="secondary"
             variant="outlined"
             inputRef={materialRef}
           />

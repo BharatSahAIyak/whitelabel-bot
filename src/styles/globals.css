@@ -5,23 +5,23 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
+body{
   background-color: var(--bg-color) !important;
 }
 
 @font-face {
   font-family: NotoSans-Bold;
-  src: url('../assets/fonts/NotoSans-Bold.ttf');
+  src: url("../assets/fonts/NotoSans-Bold.ttf");
   font-display: swap;
 }
 @font-face {
   font-family: NotoSans-Medium;
-  src: url('../assets/fonts/NotoSans-Medium.ttf');
+  src: url("../assets/fonts/NotoSans-Medium.ttf");
   font-display: swap;
 }
 @font-face {
   font-family: NotoSans-Regular;
-  src: url('../assets/fonts/NotoSans-Regular.ttf');
+  src: url("../assets/fonts/NotoSans-Regular.ttf");
   font-display: swap;
 }
 ::-webkit-scrollbar {
@@ -38,16 +38,16 @@ body {
   border-radius: 10px;
 }
 
-:root {
-  --font: #474c5d;
-  --lightgrey: #d0d0d0;
+:root{
+  --font: #474C5D;
+  --lightgrey: #D0D0D0;
   --grey: #828282;
   --darkgrey: #333232;
-  --primary: #d2f4e0;
+  --primary: #D2F4E0;
   --secondary: #219653;
-  --tertiary: #003a00;
+  --tertiary: #003A00;
   --red: #be0f39;
-  --bg-color: #f6faff;
+  --bg-color: #F6FAFF;
 }
 
 body {
@@ -62,11 +62,11 @@ body {
   min-height: 100vh;
 }
 
-.flex {
+.flex{
   display: flex;
 }
 
-.hidden {
+.hidden{
   display: none;
 }
 
@@ -74,6 +74,7 @@ body {
   max-width: 300px !important;
   border-radius: 0 10px 10px 0;
 }
+
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -93,21 +94,4 @@ input::-webkit-inner-spin-button {
 }
 ::-webkit-scrollbar {
   display: block !important;
-}
-.pac-item {
-  font-size: 1em;
-  padding: 5px;
-}
-.pac-matched {
-  font-size: 1.2em;
-}
-.pac-target-input {
-  font-size: 1em;
-}
-.pac-item:hover {
-  font-weight: bold;
-}
-.pac-container {
-  animation: rotateMenu 400ms ease-in-out forwards;
-  transform-origin: top center;
-}
+}  

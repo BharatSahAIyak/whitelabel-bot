@@ -104,8 +104,8 @@ const OnBoardingPage = (props: any) => {
               handleNext={handleNext}
               handleBack={handleBack}
               setOnboardingData={setOnboardingData}
-              commodityType="crops"
-              commodityList={cropList}
+              commodityType="crop"
+              entityList={cropList}
             />
           )}
           {activeStep === 3 && (
@@ -113,8 +113,8 @@ const OnBoardingPage = (props: any) => {
               handleNext={handleNext}
               handleBack={handleBack}
               setOnboardingData={setOnboardingData}
-              commodityType="animals"
-              commodityList={animalList}
+              commodityType="animal"
+              entityList={animalList}
             />
           )}
         </OnBoarding>
