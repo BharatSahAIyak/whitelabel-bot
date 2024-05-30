@@ -82,7 +82,7 @@ const OptionSelector = (props: any) => {
       </div>
 
       <div className="text-center mt-4">
-        <p style={{ color: "#51586B", fontSize: "24px" }}>
+        <p style={{ color: "#51586B", fontSize: "24px", margin: 0 }}>
           {t('label.select_crops_from_below')}
         </p>
         <div
@@ -96,8 +96,8 @@ const OptionSelector = (props: any) => {
         >
           <Grid
             container
-            spacing={{ xs: 1, md: 3 }}
-            columns={{ xs: 3, sm: 8, md: 12 }}
+            spacing={{ xs: 1, sm: 6, md: 3 }}
+            columns={{ xs: 3, sm: 6, md: 12 }}
             style={{ marginTop: "10px" }}
           >
             {props?.entityList?.map((entity: any) => (
@@ -108,8 +108,9 @@ const OptionSelector = (props: any) => {
                     border: includes(activeElements, entity?.id)
                       ? `1px solid ${theme?.primary?.main}`
                       : "1px solid #B0B0B0",
-                      height: '180px',
-                      boxShadow: 'none'
+                      height: '130px',
+                      boxShadow: 'none',
+                      padding: '5px'
                   }}
                 >
                   {includes(activeElements, entity?.id) && (
@@ -126,8 +127,8 @@ const OptionSelector = (props: any) => {
                     </div>
                   )}
                   <div style={{
-                    width: "70px",
-                    height: "70px",
+                    width: "60px",
+                    height: "60px",
                     overflow: 'hidden',
                     borderRadius: "50%",
                     margin: 'auto',
@@ -138,7 +139,7 @@ const OptionSelector = (props: any) => {
                     width="100%"
                   />
                   </div>
-                  <p style={{ fontSize: "20px", wordWrap: "break-word" }} className="mt-1 mb-0">
+                  <p style={{ fontSize: "16px", wordWrap: "break-word" }} className="mt-2 mb-0">
                     {localStorage.getItem('locale') === 'en' ?  entity?.name : entity.translation}
                   </p>
                 </Item>
@@ -155,7 +156,6 @@ const OptionSelector = (props: any) => {
                 sx={{
                   textTransform: "none",
                   mt: 2,
-                  mb: 2,
                   width: '80%',
                   height: '60px',
                   fontSize: '16px',
