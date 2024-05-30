@@ -17,6 +17,7 @@ const UserTypeSelector = (props: any) => {
         height: "100dvh",
         position: "relative",
         overflow: "hidden",
+        fontWeight: '500'
       }}
     >
       <div
@@ -75,7 +76,12 @@ const UserTypeSelector = (props: any) => {
                 borderRadius: "16px",
                 padding: "16px",
                 width: "40%",
-                textAlign: "center",
+                height: '140px',
+                // display: 'flex',
+                // flexDirection: 'column',
+                // justifyContent: 'center',
+                // alignItems: 'center',
+                textAlign: 'center'
               }}
             >
               <img
@@ -100,7 +106,12 @@ const UserTypeSelector = (props: any) => {
                 borderRadius: "16px",
                 padding: "16px",
                 width: "40%",
-                textAlign: "center",
+                height: '140px',
+                // display: 'flex',
+                // flexDirection: 'column',
+                // justifyContent: 'center',
+                // alignItems: 'center',
+                textAlign: 'center'
               }}
             >
               <img
@@ -113,7 +124,7 @@ const UserTypeSelector = (props: any) => {
           </div>
         </div>
       </div>
-        <div style={{height: '400px', overflow: 'hidden', objectFit: 'cover'}}>
+        <div style={{height: '400px', overflow: 'hidden', objectFit: 'cover' }}>
           <img
             src={config?.backgroundImage}
             alt="bgImage"
