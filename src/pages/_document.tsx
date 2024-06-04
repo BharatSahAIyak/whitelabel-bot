@@ -8,9 +8,9 @@ export default function Document() {
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icon.png"></link>
         <meta name="theme-color" content="#fff" />
-        <Script
-          id="ms-clarity"
-          strategy="afterInteractive"
+        <script
+          // id="ms-clarity"
+          // strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function(c,l,a,r,i,t,y){
