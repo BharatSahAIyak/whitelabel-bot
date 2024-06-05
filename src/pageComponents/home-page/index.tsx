@@ -309,7 +309,8 @@ const HomePage: NextPage = () => {
               ></div>
               {(config?.showKalia ||
                 config?.showWeatherAdvisory ||
-                config?.showPlantProtection) && (
+                config?.showPlantProtection ||
+                config?.showSchemes) && (
                 <div className={styles.imgButtons} data-testid="homepage-action-buttons">
                   <div
                     style={{
@@ -355,10 +356,33 @@ const HomePage: NextPage = () => {
                       </div>
                     )}
                   </div>
+                  <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-evenly',
+                      marginTop: '10px',
+                      width: '100%',
+                      maxWidth: '500px',
+                    }}>
+                    {config?.showSchemes && (
+                      <div
+                        className={styles.imgBtn}
+                        onClick={() => sendGuidedMsg('scheme')}
+                      >
+                        <p>{t('label.scheme')}</p>
+                        <img
+                          src={
+                            config?.schemesImg ||
+                            plantProtectionImg?.src
+                          }
+                          width={60}
+                          height={60}
+                          alt="schemes"
+                        />
+                      </div>
+                    )}
                   {config?.showKalia && (
                     <div
                       className={styles.imgBtn}
-                      style={{ marginTop: '10px' }}
                       onClick={() => {
                         context?.setKaliaClicked((props: boolean) => !props)
                       }}
@@ -366,12 +390,13 @@ const HomePage: NextPage = () => {
                       <p>{t('label.kalia_status')}</p>
                       <img
                         src={config?.kaliaStatusImg || kaliaStatusImg?.src}
-                        width={80}
-                        height={80}
+                        width={60}
+                        height={60}
                         alt="kaliastatus"
                       />
                     </div>
                   )}
+                  </div>
                 </div>
               )}
 

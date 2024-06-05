@@ -7,7 +7,8 @@ import { useLocalization } from "../../hooks";
 
 const WelcomePage = (props: any) => {
   const t = useLocalization();
-  const config = useConfig('component', 'welcomePage');
+  const config = useConfig('component', 'welcomePage') || props?.config?.component?.welcomePage;
+  
   const theme = useColorPalates();
   return (
     <Container
@@ -15,14 +16,13 @@ const WelcomePage = (props: any) => {
       style={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between", 
+        // justifyContent: "space-between", 
         height: "100dvh", 
       }}
     >
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
           alignItems: 'center',
           width: "100%",
         }}
@@ -33,16 +33,16 @@ const WelcomePage = (props: any) => {
        {config?.showTopLeftLogo2 && <img src={config?.topLeftLogo2} height="100%" width="30%" />}
        {config?.showTopLeftLogo3 && <img src={config?.topLeftLogo3} height="100%" width="30%" />}
        </div>
-        <LanguagePicker />
+        {/* <LanguagePicker /> */}
       </div>
       <div className="text-center">
-        <div className="mt-4">
+        <div style={{marginTop: '20%'}}>
          {config?.showCenterImage && <img src={config?.centerImage} width={config?.centerImageWidth} height={config?.centerImageHeight} />}
         </div>
         <div style={{
-              marginTop: '8px'
+              marginTop: '20%'
         }}>
-          <text
+          <p
             style={{
               fontSize: "32px",
               color: theme?.primary?.main,
@@ -51,13 +51,13 @@ const WelcomePage = (props: any) => {
             }}
           >
            {t("label.subtitle")}
-          </text>
+          </p>
         </div>
       {config?.showCenterBottomImage &&  <div style={{marginTop: '8px'}}><img src={config?.centerBottomImage} height={config?.centerBottomImageHeight} width={config?.centerBottomImageWidth} /></div>}
         <div style={{
               marginTop: '8px'
         }}>
-          <text
+          <p
             style={{
               fontSize: "24px",
               color: 'var(--font)',
@@ -65,10 +65,10 @@ const WelcomePage = (props: any) => {
             }}
           >
            {t("label.connect_with_us")}
-          </text>
+          </p>
         </div>
       </div>
-     {<div className="text-center mt-4">
+     {/* {<div className="text-center mt-4">
         <IconButton
           aria-label="fingerprint"
           style={{ background: theme?.primary?.main, height: '76px', width: '76px' }}
@@ -76,7 +76,7 @@ const WelcomePage = (props: any) => {
         >
           <ArrowForwardIcon style={{ color: "white", height: '36px', width: '36px' }} />
         </IconButton>
-      </div>}
+      </div>} */}
     </Container>
   );
 };

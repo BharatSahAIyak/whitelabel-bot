@@ -82,8 +82,8 @@ const App = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     if (!isAuthenticated) {
       login();
-    }else{
-      // fetchUser()
+    }else if(process.env.NEXT_PUBLIC_SHOW_ONBOARDING === 'true'){
+      fetchUser()
     }
   }, [isAuthenticated, login]);
 
@@ -92,13 +92,13 @@ const App = ({ Component, pageProps }: AppProps) => {
   }
 
   if (typeof window === 'undefined') return <FullPageLoader loading />;
-  // if(isAuthenticated && user && !user?.data?.profile){
-  //   return (
-  //     <Provider>
-  //     <OnBoardingPage setUser={setUser}/>
-  //     </Provider>
-  //   )
-  // }
+  if(isAuthenticated && user && !user?.data?.profile){
+    return (
+      <Provider>
+      <OnBoardingPage setUser={setUser}/>
+      </Provider>
+    )
+  }
     return (
       <Provider>
         <>

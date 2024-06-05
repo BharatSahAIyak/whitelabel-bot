@@ -37,6 +37,8 @@ import saveTelemetryEvent from '../../utils/telemetry';
 import BlinkingSpinner from '../blinking-spinner/index';
 import Loader from '../loader';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
+import { v4 as uuidv4 } from 'uuid';
+import router from 'next/router';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
@@ -700,8 +702,22 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         setPopupActive(false);
                         if (item?.showTextInput) {
                           context?.setShowInputBox(true);
+                          context?.sendMessage(item?.key, item?.text);
+                        }else if(item?.action === "home"){
+                          const newConversationId = uuidv4();
+                          sessionStorage.setItem('conversationId', newConversationId);
+                          sessionStorage.removeItem('tags');
+                          context?.setShowInputBox(true);
+                          if (context?.audioElement) context?.audioElement.pause();
+                          if (context?.setAudioPlaying) context?.setAudioPlaying(false);
+                          context?.setConversationId(newConversationId);
+                          context?.setMessages([]);
+                          context?.setIsMsgReceiving(false);
+                          context?.setLoading(false);
+                          router.push('/');
+                        }else{
+                          context?.sendMessage(item?.key, item?.text);
                         }
-                        context?.sendMessage(item?.key, item?.text);
                       }}>
                       {item.text}
                     </div>
@@ -1008,8 +1024,22 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         setPopupActive(false);
                         if (item?.showTextInput) {
                           context?.setShowInputBox(true);
+                          context?.sendMessage(item?.key, item?.text);
+                        }else if(item?.action === "home"){
+                          const newConversationId = uuidv4();
+                          sessionStorage.setItem('conversationId', newConversationId);
+                          sessionStorage.removeItem('tags');
+                          context?.setShowInputBox(true);
+                          if (context?.audioElement) context?.audioElement.pause();
+                          if (context?.setAudioPlaying) context?.setAudioPlaying(false);
+                          context?.setConversationId(newConversationId);
+                          context?.setMessages([]);
+                          context?.setIsMsgReceiving(false);
+                          context?.setLoading(false);
+                          router.push('/');
+                        }else{
+                          context?.sendMessage(item?.key, item?.text);
                         }
-                        context?.sendMessage(item?.key, item?.text);
                       }}>
                       {item.text}
                     </div>
