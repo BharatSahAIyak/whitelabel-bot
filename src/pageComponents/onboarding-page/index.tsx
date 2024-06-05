@@ -62,9 +62,7 @@ const OnBoardingPage = (props: any) => {
           '/user/' +
           localStorage.getItem('userID'),
         {
-          data: { 
-            profile: { ...onboardingData } 
-          }
+          profile: { ...onboardingData } 
         },
         {
           headers: {
