@@ -57,20 +57,27 @@ const OnBoardingPage = (props: any) => {
 
   const updateUser = async () => {
     try {
-      const res = await axios.put(process.env.NEXT_PUBLIC_BFF_API_URL + '/user/' + localStorage.getItem('userID'), {
-        headers: {
-          Authorization: process.env.NEXT_PUBLIC_FUSIONAUTH_KEY || '',
-          "Service-Url": process.env.NEXT_PUBLIC_FUSIONAUTH_URL || ''
+      const res = await axios.put(
+        process.env.NEXT_PUBLIC_BFF_API_URL +
+          '/users/' +
+          localStorage.getItem('userID'),
+        {
+          data: { 
+            profile: { ...onboardingData } 
+          }
         },
-        data: {
-          profile: { ...onboardingData }
+        {
+          headers: {
+            Authorization: process.env.NEXT_PUBLIC_FUSIONAUTH_KEY || '',
+            'Service-Url': process.env.NEXT_PUBLIC_FUSIONAUTH_URL || '',
+          },
         }
-      })
-      console.log(res)
-    }catch (err) {
-      console.log(err)
+      );
+      console.log(res);
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
   useEffect(() => {
     console.log(activeStep);
