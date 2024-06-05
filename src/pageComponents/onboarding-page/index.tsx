@@ -59,12 +59,10 @@ const OnBoardingPage = (props: any) => {
     try {
       const res = await axios.put(
         process.env.NEXT_PUBLIC_BFF_API_URL +
-          '/users/' +
+          '/user/' +
           localStorage.getItem('userID'),
         {
-          data: { 
-            profile: { ...onboardingData } 
-          }
+          profile: { ...onboardingData } 
         },
         {
           headers: {
