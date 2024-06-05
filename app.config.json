@@ -45,6 +45,7 @@
       "transliterationOutputLanguage": ""
     },
     "welcomePage": {
+      "showWelcomePage": false,
       "showTopLeftLogo1": true,
       "topLeftLogo1": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
       "showTopLeftLogo2": true,
@@ -73,10 +74,6 @@
     "navbar": {
       "showNavbar": true,
       "showLanguageToggle": true,
-      "languageCode_1": "en",
-      "languageLabel1": "ENG",
-      "languageLabel2": "ENG",
-      "languageCode_2": "",
       "showHamburgerMenu": true,
       "showHomeIcon": true,
       "showCenterLogo": false,
@@ -109,11 +106,7 @@
       "showDarshanLogo": false
     },
     "otpPage": {
-      "showLogo": false,
-      "showSplitedView": true,
       "otpLength": 4,
-      "logo": "https://seeklogo.com/images/C/corporate-company-logo-749CEE6ADC-seeklogo.com.png",
-      "title": "OTP Verification",
       "resendOtpTimer": "30"
     },
     "downtimePage": {
@@ -137,11 +130,7 @@
       "ratingBox": true,
       "ratingMaxStars": 5
     },
-    "loginMobileAadharPage": {
-      "loginWithAadhaar": false,
-      "showSignUp": false,
-      "showAlternateSignIn": false,
-      "showSplitedView": true,
+    "loginPage": {
       "logowidth": "320px",
       "logoheight": "280px",
       "showLogo": false,
@@ -151,11 +140,6 @@
       "historyShowHistoryPage": true,
       "allowDelete": true,
       "showTimestamp": true
-    },
-    "launchPage": {
-      "logo": "",
-      "showLaunchPage": false,
-      "launchPageColor": "#d2f4df"
     },
     "share-buttons": {
       "allowDownloadChat": true,

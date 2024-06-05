@@ -7,9 +7,10 @@ import { useColorPalates } from "../../providers/theme-provider/hooks";
 import { useConfig } from "../../hooks/useConfig";
 import { AppContext } from "../../context";
 const LanguagePicker = () => {
-  const [activeLanguage, setActiveLanguage] = React.useState(localStorage.getItem('locale') || "en");
   const config = useConfig('component', 'sidebar');
+  const botConfig = useConfig('component', 'botDetails');
   const context = useContext(AppContext);
+  const [activeLanguage, setActiveLanguage] = React.useState(localStorage.getItem('locale') || botConfig?.defaultLanguage || "en");
 
   const handleChange = (event: SelectChangeEvent) => {
     setActiveLanguage(event.target.value);
@@ -32,6 +33,7 @@ const LanguagePicker = () => {
         height:'36px'
       }}
       size="small"
+      data-testid="language-picker"
     >
       <Select
         value={activeLanguage}
