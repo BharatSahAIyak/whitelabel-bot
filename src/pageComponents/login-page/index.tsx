@@ -15,7 +15,7 @@ import LanguagePicker from '../../components/language-picker';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const LoginPage: React.FC = () => {
-  const config = useConfig('component', 'loginMobileAadharPage');
+  const config = useConfig('component', 'loginPage');
   const {
     logo,
     showLogo,

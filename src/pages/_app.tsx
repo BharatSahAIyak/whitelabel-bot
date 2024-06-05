@@ -82,7 +82,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     if (!isAuthenticated) {
       login();
-    }else{
+    }else if(process.env.NEXT_PUBLIC_SHOW_ONBOARDING === 'true'){
       fetchUser()
     }
   }, [isAuthenticated, login]);

@@ -8,8 +8,11 @@ import {
   Fade,
   CircularProgress
 } from '@mui/material';
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+// import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import { useLocalization } from '../../hooks';
+import locationImg from './assets/Precise.png';
+import Image from 'next/image';
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -77,7 +80,8 @@ const LocationPermissionModal = (props: any) => {
         <Fade in={open}>
           <Box sx={style}>
             <div className='d-flex align-items-center justify-content-center'>
-              <LocationOnOutlinedIcon sx={{width: '35px', height: '35px'}}/>
+              {/* <LocationOnOutlinedIcon sx={{width: '35px', height: '35px'}}/> */}
+          <Image src={locationImg} alt="" />
             </div>
             <Typography id="location-permission-modal-title" variant="h6" component="h2" className='text-center mt-2 font-weight-bold'>
               {t('message.allow_location')}
