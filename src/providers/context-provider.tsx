@@ -18,7 +18,7 @@ import { useCookies } from 'react-cookie';
 import { UCI } from 'socket-package';
 import { XMessage } from '@samagra-x/xmessage';
 import { FullPageLoader } from '../components/fullpage-loader';
-import LaunchPage from '../pageComponents/launch-page';
+import WelcomePage from '../pageComponents/welcome-page';
 import saveTelemetryEvent from '../utils/telemetry';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
@@ -36,7 +36,7 @@ const ContextProvider: FC<{
   const [isMsgReceiving, setIsMsgReceiving] = useState(false);
   const [messages, setMessages] = useState<Array<any>>([]);
   const [newSocket, setNewSocket] = useState<any>();
-  const [showLaunchPage, setShowLaunchPage] = useState(false);
+  const [showWelcomePage, setShowWelcomePage] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(
     sessionStorage.getItem('conversationId')
   );
@@ -58,13 +58,13 @@ const ContextProvider: FC<{
   useEffect(() => {
     if (
       //@ts-ignore
-      config?.component?.launchPage &&
+      config?.component?.welcomePage &&
       //@ts-ignore
-      config?.component?.launchPage?.showLaunchPage
+      config?.component?.welcomePage?.showWelcomePage
     ) {
-      setShowLaunchPage(true);
+      setShowWelcomePage(true);
       setTimeout(() => {
-        setShowLaunchPage(false);
+        setShowWelcomePage(false);
       }, 2000);
     }
   }, [config]);
@@ -80,7 +80,7 @@ const ContextProvider: FC<{
     };
   }, []);
   useEffect(() => {
-    console.log("trigger",{locale})
+    console.log("trigger", {locale})
     //@ts-ignore
     if (config?.translation && locale) {
       onLocaleUpdate();
@@ -736,16 +736,10 @@ const ContextProvider: FC<{
 
   if (!config)
     return <FullPageLoader loading label="Loading configuration.." />;
-    if (showLaunchPage)
-    return (
-      <LaunchPage
-      //@ts-ignore
-      theme={config?.theme}
-      //@ts-ignore
-        config={config?.component?.launchPage}
-        compConfig={config}
-      />
-    );
+
+  if (showWelcomePage)
+    return <WelcomePage config={config}/>;
+    
   return (
     //@ts-ignore
     <AppContext.Provider value={values}>{children}</AppContext.Provider>

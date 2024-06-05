@@ -2,7 +2,7 @@ import React from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useLocalization } from '../hooks';
-import LoginMobileAadharPage from '../pageComponents/login-mobile-aadhar-page';
+import LoginMobileAadharPage from '../pageComponents/login-page';
 import { useConfig } from "../hooks/useConfig";
 const Login: NextPage = () => {
   const t=useLocalization();

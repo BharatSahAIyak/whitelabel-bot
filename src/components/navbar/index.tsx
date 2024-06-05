@@ -11,7 +11,7 @@ import Sidebar from '../sidebar';
 import { recordUserLocation } from '../../utils/location';
 import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
-import { useLocalization, useLogin } from '../../hooks';
+import { useLocalization } from '../../hooks';
 import toast from 'react-hot-toast';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
@@ -21,13 +21,8 @@ const Navbar: React.FC = () => {
   const config = useConfig('component', 'navbar');
   const botConfig = useConfig('component', 'botDetails');
   const context = useContext(AppContext);
-  const [activeLanguage, setActiveLanguage] = useState<string>(() => {
-    const storedLang = localStorage.getItem('locale');
-    return storedLang || 'en';
-  });
   const t = useLocalization();
   const theme = useColorPalates();
-  const { isAuthenticated } = useLogin();
   const {
     showHamburgerMenu,
     showHomeIcon,
@@ -58,15 +53,6 @@ const Navbar: React.FC = () => {
     setSidebarOpen(!isSidebarOpen);
   };
 
-  const handleLanguageClick = (langCode: string) => {
-    setActiveLanguage(langCode);
-    localStorage.setItem('locale', langCode);
-  };
-  useEffect(() => {
-    if (router.pathname == '/login' || router.pathname == '/otp')
-      context?.setLocale(activeLanguage);
-  }, [activeLanguage, context]);
-
   const newChatHandler = useCallback(() => {
     if (context?.isMsgReceiving) {
       toast.error(`${t('error.wait_new_chat')}`);
@@ -88,7 +74,8 @@ const Navbar: React.FC = () => {
     router.push('/');
   }, [context, t, router]);
 
-  console.log({ activeLanguage, config, path: router.pathname });
+  console.log({ config, path: router.pathname });
+  if(router.pathname === '/login' || router.pathname === '/otp') return null;
   return (
     <>
       <AppBar
@@ -97,7 +84,7 @@ const Navbar: React.FC = () => {
           background: 'var(--bg-color)',
           boxShadow: 'none',
           borderBottom: '1px solid lightgray',
-          height: router.pathname === '/login' ? '120px' : '80px',
+          height: '80px',
           fontFamily: 'NotoSans-Regular'
         }}>
         <Toolbar
@@ -107,63 +94,9 @@ const Navbar: React.FC = () => {
             height: '100%',
           }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {(router.pathname == '/login' || router.pathname == '/otp') && (
-              <div
-                data-testid="navbar-language-toggle"
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  width: '100%',
-                }}>
-                <button
-                  className={`Sidemenu_button ${
-                    activeLanguage === config?.languageCode_1 ? 'active' : ''
-                  }`}
-                  style={{
-                    borderTopLeftRadius: '10px',
-                    borderBottomLeftRadius: '10px',
-                    borderTopRightRadius: '0',
-                    borderBottomRightRadius: '0',
-                    backgroundColor:
-                      activeLanguage === config?.languageCode_1
-                        ? theme.primary.main
-                        : 'lightgray',
-                    border: 'none',
-                    width: '60px',
-                    height: '30px',
-                    padding: '5px',
-                  }}
-                  onClick={() => handleLanguageClick(config?.languageCode_1)}>
-                  {config?.languageLabel1}
-                </button>
-
-                <button
-                  className={`Sidemenu_button ${
-                    activeLanguage === config?.languageCode_2 ? 'active' : ''
-                  }`}
-                  style={{
-                    borderTopLeftRadius: '0',
-                    borderBottomLeftRadius: '0',
-                    borderTopRightRadius: '10px',
-                    borderBottomRightRadius: '10px',
-                    backgroundColor:
-                      config?.languageCode_2 === activeLanguage
-                        ? theme.primary.main
-                        : 'lightgray',
-                    border: 'none',
-                    width: '60px',
-                    height: '30px',
-                    padding: '5px',
-                  }}
-                  onClick={() => handleLanguageClick(config?.languageCode_2)}>
-                  {config?.languageLabel2}
-                </button>
-              </div>
-            )}
+            
             {router.pathname !== '/chat' &&
             router.pathname !== '/weather' && 
-            router.pathname !== '/login' &&
-            router.pathname !== '/otp' &&
               showHamburgerMenu && (
                 <IconButton
                   data-testid="navbar-hamburger-menu"
@@ -232,8 +165,7 @@ const Navbar: React.FC = () => {
               </div>
             )}
 
-            {isAuthenticated &&
-            showHomeIcon &&
+            {showHomeIcon &&
               router.pathname !== '/' &&
               router.pathname !== '/weather' &&
               router.pathname !== '/chat' && (
@@ -269,7 +201,7 @@ const Navbar: React.FC = () => {
               </div>
             )}
 
-            {router.pathname === '/login' && showCenterLogo && (
+            {/* {router.pathname === '/login' && showCenterLogo && (
               <div
                 style={{
                   fontSize: '10px',
@@ -279,7 +211,7 @@ const Navbar: React.FC = () => {
                 }}
                 dangerouslySetInnerHTML={{ __html: t('label.title') }}
               />
-            )}
+            )} */}
           </div>
 
           <div data-testid="navbar-right-logos">
