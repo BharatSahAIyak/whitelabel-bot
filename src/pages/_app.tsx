@@ -44,18 +44,25 @@ const App = ({ Component, pageProps }: AppProps) => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
       // already logged in then send to home
       if (cookie['access_token'] && localStorage.getItem('userID')) {
-        router.push('/');
+        console.log("here")
+        router.push(sessionStorage.getItem("path") ?? '/');
       }
     } else {
-      // not logged in then send to login page
-      if (!cookie['access_token'] || !localStorage.getItem('userID')) {
+      if(router.query.navbar){
+        localStorage.setItem("navbar", router.query.navbar as string);
+      }
+      sessionStorage.setItem("path", router.asPath);
+      if(router.query.auth && router.query.userId){
+        setCookie('access_token', router.query.auth, { path: '/' });
+        localStorage.setItem('userID', router.query.userId as string);
+      }else if (!cookie['access_token'] || !localStorage.getItem('userID')) {
         localStorage.clear();
         sessionStorage.clear();
         removeCookie('access_token', { path: '/' })
         router.push('/login');
       }
     }
-  }, [cookie, router]);
+  }, [router]);
 
   useEffect(() => {
     handleLoginRedirect();
@@ -74,10 +81,6 @@ const App = ({ Component, pageProps }: AppProps) => {
       console.log(err)
     }
   }
-
-  useEffect(() => {
-    console.log({user})
-  }, [user])
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -105,8 +108,8 @@ const App = ({ Component, pageProps }: AppProps) => {
           <div style={{ height: '100%' }}>
             <Toaster position="top-center" reverseOrder={false} />
             <FeaturePopup />
-            <InstallModal />
-            <NavBar />
+            {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />}
+            {localStorage.getItem("navbar") !== "hidden" && <NavBar />}
             <SafeHydrate>
               <Component {...pageProps} />
             </SafeHydrate>

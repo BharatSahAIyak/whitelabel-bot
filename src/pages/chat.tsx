@@ -25,7 +25,6 @@ const Chat: NextPage = () => {
     if (message) {
       router.replace('/chat', '', { shallow: true });
       setTimeout(() => {
-        console.log("here")
         context?.sendMessage(message as string, message as string);
       }, 2000);
     }

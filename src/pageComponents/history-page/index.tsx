@@ -26,9 +26,11 @@ import { toast } from 'react-hot-toast';
 import { AppContext } from '../../context';
 import { recordUserLocation } from '../../utils/location';
 import { v4 as uuidv4 } from 'uuid';
+import { useCookies } from 'react-cookie';
 
 const HistoryPage: FC = () => {
   const [isFetching, setIsFetching] = useState(true);
+  const [cookie] = useCookies();
   const theme = useColorPalates();
   const [conversations, setConversations] = useState([]);
   const context = useContext(AppContext);
@@ -54,7 +56,7 @@ const HistoryPage: FC = () => {
             `${process.env.NEXT_PUBLIC_BFF_API_URL}/user/conversations/delete/${conversationId}`,
             {
               headers: {
-                authorization: `Bearer ${localStorage.getItem('auth')}`,
+                authorization: `Bearer ${cookie.access_token}`,
               },
             }
           )
@@ -159,7 +161,7 @@ const HistoryPage: FC = () => {
               <IconButton edge="end" aria-label="comments">
                 {config?.allowDelete && (
                   <DeleteOutlineIcon
-                    onClick={() => deleteConversation(chatItem?.conversationId)}
+                    onClick={() => deleteConversation(chatItem?.channelMessageId)}
                   />
                 )}
               </IconButton>
