@@ -298,6 +298,7 @@ const ContextProvider: FC<{
                 position: 'left',
                 reaction: 0,
                 messageId: msg?.messageId.Id,
+                replyId: msg?.messageId.replyId,
                 conversationId: msg.messageId.channelMessageId,
                 sentTimestamp: Date.now(),
                 card: msg?.payload?.card,
