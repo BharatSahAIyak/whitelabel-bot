@@ -45,6 +45,7 @@ const UserTypeSelector = (props: any) => {
         }}>
         <div style={{ padding: '0 10px 10px 10px' }}>
           <p
+            data-testid="user-select-type-title"
             style={{
               marginTop: '10px',
               marginBottom: '0px',
@@ -63,6 +64,7 @@ const UserTypeSelector = (props: any) => {
             }}>
             {/* Two cards/buttons */}
             <div
+              data-testid="user-select-type-button-1"
               onClick={() => {
                 setData((prev: any) => ({
                   ...prev,
@@ -92,6 +94,7 @@ const UserTypeSelector = (props: any) => {
             </div>
             <p className="m-0">{t('label.or')}</p>
             <div
+              data-testid="user-select-type-button-2"
               onClick={() => {
                 setData((prev: any) => ({
                   ...prev,
@@ -123,6 +126,7 @@ const UserTypeSelector = (props: any) => {
         </div>
         <div style={{ padding: '0 10px 10px 10px' }}>
           <p
+            data-testid="user-select-name-title"
             style={{
               marginTop: '16px',
               marginBottom: "0px",
@@ -141,7 +145,7 @@ const UserTypeSelector = (props: any) => {
               // height: '180px'
             }}>
             <TextField
-              data-testid="name-input"
+              data-testid="user-select-name-input"
               margin="normal"
               fullWidth
               onChange={(e) => {
@@ -156,6 +160,7 @@ const UserTypeSelector = (props: any) => {
               autoFocus
             />
             <Button
+              data-testid="user-select-continue-button"
               type="submit"
               fullWidth
               variant="contained"
@@ -183,7 +188,7 @@ const UserTypeSelector = (props: any) => {
           </div>
         </div>
       </div>
-      <div style={{ height: '400px', overflow: 'hidden', objectFit: 'cover' }}>
+      <div style={{ height: '400px', overflow: 'hidden', objectFit: 'cover' }} data-testid="user-select-bg-image">
         <img src={config?.backgroundImage} alt="bgImage" width={'100%'} />
       </div>
     </div>

@@ -67,8 +67,6 @@ const LocationPermissionModal = (props: any) => {
   return (
     <div>
       <Modal
-        aria-labelledby="location-permission-modal-title"
-        aria-describedby="location-permission-modal-description"
         open={open}
         // onClose={handleClose}
         closeAfterTransition
@@ -83,11 +81,12 @@ const LocationPermissionModal = (props: any) => {
               {/* <LocationOnOutlinedIcon sx={{width: '35px', height: '35px'}}/> */}
           <Image src={locationImg} alt="" />
             </div>
-            <Typography id="location-permission-modal-title" variant="h6" component="h2" className='text-center mt-2 font-weight-bold'>
+            <Typography data-testid="location-permission-modal-title" variant="h6" component="h2" className='text-center mt-2 font-weight-bold'>
               {t('message.allow_location')}
             </Typography>
             <div style={{display: 'flex', flexDirection: 'column', marginTop: '20px', gap: '10px'}}>
             <Button
+              data-testid="location-permission-modal-allow-button"
               variant="contained"
               color="primary"
               onClick={requestLocationPermission}
@@ -97,6 +96,7 @@ const LocationPermissionModal = (props: any) => {
               {loading ? <CircularProgress size={24} color="inherit" /> : t('label.allow_location_access')}
             </Button>
             <Button
+              data-testid="location-permission-modal-dont-allow-button"
               variant="contained"
               color="primary"
               onClick={handleClose}

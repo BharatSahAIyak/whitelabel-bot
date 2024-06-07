@@ -167,7 +167,6 @@ const OtpPage: React.FC = () => {
           data-testid="otp-verification-line2"
           variant="subtitle1"
           textAlign="center"
-          width="90%"
           color="#1E232C"
           sx={{ m: 2 }}>
           <FormattedMessage
