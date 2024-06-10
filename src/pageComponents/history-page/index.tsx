@@ -56,7 +56,7 @@ const HistoryPage: FC = () => {
             `${process.env.NEXT_PUBLIC_BFF_API_URL}/user/conversations/delete/${conversationId}`,
             {
               headers: {
-                authorization: `Bearer ${cookie.access_token}`,
+                authorization: `Bearer ${localStorage.getItem('auth')}`,
               },
             }
           )

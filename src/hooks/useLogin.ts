@@ -22,13 +22,14 @@ export const useLogin = () => {
 
   const login = useCallback(() => {
     // No need to check for auth if access token is not present
-    if (cookies.access_token || auth) {
-      const decodedToken: any = jwt.decode(cookies.access_token || auth);
+    if (localStorage.getItem('auth') || auth) {
+      // @ts-ignore
+      const decodedToken: any = jwt.decode(localStorage.getItem('auth') || auth);
 
       const expires = new Date(decodedToken?.exp * 1000);
 
       if (expires > new Date()) {
-        const token = cookies.access_token || auth;
+        const token = localStorage.getItem('auth') || auth;
         axios
           .get(`/api/auth?token=${token}`)
           .then((response) => {
@@ -59,11 +60,12 @@ export const useLogin = () => {
         if (typeof window !== "undefined") window.location.reload();
       }
     }
-  }, [cookies.access_token, removeCookie, router]);
+  }, [removeCookie, router]);
 
   useEffect(() => {
     if(auth && userId){
-      setCookie('access_token', auth, { path: '/' });
+      // setCookie('access_token', auth, { path: '/' });
+      localStorage.setItem('auth', auth as string);
       localStorage.setItem('userID', userId as string);
     }
     const token = auth;
@@ -73,7 +75,7 @@ export const useLogin = () => {
     }
 
     login();
-  }, [cookies.access_token, login]);
+  }, [login]);
 
  
   return { isAuthenticated, login, loading };
