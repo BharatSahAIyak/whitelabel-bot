@@ -56,6 +56,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         // setCookie('access_token', router.query.auth, { path: '/' });
         localStorage.setItem('auth', router.query.auth as string);
         localStorage.setItem('userID', router.query.userId as string);
+        sessionStorage.removeItem('conversationId')
       }else if (!localStorage.getItem('auth') || !localStorage.getItem('userID')) {
         localStorage.clear();
         sessionStorage.clear();
