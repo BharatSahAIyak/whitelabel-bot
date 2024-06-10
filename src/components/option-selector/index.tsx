@@ -56,6 +56,7 @@ const OptionSelector = (props: any) => {
     <Container className="p-2">
       <div className="d-flex pt-2 align-items-center justify-content-center mt-2">
         <IconButton
+          data-testid="option-selector-back-button"
           aria-label="fingerprint"
           style={{
             height: '40px',
@@ -69,6 +70,7 @@ const OptionSelector = (props: any) => {
         </IconButton>
         <div className="text-center w-100 pr-4">
           <p
+            data-testid="option-selector-title"
             style={{
               fontWeight: "500",
               fontSize: "32px",
@@ -82,7 +84,7 @@ const OptionSelector = (props: any) => {
       </div>
 
       <div className="text-center mt-4">
-        <p style={{ color: "#51586B", fontSize: "20px", margin: 0 }}>
+        <p style={{ color: "#51586B", fontSize: "20px", margin: 0 }} data-testid="option-selector-description">
           {t(`label.select_${props?.commodityType}_from_below`)}
         </p>
         <div
@@ -99,6 +101,7 @@ const OptionSelector = (props: any) => {
             spacing={{ xs: 1, sm: 6, md: 3 }}
             columns={{ xs: 3, sm: 6, md: 12 }}
             style={{ marginTop: "10px" }}
+            data-testid="option-selector-list"
           >
             {props?.commodityList?.map((commodity: any) => (
               <Grid item xs={1} sm={2} md={3}>
@@ -149,6 +152,7 @@ const OptionSelector = (props: any) => {
         </div>
             <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <Button
+                data-testid="option-selector-continue-button"
                 type="submit"
                 fullWidth
                 variant="contained"
@@ -183,6 +187,7 @@ const OptionSelector = (props: any) => {
                {t('label.continue')}
               </Button>
               <Link
+                data-testid="option-selector-skip"
                 component="button"
                 variant="body2"
                 onClick={props?.handleNext}

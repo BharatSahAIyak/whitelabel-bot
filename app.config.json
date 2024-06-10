@@ -224,6 +224,8 @@
       "label.choose_animals": "Choose your animal",
       "label.confirm_delete": "Are you sure you want to delete this conversation?",
       "label.enter_location": "Enter location manually",
+      "label.enter_your_name": "Please enter your name",
+      "label.your_name": "Your name",
       "message.cannot_share": "Your system doesn't support sharing this file.",
       "message.dialer_popup": "You may speak to an Ama Krushi expert to get a satisfactory response",
       "message.enter_mobile": "Enter Mobile Number",

@@ -233,7 +233,7 @@ const ContextProvider: FC<{
             transportOptions: {
               polling: {
                 extraHeaders: {
-                  // Authorization: `Bearer ${localStorage.getItem('auth')}`,
+                  // Authorization: `Bearer ${cookie.access_token}`,
                   channel: 'akai',
                 },
               },
@@ -298,6 +298,7 @@ const ContextProvider: FC<{
                 position: 'left',
                 reaction: 0,
                 messageId: msg?.messageId.Id,
+                replyId: msg?.messageId.replyId,
                 conversationId: msg.messageId.channelMessageId,
                 sentTimestamp: Date.now(),
                 card: msg?.payload?.card,
@@ -594,7 +595,7 @@ const ContextProvider: FC<{
               }/user/chathistory/${sessionStorage.getItem('conversationId')}`,
               {
                 headers: {
-                  authorization: `Bearer ${localStorage.getItem('auth')}`,
+                  authorization: `Bearer ${cookie.access_token}`,
                 },
               }
             );

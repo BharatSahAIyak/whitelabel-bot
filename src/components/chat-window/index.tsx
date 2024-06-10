@@ -79,6 +79,7 @@ const ChatUiWindow: React.FC = () => {
             reaction: item?.feedback?.type === 'FEEDBACK_POSITIVE' ? 1 : item?.feedback?.type === 'FEEDBACK_NEGATIVE' ? -1 : 0,
             msgId: item.messageId,
             messageId: item.messageId,
+            replyId: item.replyId,
             audio_url: item?.audioURL,
             isEnd: true,
             optionClicked: true,

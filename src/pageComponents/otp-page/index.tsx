@@ -113,7 +113,7 @@ const OtpPage: React.FC = () => {
               const decodedToken = jwt_decode(res.result.data.user.token);
               //@ts-ignore
               localStorage.setItem('userID', decodedToken?.sub);
-              localStorage.setItem('auth', res.result.data.user.token);
+              // localStorage.setItem('auth', res.result.data.user.token);
               // @ts-ignore
               // setUserId(analytics, localStorage.getItem("userID"));
               setTimeout(() => {
@@ -167,7 +167,6 @@ const OtpPage: React.FC = () => {
           data-testid="otp-verification-line2"
           variant="subtitle1"
           textAlign="center"
-          width="90%"
           color="#1E232C"
           sx={{ m: 2 }}>
           <FormattedMessage

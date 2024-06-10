@@ -248,7 +248,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         userId: localStorage.getItem('userID') || '',
         phoneNumber: localStorage.getItem('phoneNumber') || '',
         conversationId: sessionStorage.getItem('conversationId') || '',
-        messageId: content?.data?.messageId,
+        messageId: content?.data?.replyId,
         text: content?.text,
         timesAudioUsed: 1,
       });
@@ -265,7 +265,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {
             text: text,
             language: context?.locale,
-            messageId: content?.data?.messageId,
+            messageId: content?.data?.replyId,
             conversationId: sessionStorage.getItem('conversationId') || '',
           },
           {
@@ -291,7 +291,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             phoneNumber: localStorage.getItem('phoneNumber') || '',
             conversationId: sessionStorage.getItem('conversationId') || '',
             text: text,
-            messageId: content?.data?.messageId,
+            messageId: content?.data?.replyId,
             timeTaken: latency,
             createdAt: Math.floor(startTime / 1000),
             audioUrl: response?.data?.url || 'No audio URL',
@@ -316,7 +316,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             phoneNumber: localStorage.getItem('phoneNumber') || '',
             conversationId: sessionStorage.getItem('conversationId') || '',
             text: text,
-            msgId: content?.data?.messageId,
+            msgId: content?.data?.replyId,
             timeTaken: latency,
             createdAt: Math.floor(startTime / 1000),
             error: error?.message || 'Error fetching audio',

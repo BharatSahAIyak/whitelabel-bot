@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, ReactElement, useState, useEffect, useContext } from 'react'
+import React, { FC, ReactElement, useState, useEffect, useContext, useMemo } from 'react'
 import { FullPageLoader } from '../components/fullpage-loader';
 import ContextProvider from './context-provider';
 import { IntlProvider } from 'react-intl';
@@ -23,14 +23,20 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => 
     useEffect(() => {
         mergeConfigurations().then((res) => {
           setConfig(res);
+          !localStorage.getItem('locale') && localStorage.setItem('locale', res?.component?.botDetails?.defaultLanguage);
           themeContext?.modifyPaletes(res?.theme?.palette);
         });
     }, []);
-    const defaultLang = config?.component?.botDetails?.defaultLanguage || "en";
+    const defaultLang = useMemo(() => localStorage.getItem('locale') || config?.component?.botDetails?.defaultLanguage || "en", [config]);
     const [locale, setLocale] = useState(
         localStorage.getItem('locale') || defaultLang
     );
-    (!localStorage.getItem('locale') && defaultLang!=="en") ? localStorage.setItem('locale', defaultLang) : '';
+
+    useEffect(() => {
+      setLocale(defaultLang)
+    }, [defaultLang]);
+    
+    (!localStorage.getItem('locale') && defaultLang!=="en") ? localStorage.setItem('locale', defaultLang as string) : '';
     
     const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
         null

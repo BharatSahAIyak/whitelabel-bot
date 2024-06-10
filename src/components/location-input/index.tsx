@@ -62,6 +62,7 @@ const LocationInput = (props: any) => {
       <LocationPermissionModal setLocation={setLocation} />
       <div className="d-flex pt-2 align-items-center justify-content-center mt-2">
         <IconButton
+          data-testid="location-input-back-button"
           aria-label="fingerprint"
           style={{
             height: '40px',
@@ -75,6 +76,7 @@ const LocationInput = (props: any) => {
         </IconButton>
         <div className="text-center w-100 pr-4">
           <p
+            data-testid="location-input-title"
             style={{
               fontWeight: "500",
               fontSize: "32px",
@@ -97,6 +99,7 @@ const LocationInput = (props: any) => {
           }}
         >
          <TextField
+            data-testid="location-input"
             fullWidth
             variant="outlined"
             inputRef={materialRef}
@@ -105,6 +108,7 @@ const LocationInput = (props: any) => {
         <div>
             <Box sx={{ mt: 1 }}>
               <Button
+                data-testid="location-input-continue-button"
                 type="submit"
                 fullWidth
                 variant="contained"

@@ -99,7 +99,7 @@ const LoginPage: React.FC = () => {
           <LanguagePicker />
         </div>
         {showLogo && logo && (<div
-          style={{ height: '400px', overflow: 'hidden', objectFit: 'cover' }}>
+          style={{ height: '400px', overflow: 'hidden', objectFit: 'cover', maxWidth: '400px', margin: '0 auto' }}>
           <img
             data-testid="login-page-img"
             src={logo}
