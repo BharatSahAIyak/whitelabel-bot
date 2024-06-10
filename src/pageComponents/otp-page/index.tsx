@@ -103,17 +103,17 @@ const OtpPage: React.FC = () => {
               );
               removeCookie('access_token');
 
-              setCookie('access_token', res.result.data.user.token, {
-                path: '/',
-                expires,
-              });
+              // setCookie('access_token', res.result.data.user.token, {
+              //   path: '/',
+              //   expires,
+              // });
               const phoneNumber = router.query.state;
               // @ts-ignore
               localStorage.setItem('phoneNumber', phoneNumber);
               const decodedToken = jwt_decode(res.result.data.user.token);
               //@ts-ignore
               localStorage.setItem('userID', decodedToken?.sub);
-              // localStorage.setItem('auth', res.result.data.user.token);
+              localStorage.setItem('auth', res.result.data.user.token);
               // @ts-ignore
               // setUserId(analytics, localStorage.getItem("userID"));
               setTimeout(() => {

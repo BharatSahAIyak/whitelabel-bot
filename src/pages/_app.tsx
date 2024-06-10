@@ -43,7 +43,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
       // already logged in then send to home
-      if (cookie['access_token'] && localStorage.getItem('userID')) {
+      if (localStorage.getItem('auth') && localStorage.getItem('userID')) {
         console.log("here")
         router.push(sessionStorage.getItem("path") ?? '/');
       }
@@ -53,9 +53,10 @@ const App = ({ Component, pageProps }: AppProps) => {
       }
       sessionStorage.setItem("path", router.asPath);
       if(router.query.auth && router.query.userId){
-        setCookie('access_token', router.query.auth, { path: '/' });
+        // setCookie('access_token', router.query.auth, { path: '/' });
+        localStorage.setItem('auth', router.query.auth as string);
         localStorage.setItem('userID', router.query.userId as string);
-      }else if (!cookie['access_token'] || !localStorage.getItem('userID')) {
+      }else if (!localStorage.getItem('auth') || !localStorage.getItem('userID')) {
         localStorage.clear();
         sessionStorage.clear();
         removeCookie('access_token', { path: '/' })
