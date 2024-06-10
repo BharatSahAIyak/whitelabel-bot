@@ -1,6 +1,6 @@
 export const getMsgType = (msg: any): string => {
 	if (isJsonString(msg?.text)) {
-		if (JSON.parse(msg?.text)) return 'table';
+		if (JSON.parse(msg?.text) && msg?.position === 'left') return 'table';
 	}
 	// if (msg?.payload?.buttonChoices?.length || msg?.choices?.length) return 'options';
 	if (msg?.imageUrl) return 'image';
