@@ -5,8 +5,7 @@ export default function Document() {
   return (
     <Html>
       <Head>
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icon.png"></link>
+        <link rel="manifest" id="manifest-file" />
         <meta name="theme-color" content="#fff" />
         <script
           // id="ms-clarity"
