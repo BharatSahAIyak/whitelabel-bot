@@ -401,7 +401,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         <div
           style={{
             position: 'relative',
-            maxWidth: '90vw',
+            maxWidth: '50vh',
             fontFamily: 'NotoSans-Medium',
           }}>
           <Bubble
