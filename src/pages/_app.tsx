@@ -133,17 +133,13 @@ const App = ({ Component, pageProps }: AppProps) => {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get(process.env.NEXT_PUBLIC_BFF_API_URL + '/user/' + localStorage.getItem('userID'), {
-        headers: {
-          Authorization: process.env.NEXT_PUBLIC_FUSIONAUTH_KEY || '',
-          "Service-Url": process.env.NEXT_PUBLIC_FUSIONAUTH_URL || ''
-        }
-      })
+      const userID = localStorage.getItem('userID');
+      const res = await axios.get(`/api/fetchUser?userID=${userID}`);
       setUser(res?.data?.user);
-    }catch (err) {
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {
