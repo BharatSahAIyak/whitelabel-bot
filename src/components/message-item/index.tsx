@@ -8,7 +8,7 @@ import {
   Typing,
   Popup,
   RichText,
-} from "@samagra-x/chatui";
+} from '@samagra-x/chatui';
 import {
   FC,
   ReactElement,
@@ -17,32 +17,32 @@ import {
   useEffect,
   useMemo,
   useState,
-} from "react";
-import { toast } from "react-hot-toast";
-import styles from "./index.module.css";
-import RightIcon from "./assets/right";
-import SpeakerIcon from "./assets/speaker";
-import SpeakerPauseIcon from "./assets/speakerPause";
-import MsgThumbsUp from "./assets/msg-thumbs-up";
-import MsgThumbsDown from "./assets/msg-thumbs-down";
-import { MessageItemPropType } from "./index.d";
-import { JsonToTable } from "../json-to-table";
-import moment from "moment";
-import { useColorPalates } from "../../providers/theme-provider/hooks";
-import { useConfig } from "../../hooks/useConfig";
-import { useLocalization } from "../../hooks";
-import { AppContext } from "../../context";
-import axios from "axios";
-import saveTelemetryEvent from "../../utils/telemetry";
-import BlinkingSpinner from "../blinking-spinner/index";
-import Loader from "../loader";
-import { MessageType, XMessage } from "@samagra-x/xmessage";
-import { v4 as uuidv4 } from "uuid";
-import router from "next/router";
+} from 'react';
+import { toast } from 'react-hot-toast';
+import styles from './index.module.css';
+import RightIcon from './assets/right';
+import SpeakerIcon from './assets/speaker';
+import SpeakerPauseIcon from './assets/speakerPause';
+import MsgThumbsUp from './assets/msg-thumbs-up';
+import MsgThumbsDown from './assets/msg-thumbs-down';
+import { MessageItemPropType } from './index.d';
+import { JsonToTable } from '../json-to-table';
+import moment from 'moment';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
+import { useConfig } from '../../hooks/useConfig';
+import { useLocalization } from '../../hooks';
+import { AppContext } from '../../context';
+import axios from 'axios';
+import saveTelemetryEvent from '../../utils/telemetry';
+import BlinkingSpinner from '../blinking-spinner/index';
+import Loader from '../loader';
+import { MessageType, XMessage } from '@samagra-x/xmessage';
+import { v4 as uuidv4 } from 'uuid';
+import router from 'next/router';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
-  const config = useConfig("component", "chatUI");
+  const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
   const [reaction, setReaction] = useState(content?.data?.reaction?.type);
   const [optionDisabled, setOptionDisabled] = useState(
@@ -51,7 +51,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const [audioFetched, setAudioFetched] = useState(false);
   const [ttsLoader, setTtsLoader] = useState(false);
   const [popupActive, setPopupActive] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [filteredChoices, setFilteredChoices] = useState([]);
   const t = useLocalization();
   const theme = useColorPalates();
@@ -100,14 +100,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       if (value === 1) {
         context?.newSocket.sendMessage({
           payload: {
-            app: process.env.NEXT_PUBLIC_BOT_ID || "",
+            app: process.env.NEXT_PUBLIC_BOT_ID || '',
             from: {
-              userID: localStorage.getItem("userID"),
+              userID: localStorage.getItem('userID'),
             },
             messageType: MessageType.FEEDBACK_POSITIVE,
             messageId: {
               replyId: msgId,
-              channelMessageId: sessionStorage.getItem("conversationId"),
+              channelMessageId: sessionStorage.getItem('conversationId'),
             },
           } as Partial<XMessage>,
         });
@@ -122,20 +122,20 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   const feedbackHandler = useCallback(
     ({ like, msgId }: { like: 0 | 1 | -1; msgId: string }) => {
-      console.log("vbnm:", { reaction, like });
+      console.log('vbnm:', { reaction, like });
       // Don't let user change reaction once given
-      if (reaction !== 0) return toast.error("Cannot give feedback again");
+      if (reaction !== 0) return toast.error('Cannot give feedback again');
       if (reaction === 0) {
         setReaction(like);
         return onLikeDislike({ value: like, msgId });
       }
       if (reaction === 1 && like === -1) {
-        console.log("vbnm triggered 1");
+        console.log('vbnm triggered 1');
         setReaction(-1);
         return onLikeDislike({ value: -1, msgId });
       }
       if (reaction === -1 && like === 1) {
-        console.log("vbnm triggered 2");
+        console.log('vbnm triggered 2');
         setReaction(1);
         return onLikeDislike({ value: 1, msgId });
       }
@@ -156,21 +156,21 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               style={
                 optionDisabled
                   ? {
-                      background: "var(--lightgrey)",
-                      color: "var(--font)",
-                      boxShadow: "none",
+                      background: 'var(--lightgrey)',
+                      color: 'var(--font)',
+                      boxShadow: 'none',
                     }
                   : null
               }
               onClick={(e: any): void => {
                 e.preventDefault();
-                console.log("Option Disabled", optionDisabled);
+                console.log('Option Disabled', optionDisabled);
                 if (optionDisabled) {
                   toast.error(
                     `${
                       isWeather
-                        ? t("message.wait_before_choosing")
-                        : t("message.cannot_answer_again")
+                        ? t('message.wait_before_choosing')
+                        : t('message.cannot_answer_again')
                     }`
                   );
                 } else {
@@ -179,42 +179,40 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   setTimeout(
                     () =>
                       document
-                        .getElementsByClassName("PullToRefresh")?.[0]
+                        .getElementsByClassName('PullToRefresh')?.[0]
                         ?.scrollTo({
                           top: 999999,
                           left: 0,
-                          behavior: "smooth",
+                          behavior: 'smooth',
                         }),
                     500
                   );
                   if (isWeather) {
                     setTimeout(() => {
-                      console.log("Enabling options again");
+                      console.log('Enabling options again');
                       setOptionDisabled(false);
                     }, 4001);
                   }
                 }
-              }}
-            >
+              }}>
               <div
                 className="onHover"
                 style={{
-                  display: "flex",
-                  alignItems: "center",
+                  display: 'flex',
+                  alignItems: 'center',
                   color:
-                    content?.data?.position === "right"
-                      ? "white"
+                    content?.data?.position === 'right'
+                      ? 'white'
                       : optionDisabled
-                      ? "var(--font)"
-                      : "var(--secondarygreen)",
-                }}
-              >
+                      ? 'var(--font)'
+                      : 'var(--secondarygreen)',
+                }}>
                 <div>{choice?.text}</div>
-                <div style={{ marginLeft: "auto" }}>
+                <div style={{ marginLeft: 'auto' }}>
                   <RightIcon
                     width="30px"
                     color={
-                      optionDisabled ? "var(--font)" : "var(--secondarygreen)"
+                      optionDisabled ? 'var(--font)' : 'var(--secondarygreen)'
                     }
                   />
                 </div>
@@ -233,23 +231,23 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   //   }
   // }, [content]);
 
-  console.log("here", content);
+  console.log('here', content);
 
   const handleAudio = useCallback(
     (url: any) => {
       // console.log(url)
       if (!url) {
-        if (audioFetched) toast.error("No audio");
+        if (audioFetched) toast.error('No audio');
         return;
       }
       context?.playAudio(url, content);
       setTtsLoader(false);
-      saveTelemetryEvent("0.1", "E015", "userQuery", "timesAudioUsed", {
-        botId: process.env.NEXT_PUBLIC_BOT_ID || "",
-        orgId: process.env.NEXT_PUBLIC_ORG_ID || "",
-        userId: localStorage.getItem("userID") || "",
-        phoneNumber: localStorage.getItem("phoneNumber") || "",
-        conversationId: sessionStorage.getItem("conversationId") || "",
+      saveTelemetryEvent('0.1', 'E015', 'userQuery', 'timesAudioUsed', {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || '',
         messageId: content?.data?.replyId,
         text: content?.text,
         timesAudioUsed: 1,
@@ -268,13 +266,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             text: text,
             language: context?.locale,
             messageId: content?.data?.replyId,
-            conversationId: sessionStorage.getItem("conversationId") || "",
+            conversationId: sessionStorage.getItem('conversationId') || '',
           },
           {
             headers: {
-              botId: process.env.NEXT_PUBLIC_BOT_ID || "",
-              orgId: process.env.NEXT_PUBLIC_ORG_ID || "",
-              userId: localStorage.getItem("userID") || "",
+              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+              orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+              userId: localStorage.getItem('userID') || '',
             },
           }
         );
@@ -282,46 +280,46 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         const endTime = Date.now();
         const latency = endTime - startTime;
         await saveTelemetryEvent(
-          "0.1",
-          "E045",
-          "aiToolProxyToolLatency",
-          "t2sLatency",
+          '0.1',
+          'E045',
+          'aiToolProxyToolLatency',
+          't2sLatency',
           {
-            botId: process.env.NEXT_PUBLIC_BOT_ID || "",
-            orgId: process.env.NEXT_PUBLIC_ORG_ID || "",
-            userId: localStorage.getItem("userID") || "",
-            phoneNumber: localStorage.getItem("phoneNumber") || "",
-            conversationId: sessionStorage.getItem("conversationId") || "",
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+            phoneNumber: localStorage.getItem('phoneNumber') || '',
+            conversationId: sessionStorage.getItem('conversationId') || '',
             text: text,
             messageId: content?.data?.replyId,
             timeTaken: latency,
             createdAt: Math.floor(startTime / 1000),
-            audioUrl: response?.data?.url || "No audio URL",
+            audioUrl: response?.data?.url || 'No audio URL',
           }
         );
         // cacheAudio(response.data);
         return response?.data?.url;
       } catch (error: any) {
-        console.error("Error fetching audio:", error);
+        console.error('Error fetching audio:', error);
         setAudioFetched(true);
         const endTime = Date.now();
         const latency = endTime - startTime;
         await saveTelemetryEvent(
-          "0.1",
-          "E045",
-          "aiToolProxyToolLatency",
-          "t2sLatency",
+          '0.1',
+          'E045',
+          'aiToolProxyToolLatency',
+          't2sLatency',
           {
-            botId: process.env.NEXT_PUBLIC_BOT_ID || "",
-            orgId: process.env.NEXT_PUBLIC_ORG_ID || "",
-            userId: localStorage.getItem("userID") || "",
-            phoneNumber: localStorage.getItem("phoneNumber") || "",
-            conversationId: sessionStorage.getItem("conversationId") || "",
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+            phoneNumber: localStorage.getItem('phoneNumber') || '',
+            conversationId: sessionStorage.getItem('conversationId') || '',
             text: text,
             msgId: content?.data?.replyId,
             timeTaken: latency,
             createdAt: Math.floor(startTime / 1000),
-            error: error?.message || "Error fetching audio",
+            error: error?.message || 'Error fetching audio',
           }
         );
         return null;
@@ -329,8 +327,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     };
 
     const fetchData = async () => {
-      if (!content?.data?.audio_url && content?.data?.position === "left") {
-        const toastId = toast.loading(`${t("message.download_audio")}`);
+      if (!content?.data?.audio_url && content?.data?.position === 'left') {
+        const toastId = toast.loading(`${t('message.download_audio')}`);
         setTimeout(() => {
           toast.dismiss(toastId);
         }, 1500);
@@ -340,11 +338,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 const texts = [];
                 if (cell.header) texts.push(cell.header);
                 if (cell.footer) texts.push(cell.footer);
-                return texts.join(" ");
+                return texts.join(' ');
               })
-              .join(" ")
+              .join(' ')
           : content?.text;
-        const audioUrl = await fetchAudio(text ?? "No text found");
+        const audioUrl = await fetchAudio(text ?? 'No text found');
 
         setTtsLoader(false);
         if (audioUrl) {
@@ -371,10 +369,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   const parseWeatherJson = (data: any) => {
     if (!data || data.length === 0) {
-      console.error("Data is undefined or empty.");
+      console.error('Data is undefined or empty.');
       return [];
     }
-    const firstKey = Object.keys(data[0])[0] || "datetime";
+    const firstKey = Object.keys(data[0])[0] || 'datetime';
     const result = Object.keys(data[0]).reduce((acc: any, key) => {
       if (key !== firstKey) {
         acc.push({
@@ -396,50 +394,47 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   }, [popupActive]);
 
   switch (type) {
-    case "loader":
+    case 'loader':
       return <Typing />;
-    case "text":
+    case 'text':
       return (
         <div
           style={{
-            position: "relative",
-            maxWidth: "50vh",
-            fontFamily: "NotoSans-Medium",
-          }}
-        >
+            position: 'relative',
+            maxWidth: '50vh',
+            fontFamily: 'NotoSans-Medium',
+          }}>
           <Bubble
             type="text"
             style={
-              content?.data?.position === "right"
+              content?.data?.position === 'right'
                 ? {
                     background: contrastText,
-                    boxShadow: "0 3px 8px rgba(0,0,0,.24)",
-                    borderRadius: "15px 15px 0px 15px",
-                    padding: "10px, 15px, 10px, 15px",
-                    gap: "10px",
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 0px 15px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px',
                   }
                 : {
                     background: content?.data?.card
                       ? contrastText
                       : secondaryColor,
-                    boxShadow: "0 3px 8px rgba(0,0,0,.24)",
-                    borderRadius: "15px 15px 15px 0px",
-                    padding: "10px, 15px, 10px, 15px",
-                    gap: "10px",
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 15px 0px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px',
                   }
-            }
-          >
+            }>
             {content?.data?.card ? (
               <div>
                 <div
                   style={{
-                    background: "#EDEDF1",
-                    padding: "10px",
+                    background: '#EDEDF1',
+                    padding: '10px',
                     fontWeight: 600,
                     color: theme?.primary?.main,
-                    textAlign: "center",
-                  }}
-                >
+                    textAlign: 'center',
+                  }}>
                   <div>{content?.data?.card?.header?.title}</div>
                   <div>{content?.data?.card?.header?.description}</div>
                 </div>
@@ -448,19 +443,17 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     return (
                       <div
                         style={{
-                          border: "1px solid #EDEDF1",
-                          padding: "10px",
-                          textAlign: "center",
-                        }}
-                      >
+                          border: '1px solid #EDEDF1',
+                          padding: '10px',
+                          textAlign: 'center',
+                        }}>
                         <div
                           style={{
                             color: theme?.primary?.main,
-                          }}
-                        >
+                          }}>
                           <RichText content={cell?.header} />
                         </div>
-                        <div style={{ color: "var(--font)" }}>
+                        <div style={{ color: 'var(--font)' }}>
                           <RichText content={cell?.footer} />
                         </div>
                       </div>
@@ -469,8 +462,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 </div>
                 {content?.data?.card?.footer && (
                   <div
-                    style={{ padding: "20px", borderTop: "1px solid #EDEDF1" }}
-                  >
+                    style={{ padding: '20px', borderTop: '1px solid #EDEDF1' }}>
                     <div>
                       <RichText content={content?.data?.card?.footer?.title} />
                     </div>
@@ -486,28 +478,26 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               <span
                 style={{
                   // fontWeight: 600,
-                  fontSize: "16px",
+                  fontSize: '16px',
                   color:
-                    content?.data?.position === "right"
-                      ? "var(--font)"
+                    content?.data?.position === 'right'
+                      ? 'var(--font)'
                       : contrastText,
-                }}
-              >
-                {content?.text}{" "}
-                {content?.data?.position === "right"
+                }}>
+                {content?.text}{' '}
+                {content?.data?.position === 'right'
                   ? null
                   : !content?.data?.isEnd && <BlinkingSpinner />}
-                {process.env.NEXT_PUBLIC_DEBUG === "true" && (
+                {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                   <div
                     style={{
                       color:
-                        content?.data?.position === "right"
-                          ? "var(--font)"
-                          : "yellow",
-                      fontSize: "12px",
-                      fontWeight: "normal",
-                    }}
-                  >
+                        content?.data?.position === 'right'
+                          ? 'var(--font)'
+                          : 'yellow',
+                      fontSize: '12px',
+                      fontWeight: 'normal',
+                    }}>
                     <br></br>
                     <span>messageId: {content?.data?.messageId}</span>
                     <br></br>
@@ -524,20 +514,18 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             })} */}
             <div
               style={{
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
+                display: 'flex',
+                justifyContent: 'flex-end',
+              }}>
               <span
                 style={{
                   color:
-                    content?.data?.position === "right"
-                      ? "var(--font)"
+                    content?.data?.position === 'right'
+                      ? 'var(--font)'
                       : contrastText,
-                  fontSize: "12px",
-                }}
-              >
-                {moment(content?.data?.timestamp).format("hh:mma ")}
+                  fontSize: '12px',
+                }}>
+                {moment(content?.data?.timestamp).format('hh:mma ')}
               </span>
             </div>
           </Bubble>
@@ -547,23 +535,21 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 onClick={() => window?.location?.reload()}
                 style={{
                   border: `2px solid ${secondaryColor}`,
-                }}
-              >
+                }}>
                 Refresh
               </button>
             </div>
           ) : (
-            content?.data?.position === "left" && (
+            content?.data?.position === 'left' && (
               <div
                 style={{
-                  display: "flex",
-                  position: "relative",
-                  top: "-10px",
-                  justifyContent: "space-between",
-                }}
-              >
+                  display: 'flex',
+                  position: 'relative',
+                  top: '-10px',
+                  justifyContent: 'space-between',
+                }}>
                 {config?.allowTextToSpeech && (
-                  <div style={{ display: "flex" }}>
+                  <div style={{ display: 'flex' }}>
                     <div
                       // style={{
                       //   border: `1px solid ${theme?.primary?.main}`,
@@ -574,19 +560,18 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       style={
                         !content?.data?.isEnd
                           ? {
-                              pointerEvents: "none",
-                              filter: "grayscale(100%)",
-                              opacity: "0.5",
+                              pointerEvents: 'none',
+                              filter: 'grayscale(100%)',
+                              opacity: '0.5',
                               border: `1px solid ${theme?.primary?.main}`,
                             }
                           : {
-                              pointerEvents: "auto",
-                              opacity: "1",
-                              filter: "grayscale(0%)",
+                              pointerEvents: 'auto',
+                              opacity: '1',
+                              filter: 'grayscale(0%)',
                               border: `1px solid ${theme?.primary?.main}`,
                             }
-                      }
-                    >
+                      }>
                       {context?.clickedAudioUrl === content?.data?.audio_url ? (
                         !context?.audioPlaying ? (
                           <SpeakerIcon color={theme?.primary?.main} />
@@ -601,16 +586,15 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
                       <p
                         style={{
-                          fontSize: "12px",
+                          fontSize: '12px',
                           // color: contrastText,
-                          fontFamily: "NotoSans-Bold",
-                          display: "flex",
-                          alignItems: "flex-end",
-                          margin: "0 1px 0 0",
-                          padding: "0 5px",
-                        }}
-                      >
-                        {t("message.speaker")}
+                          fontFamily: 'NotoSans-Bold',
+                          display: 'flex',
+                          alignItems: 'flex-end',
+                          margin: '0 1px 0 0',
+                          padding: '0 5px',
+                        }}>
+                        {t('message.speaker')}
                       </p>
                     </div>
                   </div>
@@ -621,19 +605,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       <div
                         className={styles.msgFeedbackIcons}
                         style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          border: `1px solid  ${theme?.primary?.main}`,
-                          padding: "5px",
-                          boxSizing: "border-box",
-                        }}
-                      >
+                          border: `1px solid ${theme?.primary?.main}`,
+                        }}>
                         <div
                           style={{
-                            display: "flex",
-                            alignItems: "center",
-                            flexDirection: "column",
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexDirection: 'column',
                           }}
                           data-testid="message-like-button"
                           onClick={() =>
@@ -641,32 +619,30 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                               like: 1,
                               msgId: content?.data?.messageId,
                             })
-                          }
-                        >
+                          }>
                           <MsgThumbsUp fill={reaction === 1} width="20px" />
                           <p
                             style={{
-                              fontSize: "12px",
-                              fontFamily: "NotoSans-Bold",
+                              fontSize: '12px',
+                              fontFamily: 'NotoSans-Bold',
                               margin: 0,
-                            }}
-                          >
-                            {t("label.helpful")}
+                            }}>
+                            {t('label.helpful')}
                           </p>
                         </div>
                         <div
                           style={{
-                            height: "32px",
-                            width: "1px",
+                            height: '32px',
+                            width: '1px',
                             backgroundColor: theme?.primary?.main,
-                            margin: "0px 10px",
-                          }}
-                        ></div>
+                            margin: '6px 0',
+                          }}></div>
+
                         <div
                           style={{
-                            display: "flex",
-                            alignItems: "center",
-                            flexDirection: "column",
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexDirection: 'column',
                           }}
                           data-testid="message-dislike-button"
                           onClick={() =>
@@ -674,17 +650,15 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                               like: -1,
                               msgId: content?.data?.messageId,
                             })
-                          }
-                        >
+                          }>
                           <MsgThumbsDown fill={reaction === -1} width="20px" />
                           <p
                             style={{
-                              fontSize: "12px",
-                              fontFamily: "NotoSans-Bold",
+                              fontSize: '12px',
+                              fontFamily: 'NotoSans-Bold',
                               margin: 0,
-                            }}
-                          >
-                            {t("label.not_helpful")}
+                            }}>
+                            {t('label.not_helpful')}
                           </p>
                         </div>
                       </div>
@@ -696,9 +670,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {content?.data?.choices?.choices?.length > 0 && (
             <>
               <Popup
-                bottom={content?.data?.choices?.isSearchable ? "65px" : "0px"}
+                bottom={content?.data?.choices?.isSearchable ? '65px' : '0px'}
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={"20vh"}
+                height={'20vh'}
                 onClose={() => {
                   setPopupActive(false);
                 }}
@@ -708,13 +682,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 bgColor="transparent"
                 title={content?.data?.choices?.header}
                 titleColor="var(--font)"
-                titleSize="16px"
-              >
+                titleSize="16px">
                 {displayedChoices.map((item: any) => {
                   return (
                     <div
                       style={{
- 
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -726,35 +698,28 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         cursor: 'pointer',
                         borderBottom: '2px solid #DDDDDD',
                         textAlign: 'center'
- 
                       }}
                       onClick={() => {
                         setPopupActive(false);
                         if (item?.showTextInput) {
                           context?.setShowInputBox(true);
                           context?.sendMessage(item?.key, item?.text);
-                        } else if (item?.action === "home") {
+                        }else if(item?.action === "home"){
                           const newConversationId = uuidv4();
-                          sessionStorage.setItem(
-                            "conversationId",
-                            newConversationId
-                          );
-                          sessionStorage.removeItem("tags");
+                          sessionStorage.setItem('conversationId', newConversationId);
+                          sessionStorage.removeItem('tags');
                           context?.setShowInputBox(true);
-                          if (context?.audioElement)
-                            context?.audioElement.pause();
-                          if (context?.setAudioPlaying)
-                            context?.setAudioPlaying(false);
+                          if (context?.audioElement) context?.audioElement.pause();
+                          if (context?.setAudioPlaying) context?.setAudioPlaying(false);
                           context?.setConversationId(newConversationId);
                           context?.setMessages([]);
                           context?.setIsMsgReceiving(false);
                           context?.setLoading(false);
-                          router.push("/");
-                        } else {
+                          router.push('/');
+                        }else{
                           context?.sendMessage(item?.key, item?.text);
                         }
-                      }}
-                    >
+                      }}>
                       {item.text}
                     </div>
                   );
@@ -763,34 +728,33 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               {content?.data?.choices?.isSearchable && popupActive && (
                 <div
                   style={{
-                    padding: "10px",
-                    background: "#F4F4F4",
-                    position: "fixed",
+                    padding: '10px',
+                    background: '#F4F4F4',
+                    position: 'fixed',
                     bottom: 0,
                     left: 0,
                     right: 0,
-                  }}
-                >
+                  }}>
                   <input
                     placeholder={
-                      t("label.buttons_search_placeholder") || "Search"
+                      t('label.buttons_search_placeholder') || 'Search'
                     }
                     value={searchQuery}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "100%",
-                      height: "45px",
-                      padding: "4px",
-                      color: "var(--font)",
-                      fontFamily: "NotoSans-Medium",
-                      fontWeight: "500",
-                      fontSize: "14px",
-                      cursor: "pointer",
-                      border: "none",
-                      outline: "none",
-                      borderRadius: "10px",
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      height: '45px',
+                      padding: '4px',
+                      color: 'var(--font)',
+                      fontFamily: 'NotoSans-Medium',
+                      fontWeight: '500',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      border: 'none',
+                      outline: 'none',
+                      borderRadius: '10px',
                     }}
                     onChange={handleSearchChange}
                   />
@@ -801,45 +765,41 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {content?.data?.choices?.choices?.length > 0 && (
             <div
               style={{
-                height: popupActive ? "200px" : "0px",
-                width: "100vw",
-              }}
-            ></div>
+                height: popupActive ? '200px' : '0px',
+                width: '100vw',
+              }}></div>
           )}
         </div>
       );
 
-    case "image": {
+    case 'image': {
       const url = content?.data?.payload?.media?.url || content?.data?.imageUrl;
       return (
-        <div style={{ fontFamily: "NotoSans-Regular" }}>
-          {content?.data?.position === "left" && (
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
+          {content?.data?.position === 'left' && (
             <div
               style={{
-                width: "40px",
-                marginRight: "4px",
-                textAlign: "center",
-              }}
-            ></div>
+                width: '40px',
+                marginRight: '4px',
+                textAlign: 'center',
+              }}></div>
           )}
           <Bubble type="image">
-            <div style={{ padding: "7px" }}>
+            <div style={{ padding: '7px' }}>
               <Img src={url} width="299" height="200" alt="image" lazy fluid />
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "self-end",
-                }}
-              >
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'self-end',
+                }}>
                 <span
                   style={{
                     color: contrastText,
-                    fontSize: "10px",
-                  }}
-                >
+                    fontSize: '10px',
+                  }}>
                   {moment(content?.data?.timestamp).format(
-                    "hh:mm A DD/MM/YYYY"
+                    'hh:mm A DD/MM/YYYY'
                   )}
                 </span>
               </div>
@@ -849,37 +809,34 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       );
     }
 
-    case "file": {
+    case 'file': {
       const url = content?.data?.payload?.media?.url || content?.data?.fileUrl;
       return (
-        <div style={{ fontFamily: "NotoSans-Regular" }}>
-          {content?.data?.position === "left" && (
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
+          {content?.data?.position === 'left' && (
             <div
               style={{
-                width: "40px",
-                marginRight: "4px",
-                textAlign: "center",
-              }}
-            ></div>
+                width: '40px',
+                marginRight: '4px',
+                textAlign: 'center',
+              }}></div>
           )}
           <Bubble type="image">
-            <div style={{ padding: "7px" }}>
+            <div style={{ padding: '7px' }}>
               <FileCard file={url} extension="pdf" />
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "self-end",
-                }}
-              >
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'self-end',
+                }}>
                 <span
                   style={{
                     color: contrastText,
-                    fontSize: "10px",
-                  }}
-                >
+                    fontSize: '10px',
+                  }}>
                   {moment(content?.data?.timestamp).format(
-                    "hh:mm A DD/MM/YYYY"
+                    'hh:mm A DD/MM/YYYY'
                   )}
                 </span>
               </div>
@@ -889,36 +846,33 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       );
     }
 
-    case "video": {
+    case 'video': {
       const url = content?.data?.payload?.media?.url || content?.data?.videoUrl;
-      const videoId = url.split("=")[1];
+      const videoId = url.split('=')[1];
       return (
-        <div style={{ fontFamily: "NotoSans-Regular" }}>
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
           <Bubble type="image">
-            <div style={{ padding: "7px" }}>
+            <div style={{ padding: '7px' }}>
               <iframe
                 width="100%"
                 height="fit-content"
                 src={`https://www.youtube.com/embed/` + videoId}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              ></iframe>
+                allowFullScreen></iframe>
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "self-end",
-                }}
-              >
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'self-end',
+                }}>
                 <span
                   style={{
                     color: contrastText,
-                    fontSize: "10px",
-                  }}
-                >
+                    fontSize: '10px',
+                  }}>
                   {moment(content?.data?.timestamp).format(
-                    "hh:mm A DD/MM/YYYY"
+                    'hh:mm A DD/MM/YYYY'
                   )}
                 </span>
               </div>
@@ -927,21 +881,20 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         </div>
       );
     }
-    case "options": {
+    case 'options': {
       return (
-        <div style={{ fontFamily: "NotoSans-Regular" }}>
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
           <Bubble type="text" className={styles.textBubble}>
-            <div style={{ display: "flex" }}>
+            <div style={{ display: 'flex' }}>
               <span className={styles.optionsText}>
                 {content?.data?.payload?.text}
-                {process.env.NEXT_PUBLIC_DEBUG === "true" && (
+                {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                   <div
                     style={{
-                      color: "var(--font)",
-                      fontSize: "12px",
-                      fontWeight: "normal",
-                    }}
-                  >
+                      color: 'var(--font)',
+                      fontSize: '12px',
+                      fontWeight: 'normal',
+                    }}>
                     <br></br>
                     <span>messageId: {content?.data?.messageId}</span>
                     <br></br>
@@ -959,42 +912,39 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       );
     }
 
-    case "table": {
+    case 'table': {
       console.log({ table: content });
       return (
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            position: "relative",
-            maxWidth: "90vw",
-            fontFamily: "NotoSans-Regular",
-          }}
-        >
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative',
+            maxWidth: '90vw',
+            fontFamily: 'NotoSans-Regular',
+          }}>
           <Bubble
             type="text"
             style={
-              content?.data?.position === "right"
+              content?.data?.position === 'right'
                 ? {
                     background: secondaryColor,
-                    boxShadow: "0 3px 8px rgba(0,0,0,.24)",
-                    borderRadius: "15px 15px 0px 15px",
-                    padding: "10px, 15px, 10px, 15px",
-                    gap: "10px",
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 0px 15px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px',
                   }
                 : {
                     background: contrastText,
-                    boxShadow: "0 3px 8px rgba(0,0,0,.24)",
-                    borderRadius: "15px 15px 15px 0px",
-                    padding: "10px, 15px, 10px, 15px",
-                    gap: "10px",
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 15px 0px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px',
                   }
-            }
-          >
+            }>
             <div
               className={styles.tableContainer}
-              style={{ overflowX: "scroll" }}
-            >
+              style={{ overflowX: 'scroll' }}>
               {
                 <JsonToTable
                   json={parseWeatherJson(JSON.parse(content?.text)?.table)}
@@ -1012,28 +962,26 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <span
               style={{
                 // fontWeight: 600,
-                fontSize: "16px",
+                fontSize: '16px',
                 color:
-                  content?.data?.position === "right"
+                  content?.data?.position === 'right'
                     ? contrastText
-                    : "var(--font)",
-              }}
-            >
+                    : 'var(--font)',
+              }}>
               {`\n` + JSON.parse(content?.text)?.generalAdvice ||
-                "" + `\n\n` + JSON.parse(content?.text)?.buttonDescription ||
-                ""}
+                '' + `\n\n` + JSON.parse(content?.text)?.buttonDescription ||
+                ''}
               {/* {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
                 isWeather: true,
               })} */}
-              {process.env.NEXT_PUBLIC_DEBUG === "true" && (
+              {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                 <div
                   style={{
-                    color: "var(--font)",
-                    fontSize: "12px",
-                    fontWeight: "normal",
-                  }}
-                >
+                    color: 'var(--font)',
+                    fontSize: '12px',
+                    fontWeight: 'normal',
+                  }}>
                   <br></br>
                   <span>messageId: {content?.data?.messageId}</span>
                   <br></br>
@@ -1045,9 +993,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {content?.data?.choices?.choices?.length > 0 && (
             <>
               <Popup
-                bottom={content?.data?.choices?.isSearchable ? "65px" : "0px"}
+                bottom={content?.data?.choices?.isSearchable ? '65px' : '0px'}
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={"20vh"}
+                height={'20vh'}
                 onClose={() => {
                   setPopupActive(false);
                 }}
@@ -1057,14 +1005,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 bgColor="transparent"
                 title={content?.data?.choices?.header}
                 titleColor="var(--font)"
-                titleSize="16px"
-              >
+                titleSize="16px">
                 {displayedChoices.map((item: any) => {
                   return (
                     <div
                       style={{
- 
- 
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -1076,35 +1021,28 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         cursor: 'pointer',
                         borderBottom: '2px solid #DDDDDD',
                         textAlign: 'center'
- 
                       }}
                       onClick={() => {
                         setPopupActive(false);
                         if (item?.showTextInput) {
                           context?.setShowInputBox(true);
                           context?.sendMessage(item?.key, item?.text);
-                        } else if (item?.action === "home") {
+                        }else if(item?.action === "home"){
                           const newConversationId = uuidv4();
-                          sessionStorage.setItem(
-                            "conversationId",
-                            newConversationId
-                          );
-                          sessionStorage.removeItem("tags");
+                          sessionStorage.setItem('conversationId', newConversationId);
+                          sessionStorage.removeItem('tags');
                           context?.setShowInputBox(true);
-                          if (context?.audioElement)
-                            context?.audioElement.pause();
-                          if (context?.setAudioPlaying)
-                            context?.setAudioPlaying(false);
+                          if (context?.audioElement) context?.audioElement.pause();
+                          if (context?.setAudioPlaying) context?.setAudioPlaying(false);
                           context?.setConversationId(newConversationId);
                           context?.setMessages([]);
                           context?.setIsMsgReceiving(false);
                           context?.setLoading(false);
-                          router.push("/");
-                        } else {
+                          router.push('/');
+                        }else{
                           context?.sendMessage(item?.key, item?.text);
                         }
-                      }}
-                    >
+                      }}>
                       {item.text}
                     </div>
                   );
@@ -1113,30 +1051,29 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               {content?.data?.choices?.isSearchable && (
                 <div
                   style={{
-                    padding: "10px",
-                    background: "#F4F4F4",
-                  }}
-                >
+                    padding: '10px',
+                    background: '#F4F4F4',
+                  }}>
                   <input
                     placeholder={
-                      t("label.buttons_search_placeholder") || "Search"
+                      t('label.buttons_search_placeholder') || 'Search'
                     }
                     value={searchQuery}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: "100%",
-                      height: "45px",
-                      padding: "4px",
-                      color: "var(--font)",
-                      fontFamily: "NotoSans-Medium",
-                      fontWeight: "500",
-                      fontSize: "14px",
-                      cursor: "pointer",
-                      border: "none",
-                      outline: "none",
-                      borderRadius: "10px",
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      height: '45px',
+                      padding: '4px',
+                      color: 'var(--font)',
+                      fontFamily: 'NotoSans-Medium',
+                      fontWeight: '500',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      border: 'none',
+                      outline: 'none',
+                      borderRadius: '10px',
                     }}
                     onChange={handleSearchChange}
                   />
@@ -1147,10 +1084,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {content?.data?.choices?.choices?.length > 0 && (
             <div
               style={{
-                height: popupActive ? "200px" : "0px",
-                width: "100vw",
-              }}
-            ></div>
+                height: popupActive ? '200px' : '0px',
+                width: '100vw',
+              }}></div>
           )}
         </div>
       );
