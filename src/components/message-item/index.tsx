@@ -401,7 +401,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         <div
           style={{
             position: 'relative',
-            maxWidth: '90vw',
+            maxWidth: '50vh',
             fontFamily: 'NotoSans-Medium',
           }}>
           <Bubble
@@ -600,70 +600,77 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   </div>
                 )}
                 {config?.allowFeedback &&
-                  (!content?.data?.isGuided || content?.data?.card) && (
-                    <div className={styles.msgFeedback}>
-                      <div
-                        className={styles.msgFeedbackIcons}
-                        style={{
-                          border: `1px solid ${theme?.primary?.main}`,
-                        }}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexDirection: 'column',
-                          }}
-                          data-testid="message-like-button"
-                          onClick={() =>
-                            feedbackHandler({
-                              like: 1,
-                              msgId: content?.data?.messageId,
-                            })
-                          }>
-                          <MsgThumbsUp fill={reaction === 1} width="20px" />
-                          <p
-                            style={{
-                              fontSize: '12px',
-                              fontFamily: 'NotoSans-Bold',
-                              margin: 0,
-                            }}>
-                            {t('label.helpful')}
-                          </p>
-                        </div>
-                        <div
-                          style={{
-                            height: '32px',
-                            width: '1px',
-                            backgroundColor: theme?.primary?.main,
-                            margin: '6px 0',
-                          }}></div>
+  (!content?.data?.isGuided || content?.data?.card) && (
+    <div className={styles.msgFeedback}>
+      <div
+        className={styles.msgFeedbackIcons}
+        style={{ 
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          border: `1px solid  ${theme?.primary?.main}`,
+          padding: '5px',  
+          boxSizing: 'border-box',  
+        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'column',
+          }}
+          data-testid="message-like-button"
+          onClick={() =>
+            feedbackHandler({
+              like: 1,
+              msgId: content?.data?.messageId,
+            })
+          }>
+          <MsgThumbsUp fill={reaction === 1} width="20px" />
+          <p
+            style={{
+              fontSize: '12px',
+              fontFamily: 'NotoSans-Bold',
+              margin: 0,
+            }}>
+            {t('label.helpful')}
+          </p>
+        </div>
+        <div
+          style={{
+            height: '32px',
+            width: '1px',
+            backgroundColor: theme?.primary?.main,
+            margin: '0px 10px', // Adjust the margin
+          }}></div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'column',
+          }}
+          data-testid="message-dislike-button"
+          onClick={() =>
+            feedbackHandler({
+              like: -1,
+              msgId: content?.data?.messageId,
+            })
+          }>
+          <MsgThumbsDown fill={reaction === -1} width="20px" />
+          <p
+            style={{
+              fontSize: '12px',
+              fontFamily: 'NotoSans-Bold',
+              margin: 0,
+            }}>
+            {t('label.not_helpful')}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
 
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexDirection: 'column',
-                          }}
-                          data-testid="message-dislike-button"
-                          onClick={() =>
-                            feedbackHandler({
-                              like: -1,
-                              msgId: content?.data?.messageId,
-                            })
-                          }>
-                          <MsgThumbsDown fill={reaction === -1} width="20px" />
-                          <p
-                            style={{
-                              fontSize: '12px',
-                              fontFamily: 'NotoSans-Bold',
-                              margin: 0,
-                            }}>
-                            {t('label.not_helpful')}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                 
               </div>
             )
           )}
