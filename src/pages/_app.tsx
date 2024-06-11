@@ -43,7 +43,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
       // already logged in then send to home
-      if (cookie['access_token'] && localStorage.getItem('userID')) {
+      if (localStorage.getItem('auth') && localStorage.getItem('userID')) {
         console.log("here")
         router.push(sessionStorage.getItem("path") ?? '/');
       }
@@ -53,9 +53,11 @@ const App = ({ Component, pageProps }: AppProps) => {
       }
       sessionStorage.setItem("path", router.asPath);
       if(router.query.auth && router.query.userId){
-        setCookie('access_token', router.query.auth, { path: '/' });
+        // setCookie('access_token', router.query.auth, { path: '/' });
+        localStorage.setItem('auth', router.query.auth as string);
         localStorage.setItem('userID', router.query.userId as string);
-      }else if (!cookie['access_token'] || !localStorage.getItem('userID')) {
+        sessionStorage.removeItem('conversationId')
+      }else if (!localStorage.getItem('auth') || !localStorage.getItem('userID')) {
         localStorage.clear();
         sessionStorage.clear();
         removeCookie('access_token', { path: '/' })
@@ -68,19 +70,76 @@ const App = ({ Component, pageProps }: AppProps) => {
     handleLoginRedirect();
   }, [handleLoginRedirect]);
 
+  function convertUrl(url: string) {
+    // Parse the URL
+    const urlObject = new URL(url);
+  
+    // Change the protocol to https
+    urlObject.protocol = 'https:';
+  
+    // Remove the port if it's 443
+    if (urlObject.port === '443') {
+      urlObject.port = '';
+    }
+  
+    // Return the new URL as a string
+    return urlObject.toString();
+  }
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      fetch(process.env.NEXT_PUBLIC_CONFIG_BASE_URL || '').then((res) => res.json()).then((data) => {
+        console.log("main data",data?.data?.config);
+        const faviconUrl = data?.data?.config?.component?.botDetails?.favicon;
+        const newFaviconUrl = convertUrl(faviconUrl);
+        console.log({newFaviconUrl})
+        var myDynamicManifest = {
+          "short_name": "Bot",
+          "name": "Bot",
+          "icons": [
+            {
+              "src": newFaviconUrl,
+              "sizes": "64x64 32x32 24x24 16x16",
+              "type": "image/x-icon"
+            },
+            {
+              "src": newFaviconUrl,
+              "type": "image/png",
+              "sizes": "192x192"
+            },
+            {
+              "src": newFaviconUrl,
+              "type": "image/png",
+              "sizes": "512x512"
+            }
+          ],
+          "start_url": window?.location?.href || "/",
+          "display": "fullscreen",
+          "theme_color": "black",
+          "background_color": "white"
+        }
+        
+        const stringManifest = JSON.stringify(myDynamicManifest);
+        const blob = new Blob([stringManifest], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        document.getElementById('manifest-file')?.setAttribute('href', manifestURL);
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
+    fetchConfig();
+  }, [])
+  
+
   const fetchUser = async () => {
     try {
-      const res = await axios.get(process.env.NEXT_PUBLIC_BFF_API_URL + '/user/' + localStorage.getItem('userID'), {
-        headers: {
-          Authorization: process.env.NEXT_PUBLIC_FUSIONAUTH_KEY || '',
-          "Service-Url": process.env.NEXT_PUBLIC_FUSIONAUTH_URL || ''
-        }
-      })
+      const userID = localStorage.getItem('userID');
+      const res = await axios.get(`/api/fetchUser?userID=${userID}`);
       setUser(res?.data?.user);
-    }catch (err) {
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {

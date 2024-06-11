@@ -57,20 +57,8 @@ const OnBoardingPage = (props: any) => {
 
   const updateUser = async () => {
     try {
-      const res = await axios.put(
-        process.env.NEXT_PUBLIC_BFF_API_URL +
-          '/user/' +
-          localStorage.getItem('userID'),
-        {
-          profile: { ...onboardingData } 
-        },
-        {
-          headers: {
-            Authorization: process.env.NEXT_PUBLIC_FUSIONAUTH_KEY || '',
-            'Service-Url': process.env.NEXT_PUBLIC_FUSIONAUTH_URL || '',
-          },
-        }
-      );
+      const userID = localStorage.getItem('userID');
+      const res = await axios.put(`/api/updateUser?userID=${userID}`, { onboardingData });
       console.log(res);
     } catch (err) {
       console.log(err);

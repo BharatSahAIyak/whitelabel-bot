@@ -595,7 +595,7 @@ const ContextProvider: FC<{
               }/user/chathistory/${sessionStorage.getItem('conversationId')}`,
               {
                 headers: {
-                  authorization: `Bearer ${cookie.access_token}`,
+                  authorization: `Bearer ${localStorage.getItem('auth')}`,
                 },
               }
             );

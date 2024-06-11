@@ -697,6 +697,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         fontWeight: '500',
                         cursor: 'pointer',
                         borderBottom: '2px solid #DDDDDD',
+                        textAlign: 'center'
                       }}
                       onClick={() => {
                         setPopupActive(false);
@@ -1019,6 +1020,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         fontWeight: '500',
                         cursor: 'pointer',
                         borderBottom: '2px solid #DDDDDD',
+                        textAlign: 'center'
                       }}
                       onClick={() => {
                         setPopupActive(false);
