@@ -6,6 +6,7 @@ import Modal from '@mui/material/Modal';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
+import { useEffect } from 'react';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -20,22 +21,19 @@ const style = {
 };
 
 export const InstallModal: React.FC = () => {
-  const theme = useColorPalates()
-  const [open, setOpen] = React.useState(
-    localStorage.getItem('installPwa') !== 'true' ?? false
-  );
-  const deferredPromptRef = React.useRef<any>(null);
+  const theme = useColorPalates();
+  const [open, setOpen] = React.useState(false);
 
-  React.useEffect(() => {
+  let deferredPrompt: any;
+
+  useEffect(() => {
     if (localStorage.getItem('installPwa') !== 'true') {
       // Check if the browser has the install event
-      if ('serviceWorker' in navigator && 'PushManager' in window) {
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
         setOpen(true);
-        window.addEventListener('beforeinstallprompt', (e) => {
-          e.preventDefault();
-          deferredPromptRef.current = e;
-        });
-      }
+      });
     }
   }, []);
 
@@ -43,25 +41,24 @@ export const InstallModal: React.FC = () => {
     setOpen(false);
     localStorage.setItem('installPwa', 'true');
   };
-  const handleOpen = React.useCallback(() => {
+
+  const handleOpen = async () => {
     closeAndSetLocalStorage();
-    if (deferredPromptRef.current) {
-      deferredPromptRef.current.prompt();
-      deferredPromptRef.current.userChoice.then((choiceResult: any) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('App installed');
-        } else {
-          console.log('App installation declined');
-        }
-      });
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt.');
+    } else if (outcome === 'dismissed') {
+      console.log('User dismissed the install prompt');
     }
     setOpen(false);
-  }, []);
+  };
 
-  const handleClose = React.useCallback(() => {
+  const handleClose = () => {
     setOpen(false);
     localStorage.setItem('installPwa', 'true');
-  }, []);
+  };
 
   return (
     <>
@@ -84,7 +81,11 @@ export const InstallModal: React.FC = () => {
               }}>
               <CloseIcon />
             </IconButton>
-            <Typography id="modal-modal-title" variant="h6" component="h2" data-testid="install-app-text">
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              data-testid="install-app-text">
               Install App
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>

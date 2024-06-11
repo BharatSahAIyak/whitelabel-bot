@@ -714,16 +714,19 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   return (
                     <div
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "10px",
-                        padding: "14px",
-                        color: "var(--font)",
-                        fontSize: "16px",
-                        fontWeight: "500",
-                        cursor: "pointer",
-                        borderBottom: "2px solid #DDDDDD",
+ 
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '14px',
+                        color: 'var(--font)',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #DDDDDD',
+                        textAlign: 'center'
+ 
                       }}
                       onClick={() => {
                         setPopupActive(false);
@@ -1060,16 +1063,20 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   return (
                     <div
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "10px",
-                        padding: "14px",
-                        color: "var(--font)",
-                        fontSize: "16px",
-                        fontWeight: "500",
-                        cursor: "pointer",
-                        borderBottom: "2px solid #DDDDDD",
+ 
+ 
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '14px',
+                        color: 'var(--font)',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #DDDDDD',
+                        textAlign: 'center'
+ 
                       }}
                       onClick={() => {
                         setPopupActive(false);
