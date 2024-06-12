@@ -100,20 +100,23 @@ const App = ({ Component, pageProps }: AppProps) => {
             {
               "src": newFaviconUrl,
               "sizes": "64x64 32x32 24x24 16x16",
-              "type": "image/x-icon"
+              "type": "image/x-icon",
+              "purpose":"any maskable"
             },
             {
               "src": newFaviconUrl,
               "type": "image/png",
-              "sizes": "192x192"
+              "sizes": "192x192",
+              "purpose":"any maskable"
             },
             {
               "src": newFaviconUrl,
               "type": "image/png",
-              "sizes": "512x512"
+              "sizes": "512x512",
+              "purpose":"any maskable"
             }
           ],
-          "start_url": "https://"+process.env.NEXT_PUBLIC_BOT_NAME+".vercel.app/",
+          "start_url": window?.location?.href || "/",
           "display": "fullscreen",
           "theme_color": "black",
           "background_color": "white"

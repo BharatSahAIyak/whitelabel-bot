@@ -23,16 +23,18 @@ const style = {
 export const InstallModal: React.FC = () => {
   const theme = useColorPalates();
   const [open, setOpen] = React.useState(false);
-
-  let deferredPrompt: any;
+  const deferredPromptRef = React.useRef<any>(null);
+  // let deferredPrompt: any;
 
   useEffect(() => {
-    if (localStorage.getItem('installPwa') !== 'true') {
+    console.log("installPwa",localStorage.getItem('installPwa'))
+    if ((localStorage.getItem('installPwa') !== 'true') || (localStorage.getItem('installPwa') === null)) {
       // Check if the browser has the install event
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        setOpen(true);
+      setOpen(true);
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredPromptRef.current = event;
+        console.log("hello",deferredPromptRef.current)
       });
     }
   }, []);
@@ -43,21 +45,24 @@ export const InstallModal: React.FC = () => {
   };
 
   const handleOpen = async () => {
-    closeAndSetLocalStorage();
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt.');
-    } else if (outcome === 'dismissed') {
-      console.log('User dismissed the install prompt');
-    }
-    setOpen(false);
+      if (!deferredPromptRef.current) {
+        return;
+      }
+      console.log("deffered prompt",deferredPromptRef.current)
+      const result = await deferredPromptRef.current.prompt();
+      // const { outcome } = await deferredPromptRef.current.userChoice;
+      console.log(`Install prompt was: ${result.outcome}`);
+      deferredPromptRef.current = null;
+      // if (outcome === 'accepted') {
+      //   console.log('User accepted the install prompt.');
+        closeAndSetLocalStorage();
+      // } else if (outcome === 'dismissed') {
+      //   console.log('User dismissed the install prompt');
+      // }
   };
-
   const handleClose = () => {
     setOpen(false);
-    localStorage.setItem('installPwa', 'true');
+    // localStorage.setItem('installPwa', 'true');
   };
 
   return (
