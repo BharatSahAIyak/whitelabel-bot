@@ -136,6 +136,7 @@ const ShareButtons = () => {
         >
           {config?.allowShareChat && (
             <div
+              data-testid="share-button"
               onClick={() => downloadShareHandler('share')}
               style={{
                 display: 'flex',
@@ -176,10 +177,10 @@ const ShareButtons = () => {
               )}
               <p
                 style={{
-                  fontSize: '10px',
+                  fontSize: '12px',
                   margin: 0,
                   // color: config?.theme.primaryColor.value,
-                  fontFamily: 'Mulish-bold',
+                  fontFamily: 'NotoSans-Bold',
                 }}
               >
                 {t('label.share')}
@@ -190,6 +191,7 @@ const ShareButtons = () => {
           {config?.allowDownloadChat && config?.allowShareChat && <Divider />}
           {config?.allowDownloadChat && (
             <div
+              data-testid="download-button"
               onClick={() => downloadShareHandler('download')}
               style={{
                 display: 'flex',
@@ -230,10 +232,10 @@ const ShareButtons = () => {
               )}
               <p
                 style={{
-                  fontSize: '10px',
+                  fontSize: '12px',
                   margin: 0,
                   // color: config?.theme.primaryColor.value,
-                  fontFamily: 'Mulish-bold',
+                  fontFamily: 'NotoSans-Bold',
                 }}
               >
                 {t('label.download')}

@@ -20,7 +20,7 @@ module.exports = withBundleAnalyzer(
       ignoreBuildErrors: true,    
     },
     compiler: {
-      removeConsole:  true
+      removeConsole: true
     },
     i18n: {
       locales: ['en'], // add more lang codes if support added

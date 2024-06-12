@@ -23,12 +23,12 @@
 }
 
 .title {
-  width: 65%;
+  width: 70%;
   margin: auto;
   position: relative;
   top: 30px;
   text-align: center;
-  font-family: 'Mulish-Bold';
+  font-family: 'NotoSans-Bold';
   font-size: 3.5vh;
   font-weight: 700;
 }
@@ -65,7 +65,7 @@
 }
 
 .imgBtn p{
-  font-family: 'Mulish-bold';
+  font-family: 'NotoSans-Bold';
   text-align: center;
   line-height: 1;
   margin-bottom: 5px;
@@ -125,7 +125,7 @@
 
 .keyboard p {
   color: var(--secondary);
-  font-family: Mulish-bold;
+  font-family: NotoSans-Bold;
   text-decoration: underline;
   font-size: 18px;
 }

@@ -18,7 +18,7 @@ import { useCookies } from 'react-cookie';
 import { UCI } from 'socket-package';
 import { XMessage } from '@samagra-x/xmessage';
 import { FullPageLoader } from '../components/fullpage-loader';
-import LaunchPage from '../pageComponents/launch-page';
+import WelcomePage from '../pageComponents/welcome-page';
 import saveTelemetryEvent from '../utils/telemetry';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
@@ -36,7 +36,7 @@ const ContextProvider: FC<{
   const [isMsgReceiving, setIsMsgReceiving] = useState(false);
   const [messages, setMessages] = useState<Array<any>>([]);
   const [newSocket, setNewSocket] = useState<any>();
-  const [showLaunchPage, setShowLaunchPage] = useState(false);
+  const [showWelcomePage, setShowWelcomePage] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(
     sessionStorage.getItem('conversationId')
   );
@@ -53,18 +53,18 @@ const ContextProvider: FC<{
   const [endTime, setEndTime] = useState(Date.now());
   const [s2tMsgId, sets2tMsgId] = useState('');
   const [kaliaClicked, setKaliaClicked] = useState(false);
-  const [guidedFlow, setGuidedFlow] = useState(false);
+  const [showInputBox, setShowInputBox] = useState(true);
 
   useEffect(() => {
     if (
       //@ts-ignore
-      config?.component?.launchPage &&
+      config?.component?.welcomePage &&
       //@ts-ignore
-      config?.component?.launchPage?.showLaunchPage
+      config?.component?.welcomePage?.showWelcomePage
     ) {
-      setShowLaunchPage(true);
+      setShowWelcomePage(true);
       setTimeout(() => {
-        setShowLaunchPage(false);
+        setShowWelcomePage(false);
       }, 2000);
     }
   }, [config]);
@@ -80,7 +80,7 @@ const ContextProvider: FC<{
     };
   }, []);
   useEffect(() => {
-    console.log("trigger",{locale})
+    console.log("trigger", {locale})
     //@ts-ignore
     if (config?.translation && locale) {
       onLocaleUpdate();
@@ -233,7 +233,7 @@ const ContextProvider: FC<{
             transportOptions: {
               polling: {
                 extraHeaders: {
-                  // Authorization: `Bearer ${localStorage.getItem('auth')}`,
+                  // Authorization: `Bearer ${cookie.access_token}`,
                   channel: 'akai',
                 },
               },
@@ -298,9 +298,11 @@ const ContextProvider: FC<{
                 position: 'left',
                 reaction: 0,
                 messageId: msg?.messageId.Id,
+                replyId: msg?.messageId.replyId,
                 conversationId: msg.messageId.channelMessageId,
                 sentTimestamp: Date.now(),
                 card: msg?.payload?.card,
+                isGuided: msg?.transformer?.metaData?.isGuided || false,
                 // btns: msg?.payload?.buttonChoices,
                 // audio_url: msg?.content?.audio_url,
                 // metaData: msg.payload?.metaData
@@ -308,10 +310,6 @@ const ContextProvider: FC<{
                 //     : null,
                 ...media,
               };
-
-              if(msg?.payload?.buttonChoices){
-                setGuidedFlow(true);
-              }
 
               updatedMessages.push(newMsg);
               // console.log('useeffect', newMsg.text);
@@ -429,7 +427,8 @@ const ContextProvider: FC<{
   console.log('config:', { config });
   //@ts-ignore
   const sendMessage = useCallback(
-    async (text: string, media: any, isVisibile = true) => {
+    async (textToSend: string, textToShow: string, media: any, isVisibile = true) => {
+      if(!textToShow) textToShow = textToSend;
       if (!sessionStorage.getItem('conversationId')) {
         const cId = uuidv4();
         console.log('convId', cId);
@@ -446,7 +445,7 @@ const ContextProvider: FC<{
       // console.log('mssgs:', messages)
       setLoading(true);
       setIsMsgReceiving(true);
-      console.log('my mssg:', text);
+      console.log('my mssg:', textToSend, textToShow);
       console.log('s2tMsgId:', s2tMsgId);
       const messageId = s2tMsgId ? s2tMsgId : uuidv4();
       console.log('s2t messageId:', messageId);
@@ -454,7 +453,7 @@ const ContextProvider: FC<{
         payload: {
           app: process.env.NEXT_PUBLIC_BOT_ID || '',
           payload: {
-            text: text?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
+            text: textToSend?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
             metaData: {
               latitude: sessionStorage.getItem('latitude'),
               longitude: sessionStorage.getItem('longitude'),
@@ -489,9 +488,9 @@ const ContextProvider: FC<{
           setMessages((prev: any) => [
             ...prev.map((prevMsg: any) => ({ ...prevMsg, disabled: true })),
             {
-              text: text?.replace(/^\s+|\s+$/g, '')?.replace(/^Guided:/, ''),
+              text: textToShow?.replace(/^\s+|\s+$/g, '')?.replace(/^Guided:/, ''),
               position: 'right',
-              payload: { text },
+              payload: { textToShow },
               time: Date.now(),
               disabled: true,
               messageId: messageId,
@@ -508,7 +507,7 @@ const ContextProvider: FC<{
           phoneNumber: localStorage.getItem('phoneNumber') || '',
           conversationId: sessionStorage.getItem('conversationId') || '',
           messageId: messageId,
-          text: text,
+          text: textToSend,
           createdAt: Math.floor(new Date().getTime() / 1000),
         });
       } catch (err) {
@@ -698,8 +697,8 @@ const ContextProvider: FC<{
       setKaliaClicked,
       s2tMsgId,
       sets2tMsgId,
-      guidedFlow,
-      setGuidedFlow,
+      showInputBox,
+      setShowInputBox,
     }),
     [
       locale,
@@ -731,23 +730,17 @@ const ContextProvider: FC<{
       setKaliaClicked,
       s2tMsgId,
       sets2tMsgId,
-      guidedFlow,
-      setGuidedFlow,
+      showInputBox,
+      setShowInputBox,
     ]
   );
 
   if (!config)
     return <FullPageLoader loading label="Loading configuration.." />;
-    if (showLaunchPage)
-    return (
-      <LaunchPage
-      //@ts-ignore
-      theme={config?.theme}
-      //@ts-ignore
-        config={config?.component?.launchPage}
-        compConfig={config}
-      />
-    );
+
+  if (showWelcomePage)
+    return <WelcomePage config={config}/>;
+    
   return (
     //@ts-ignore
     <AppContext.Provider value={values}>{children}</AppContext.Provider>

@@ -11,6 +11,7 @@ import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
 import { formatDate } from '../../utils/formatDate';
 import { recordUserLocation } from '../../utils/location';
+import { useCookies } from 'react-cookie';
 
 const ChatItem: React.FC<ChatItemPropsType> = ({
   name,
@@ -22,7 +23,7 @@ const ChatItem: React.FC<ChatItemPropsType> = ({
   const context = useContext(AppContext);
   const t = useLocalization();
   const [isConversationDeleted, setIsConversationDeleted] = useState(false);
-
+  const [cookie] = useCookies();
   const handleChatPage = useCallback(() => {
     sessionStorage.setItem('conversationId', conversationId || 'null');
     context?.setConversationId(conversationId);

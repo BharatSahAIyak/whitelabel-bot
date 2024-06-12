@@ -73,16 +73,19 @@ const ChatUiWindow: React.FC = () => {
           conversationId === 'null' || item?.channelMessageId === conversationId
       )
       .map((item: any) => ({
-            text: item.payload.text.replace(/<end\/>/g, ""),
+            text: item?.payload?.text?.replace(/<end\/>/g, "")?.replace(/^Guided:/, ''),
             position: item.to === 'admin' ? 'right' : 'left',
             timestamp: item.timestamp,
             reaction: item?.feedback?.type === 'FEEDBACK_POSITIVE' ? 1 : item?.feedback?.type === 'FEEDBACK_NEGATIVE' ? -1 : 0,
             msgId: item.messageId,
             messageId: item.messageId,
+            replyId: item.replyId,
             audio_url: item?.audioURL,
             isEnd: true,
             optionClicked: true,
             // choices: item?.payload?.buttonChoices,
+            isGuided: item?.metaData?.isGuided,
+            card: item?.payload?.card,
             choices: [],
             conversationId: item?.channelMessageId
           })
@@ -105,7 +108,7 @@ const ChatUiWindow: React.FC = () => {
       }
       console.log('mssgs:', context?.messages);
       if (type === 'text' && msg.trim()) {
-        context?.sendMessage(msg.trim());
+        context?.sendMessage(msg.trim(), msg.trim());
       }
     },
     [context, t]
@@ -133,8 +136,6 @@ const ChatUiWindow: React.FC = () => {
       : normalizeMsgs;
   }, [context?.loading, normalizeMsgs]);
 
-  console.log({guidedFlow: context?.guidedFlow});
-
   if (isDown) {
     return <DowntimePage />;
   } else
@@ -144,7 +145,7 @@ const ChatUiWindow: React.FC = () => {
           btnColor={secondaryColor || 'black'}
           background="var(--bg-color)"
           disableSend={isMsgReceiving}
-          showInput={!context?.guidedFlow}
+          showInput={context?.showInputBox}
           //@ts-ignore
           translation={t}
           showTransliteration={config?.allowTransliteration  && localStorage.getItem('locale') === config?.transliterationOutputLanguage}

@@ -24,6 +24,7 @@ import BhashiniImg from '../../assets/images/bhashinilogo.png';
 import darshanLogo from '../../assets/images/darshan-logo.png';
 import styles from './style.module.css'
 import Image from 'next/image'
+import { Button } from '@mui/material'
 
 export const Sidebar = ({
   isOpen,
@@ -87,7 +88,7 @@ export const Sidebar = ({
           role="presentation"
         >
           {config && (
-            <List>
+            <List data-testid="sidebar-list">
               {config.showLangSwitcher && (
                 <ListItem disablePadding>
                   <ListItemButton onClick={handleItemClick}>
@@ -100,13 +101,14 @@ export const Sidebar = ({
                       />
                     </ListItemIcon>
                     <div
+                      data-testid="sidebar-language-toggle"
                       style={{
                         display: 'flex',
                         justifyContent: 'flex-end',
                         width: '100%',
                       }}
                     >
-                      <button
+                      <Button
                         className={`Sidemenu_button ${
                           activeLanguage === config?.languageCode1
                             ? 'active'
@@ -131,9 +133,9 @@ export const Sidebar = ({
                         }
                       >
                         {config?.languageName1}
-                      </button>
+                      </Button>
 
-                      <button
+                      <Button
                         className={`Sidemenu_button ${
                           activeLanguage === config?.languageCode2
                             ? 'active'
@@ -158,7 +160,7 @@ export const Sidebar = ({
                         }
                       >
                         {config?.languageName2}
-                      </button>
+                      </Button>
                     </div>
                   </ListItemButton>
                 </ListItem>
@@ -177,6 +179,7 @@ export const Sidebar = ({
                         />
                       </ListItemIcon>
                       <ListItemText
+                        data-testid="sidebar-welcome-text"
                         primary={t('label.welcome')}
                         secondary={
                           config?.showPhoneNumber &&
@@ -194,6 +197,7 @@ export const Sidebar = ({
               {config?.historyPage && (
                 <div>
                   <ListItem
+                    data-testid="sidebar-history-button"
                     disablePadding
                     sx={{
                       paddingTop: '10px',
@@ -224,6 +228,7 @@ export const Sidebar = ({
               {config?.faqPage && (
                 <div>
                   <ListItem
+                    data-testid="sidebar-faq-button"
                     disablePadding
                     sx={{
                       paddingTop: '10px',
@@ -254,6 +259,7 @@ export const Sidebar = ({
               {config?.feedbackPage && (
                 <div>
                   <ListItem
+                    data-testid="sidebar-feedback-button"
                     disablePadding
                     sx={{
                       paddingTop: '10px',
@@ -283,7 +289,7 @@ export const Sidebar = ({
               )}
 
               {config.showLogoutButton && (
-                <ListItem disablePadding>
+                <ListItem disablePadding data-testid="sidebar-logout-button">
                   <ListItemButton
                     sx={{
                       color: theme.primary.contrastText,

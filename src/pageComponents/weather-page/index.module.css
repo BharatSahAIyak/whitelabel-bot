@@ -3,7 +3,8 @@
   border-radius: 5px;
   position: relative;
   z-index: 1;
-  height: 350px;
+  height: 20vw;
+  min-height: 370px;
   width: 100vw;
 }
 

@@ -18,7 +18,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-import Image from 'next/image';
 import { toast } from 'react-hot-toast';
 import styles from './index.module.css';
 import RightIcon from './assets/right';
@@ -38,29 +37,27 @@ import saveTelemetryEvent from '../../utils/telemetry';
 import BlinkingSpinner from '../blinking-spinner/index';
 import Loader from '../loader';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
-import { divide } from 'lodash';
-import { borderRadius } from '@mui/system';
+import { v4 as uuidv4 } from 'uuid';
+import router from 'next/router';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
   const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
-  const [reaction, setReaction] = useState(
-    content?.data?.reaction?.type
-  );
+  const [reaction, setReaction] = useState(content?.data?.reaction?.type);
   const [optionDisabled, setOptionDisabled] = useState(
     content?.data?.optionClicked || false
   );
   const [audioFetched, setAudioFetched] = useState(false);
   const [ttsLoader, setTtsLoader] = useState(false);
-  const [popupActive, setPopupActive] = useState(false);
+  const [popupActive, setPopupActive] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredChoices, setFilteredChoices] = useState([]);
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
-    return theme?.primary?.light;
-  }, [theme?.primary?.light]);
+    return theme?.primary?.main;
+  }, [theme?.primary?.main]);
 
   const contrastText = useMemo(() => {
     return theme?.primary?.contrastText;
@@ -76,16 +73,23 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     setSearchQuery(query);
 
     if (query) {
-      const results = content?.data?.choices?.choices.filter((item: any) =>
-        item.text.toLowerCase().includes(query)
-      ).slice(0, 3);
+      const results = content?.data?.choices?.choices
+        .filter((item: any) => item.text.toLowerCase().includes(query))
+        .slice(0, 3);
       setFilteredChoices(results);
     } else {
       setFilteredChoices([]);
     }
   };
 
-  const displayedChoices = searchQuery ? filteredChoices : content?.data?.choices?.choices?.slice(0, content?.data?.choices?.isSearchable ? 3 : undefined);
+  const displayedChoices = searchQuery
+    ? filteredChoices
+    : content?.data?.choices?.choices?.slice(
+        0,
+        content?.data?.choices?.isSearchable
+          ? content?.data?.choices?.choices?.length
+          : undefined
+      );
 
   useEffect(() => {
     setReaction(content?.data?.reaction);
@@ -170,7 +174,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     }`
                   );
                 } else {
-                  context?.sendMessage(choice?.key, false, true, choice);
+                  context?.sendMessage(choice?.key, choice?.text);
                   setOptionDisabled(true);
                   setTimeout(
                     () =>
@@ -221,11 +225,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     [context, t, optionDisabled]
   );
 
-  useEffect(() => {
-    if (content?.data?.choices?.choices?.length > 0) {
-      setPopupActive(true);
-    }
-  }, [content]);
+  // useEffect(() => {
+  //   if (content?.data?.choices?.choices?.length > 0) {
+  //     setPopupActive(true);
+  //   }
+  // }, [content]);
 
   console.log('here', content);
 
@@ -244,7 +248,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         userId: localStorage.getItem('userID') || '',
         phoneNumber: localStorage.getItem('phoneNumber') || '',
         conversationId: sessionStorage.getItem('conversationId') || '',
-        messageId: content?.data?.messageId,
+        messageId: content?.data?.replyId,
         text: content?.text,
         timesAudioUsed: 1,
       });
@@ -261,7 +265,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {
             text: text,
             language: context?.locale,
-            messageId: content?.data?.messageId,
+            messageId: content?.data?.replyId,
             conversationId: sessionStorage.getItem('conversationId') || '',
           },
           {
@@ -287,7 +291,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             phoneNumber: localStorage.getItem('phoneNumber') || '',
             conversationId: sessionStorage.getItem('conversationId') || '',
             text: text,
-            messageId: content?.data?.messageId,
+            messageId: content?.data?.replyId,
             timeTaken: latency,
             createdAt: Math.floor(startTime / 1000),
             audioUrl: response?.data?.url || 'No audio URL',
@@ -312,7 +316,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             phoneNumber: localStorage.getItem('phoneNumber') || '',
             conversationId: sessionStorage.getItem('conversationId') || '',
             text: text,
-            msgId: content?.data?.messageId,
+            msgId: content?.data?.replyId,
             timeTaken: latency,
             createdAt: Math.floor(startTime / 1000),
             error: error?.message || 'Error fetching audio',
@@ -323,16 +327,22 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     };
 
     const fetchData = async () => {
-      if (
-        !content?.data?.audio_url &&
-        content?.data?.position === 'left'
-      ) {
+      if (!content?.data?.audio_url && content?.data?.position === 'left') {
         const toastId = toast.loading(`${t('message.download_audio')}`);
         setTimeout(() => {
           toast.dismiss(toastId);
         }, 1500);
-        const text = content?.data?.card ? content?.data?.card?.footer?.title : content?.text;
-        const audioUrl = await fetchAudio(text ?? "No text found");
+        const text = content?.data?.card?.content?.cells
+          ? content?.data?.card?.content?.cells
+              ?.map((cell: any) => {
+                const texts = [];
+                if (cell.header) texts.push(cell.header);
+                if (cell.footer) texts.push(cell.footer);
+                return texts.join(' ');
+              })
+              .join(' ')
+          : content?.text;
+        const audioUrl = await fetchAudio(text ?? 'No text found');
 
         setTtsLoader(false);
         if (audioUrl) {
@@ -349,6 +359,13 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       fetchData();
     }
   }, [handleAudio, content?.data, content?.text, t]);
+
+  // Hide input box if there are buttons
+  useEffect(() => {
+    if (content?.data?.choices?.choices?.length > 0) {
+      context?.setShowInputBox(false);
+    }
+  }, [content?.data?.choices?.choices]);
 
   const parseWeatherJson = (data: any) => {
     if (!data || data.length === 0) {
@@ -372,6 +389,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     return result;
   };
 
+  useEffect(() => {
+    console.log({ popupActive, msg: content?.text });
+  }, [popupActive]);
+
   switch (type) {
     case 'loader':
       return <Typing />;
@@ -380,19 +401,28 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         <div
           style={{
             position: 'relative',
-            maxWidth: '90vw',
+            maxWidth: '50vh',
+            fontFamily: 'NotoSans-Medium',
           }}>
           <Bubble
             type="text"
             style={
               content?.data?.position === 'right'
                 ? {
-                    background: secondaryColor,
-                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
-                  }
-                : {
                     background: contrastText,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 0px 15px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px',
+                  }
+                : {
+                    background: content?.data?.card
+                      ? contrastText
+                      : secondaryColor,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 15px 0px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px',
                   }
             }>
             {content?.data?.card ? (
@@ -420,34 +450,39 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         <div
                           style={{
                             color: theme?.primary?.main,
-                            fontWeight: 600,
                           }}>
-                          {cell.header}
+                          <RichText content={cell?.header} />
                         </div>
-                        <div>{cell.footer}</div>
+                        <div style={{ color: 'var(--font)' }}>
+                          <RichText content={cell?.footer} />
+                        </div>
                       </div>
                     );
                   })}
                 </div>
-                <div
-                  style={{ padding: '20px', borderTop: '1px solid #EDEDF1' }}>
-                  <div>
-                    <RichText content={content?.data?.card?.footer?.title} />
+                {content?.data?.card?.footer && (
+                  <div
+                    style={{ padding: '20px', borderTop: '1px solid #EDEDF1' }}>
+                    <div>
+                      <RichText content={content?.data?.card?.footer?.title} />
+                    </div>
+                    <div>
+                      <RichText
+                        content={content?.data?.card?.footer?.description}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <RichText content={content?.data?.card?.footer?.description} />
-                  </div>
-                </div>
+                )}
               </div>
             ) : (
               <span
                 style={{
                   // fontWeight: 600,
-                  fontSize: '1rem',
+                  fontSize: '16px',
                   color:
                     content?.data?.position === 'right'
-                      ? contrastText
-                      : secondaryColor,
+                      ? 'var(--font)'
+                      : contrastText,
                 }}>
                 {content?.text}{' '}
                 {content?.data?.position === 'right'
@@ -458,8 +493,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     style={{
                       color:
                         content?.data?.position === 'right'
-                          ? 'yellow'
-                          : 'black',
+                          ? 'var(--font)'
+                          : 'yellow',
                       fontSize: '12px',
                       fontWeight: 'normal',
                     }}>
@@ -472,66 +507,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </span>
             )}
 
-            {content?.data?.choices?.choices?.length > 0 && (
-              <Popup
-                isCollapsed={content?.data?.choices?.isCollapsed ?? false}
-                height={content?.data?.choices?.isSearchable ? "70vh" : "15vh"}
-                onClose={() => {}}
-                active={popupActive}
-                backdrop={false}
-                showClose={false}
-                bgColor="transparent"
-                title={content?.data?.choices?.header}
-                >
-                {displayedChoices.map((item: any) => {
-                    return (
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '10px',
-                          padding: '3px',
-                          color: 'black',
-                          cursor: 'pointer',
-                          borderBottom: '2px solid #DDDDDD',
-                        }}
-                        onClick={() => {
-                          setPopupActive(false);
-                          if (item?.showTextInput) {
-                            context?.setGuidedFlow(false);
-                          }
-                          context?.sendMessage(item?.key);
-                        }}>
-                        {item.text}
-                      </div>
-                    );
-                  })}
-                {content?.data?.choices?.isSearchable && (
-                  <div style={{
-                    padding: '10px',
-                    background: '#F4F4F4'
-                  }}>
-                    <input
-                    placeholder='Search'
-                    value={searchQuery}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '100%',
-                      padding: '10px',
-                      color: 'black',
-                      cursor: 'pointer',
-                      border: 'none',
-                      outline: 'none',
-                      borderRadius: '10px'
-                    }}
-                    onChange={handleSearchChange} />
-                  </div>
-                )}
-              </Popup>
-            )}
             {/* {getLists({
               choices:
                 content?.data?.payload?.buttonChoices ?? content?.data?.choices,
@@ -546,11 +521,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 style={{
                   color:
                     content?.data?.position === 'right'
-                      ? contrastText
-                      : secondaryColor,
-                  fontSize: '10px',
+                      ? 'var(--font)'
+                      : contrastText,
+                  fontSize: '12px',
                 }}>
-                {moment(content?.data?.timestamp).format('hh:mm A DD/MM/YYYY')}
+                {moment(content?.data?.timestamp).format('hh:mma ')}
               </span>
             </div>
           </Bubble>
@@ -579,6 +554,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       // style={{
                       //   border: `1px solid ${theme?.primary?.main}`,
                       // }}
+                      data-testid="message-speaker-button"
                       className={styles.msgSpeaker}
                       onClick={downloadAudio}
                       style={
@@ -610,12 +586,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
                       <p
                         style={{
-                          fontSize: '11px',
+                          fontSize: '12px',
                           // color: contrastText,
-                          // fontFamily: 'Mulish-bold',
+                          fontFamily: 'NotoSans-Bold',
                           display: 'flex',
                           alignItems: 'flex-end',
-                          marginRight: '1px',
+                          margin: '0 1px 0 0',
                           padding: '0 5px',
                         }}>
                         {t('message.speaker')}
@@ -623,69 +599,175 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     </div>
                   </div>
                 )}
-                {config?.allowFeedback && (!context?.guidedFlow || content?.data?.card) && (
-                  <div className={styles.msgFeedback}>
-                    <div
-                      className={styles.msgFeedbackIcons}
-                      style={{
-                        border: `1px solid ${theme?.primary?.main}`,
-                      }}>
+                {config?.allowFeedback &&
+                  (!content?.data?.isGuided || content?.data?.card) && (
+                    <div className={styles.msgFeedback}>
                       <div
+                        className={styles.msgFeedbackIcons}
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          flexDirection: 'column',
-                          paddingRight: '6px',
-                        }}
-                        onClick={() =>
-                          feedbackHandler({
-                            like: 1,
-                            msgId: content?.data?.messageId,
-                          })
-                        }>
-                        <MsgThumbsUp fill={reaction === 1} width="20px" />
-                        <p
+                          border: `1px solid ${theme?.primary?.main}`,
+                        }}>
+                        <div
                           style={{
-                            fontSize: '11px',
-                            // fontFamily: 'Mulish-bold',
-                          }}>
-                          {t('label.helpful')}
-                        </p>
-                      </div>
-                      <div
-                        style={{
-                          height: '32px',
-                          width: '1px',
-                          backgroundColor: theme?.primary?.main,
-                          margin: '6px 0',
-                        }}></div>
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexDirection: 'column',
+                          }}
+                          data-testid="message-like-button"
+                          onClick={() =>
+                            feedbackHandler({
+                              like: 1,
+                              msgId: content?.data?.messageId,
+                            })
+                          }>
+                          <MsgThumbsUp fill={reaction === 1} width="20px" />
+                          <p
+                            style={{
+                              fontSize: '12px',
+                              fontFamily: 'NotoSans-Bold',
+                              margin: 0,
+                            }}>
+                            {t('label.helpful')}
+                          </p>
+                        </div>
+                        <div
+                          style={{
+                            height: '32px',
+                            width: '1px',
+                            backgroundColor: theme?.primary?.main,
+                            margin: '6px 0',
+                          }}></div>
 
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          flexDirection: 'column',
-                        }}
-                        onClick={() =>
-                          feedbackHandler({
-                            like: -1,
-                            msgId: content?.data?.messageId,
-                          })
-                        }>
-                        <MsgThumbsDown fill={reaction === -1} width="20px" />
-                        <p
+                        <div
                           style={{
-                            fontSize: '11px',
-                            // fontFamily: 'Mulish-bold',
-                          }}>
-                          {t('label.not_helpful')}
-                        </p>
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexDirection: 'column',
+                          }}
+                          data-testid="message-dislike-button"
+                          onClick={() =>
+                            feedbackHandler({
+                              like: -1,
+                              msgId: content?.data?.messageId,
+                            })
+                          }>
+                          <MsgThumbsDown fill={reaction === -1} width="20px" />
+                          <p
+                            style={{
+                              fontSize: '12px',
+                              fontFamily: 'NotoSans-Bold',
+                              margin: 0,
+                            }}>
+                            {t('label.not_helpful')}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             )
+          )}
+          {content?.data?.choices?.choices?.length > 0 && (
+            <>
+              <Popup
+                bottom={content?.data?.choices?.isSearchable ? '65px' : '0px'}
+                isCollapsed={content?.data?.choices?.isCollapsed ?? false}
+                height={'20vh'}
+                onClose={() => {
+                  setPopupActive(false);
+                }}
+                active={popupActive}
+                backdrop={false}
+                showClose={false}
+                bgColor="transparent"
+                title={content?.data?.choices?.header}
+                titleColor="var(--font)"
+                titleSize="16px">
+                {displayedChoices.map((item: any) => {
+                  return (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '14px',
+                        color: 'var(--font)',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #DDDDDD',
+                        textAlign: 'center'
+                      }}
+                      onClick={() => {
+                        setPopupActive(false);
+                        if (item?.showTextInput) {
+                          context?.setShowInputBox(true);
+                          context?.sendMessage(item?.key, item?.text);
+                        }else if(item?.action === "home"){
+                          const newConversationId = uuidv4();
+                          sessionStorage.setItem('conversationId', newConversationId);
+                          sessionStorage.removeItem('tags');
+                          context?.setShowInputBox(true);
+                          if (context?.audioElement) context?.audioElement.pause();
+                          if (context?.setAudioPlaying) context?.setAudioPlaying(false);
+                          context?.setConversationId(newConversationId);
+                          context?.setMessages([]);
+                          context?.setIsMsgReceiving(false);
+                          context?.setLoading(false);
+                          router.push('/');
+                        }else{
+                          context?.sendMessage(item?.key, item?.text);
+                        }
+                      }}>
+                      {item.text}
+                    </div>
+                  );
+                })}
+              </Popup>
+              {content?.data?.choices?.isSearchable && popupActive && (
+                <div
+                  style={{
+                    padding: '10px',
+                    background: '#F4F4F4',
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                  }}>
+                  <input
+                    placeholder={
+                      t('label.buttons_search_placeholder') || 'Search'
+                    }
+                    value={searchQuery}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      height: '45px',
+                      padding: '4px',
+                      color: 'var(--font)',
+                      fontFamily: 'NotoSans-Medium',
+                      fontWeight: '500',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      border: 'none',
+                      outline: 'none',
+                      borderRadius: '10px',
+                    }}
+                    onChange={handleSearchChange}
+                  />
+                </div>
+              )}
+            </>
+          )}
+          {content?.data?.choices?.choices?.length > 0 && (
+            <div
+              style={{
+                height: popupActive ? '200px' : '0px',
+                width: '100vw',
+              }}></div>
           )}
         </div>
       );
@@ -693,7 +775,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     case 'image': {
       const url = content?.data?.payload?.media?.url || content?.data?.imageUrl;
       return (
-        <>
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
           {content?.data?.position === 'left' && (
             <div
               style={{
@@ -723,14 +805,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </div>
             </div>
           </Bubble>
-        </>
+        </div>
       );
     }
 
     case 'file': {
       const url = content?.data?.payload?.media?.url || content?.data?.fileUrl;
       return (
-        <>
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
           {content?.data?.position === 'left' && (
             <div
               style={{
@@ -760,7 +842,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </div>
             </div>
           </Bubble>
-        </>
+        </div>
       );
     }
 
@@ -768,7 +850,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       const url = content?.data?.payload?.media?.url || content?.data?.videoUrl;
       const videoId = url.split('=')[1];
       return (
-        <>
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
           <Bubble type="image">
             <div style={{ padding: '7px' }}>
               <iframe
@@ -796,12 +878,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               </div>
             </div>
           </Bubble>
-        </>
+        </div>
       );
     }
     case 'options': {
       return (
-        <>
+        <div style={{ fontFamily: 'NotoSans-Regular' }}>
           <Bubble type="text" className={styles.textBubble}>
             <div style={{ display: 'flex' }}>
               <span className={styles.optionsText}>
@@ -809,7 +891,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                   <div
                     style={{
-                      color: 'black',
+                      color: 'var(--font)',
                       fontSize: '12px',
                       fontWeight: 'normal',
                     }}>
@@ -826,7 +908,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               isWeather: false,
             })}
           </Bubble>
-        </>
+        </div>
       );
     }
 
@@ -839,22 +921,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             flexDirection: 'column',
             position: 'relative',
             maxWidth: '90vw',
+            fontFamily: 'NotoSans-Regular',
           }}>
-          <div
-            className={
-              content?.data?.position === 'right'
-                ? styles.messageTriangleRight
-                : styles.messageTriangleLeft
-            }
-            style={
-              content?.data?.position === 'right'
-                ? {
-                    borderColor: `${secondaryColor} transparent transparent transparent`,
-                  }
-                : {
-                    borderColor: `${contrastText} transparent transparent transparent`,
-                  }
-            }></div>
           <Bubble
             type="text"
             style={
@@ -862,10 +930,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 ? {
                     background: secondaryColor,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 0px 15px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px',
                   }
                 : {
                     background: contrastText,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 15px 0px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px',
                   }
             }>
             <div
@@ -888,21 +962,23 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <span
               style={{
                 // fontWeight: 600,
-                fontSize: '1rem',
+                fontSize: '16px',
                 color:
-                  content?.data?.position === 'right' ? contrastText : 'black',
+                  content?.data?.position === 'right'
+                    ? contrastText
+                    : 'var(--font)',
               }}>
               {`\n` + JSON.parse(content?.text)?.generalAdvice ||
                 '' + `\n\n` + JSON.parse(content?.text)?.buttonDescription ||
                 ''}
-              {getLists({
+              {/* {getLists({
                 choices: JSON.parse(content?.text)?.buttons,
                 isWeather: true,
-              })}
+              })} */}
               {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                 <div
                   style={{
-                    color: 'black',
+                    color: 'var(--font)',
                     fontSize: '12px',
                     fontWeight: 'normal',
                   }}>
@@ -914,6 +990,104 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               )}
             </span>
           </Bubble>
+          {content?.data?.choices?.choices?.length > 0 && (
+            <>
+              <Popup
+                bottom={content?.data?.choices?.isSearchable ? '65px' : '0px'}
+                isCollapsed={content?.data?.choices?.isCollapsed ?? false}
+                height={'20vh'}
+                onClose={() => {
+                  setPopupActive(false);
+                }}
+                active={popupActive}
+                backdrop={false}
+                showClose={false}
+                bgColor="transparent"
+                title={content?.data?.choices?.header}
+                titleColor="var(--font)"
+                titleSize="16px">
+                {displayedChoices.map((item: any) => {
+                  return (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '14px',
+                        color: 'var(--font)',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #DDDDDD',
+                        textAlign: 'center'
+                      }}
+                      onClick={() => {
+                        setPopupActive(false);
+                        if (item?.showTextInput) {
+                          context?.setShowInputBox(true);
+                          context?.sendMessage(item?.key, item?.text);
+                        }else if(item?.action === "home"){
+                          const newConversationId = uuidv4();
+                          sessionStorage.setItem('conversationId', newConversationId);
+                          sessionStorage.removeItem('tags');
+                          context?.setShowInputBox(true);
+                          if (context?.audioElement) context?.audioElement.pause();
+                          if (context?.setAudioPlaying) context?.setAudioPlaying(false);
+                          context?.setConversationId(newConversationId);
+                          context?.setMessages([]);
+                          context?.setIsMsgReceiving(false);
+                          context?.setLoading(false);
+                          router.push('/');
+                        }else{
+                          context?.sendMessage(item?.key, item?.text);
+                        }
+                      }}>
+                      {item.text}
+                    </div>
+                  );
+                })}
+              </Popup>
+              {content?.data?.choices?.isSearchable && (
+                <div
+                  style={{
+                    padding: '10px',
+                    background: '#F4F4F4',
+                  }}>
+                  <input
+                    placeholder={
+                      t('label.buttons_search_placeholder') || 'Search'
+                    }
+                    value={searchQuery}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      height: '45px',
+                      padding: '4px',
+                      color: 'var(--font)',
+                      fontFamily: 'NotoSans-Medium',
+                      fontWeight: '500',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      border: 'none',
+                      outline: 'none',
+                      borderRadius: '10px',
+                    }}
+                    onChange={handleSearchChange}
+                  />
+                </div>
+              )}
+            </>
+          )}
+          {content?.data?.choices?.choices?.length > 0 && (
+            <div
+              style={{
+                height: popupActive ? '200px' : '0px',
+                width: '100vw',
+              }}></div>
+          )}
         </div>
       );
     }

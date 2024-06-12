@@ -30,7 +30,7 @@
   .title {
     margin-top: 4vh;
     margin-left: 2vh;
-    font-family: 'Mulish-Bold';
+    font-family: 'NotoSans-Bold';
     font-size: 4.265vh;
     font-weight: 700;
   }
@@ -45,7 +45,7 @@
   .noHistory div{
     margin-top: 4vh;
     margin-left: 2vh;
-    font-family: 'Mulish-Bold';
+    font-family: 'NotoSans-Bold';
     font-size: 4vh;
     text-align: center;
     color: var(--grey);  
@@ -53,7 +53,7 @@
   .noHistory p{
     margin-top: 4vh;
     margin-left: 2vh;
-    font-family: 'Mulish-Bold';
+    font-family: 'NotoSans-Bold';
     font-size: 1.65vh;
     text-align: center;
     color: var(--secondarygreen);  

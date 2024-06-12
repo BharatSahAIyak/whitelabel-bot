@@ -8,7 +8,7 @@ import WeatherPage from '../pageComponents/weather-page';
 import { recordUserLocation } from '../utils/location';
 
 const Weather: NextPage = () => {
-  const t=useLocalization();
+  const t = useLocalization();
   const config = useConfig("component", "botDetails");
   useEffect(() => {
     recordUserLocation()

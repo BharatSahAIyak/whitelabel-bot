@@ -264,7 +264,7 @@ const WeatherPage: React.FC = () => {
             </Grid>}
           </Grid>
 
-          <div style={{ marginTop: '30px' }}>
+          <div style={{ marginTop: '10px' }}>
             <div
               style={{
                 color: 'black',

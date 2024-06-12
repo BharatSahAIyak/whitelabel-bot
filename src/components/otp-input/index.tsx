@@ -151,7 +151,7 @@ export function OTPInput({
   };
 
   return (
-    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }} data-testid="otp-input-field">
       {new Array(length).fill(null).map((_, index) => (
         <React.Fragment key={index}>
           <BaseInput
@@ -204,12 +204,13 @@ const grey = {
 
 const InputElement = styled('input')(
   ({ theme }) => `
-  width: 40px;
+  width: 56px;
+  height: 52px;
   font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  padding: 8px 0px;
+  padding: 4px 0px;
   border-radius: 8px;
   text-align: center;
   color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};

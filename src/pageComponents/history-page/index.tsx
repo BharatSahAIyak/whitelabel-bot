@@ -26,9 +26,11 @@ import { toast } from 'react-hot-toast';
 import { AppContext } from '../../context';
 import { recordUserLocation } from '../../utils/location';
 import { v4 as uuidv4 } from 'uuid';
+import { useCookies } from 'react-cookie';
 
 const HistoryPage: FC = () => {
   const [isFetching, setIsFetching] = useState(true);
+  const [cookie] = useCookies();
   const theme = useColorPalates();
   const [conversations, setConversations] = useState([]);
   const context = useContext(AppContext);
@@ -159,7 +161,7 @@ const HistoryPage: FC = () => {
               <IconButton edge="end" aria-label="comments">
                 {config?.allowDelete && (
                   <DeleteOutlineIcon
-                    onClick={() => deleteConversation(chatItem?.conversationId)}
+                    onClick={() => deleteConversation(chatItem?.channelMessageId)}
                   />
                 )}
               </IconButton>
@@ -189,10 +191,10 @@ const HistoryPage: FC = () => {
           color={theme?.primary?.main}
           label="Fetching History"
         />
-        <div className={styles.title} style={{ color: theme?.primary?.main }}>
+        <div className={styles.title} style={{ color: theme?.primary?.main }} data-testid="history-title">
           {t('label.chats') ?? 'No Label Provided'}
         </div>
-        <div className={styles.chatList}>
+        <div className={styles.chatList} data-testid="history-list">
           <List
             items={conversations}
             noItem={{
