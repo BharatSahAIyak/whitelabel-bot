@@ -6,6 +6,15 @@ export async function recordUserLocation() {
             navigator.geolocation.getCurrentPosition(saveUserLocation);
         }
 
+        if(sessionStorage.getItem('latitude') && sessionStorage.getItem('longitude')) {
+            let locationRes: any = await fetch(`https://geoip.samagra.io/georev?lat=${sessionStorage.getItem('latitude')}&lon=${sessionStorage.getItem('longitude')}`);
+            locationRes = await locationRes.json();
+            if(locationRes?.district)
+                sessionStorage.setItem('city', locationRes.district);
+            if(locationRes?.state)
+                sessionStorage.setItem('state', locationRes.state);
+        }
+
         let apiRes: any = await fetch('https://api.ipify.org?format=json');
 
         apiRes = await apiRes.json();
@@ -15,8 +24,8 @@ export async function recordUserLocation() {
 
                 let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes.ip}`);
                 locationRes = await locationRes.json();
-                sessionStorage.setItem('city', locationRes.city);
-                sessionStorage.setItem('state', locationRes.regionName);
+                if(!sessionStorage.getItem('city')) sessionStorage.setItem('city', locationRes.city);
+                if(!sessionStorage.getItem('state')) sessionStorage.setItem('state', locationRes.regionName);
                 sessionStorage.setItem('ip', apiRes?.ip);
 
                 if (res.state != 'granted') {

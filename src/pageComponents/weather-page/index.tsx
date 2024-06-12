@@ -11,7 +11,6 @@ import SunnyBg from './assets/sunny-bg.png';
 import ThunderBg from './assets/thunder-bg.png';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import { Chip, Grid } from '@mui/material';
-import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
 import Image from 'next/image';
@@ -23,11 +22,12 @@ const WeatherPage: React.FC = () => {
   const t = useLocalization();
   const config = useConfig('component', 'weatherPage');
   const [weather, setWeather] = useState<any>(null);
+  const [crop, setCrop] = useState<any>(null);
   const [isNight, setIsNight] = useState(false);
-  const [showWeatherAdvisoryPopup, setShowWeatherAdvisoryPopup] = useState(false);
-  const [selectedCrop, setSelectedCrop] = useState<string>('');
+  const [showWeatherAdvisoryPopup, setShowWeatherAdvisoryPopup] =
+    useState(false);
+  const [selectedCrop, setSelectedCrop] = useState<any>(null);
   console.log({ config });
-  const theme = useColorPalates();
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -44,17 +44,67 @@ const WeatherPage: React.FC = () => {
       )
         return;
       try {
-        const res = await axios.get(
-          `${
-            process.env.NEXT_PUBLIC_BFF_API_URL
-          }/weather?latitude=${sessionStorage.getItem(
-            'latitude'
-          )}&longitude=${sessionStorage.getItem('longitude')}`
+        const response = await axios.get(
+          process.env.NEXT_PUBLIC_WEATHER_API || '',
+          {
+            params: {
+              latitude: sessionStorage.getItem('latitude'),
+              longitude: sessionStorage.getItem('longitude'),
+            },
+          }
         );
-        console.log(res);
-        setWeather(res?.data);
-      } catch (err) {
-        console.log(err);
+        console.log(response.data);
+        const providers = response.data.message.catalog.providers;
+        // setData(providers);
+
+        // providers.forEach((provider: any) => {
+        //   if(provider?.id === 'upcar') {
+        //     setCrop(provider);
+        //   }else{
+        //     setWeather(provider);
+        //   }
+        // });
+
+        providers.forEach((provider: any) => {
+          if (provider.id.toLowerCase() === 'ouat') {
+            if (provider.category_id === 'crop_advisory_provider') {
+              setCrop(provider?.items);
+            } else if (provider.category_id === 'weather_provider') {
+              setWeather((prev: any) => ({
+                ...prev,
+                future: provider?.items,
+              }));
+            }
+          } else {
+            if (
+              provider.category_id === 'weather_provider' &&
+              provider.id === 'imd'
+            ) {
+              if (!weather) {
+                setWeather((prev: any) => ({
+                  future: provider?.items?.slice(1),
+                  current: provider?.items?.[0],
+                }));
+              } else {
+                setWeather((prev: any) => ({
+                  ...prev,
+                  current: provider?.items?.[0],
+                }));
+              }
+            } else if (
+              provider.category_id === 'crop_advisory_provider' &&
+              provider.id === 'upcar'
+            ) {
+              if (!crop) {
+                setCrop(provider?.items);
+              }
+            }
+          }
+        });
+        return providers;
+      } catch (error) {
+        console.error('Error fetching advisory data:', error);
+        throw error;
       }
     };
 
@@ -110,37 +160,43 @@ const WeatherPage: React.FC = () => {
     return days[date.getDay()];
   }
 
-  if (!weather) {
-    return <FullPageLoader loading={!weather} />;
+  if (!weather || !crop) {
+    return <FullPageLoader loading={!weather || !crop} />;
   }
   return (
     <>
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"></meta>
-      {showWeatherAdvisoryPopup && <WeatherAdvisoryPopup cropName={selectedCrop} setShowWeatherAdvisoryPopup={setShowWeatherAdvisoryPopup} />}
+      {showWeatherAdvisoryPopup && (
+        <WeatherAdvisoryPopup
+          cropName={selectedCrop?.code}
+          setShowWeatherAdvisoryPopup={setShowWeatherAdvisoryPopup}
+          advisory={selectedCrop}
+        />
+      )}
       <div className={styles.container}>
         <Image src={isNight ? NightBg : SunnyBg} layout="fill" />
         <div className={styles.weatherText}>
           <div>
-            <h1 style={{ color: 'white' }}>{weather?.days?.[0]?.temp}°C</h1>
+            <h1 style={{ color: 'white' }}>{weather?.current?.tags?.temp}°C</h1>
           </div>
           <div style={{ textAlign: 'right' }}>
             <h1>{weather?.currentConditions?.conditions}</h1>
             {sessionStorage.getItem('city') && (
-              <p style={{ display: 'flex', alignItems: 'center' }}>
-                <LocationOnRoundedIcon style={{ fontSize: '1rem' }} />
-                {sessionStorage.getItem('city')}
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
+                <span style={{fontSize: '1.5rem', fontWeight: '500'}}>{sessionStorage.getItem('city')}</span>
+              </div>
             )}
           </div>
         </div>
 
         <div className={styles.weatherBottom}>
           <Grid container spacing={{ xs: 2, md: 3 }} columns={3}>
-            <Grid item xs={1} sm={1} md={1}>
+            {weather?.current?.tags?.winddir && <Grid item xs={1} sm={1} md={1}>
               <Chip
-                label={getClosestDirection(weather?.days?.[0]?.winddir)}
+                label={getClosestDirection(weather?.current?.tags?.winddir)}
                 size="medium"
                 sx={{
                   fontSize: '14px',
@@ -157,12 +213,12 @@ const WeatherPage: React.FC = () => {
                   fontWeight: '600',
                   marginTop: '5px',
                 }}>
-                हवा की दिशा
+                {t('label.wind_direction')}
               </p>
-            </Grid>
-            <Grid item xs={1} sm={1} md={1}>
+            </Grid>}
+            {weather?.current?.tags?.windspeed && <Grid item xs={1} sm={1} md={1}>
               <Chip
-                label={weather?.days?.[0]?.windspeed + ' km/h'}
+                label={weather?.current?.tags?.windspeed + ' km/h'}
                 size="medium"
                 sx={{
                   fontSize: '14px',
@@ -180,12 +236,12 @@ const WeatherPage: React.FC = () => {
                   fontWeight: '600',
                   marginTop: '5px',
                 }}>
-                हवा की गति
+                {t('label.wind_speed')}
               </p>
-            </Grid>
-            <Grid item xs={1} sm={1} md={1}>
+            </Grid>}
+            {weather?.current?.tags?.humidity && <Grid item xs={1} sm={1} md={1}>
               <Chip
-                label={weather?.days?.[0]?.humidity + '%'}
+                label={weather?.current?.tags?.humidity + '%'}
                 size="medium"
                 sx={{
                   fontSize: '14px',
@@ -203,9 +259,9 @@ const WeatherPage: React.FC = () => {
                   fontWeight: '600',
                   marginTop: '5px',
                 }}>
-                नमी
+                {t('label.humidity')}
               </p>
-            </Grid>
+            </Grid>}
           </Grid>
 
           <div style={{ marginTop: '30px' }}>
@@ -222,7 +278,7 @@ const WeatherPage: React.FC = () => {
                   fontWeight: 600,
                   margin: '0 0 0 10px',
                 }}>
-                अगले 4 दिनों का पूर्वानुमान
+                {t('label.weather_forecast')}
               </p>
               <div
                 style={{
@@ -230,8 +286,8 @@ const WeatherPage: React.FC = () => {
                   justifyContent: 'space-between',
                   flex: '1',
                 }}>
-                {weather?.days.map((ele: any, index: any) => {
-                  if (index === 0 || index > 4) return;
+                {weather?.future?.map((ele: any, index: any) => {
+                  if (index > 3) return;
                   return (
                     <div
                       key={index}
@@ -243,14 +299,19 @@ const WeatherPage: React.FC = () => {
                       }}>
                       <div>
                         <p style={{ fontWeight: 600 }}>
-                          {getDayAbbreviation(ele.datetime)}
+                          {getDayAbbreviation(ele?.time?.timestamp)}
                         </p>
                         <Image
                           src={weatherImages?.[ele.icon] || SunRainCloud}
                           alt=""
                           height={'32px'}
                         />
-                        <p style={{ fontWeight: 400 }}>{ele.temp + '°C'}</p>
+                        <p style={{ fontWeight: 400 }}>
+                          {(Number(ele?.tags?.temp_max) +
+                            Number(ele?.tags?.temp_min)) /
+                            2 +
+                            '°C'}
+                        </p>
                       </div>
                     </div>
                   );
@@ -262,7 +323,7 @@ const WeatherPage: React.FC = () => {
       </div>
       <div className={styles.cropContainer}>
         <div className={styles.heading} style={{ background: '#DFF6D1' }}>
-          आज की फ़सल सलाह
+          {t('label.todays_crop_advisory')}
         </div>
         <Grid
           container
@@ -270,15 +331,18 @@ const WeatherPage: React.FC = () => {
           overflow={'auto'}
           height={'calc(100% - 50px)'}
           justifyContent={'center'}>
-          {[
-            'banana',
-            'Arhar',
-            'maize',
-            'bengal gram',
-            'barjra',
-            'ber',
-            'bitter gourd',
-          ].map((ele, index) => {
+          {(localStorage.getItem('locale') !== 'en'
+            ? crop.filter((ele: any) =>
+                ele.category_ids.some((categoryId: string) =>
+                  categoryId.endsWith('translated')
+                )
+              )
+            : crop.filter((ele: any) =>
+                !ele.category_ids.some(
+                  (categoryId: string) => categoryId.endsWith('translated')
+                )
+              )
+          ).map((ele: any, index: number) => {
             return (
               <Grid
                 item
@@ -292,14 +356,17 @@ const WeatherPage: React.FC = () => {
                   margin: '5px',
                   width: '29%',
                 }}
-                onClick={() => {setShowWeatherAdvisoryPopup(true); setSelectedCrop(ele)}}>
+                onClick={() => {
+                  setShowWeatherAdvisoryPopup(true);
+                  setSelectedCrop(ele);
+                }}>
                 <Image
-                  src={`/crops/${ele}.jpeg`}
+                  src={`/crops/${ele?.code}.jpeg`}
                   alt=""
                   width={100}
                   height={100}
                 />
-                <p>{ele}</p>
+                <p>{ele?.code}</p>
               </Grid>
             );
           })}

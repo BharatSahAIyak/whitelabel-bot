@@ -8,27 +8,51 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { Button, List, Typography } from '@mui/material';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
+import { useLocalization } from '../../hooks';
+import axios from 'axios';
+import { useConfig } from '../../hooks/useConfig';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const WeatherAdvisoryPopup = (props: any) => {
+  const t = useLocalization();
+  const config = useConfig('component', 'botDetails');
   const [open, setOpen] = React.useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [audioElement, setAudioElement] = useState<any>(null);
 
   const handleClose = () => {
     setOpen(false);
     props?.setShowWeatherAdvisoryPopup(false);
+    audioElement && audioElement.pause();
   };
 
-  const weatherDetails = [
-    {
-      id: 1,
-      label:
-        'उन्हें अच्छी तरह हाइड्रेटेड रखने के लिए स्वच्छ पेयजल उपलब्ध कराएं।',
-    },
-    {
-      id: 2,
-      label: 'तूफ़ान गुज़रने तक उन्हें शांत और सुरक्षित स्थान पर रखें।',
-    },
-  ];
+  const fetchAudio = async (text: string) => {
+    const toastId = toast.loading(`${t('message.download_audio')}`);
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/text-to-speech`,
+        {
+          text: text,
+          language: localStorage.getItem('locale'),
+          disableTelemetry: true
+        },
+        {
+          headers: {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+          },
+        }
+      );
+      toast.dismiss(toastId);
+      return response?.data?.url;
+    } catch (error: any) {
+      toast.dismiss(toastId);
+      toast.error(t('message.no_link'));
+      console.error('Error fetching audio:', error);
+      return null;
+    }
+  };
 
   const theme = useColorPalates();
   return (
@@ -42,7 +66,8 @@ const WeatherAdvisoryPopup = (props: any) => {
         slots={{ backdrop: Backdrop }}
         slotProps={{
           backdrop: {
-            timeout: 500,
+            style: { backgroundColor: 'rgba(0, 0, 0, 0.8)' },
+            timeout: 300,
           },
         }}>
         <Fade in={open}>
@@ -55,7 +80,7 @@ const WeatherAdvisoryPopup = (props: any) => {
                   fontWeight: 600,
                   fontSize: '20px',
                 }}>
-                फ़सल सलाह - {props?.cropName}
+                {t('label.crop_advisory')} - {props?.cropName}
               </p>
               <CloseRoundedIcon onClick={handleClose} />
             </div>
@@ -66,9 +91,18 @@ const WeatherAdvisoryPopup = (props: any) => {
                 borderColor: 'black',
                 backgroundColor: '#B4B9C5',
               }}></div>
-            <div className="text-center p-3">
+            <div className="text-center p-3" style={{maxHeight: '400px', overflow: 'auto', paddingRight: '10px'}}>
               <List dense>
-                {weatherDetails.map((item) => (
+              <Typography
+                color="black"
+                style={{
+                  wordBreak: 'break-word',
+                  fontSize: '16px',
+                  fontWeight: 500,
+                }}>
+                {props?.advisory?.descriptor?.long_desc}
+              </Typography>
+                {/* {weatherDetails.map((item) => (
                   <div
                     style={{
                       display: 'flex',
@@ -92,7 +126,7 @@ const WeatherAdvisoryPopup = (props: any) => {
                       {item.label}
                     </Typography>
                   </div>
-                ))}
+                ))} */}
               </List>
               <p
                 style={{
@@ -114,9 +148,28 @@ const WeatherAdvisoryPopup = (props: any) => {
                     style={{ fontSize: '16px' }}
                   />
                 </span>
-                वेरिफ़िएड बय ओडिशा कृषि एवं प्रौद्योगिकी विश्वविद्यालय
+                {t('label.verified_advisory')}
               </p>
               <Button
+              onClick={async () => {
+                const url = await fetchAudio(props?.advisory?.descriptor?.long_desc);
+                const audio = new Audio(url);
+                audio.playbackRate = config?.component?.botDetails?.audioPlayback || 1.5;
+                audio.addEventListener('ended', () => {
+                  setAudioElement(null);
+                });
+                audio.play().then(() => {
+                  console.log('Audio played:', url);
+                  // Update the current audio to the new audio element
+                  //@ts-ignore
+                  setAudioElement(audio);
+                })
+                .catch((error) => {
+                  setAudioElement(null);
+                  toast.error(t('message.no_link'));
+                  console.error('Error playing audio:', error);
+                });
+              }}
                 fullWidth
                 variant="contained"
                 style={{
@@ -124,9 +177,10 @@ const WeatherAdvisoryPopup = (props: any) => {
                   backgroundColor: `${theme.primary.dark}`,
                   color: theme.primary.main,
                   padding: '8px 0',
+                  textTransform : "none"
                 }}
                 startIcon={<VolumeUpIcon />}>
-                सुनने के लिए यहां क्लिक करें
+                {t('label.play_advisory')}
               </Button>
             </div>
           </div>
