@@ -323,8 +323,13 @@ const HomePage: NextPage = () => {
                     {config?.showWeatherAdvisory && (
                       <div
                         className={styles.imgBtn}
-                        // onClick={() => router.push('/weather')}
-                        onClick={() => sendGuidedMsg('weather')}
+                        onClick={() => {
+                          if(config?.showWeatherPage){
+                            router.push('/weather')
+                          }else{
+                            sendGuidedMsg('weather')
+                          }
+                        }}
                       >
                         <p>{t('label.weather_advisory')}</p>
                         <img

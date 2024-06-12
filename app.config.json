@@ -22,6 +22,7 @@
     "homePage": {
       "showKalia": false,
       "showWeatherAdvisory": false,
+      "showWeatherPage": false,
       "showPlantProtection": false,
       "showSchemes": true,
       "weatherAdvisoryImg": "",
@@ -291,7 +292,15 @@
       "label.buttons_search_placeholder": "Please type your crop name",
       "label.dont_allow_location_access": "DON'T ALLOW",
       "message.down_time_view_prev_chats": "View previous chats",
-      "message.temporarily_down_description": "We are experiencing high user volume at the moment, please try logging in after some time"
+      "message.temporarily_down_description": "We are experiencing high user volume at the moment, please try logging in after some time",
+      "label.wind_direction": "Wind Direction",
+      "label.wind_speed": "Wind Speed",
+      "label.humidity": "Humidity",
+      "label.weather_forecast": "Forecast for next 4 days",
+      "label.crop_advisory": "Crop Advisory",
+      "label.todays_crop_advisory": "Today's Crop Advisory",
+      "label.verified_advisory": "Verified Advisory",
+      "label.play_advisory": "Click here to listen"
     }
   }
 }

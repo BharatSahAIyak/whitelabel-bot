@@ -31,3 +31,13 @@
   padding: 5px;
   font-size: 14px;
 }
+
+.cropContainer {
+  border-radius: 5px;
+  height: calc(100dvh - 430px);
+  width: 100vw;
+}
+
+.heading {
+  padding: 10px;
+}
