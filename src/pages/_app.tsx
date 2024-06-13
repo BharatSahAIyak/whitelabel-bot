@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic';
 import { useLogin } from '../hooks';
 import FeaturePopup from '../components/feature-popup';
 import Provider from '../providers';
-import { InstallModal } from '../components/install-modal';
+// import { InstallModal } from '../components/install-modal';
 import { FullPageLoader } from '../components/fullpage-loader';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
@@ -167,7 +167,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           <div style={{ height: '100%' }}>
             <Toaster position="top-center" reverseOrder={false} />
             <FeaturePopup />
-            {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />}
+            {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}
             {localStorage.getItem("navbar") !== "hidden" && <NavBar />}
             <SafeHydrate>
               <Component {...pageProps} />
