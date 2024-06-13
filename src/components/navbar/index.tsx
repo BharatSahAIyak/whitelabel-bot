@@ -35,7 +35,6 @@ const Navbar: React.FC = () => {
     showRightLogo3,
     rightLogo3Src,
     centerLogoSize,
-    logoTitleColor,
     newChatButtonColor,
   } = config;
 
@@ -188,7 +187,7 @@ const Navbar: React.FC = () => {
               left: '50%',
               transform: 'translateX(-50%)',
               textAlign: 'center',
-              marginTop: '20px',
+              // marginTop: '20px',
             }}>
             {showCenterLogo && (
               <div>
@@ -200,18 +199,6 @@ const Navbar: React.FC = () => {
                 />
               </div>
             )}
-
-            {/* {router.pathname === '/login' && showCenterLogo && (
-              <div
-                style={{
-                  fontSize: '10px',
-                  color: logoTitleColor ?? (theme?.primary?.dark || 'black'),
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                }}
-                dangerouslySetInnerHTML={{ __html: t('label.title') }}
-              />
-            )} */}
           </div>
 
           <div data-testid="navbar-right-logos">

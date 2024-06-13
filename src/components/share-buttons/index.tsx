@@ -126,8 +126,8 @@ const ShareButtons = () => {
           style={{
             position: 'absolute',
             right: 0,
-            top: '40%',
-            background: 'white',
+            top: '15%',
+            background: 'rgba(255, 255, 255, 0.2)',
             padding: '5px',
             borderRadius: '5px 0 0 5px',
             boxShadow:

@@ -56,8 +56,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
-    return theme?.primary?.main;
-  }, [theme?.primary?.main]);
+    return theme?.primary?.light;
+  }, [theme?.primary?.light]);
 
   const contrastText = useMemo(() => {
     return theme?.primary?.contrastText;
@@ -421,19 +421,37 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       : secondaryColor,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                     borderRadius: '15px 15px 15px 0px',
-                    padding: '10px, 15px, 10px, 15px',
+                    padding: content?.data?.card ? '0':'10px, 15px, 10px, 15px',
                     gap: '10px',
                   }
             }>
             {content?.data?.card ? (
               <div>
-                <div
+                {content?.data?.card?.banner && <div
                   style={{
-                    background: '#EDEDF1',
+                    background: content?.data?.card?.banner?.color ?? '#EDEDF1',
                     padding: '10px',
                     fontWeight: 600,
-                    color: theme?.primary?.main,
+                    color: "black",
                     textAlign: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: '15px 15px 0 0',
+                    borderBottom: '1px solid black',
+                    fontSize: '18px'
+                  }}>
+                  {content?.data?.card?.banner?.logo && <img src={content?.data?.card?.banner?.logo} alt="" height="35px" style={{flex: 0.12}} />}
+                  <div style={{flex: 1, marginRight: content?.data?.card?.banner?.logo ? '30px' : '0'}}>{content?.data?.card?.banner?.title}</div>
+                </div>}
+                <div
+                  style={{
+                    background: content?.data?.card?.banner?.color ?? '#EDEDF1',
+                    padding: '10px',
+                    fontWeight: 600,
+                    color: "black",
+                    textAlign: 'center',
+                    // borderRadius: '15px 15px 0 0'
                   }}>
                   <div>{content?.data?.card?.header?.title}</div>
                   <div>{content?.data?.card?.header?.description}</div>
@@ -765,7 +783,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {content?.data?.choices?.choices?.length > 0 && (
             <div
               style={{
-                height: popupActive ? '200px' : '0px',
+                height: popupActive ? '250px' : '0px',
                 width: '100vw',
               }}></div>
           )}
@@ -1084,7 +1102,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {content?.data?.choices?.choices?.length > 0 && (
             <div
               style={{
-                height: popupActive ? '200px' : '0px',
+                height: popupActive ? '250px' : '0px',
                 width: '100vw',
               }}></div>
           )}
