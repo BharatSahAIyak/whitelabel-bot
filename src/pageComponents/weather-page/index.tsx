@@ -1,19 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.module.css';
-import RainingCloud from './assets/raining-cloud.png';
-import HeavyRain from './assets/heavy-rain.png';
-import SunRainCloud from './assets/sun-rain-cloud.png';
-import ThunderCloud from './assets/thunder-cloud.png';
-import CloudyBg from './assets/cloudy-bg.png';
-import NightBg from './assets/night-bg.png';
-import RainyBg from './assets/rainy-bg.png';
-import SunnyBg from './assets/sunny-bg.png';
-import ThunderBg from './assets/thunder-bg.png';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import { Chip, Grid } from '@mui/material';
 import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
-import Image from 'next/image';
 import axios from 'axios';
 import { FullPageLoader } from '../../components/fullpage-loader';
 import WeatherAdvisoryPopup from '../../components/weather-advisory-popup';
@@ -131,11 +121,6 @@ const WeatherPage: React.FC = () => {
     360: 'Northerly',
   };
 
-  const weatherImages: any = {
-    'clear-day': SunRainCloud,
-    'partly-cloudy-day': RainingCloud,
-  };
-
   function getClosestDirection(degree: number) {
     const keys = Object.keys(windDirections).map(Number);
     let closestKey = keys[0];
@@ -164,7 +149,7 @@ const WeatherPage: React.FC = () => {
     return <FullPageLoader loading={!weather || !crop} />;
   }
   return (
-    <>
+    <div className={styles.main}>
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"></meta>
@@ -176,13 +161,13 @@ const WeatherPage: React.FC = () => {
         />
       )}
       <div className={styles.container}>
-        <Image src={isNight ? NightBg : SunnyBg} layout="fill" />
+        <img src={`https://drive.google.com/thumbnail?id=${weather?.current?.descriptor?.images?.find((image: any) => image.type === (isNight ? "image_night" : "image_day"))?.url?.split('/d/')?.[1]?.split('/view')?.[0]}`} style={{width: '100%'}} />
         <div className={styles.weatherText}>
           <div>
-            <h1 style={{ color: 'white' }}>{weather?.current?.tags?.temp}°C</h1>
+            <h1 style={{ color: 'white', margin: 0 }}>{weather?.current?.tags?.temp}°C</h1>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <h1>{weather?.currentConditions?.conditions}</h1>
+            <h1>{localStorage.getItem('locale') === "en" ? weather?.current?.tags?.conditions : weather?.current?.tags?.[`conditions${"_"+localStorage.getItem('locale') || ""}`]}</h1>
             {sessionStorage.getItem('city') && (
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
@@ -301,10 +286,11 @@ const WeatherPage: React.FC = () => {
                         <p style={{ fontWeight: 600 }}>
                           {getDayAbbreviation(ele?.time?.timestamp)}
                         </p>
-                        <Image
-                          src={weatherImages?.[ele.icon] || SunRainCloud}
+                        <img
+                          src={`https://drive.google.com/thumbnail?id=${ele?.descriptor?.images?.find((image: any) => image.type === "icon")?.url?.split('/d/')?.[1]?.split('/view')?.[0]}`}
                           alt=""
-                          height={'32px'}
+                          height='32px'
+                          width='32px'
                         />
                         <p style={{ fontWeight: 400 }}>
                           {(Number(ele?.tags?.temp_max) +
@@ -360,8 +346,8 @@ const WeatherPage: React.FC = () => {
                   setShowWeatherAdvisoryPopup(true);
                   setSelectedCrop(ele);
                 }}>
-                <Image
-                  src={`/crops/${ele?.code}.jpeg`}
+                <img
+                  src={`https://drive.google.com/thumbnail?id=${ele?.descriptor?.images?.[0]?.url?.split('/d/')?.[1]?.split('/view')?.[0]}`}
                   alt=""
                   width={100}
                   height={100}
@@ -372,7 +358,7 @@ const WeatherPage: React.FC = () => {
           })}
         </Grid>
       </div>
-    </>
+    </div>
   );
 };
 

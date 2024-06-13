@@ -1,10 +1,15 @@
+.main{
+  height: calc(100dvh - 80px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .container {
   color: white;
   border-radius: 5px;
   position: relative;
   z-index: 1;
-  height: 20vw;
-  min-height: 370px;
+  height: 400px;
   width: 100vw;
 }
 
@@ -34,7 +39,6 @@
 
 .cropContainer {
   border-radius: 5px;
-  height: calc(100dvh - 430px);
   width: 100vw;
 }
 
