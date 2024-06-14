@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useEffect } from 'react';
-
+import { AppContext } from '../../context';
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -22,32 +22,8 @@ const style = {
 
 export const InstallModal: React.FC = () => {
   const theme = useColorPalates();
-  const [open, setOpen] = React.useState(false);
-  const deferredPromptRef = React.useRef<any>(null);
   // let deferredPrompt: any;
-
-  useEffect(() => {
-    const handleBeforeInstallPrompt = (event) => {
-      event.preventDefault();
-      console.log("hi 2");
-      deferredPromptRef.current = event;
-      console.log("hello", deferredPromptRef.current);
-    };
-  
-    console.log("installPwa", localStorage.getItem('installPwa'));
-    if ((localStorage.getItem('installPwa') !== 'true') || (localStorage.getItem('installPwa') === null)) {
-      // Check if the browser has the install event
-      setOpen(true);
-      console.log("hi 1");
-      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt, { once: true });
-    }
-  
-    // Cleanup function
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    };
-  }, []);
-
+  const {deferredPromptRef, setOpen, open} = React.useContext(AppContext)
   const closeAndSetLocalStorage = () => {
     setOpen(false);
     localStorage.setItem('installPwa', 'true');

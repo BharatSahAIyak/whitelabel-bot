@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { AppContext } from '../context';
@@ -571,6 +572,31 @@ const ContextProvider: FC<{
     return history;
   };
 
+  const deferredPromptRef = useRef<any>(null);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (event:any) => {
+      event.preventDefault();
+      console.log("hi 2");
+      deferredPromptRef.current = event;
+      console.log("hello", deferredPromptRef.current);
+    };
+  
+    console.log("installPwa", localStorage.getItem('installPwa'));
+    if ((localStorage.getItem('installPwa') !== 'true') || (localStorage.getItem('installPwa') === null)) {
+      // Check if the browser has the install event
+      setOpen(true);
+      console.log("hi 1");
+      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    }
+  
+    // Cleanup function
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
   useEffect(() => {
     if (isDown) return;
     let secondTimer: any = null;
@@ -699,6 +725,9 @@ const ContextProvider: FC<{
       sets2tMsgId,
       showInputBox,
       setShowInputBox,
+      deferredPromptRef,
+      setOpen,
+      open
     }),
     [
       locale,
@@ -732,6 +761,9 @@ const ContextProvider: FC<{
       sets2tMsgId,
       showInputBox,
       setShowInputBox,
+      deferredPromptRef,
+      setOpen,
+      open
     ]
   );
 
