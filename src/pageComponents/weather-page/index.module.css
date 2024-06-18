@@ -14,7 +14,7 @@
 }
 
 .weatherText {
-  top: 10%;
+  top: 20%;
   position: absolute;
   display: flex;
   justify-content: space-between;
@@ -32,7 +32,7 @@
   right: 0;
   left: 0;
   bottom: 0;
-  margin: 10px;
+  margin: 10px 10px 10px 5px;
   padding: 5px;
   font-size: 14px;
 }
@@ -44,4 +44,5 @@
 
 .heading {
   padding: 10px;
+  margin: 20px 20px 10px 20px;
 }
