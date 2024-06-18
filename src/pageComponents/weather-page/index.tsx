@@ -164,14 +164,14 @@ const WeatherPage: React.FC = () => {
         <img src={`https://drive.google.com/thumbnail?id=${weather?.current?.descriptor?.images?.find((image: any) => image.type === (isNight ? "image_night" : "image_day"))?.url?.split('/d/')?.[1]?.split('/view')?.[0]}`} style={{width: '100%'}} />
         <div className={styles.weatherText}>
           <div>
-            <h1 style={{ color: 'white', margin: 0 }}>{weather?.current?.tags?.temp}°C</h1>
+            <h1 style={{ color: 'white', margin: 0, fontSize: '2.75rem' }}>{weather?.current?.tags?.temp}°C</h1>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <h1>{localStorage.getItem('locale') === "en" ? weather?.current?.tags?.conditions : weather?.current?.tags?.[`conditions${"_"+localStorage.getItem('locale') || ""}`]}</h1>
+            <h2>{localStorage.getItem('locale') === "en" ? weather?.current?.tags?.conditions : weather?.current?.tags?.[`conditions${"_"+localStorage.getItem('locale') || ""}`]}</h2>
             {sessionStorage.getItem('city') && (
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
-                <span style={{fontSize: '1.5rem', fontWeight: '500'}}>{sessionStorage.getItem('city')}</span>
+                <span style={{fontSize: '1.25rem'}}>{sessionStorage.getItem('city')}</span>
               </div>
             )}
           </div>
@@ -260,7 +260,7 @@ const WeatherPage: React.FC = () => {
               <p
                 style={{
                   width: '15%',
-                  fontWeight: 600,
+                  // fontWeight: 600,
                   margin: '0 0 0 10px',
                 }}>
                 {t('label.weather_forecast')}
@@ -283,7 +283,7 @@ const WeatherPage: React.FC = () => {
                         flex: '1',
                       }}>
                       <div>
-                        <p style={{ fontWeight: 600 }}>
+                        <p>
                           {getDayAbbreviation(ele?.time?.timestamp)}
                         </p>
                         <img
@@ -299,6 +299,7 @@ const WeatherPage: React.FC = () => {
                             '°C'}
                         </p>
                       </div>
+                      {index<3 && <div style={{height: '80%', width: '1px', backgroundColor: '#cdcaca'}}></div>}
                     </div>
                   );
                 })}
@@ -309,7 +310,7 @@ const WeatherPage: React.FC = () => {
       </div>
       <div className={styles.cropContainer}>
         <div className={styles.heading} style={{ background: '#DFF6D1' }}>
-          {t('label.todays_crop_advisory')}
+          {t('label.todays_advisory')}
         </div>
         <Grid
           container
@@ -339,8 +340,8 @@ const WeatherPage: React.FC = () => {
                   backgroundColor: 'white',
                   boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
                   borderRadius: '5px',
-                  margin: '5px',
-                  width: '29%',
+                  margin: '10px',
+                  width: '26%',
                 }}
                 onClick={() => {
                   setShowWeatherAdvisoryPopup(true);
@@ -349,8 +350,8 @@ const WeatherPage: React.FC = () => {
                 <img
                   src={`https://drive.google.com/thumbnail?id=${ele?.descriptor?.images?.[0]?.url?.split('/d/')?.[1]?.split('/view')?.[0]}`}
                   alt=""
-                  width={100}
-                  height={100}
+                  width={80}
+                  height={80}
                 />
                 <p>{ele?.code}</p>
               </Grid>
