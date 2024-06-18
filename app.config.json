@@ -298,7 +298,7 @@
       "label.humidity": "Humidity",
       "label.weather_forecast": "Forecast for next 4 days",
       "label.crop_advisory": "Crop Advisory",
-      "label.todays_crop_advisory": "Today's Crop Advisory",
+      "label.todays_advisory": "Today's Advisory",
       "label.verified_advisory": "Verified Advisory",
       "label.play_advisory": "Click here to listen"
     }
