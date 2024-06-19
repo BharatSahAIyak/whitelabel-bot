@@ -9,7 +9,8 @@
     "lint": "next lint",
     "analyze": "cross-env ANALYZE=true next build",
     "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
-    "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"
+    "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build",
+    "prepare": "husky"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -72,9 +73,17 @@
     "dotenv-cli": "^7.2.1",
     "eslint": "8.18.0",
     "eslint-config-next": "12.1.6",
-    "prettier": "^2.5.1",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
+    "prettier": "^2.8.8",
     "typescript": "4.7.4",
     "webpack": "^5.69.1",
     "webpack-dev-server": "^4.9.0"
-  }
+  
+  },
+  "lint-staged": {
+   
+  "*.{js,jsx,ts,tsx,md,html,css}": "prettier --write"
+}
+  
 }
