@@ -161,7 +161,7 @@ const WeatherPage: React.FC = () => {
         />
       )}
       <div className={styles.container}>
-        <img src={`https://drive.google.com/thumbnail?id=${weather?.current?.descriptor?.images?.find((image: any) => image.type === (isNight ? "image_night" : "image_day"))?.url?.split('/d/')?.[1]?.split('/view')?.[0]}`} style={{width: '100%'}} />
+        <img src={`https://drive.google.com/thumbnail?id=${weather?.current?.descriptor?.images?.find((image: any) => image.type === (isNight ? "image_night" : "image_day"))?.url?.split('/d/')?.[1]?.split('/view')?.[0]}`} style={{width: '100%', maxHeight: '400px'}} />
         <div className={styles.weatherText}>
           <div>
             <h1 style={{ color: 'white', margin: 0, fontSize: '2.75rem' }}>{weather?.current?.tags?.temp}°C</h1>
@@ -259,7 +259,7 @@ const WeatherPage: React.FC = () => {
               }}>
               <p
                 style={{
-                  width: '15%',
+                  width: '16%',
                   // fontWeight: 600,
                   margin: '0 0 0 10px',
                 }}>
@@ -274,15 +274,16 @@ const WeatherPage: React.FC = () => {
                 {weather?.future?.map((ele: any, index: any) => {
                   if (index > 3) return;
                   return (
+                    <>
                     <div
                       key={index}
                       style={{
                         display: 'flex',
-                        justifyContent: 'space-around',
+                        justifyContent: 'center',
                         alignItems: 'center',
                         flex: '1',
                       }}>
-                      <div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <p>
                           {getDayAbbreviation(ele?.time?.timestamp)}
                         </p>
@@ -292,15 +293,15 @@ const WeatherPage: React.FC = () => {
                           height='32px'
                           width='32px'
                         />
-                        <p style={{ fontWeight: 400 }}>
-                          {(Number(ele?.tags?.temp_max) +
-                            Number(ele?.tags?.temp_min)) /
-                            2 +
-                            '°C'}
-                        </p>
+                        <p style={{ fontWeight: 400, margin: '0' }}>
+                          {Number(ele?.tags?.temp_max)}°</p>
+                        <div style={{width: '80%', height: '1px', margin: 'auto', backgroundColor: '#cdcaca'}}></div>
+                        <p style={{ fontWeight: 400, margin: '0', opacity: '0.5' }}>
+                          {Number(ele?.tags?.temp_min)}°</p>
                       </div>
-                      {index<3 && <div style={{height: '80%', width: '1px', backgroundColor: '#cdcaca'}}></div>}
                     </div>
+                      {index<3 && <div style={{flex: '0.01 1', backgroundColor: '#cdcaca'}}></div>}
+                      </>
                   );
                 })}
               </div>
