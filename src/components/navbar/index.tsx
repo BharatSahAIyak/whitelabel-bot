@@ -15,7 +15,7 @@ import { useLocalization } from '../../hooks';
 import toast from 'react-hot-toast';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import Image from 'next/image';
+
 const Navbar: React.FC = () => {
     const router = useRouter();
     const config = useConfig('component', 'navbar');
@@ -213,7 +213,7 @@ const Navbar: React.FC = () => {
                     >
                         {showCenterLogo && (
                             <div>
-                                <Image
+                                <img
                                     data-testid="navbar-center-img"
                                     src={centerLogoSrc}
                                     alt="Center Logo"
