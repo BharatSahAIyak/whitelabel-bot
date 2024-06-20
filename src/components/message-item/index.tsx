@@ -1407,8 +1407,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             return (
                 <ScrollView
                     data={[]}
-                    // @ts-ignore
                     renderItem={(item): ReactElement => (
+                        // @ts-ignore
                         <Button label={item.text} />
                     )}
                 />
