@@ -436,6 +436,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     }}
                 >
                     <Bubble
+                        id={content?.data?.messageId || uuidv4()}
                         type="text"
                         style={
                             content?.data?.position === 'right'
@@ -1172,6 +1173,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     }}
                 >
                     <Bubble
+                        id={content?.data?.messageId || uuidv4()}
                         type="text"
                         style={
                             content?.data?.position === 'right'
