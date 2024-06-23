@@ -213,7 +213,10 @@ const Navbar: React.FC = () => {
                     >
                         {showCenterLogo && (
                             <div>
+ 
                                 <Image
+ 
+ 
                                     data-testid="navbar-center-img"
                                     src={centerLogoSrc}
                                     alt="Center Logo"

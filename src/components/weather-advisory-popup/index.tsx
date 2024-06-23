@@ -91,7 +91,7 @@ const WeatherAdvisoryPopup = (props: any) => {
                 borderColor: 'black',
                 backgroundColor: '#B4B9C5',
               }}></div>
-            <div className="text-center p-3" style={{maxHeight: '400px', overflow: 'auto', paddingRight: '10px'}}>
+            <div className="p-3" style={{maxHeight: '400px', overflow: 'auto', paddingRight: '10px'}}>
               <List dense>
               <Typography
                 color="black"
@@ -175,7 +175,7 @@ const WeatherAdvisoryPopup = (props: any) => {
                 style={{
                   marginTop: '30px',
                   backgroundColor: `${theme.primary.dark}`,
-                  color: theme.primary.main,
+                  color: theme.primary.contrastText,
                   padding: '8px 0',
                   textTransform : "none"
                 }}

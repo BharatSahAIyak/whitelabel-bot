@@ -11,11 +11,13 @@
     "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build",
     "prepare": "husky"
+ 
   },
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
+ 
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -86,8 +88,12 @@
     "typescript": "4.7.4",
     "webpack": "^5.69.1",
     "webpack-dev-server": "^4.9.0"
+ 
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,md,html,css}": "prettier --write"
   }
+ 
+  
+ 
 }

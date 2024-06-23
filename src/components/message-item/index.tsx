@@ -436,6 +436,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     }}
                 >
                     <Bubble
+ 
+                        id={content?.data?.messageId || uuidv4()
                         type="text"
                         style={
                             content?.data?.position === 'right'
@@ -1172,6 +1174,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     }}
                 >
                     <Bubble
+ 
+ 
+                        id={content?.data?.messageId || uuidv4()}
+ 
                         type="text"
                         style={
                             content?.data?.position === 'right'
@@ -1362,7 +1368,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                                         padding: '10px',
                                         background: '#F4F4F4',
                                     }}
-                                >
+                                ><<<<<<< feat/newpipeline
                                     <input
                                         placeholder={
                                             t(
@@ -1407,8 +1413,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             return (
                 <ScrollView
                     data={[]}
+ 
                     // @ts-ignore
                     renderItem={(item): ReactElement => (
+ 
+ 
                         <Button label={item.text} />
                     )}
                 />
