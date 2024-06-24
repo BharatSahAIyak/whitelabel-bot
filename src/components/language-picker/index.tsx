@@ -1,16 +1,18 @@
-import React, {useContext} from "react";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { map } from "lodash";
-import { useColorPalates } from "../../providers/theme-provider/hooks";
-import { useConfig } from "../../hooks/useConfig";
-import { AppContext } from "../../context";
+import React, { useContext } from 'react';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { map } from 'lodash';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
+import { useConfig } from '../../hooks/useConfig';
+import { AppContext } from '../../context';
 const LanguagePicker = () => {
   const config = useConfig('component', 'sidebar');
   const botConfig = useConfig('component', 'botDetails');
   const context = useContext(AppContext);
-  const [activeLanguage, setActiveLanguage] = React.useState(localStorage.getItem('locale') || botConfig?.defaultLanguage || "en");
+  const [activeLanguage, setActiveLanguage] = React.useState(
+    localStorage.getItem('locale') || botConfig?.defaultLanguage || 'en'
+  );
 
   const handleChange = (event: SelectChangeEvent) => {
     setActiveLanguage(event.target.value);
@@ -28,9 +30,9 @@ const LanguagePicker = () => {
       sx={{
         m: 1,
         background: theme?.primary?.main,
-        border: "none",
-        borderRadius: "10px",
-        height:'36px'
+        border: 'none',
+        borderRadius: '10px',
+        height: '36px',
       }}
       size="small"
       data-testid="language-picker"
@@ -39,13 +41,13 @@ const LanguagePicker = () => {
         value={activeLanguage}
         onChange={handleChange}
         displayEmpty
-        inputProps={{ "aria-label": "Without label" }}
+        inputProps={{ 'aria-label': 'Without label' }}
         sx={{
           color: theme?.primary?.contrastText,
-          border: "none",
-          borderRadius: "10px",
-          width: "85px",
-          height:'36px'
+          border: 'none',
+          borderRadius: '10px',
+          width: '85px',
+          height: '36px',
         }}
       >
         {map(languages, (lang) => (

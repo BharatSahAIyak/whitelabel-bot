@@ -1,4 +1,4 @@
-import styles from './index.module.css'
+import styles from './index.module.css';
 import React, {
   useCallback,
   useContext,
@@ -6,48 +6,49 @@ import React, {
   useMemo,
   useRef,
   useState,
-} from 'react'
-import { NextPage } from 'next'
-import axios from 'axios'
-import { AppContext } from '../../context'
-import SendButton from './assets/sendButton'
-import { useLocalization } from '../../hooks'
-import router from 'next/router'
-import Image from 'next/image'
-import toast from 'react-hot-toast'
-import { v4 as uuidv4 } from 'uuid'
-import RenderVoiceRecorder from '../../components/recorder/RenderVoiceRecorder'
-import { recordUserLocation } from '../../utils/location'
-import { useConfig } from '../../hooks/useConfig'
-import DowntimePage from '../downtime-page'
-import { useColorPalates } from '../../providers/theme-provider/hooks'
-import kaliaStatusImg from './assets/kalia_status.png'
-import plantProtectionImg from './assets/plant_protection.png'
-import weatherAdvisoryImg from './assets/weather_advisory.png'
+} from 'react';
+import { NextPage } from 'next';
+import axios from 'axios';
+import { AppContext } from '../../context';
+import SendButton from './assets/sendButton';
+import { useLocalization } from '../../hooks';
+import router from 'next/router';
+import Image from 'next/image';
+import toast from 'react-hot-toast';
+import { v4 as uuidv4 } from 'uuid';
+import RenderVoiceRecorder from '../../components/recorder/RenderVoiceRecorder';
+import { recordUserLocation } from '../../utils/location';
+import { useConfig } from '../../hooks/useConfig';
+import DowntimePage from '../downtime-page';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
+import kaliaStatusImg from './assets/kalia_status.png';
+import plantProtectionImg from './assets/plant_protection.png';
+import weatherAdvisoryImg from './assets/weather_advisory.png';
+import saveTelemetryEvent from '../../utils/telemetry';
 
 const HomePage: NextPage = () => {
-  const context = useContext(AppContext)
-  const botConfig = useConfig('component', 'chatUI')
-  const config = useConfig('component', 'homePage')
-  const { micWidth, micHeight } = config
-  const t = useLocalization()
-  const inputRef = useRef(null)
-  const placeholder = useMemo(() => t('message.ask_ur_question'), [t])
-  const [inputMsg, setInputMsg] = useState('')
-  const voiceRecorderRef = useRef(null)
-  const chatBoxButton = useRef(null)
-  const [suggestions, setSuggestions] = useState([])
-  const [suggestionClicked, setSuggestionClicked] = useState(false)
-  const [activeSuggestion, setActiveSuggestion] = useState<number>(0)
-  const [cursorPosition, setCursorPosition] = useState(0)
-  const theme = useColorPalates()
+  const context = useContext(AppContext);
+  const botConfig = useConfig('component', 'chatUI');
+  const config = useConfig('component', 'homePage');
+  const { micWidth, micHeight } = config;
+  const t = useLocalization();
+  const inputRef = useRef(null);
+  const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
+  const [inputMsg, setInputMsg] = useState('');
+  const voiceRecorderRef = useRef(null);
+  const chatBoxButton = useRef(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [suggestionClicked, setSuggestionClicked] = useState(false);
+  const [activeSuggestion, setActiveSuggestion] = useState<number>(0);
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
-    return theme?.primary?.main
-  }, [theme?.primary?.main])
+    return theme?.primary?.main;
+  }, [theme?.primary?.main]);
 
   const suggestionHandler = (e: any, index: number) => {
-    setActiveSuggestion(index)
-  }
+    setActiveSuggestion(index);
+  };
 
   useEffect(() => {
     if (
@@ -57,27 +58,27 @@ const HomePage: NextPage = () => {
         botConfig?.transliterationOutputLanguage
     ) {
       if (suggestionClicked) {
-        setSuggestionClicked(false)
-        return
+        setSuggestionClicked(false);
+        return;
       }
 
-      setSuggestions([])
+      setSuggestions([]);
 
-      const words = inputMsg.split(' ')
+      const words = inputMsg.split(' ');
       const wordUnderCursor = words.find(
         (word, index) =>
           cursorPosition >= inputMsg.indexOf(word) &&
           cursorPosition <= inputMsg.indexOf(word) + word.length
-      )
+      );
 
-      if (!wordUnderCursor) return
+      if (!wordUnderCursor) return;
       let data = JSON.stringify({
         inputLanguage: botConfig?.transliterationInputLanguage,
         outputLanguage: botConfig?.transliterationOutputLanguage,
         input: wordUnderCursor,
         provider: botConfig?.transliterationProvider || 'bhashini',
         numSuggestions: botConfig?.transliterationSuggestions || 3,
-      })
+      });
 
       let axiosConfig = {
         method: 'post',
@@ -87,86 +88,86 @@ const HomePage: NextPage = () => {
           'Content-Type': 'application/json',
         },
         data: data,
-      }
+      };
 
       axios
         .request(axiosConfig)
         .then((res: any) => {
           // console.log("hurray", res?.data?.output?.[0]?.target);
-          setSuggestions(res?.data?.suggestions)
+          setSuggestions(res?.data?.suggestions);
         })
         .catch((err) => {
-          console.log(err)
-          toast.error('Transliteration failed')
-        })
+          console.log(err);
+          toast.error('Transliteration failed');
+        });
     } else {
-      setSuggestions([])
+      setSuggestions([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputMsg, cursorPosition])
+  }, [inputMsg, cursorPosition]);
 
   useEffect(() => {
-    context?.fetchIsDown() // check if server is down
+    context?.fetchIsDown(); // check if server is down
 
     if (!sessionStorage.getItem('conversationId')) {
-      const newConversationId = uuidv4()
-      sessionStorage.setItem('conversationId', newConversationId)
-      context?.setConversationId(newConversationId)
+      const newConversationId = uuidv4();
+      sessionStorage.setItem('conversationId', newConversationId);
+      context?.setConversationId(newConversationId);
     }
-    recordUserLocation()
+    recordUserLocation();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const sendMessage = useCallback(
     async (msg: string) => {
       if (msg.length === 0) {
-        toast.error(t('error.empty_msg'))
-        return
+        toast.error(t('error.empty_msg'));
+        return;
       }
       if (context?.newSocket?.socket?.connected) {
-        console.log('clearing mssgs')
-        context?.setMessages([])
-        router.push('/chat')
+        console.log('clearing mssgs');
+        context?.setMessages([]);
+        router.push('/chat');
         if (context?.kaliaClicked) {
           context?.sendMessage(
             'Aadhaar number - ' + msg,
             'Aadhaar number - ' + msg,
             null,
             true
-          )
-        } else context?.sendMessage(msg, msg)
+          );
+        } else context?.sendMessage(msg, msg);
       } else {
-        toast.error(t('error.disconnected'))
-        return
+        toast.error(t('error.disconnected'));
+        return;
       }
     },
     [context, t]
-  )
+  );
 
   const handleInputChange = (e: any) => {
-    const inputValue = e.target.value
+    const inputValue = e.target.value;
     if (context?.kaliaClicked) {
       if (!/^[0-9]*$/.test(inputValue) || inputValue.length > 12) {
-        toast.error('Please enter valid aadhaar number')
+        toast.error('Please enter valid aadhaar number');
         // setInputMsg(inputValue.slice(0, 12));
-      } else setInputMsg(inputValue)
-    } else setInputMsg(inputValue)
+      } else setInputMsg(inputValue);
+    } else setInputMsg(inputValue);
     // Store the cursor position
-    const cursorPosition = e.target.selectionStart
-    setCursorPosition(cursorPosition)
+    const cursorPosition = e.target.selectionStart;
+    setCursorPosition(cursorPosition);
     // setShowExampleMessages(inputValue.length === 0);
     // Adjust textarea height dynamically based on content
     if (inputRef.current) {
       //@ts-ignore
-      inputRef.current.style.height = 'auto'
+      inputRef.current.style.height = 'auto';
       //@ts-ignore
-      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`
+      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
     }
-  }
+  };
 
   const handleDocumentClick = useCallback((event: any) => {
-    const target = event.target
+    const target = event.target;
 
     // Check if clicked outside voiceRecorder and exampleMessages
     if (
@@ -176,39 +177,39 @@ const HomePage: NextPage = () => {
       !chatBoxButton.current?.contains(target)
     ) {
       // setShowExampleMessages(false);
-      setSuggestions([])
+      setSuggestions([]);
       // setShowChatBox(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    document.addEventListener('click', handleDocumentClick)
+    document.addEventListener('click', handleDocumentClick);
 
     return () => {
-      document.removeEventListener('click', handleDocumentClick)
-    }
-  }, [handleDocumentClick])
+      document.removeEventListener('click', handleDocumentClick);
+    };
+  }, [handleDocumentClick]);
 
   const suggestionClickHandler = useCallback(
     (e: any) => {
-      const words = inputMsg.split(' ')
+      const words = inputMsg.split(' ');
 
       // Find the word at the cursor position
       //@ts-ignore
-      const cursorPosition = inputRef.current.selectionStart
-      let currentIndex = 0
-      let selectedWord = ''
+      const cursorPosition = inputRef.current.selectionStart;
+      let currentIndex = 0;
+      let selectedWord = '';
 
       for (let i = 0; i < words.length; i++) {
-        const word = words[i]
+        const word = words[i];
         if (
           currentIndex <= cursorPosition &&
           cursorPosition <= currentIndex + word.length
         ) {
-          selectedWord = word
-          break
+          selectedWord = word;
+          break;
         }
-        currentIndex += word.length + 1 // +1 to account for the space between words
+        currentIndex += word.length + 1; // +1 to account for the space between words
       }
 
       // Replace the selected word with the transliterated suggestion
@@ -216,20 +217,20 @@ const HomePage: NextPage = () => {
         const newInputMsg = inputMsg.replace(
           selectedWord,
           cursorPosition === inputMsg.length ? e + ' ' : e
-        )
+        );
 
-        setSuggestions([])
-        setSuggestionClicked(true)
-        setActiveSuggestion(0)
+        setSuggestions([]);
+        setSuggestionClicked(true);
+        setActiveSuggestion(0);
 
-        setInputMsg(newInputMsg)
+        setInputMsg(newInputMsg);
 
         //@ts-ignore
-        inputRef.current && inputRef.current.focus()
+        inputRef.current && inputRef.current.focus();
       }
     },
     [inputMsg]
-  )
+  );
 
   const handleKeyDown = useCallback(
     (e: any) => {
@@ -277,13 +278,32 @@ const HomePage: NextPage = () => {
   const sendGuidedMsg = (type: string) => {
     // convert the string type into stringified array
     context?.setShowInputBox(false);
-    const tags = [type]
-    sessionStorage.setItem('tags', JSON.stringify(tags))
-    sendMessage(`Guided: ${t('label.' + type)}`)
-  }
+    const tags = [type];
+    sessionStorage.setItem('tags', JSON.stringify(tags));
+    sendMessage(`Guided: ${t('label.' + type)}`);
+  };
+
+  const sendWeatherTelemetry = async () => {
+    try {
+      const msgId = uuidv4();
+      sessionStorage.setItem('weatherMsgId', msgId);
+      await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || '',
+        messageId: msgId,
+        text: 'Weather',
+        createdAt: Math.floor(new Date().getTime() / 1000),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (context?.isDown) {
-    return <DowntimePage />
+    return <DowntimePage />;
   } else
     return (
       <>
@@ -305,13 +325,18 @@ const HomePage: NextPage = () => {
             <>
               <div
                 className={styles.title}
-                dangerouslySetInnerHTML={{ __html: t('label.ask_me') }}
+                dangerouslySetInnerHTML={{
+                  __html: t('label.ask_me'),
+                }}
               ></div>
               {(config?.showKalia ||
                 config?.showWeatherAdvisory ||
                 config?.showPlantProtection ||
                 config?.showSchemes) && (
-                <div className={styles.imgButtons} data-testid="homepage-action-buttons">
+                <div
+                  className={styles.imgButtons}
+                  data-testid="homepage-action-buttons"
+                >
                   <div
                     style={{
                       display: 'flex',
@@ -324,10 +349,11 @@ const HomePage: NextPage = () => {
                       <div
                         className={styles.imgBtn}
                         onClick={() => {
-                          if(config?.showWeatherPage){
-                            router.push('/weather')
-                          }else{
-                            sendGuidedMsg('weather')
+                          if (config?.showWeatherPage) {
+                            router.push('/weather');
+                            sendWeatherTelemetry();
+                          } else {
+                            sendGuidedMsg('weather');
                           }
                         }}
                       >
@@ -361,13 +387,15 @@ const HomePage: NextPage = () => {
                       </div>
                     )}
                   </div>
-                  <div style={{
+                  <div
+                    style={{
                       display: 'flex',
                       justifyContent: 'space-evenly',
                       marginTop: '10px',
                       width: '100%',
                       maxWidth: '500px',
-                    }}>
+                    }}
+                  >
                     {config?.showSchemes && (
                       <div
                         className={styles.imgBtn}
@@ -375,32 +403,29 @@ const HomePage: NextPage = () => {
                       >
                         <p>{t('label.scheme')}</p>
                         <img
-                          src={
-                            config?.schemesImg ||
-                            plantProtectionImg?.src
-                          }
+                          src={config?.schemesImg || plantProtectionImg?.src}
                           width={60}
                           height={60}
                           alt="schemes"
                         />
                       </div>
                     )}
-                  {config?.showKalia && (
-                    <div
-                      className={styles.imgBtn}
-                      onClick={() => {
-                        context?.setKaliaClicked((props: boolean) => !props)
-                      }}
-                    >
-                      <p>{t('label.kalia_status')}</p>
-                      <img
-                        src={config?.kaliaStatusImg || kaliaStatusImg?.src}
-                        width={60}
-                        height={60}
-                        alt="kaliastatus"
-                      />
-                    </div>
-                  )}
+                    {config?.showKalia && (
+                      <div
+                        className={styles.imgBtn}
+                        onClick={() => {
+                          context?.setKaliaClicked((props: boolean) => !props);
+                        }}
+                      >
+                        <p>{t('label.kalia_status')}</p>
+                        <img
+                          src={config?.kaliaStatusImg || kaliaStatusImg?.src}
+                          width={60}
+                          height={60}
+                          alt="kaliastatus"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -408,7 +433,10 @@ const HomePage: NextPage = () => {
               {config?.showMic && (
                 <div
                   className={styles.voiceRecorder}
-                  style={{ height: micHeight, width: micWidth }}
+                  style={{
+                    height: micHeight,
+                    width: micWidth,
+                  }}
                   ref={voiceRecorderRef}
                 >
                   <RenderVoiceRecorder
@@ -438,7 +466,7 @@ const HomePage: NextPage = () => {
                     >
                       {elem}
                     </div>
-                  )
+                  );
                 })}
               </div>
               <textarea
@@ -449,7 +477,7 @@ const HomePage: NextPage = () => {
                     sendMessage(inputMsg);
                   }
                 }}
-                style={{fontFamily: 'NotoSans-Regular'}}
+                style={{ fontFamily: 'NotoSans-Regular' }}
                 id="inputBox"
                 ref={inputRef}
                 rows={1}
@@ -477,6 +505,6 @@ const HomePage: NextPage = () => {
           </form>
         </div>
       </>
-    )
-}
-export default HomePage
+    );
+};
+export default HomePage;

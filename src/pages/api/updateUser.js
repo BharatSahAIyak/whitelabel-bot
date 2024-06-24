@@ -16,13 +16,13 @@ export default async function handler(req, res) {
     const response = await axios.put(
       `${process.env.NEXT_PUBLIC_BFF_API_URL}/user/${userID}`,
       {
-        profile: { ...onboardingData }
+        profile: { ...onboardingData },
       },
       {
         headers: {
           Authorization: process.env.FUSIONAUTH_KEY || '',
           'Service-Url': process.env.FUSIONAUTH_URL || '',
-        }
+        },
       }
     );
 

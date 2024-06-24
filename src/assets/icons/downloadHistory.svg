@@ -16,8 +16,8 @@
           <polyline data-name="Right" fill="none" id="Right-2" points="7.9 12.3 12 16.3 16.1 12.3" stroke="#000"
             strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
 
-          <line fill="none" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="12"
-            x2="12" y1="2.7" y2="14.2" />
+          <line fill="none" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="12" x2="12"
+            y1="2.7" y2="14.2" />
 
         </g>
 

@@ -38,10 +38,12 @@ const ChatUiWindow: React.FC = () => {
           const chatHistory = await axios.get(
             `${
               process.env.NEXT_PUBLIC_BFF_API_URL
-            }/history?userId=${localStorage.getItem('userID')}&conversationId=${sessionStorage.getItem('conversationId')}`,
+            }/history?userId=${localStorage.getItem(
+              'userID'
+            )}&conversationId=${sessionStorage.getItem('conversationId')}`,
             {
               headers: {
-                botId: process.env.NEXT_PUBLIC_BOT_ID || ''
+                botId: process.env.NEXT_PUBLIC_BOT_ID || '',
               },
             }
           );
@@ -73,26 +75,33 @@ const ChatUiWindow: React.FC = () => {
           conversationId === 'null' || item?.channelMessageId === conversationId
       )
       .map((item: any) => ({
-            text: item?.payload?.text?.replace(/<end\/>/g, "")?.replace(/^Guided:/, ''),
-            position: item.to === 'admin' ? 'right' : 'left',
-            timestamp: item.timestamp,
-            reaction: item?.feedback?.type === 'FEEDBACK_POSITIVE' ? 1 : item?.feedback?.type === 'FEEDBACK_NEGATIVE' ? -1 : 0,
-            msgId: item.messageId,
-            messageId: item.messageId,
-            replyId: item.replyId,
-            audio_url: item?.audioURL,
-            isEnd: true,
-            optionClicked: true,
-            // choices: item?.payload?.buttonChoices,
-            isGuided: item?.metaData?.isGuided,
-            card: item?.payload?.card,
-            choices: [],
-            conversationId: item?.channelMessageId
-          })
-      ).sort(
+        text: item?.payload?.text
+          ?.replace(/<end\/>/g, '')
+          ?.replace(/^Guided:/, ''),
+        position: item.to === 'admin' ? 'right' : 'left',
+        timestamp: item.timestamp,
+        reaction:
+          item?.feedback?.type === 'FEEDBACK_POSITIVE'
+            ? 1
+            : item?.feedback?.type === 'FEEDBACK_NEGATIVE'
+            ? -1
+            : 0,
+        msgId: item.messageId,
+        messageId: item.messageId,
+        replyId: item.replyId,
+        audio_url: item?.audioURL,
+        isEnd: true,
+        optionClicked: true,
+        // choices: item?.payload?.buttonChoices,
+        isGuided: item?.metaData?.isGuided,
+        card: item?.payload?.card,
+        choices: [],
+        conversationId: item?.channelMessageId,
+      }))
+      .sort(
         //@ts-ignore
         (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
-    );
+      );
 
     console.log('historyyy', history);
     console.log('history length:', history.length);
@@ -148,7 +157,11 @@ const ChatUiWindow: React.FC = () => {
           showInput={context?.showInputBox}
           //@ts-ignore
           translation={t}
-          showTransliteration={config?.allowTransliteration  && localStorage.getItem('locale') === config?.transliterationOutputLanguage}
+          showTransliteration={
+            config?.allowTransliteration &&
+            localStorage.getItem('locale') ===
+              config?.transliterationOutputLanguage
+          }
           transliterationConfig={{
             transliterationApi: config?.transliterationApi + '/transliterate',
             transliterationInputLanguage: config?.transliterationInputLanguage,
@@ -166,7 +179,7 @@ const ChatUiWindow: React.FC = () => {
           )}
           onSend={handleSend}
           locale="en-US"
-          placeholder='Ask Your Question'
+          placeholder="Ask Your Question"
         />
         <ShareButtons />
       </div>
