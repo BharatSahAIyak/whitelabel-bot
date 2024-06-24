@@ -16,10 +16,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const LoginPage: React.FC = () => {
   const config = useConfig('component', 'loginPage');
-  const {
-    logo,
-    showLogo,
-  } = config;
+  const { logo, showLogo } = config;
 
   const t = useLocalization();
   const router = useRouter();
@@ -87,7 +84,8 @@ const LoginPage: React.FC = () => {
     <>
       <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"></meta>
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+      ></meta>
       <div className={styles.rightColumn}>
         <div
           style={{
@@ -95,18 +93,27 @@ const LoginPage: React.FC = () => {
             top: '16px',
             left: 'calc(100% - 117px)',
             zIndex: 10,
-          }}>
+          }}
+        >
           <LanguagePicker />
         </div>
-        {showLogo && logo && (<div
-          style={{ height: '400px', overflow: 'hidden', objectFit: 'cover', maxWidth: '400px', margin: '0 auto' }}>
-          <img
-            data-testid="login-page-img"
-            src={logo}
-            alt="loginPageImg"
-            width={'100%'}
-          />
-        </div>
+        {showLogo && logo && (
+          <div
+            style={{
+              height: '400px',
+              overflow: 'hidden',
+              objectFit: 'cover',
+              maxWidth: '400px',
+              margin: '0 auto',
+            }}
+          >
+            <img
+              data-testid="login-page-img"
+              src={logo}
+              alt="loginPageImg"
+              width={'100%'}
+            />
+          </div>
         )}
         <div className={styles.form}>
           {/* Form */}
@@ -120,11 +127,21 @@ const LoginPage: React.FC = () => {
             color={theme?.primary?.main || 'black'}
             dangerouslySetInnerHTML={{
               __html: t('label.subtitle'),
-            }}></Typography>
+            }}
+          ></Typography>
           <Box
             component="form"
             onSubmit={handleLogin}
-            sx={{ mt: 1, width: '100%', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+            sx={{
+              mt: 1,
+              width: '100%',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%',
+            }}
+          >
             <TextField
               data-testid="mobile-input"
               margin="normal"
@@ -155,7 +172,8 @@ const LoginPage: React.FC = () => {
               }}
               onClick={handleLogin}
               disabled={!valid || loading}
-              endIcon={<ArrowForwardIcon />}>
+              endIcon={<ArrowForwardIcon />}
+            >
               {loading ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (

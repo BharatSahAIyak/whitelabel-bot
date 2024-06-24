@@ -5,7 +5,11 @@ export const getUtcTimeformated = (timeinstance: any) => {
   const amPM = hours >= 12 ? 'pm' : 'am';
   const formattedHours = hours > 12 ? hours - 12 : hours;
 
-  return `${timeinstance.getUTCDate()}/${timeinstance.getUTCMonth() + 1}/${timeinstance.getUTCFullYear()} ${formattedHours}:${minutes < 10 ? '0' : ''}${minutes} ${amPM}`;
+  return `${timeinstance.getUTCDate()}/${
+    timeinstance.getUTCMonth() + 1
+  }/${timeinstance.getUTCFullYear()} ${formattedHours}:${
+    minutes < 10 ? '0' : ''
+  }${minutes} ${amPM}`;
 };
 
 export const getFormatedTime = (timeinstance: any) => {
@@ -15,5 +19,9 @@ export const getFormatedTime = (timeinstance: any) => {
   const amPM = hours >= 12 ? 'pm' : 'am';
   const formattedHours = hours > 12 ? hours - 12 : hours;
 
-  return `${timeinstance.getDate()}/${timeinstance.getMonth() + 1}/${timeinstance.getFullYear()} ${formattedHours}:${minutes < 10 ? '0' : ''}${minutes} ${amPM}`;
+  return `${timeinstance.getDate()}/${
+    timeinstance.getMonth() + 1
+  }/${timeinstance.getFullYear()} ${formattedHours}:${
+    minutes < 10 ? '0' : ''
+  }${minutes} ${amPM}`;
 };

@@ -18,20 +18,26 @@ const FeedbackPage: React.FC = () => {
   const t = useLocalization();
 
   useEffect(() => {
-    axios.get(`${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback/${localStorage.getItem(
-      'userID'
-    )}`,{
-      headers: {
-        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-      },
-    }).then((res) => {
-      setStar(res?.data?.rating);
-      setReview(res?.data?.review);
-    }).catch((error) => {
-      console.log(error);
-    })
-  }, [])
+    axios
+      .get(
+        `${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback/${localStorage.getItem(
+          'userID'
+        )}`,
+        {
+          headers: {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          },
+        }
+      )
+      .then((res) => {
+        setStar(res?.data?.rating);
+        setReview(res?.data?.review);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const handleFeedback = () => {
     if (!config) return;
@@ -81,7 +87,8 @@ const FeedbackPage: React.FC = () => {
               fontSize: '5vh',
               fontWeight: 'bold',
               color: theme.primary.main,
-            }}>
+            }}
+          >
             {t('label.feedback')}
           </Typography>
         </Box>
@@ -93,7 +100,8 @@ const FeedbackPage: React.FC = () => {
               sx={{
                 fontWeight: 'bold',
                 fontSize: '3vh',
-              }}>
+              }}
+            >
               {t('message.rating')}
             </Typography>
 
@@ -115,7 +123,8 @@ const FeedbackPage: React.FC = () => {
               sx={{
                 textAlign: 'center',
                 fontSize: '2vh',
-              }}>
+              }}
+            >
               {t('message.rating_description')}
             </Typography>
             <Button
@@ -132,7 +141,8 @@ const FeedbackPage: React.FC = () => {
                   backgroundColor: `${theme.primary.dark}`,
                 },
               }}
-              onClick={handleFeedback}>
+              onClick={handleFeedback}
+            >
               {t('label.submit_review')}
             </Button>
           </Box>
@@ -146,7 +156,8 @@ const FeedbackPage: React.FC = () => {
                 m: '1rem',
                 fontWeight: 'bold',
                 fontSize: '3vh',
-              }}>
+              }}
+            >
               {t('message.review')}
             </Typography>
             <textarea
@@ -177,7 +188,8 @@ const FeedbackPage: React.FC = () => {
                   backgroundColor: `${theme.primary.dark}`,
                 },
               }}
-              onClick={handleFeedback}>
+              onClick={handleFeedback}
+            >
               {t('label.submit_review')}
             </Button>
           </Box>

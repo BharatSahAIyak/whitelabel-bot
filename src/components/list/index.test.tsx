@@ -31,13 +31,13 @@
 //         const { getByText } = render(<List items={[]} noItem={{ label: 'No items found', icon: <div>NoIcon</div> }} />);
 //         expect(getByText('No items found')).toBeInTheDocument();
 //       });
-      
+
 //       it('renders with items', () => {
 //         render(<List items={mockItems} />);
 //         expect(screen.getByText('Item 1')).toBeInTheDocument();
 //         expect(screen.getByText('Item 2')).toBeInTheDocument();
 //       });
-      
+
 //       it('toggles item collapse on click', () => {
 //         render(<List items={mockItems} />);
 //         const item1 = screen.getByText('Item 1');
@@ -48,5 +48,5 @@
 //         fireEvent.click(item1);
 //         expect(subItem).not.toBeVisible(); // You might need to adjust based on how you handle the collapse visibility
 //       });
-      
+
 //   });

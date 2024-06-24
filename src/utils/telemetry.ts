@@ -6,14 +6,14 @@ const saveTelemetryEvent = async (
   eventId: string,
   event: string,
   subEvent: string,
-  eventData: any,
+  eventData: any
 ) => {
   const telemetryApi =
     process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
 
-    if(!sessionStorage.getItem('sessionId')) {
-      sessionStorage.setItem('sessionId', uuidv4());
-    }
+  if (!sessionStorage.getItem('sessionId')) {
+    sessionStorage.setItem('sessionId', uuidv4());
+  }
 
   try {
     const telemetryData = {
@@ -27,8 +27,8 @@ const saveTelemetryEvent = async (
       event,
       subEvent,
       os:
-      // @ts-ignore
-      window.navigator?.userAgentData?.platform || window.navigator.platform,
+        // @ts-ignore
+        window.navigator?.userAgentData?.platform || window.navigator.platform,
       browser: window.navigator.userAgent,
       ip: sessionStorage.getItem('ip') || '',
       // @ts-ignore
@@ -41,8 +41,8 @@ const saveTelemetryEvent = async (
 
     await axios.post(telemetryApi, [telemetryData], {
       headers: {
-        orgId: process.env.NEXT_PUBLIC_ORG_ID || ''
-      }
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+      },
     });
   } catch (error) {
     console.error('Error saving telemetry event:', error);
