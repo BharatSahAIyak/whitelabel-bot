@@ -1,14 +1,14 @@
 /** @type {import('next').NextConfig} */
 
-const withPWA = require("next-pwa");
+const withPWA = require('next-pwa');
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true'
+  enabled: process.env.ANALYZE === 'true',
 });
 
 module.exports = withBundleAnalyzer(
   withPWA({
     pwa: {
-      dest: "public",
+      dest: 'public',
       register: true,
       skipWaiting: true,
     },
@@ -17,10 +17,10 @@ module.exports = withBundleAnalyzer(
     },
     reactStrictMode: false,
     typescript: {
-      ignoreBuildErrors: true,    
+      ignoreBuildErrors: true,
     },
     compiler: {
-      removeConsole: true
+      removeConsole: true,
     },
     i18n: {
       locales: ['en'], // add more lang codes if support added

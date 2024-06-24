@@ -98,11 +98,9 @@ const HistoryPage: FC = () => {
     setIsFetching(true);
     axios
       .post(
-        `${
-          process.env.NEXT_PUBLIC_BFF_API_URL
-        }/history/conversations`,
+        `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/conversations`,
         {
-          userId: localStorage.getItem('userID')
+          userId: localStorage.getItem('userID'),
         },
         {
           headers: {
@@ -161,7 +159,9 @@ const HistoryPage: FC = () => {
               <IconButton edge="end" aria-label="comments">
                 {config?.allowDelete && (
                   <DeleteOutlineIcon
-                    onClick={() => deleteConversation(chatItem?.channelMessageId)}
+                    onClick={() =>
+                      deleteConversation(chatItem?.channelMessageId)
+                    }
                   />
                 )}
               </IconButton>
@@ -191,7 +191,11 @@ const HistoryPage: FC = () => {
           color={theme?.primary?.main}
           label="Fetching History"
         />
-        <div className={styles.title} style={{ color: theme?.primary?.main }} data-testid="history-title">
+        <div
+          className={styles.title}
+          style={{ color: theme?.primary?.main }}
+          data-testid="history-title"
+        >
           {t('label.chats') ?? 'No Label Provided'}
         </div>
         <div className={styles.chatList} data-testid="history-list">

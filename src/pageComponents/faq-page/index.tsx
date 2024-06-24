@@ -56,13 +56,15 @@ const FAQPage: React.FC = () => {
       <>
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"></meta>
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        ></meta>
         <Box className={styles.main}>
           <Box m={3}>
             <Typography
               data-testid="faq-page-title"
               variant="h4"
-              sx={{ fontWeight: '600', color: theme?.primary?.main }}>
+              sx={{ fontWeight: '600', color: theme?.primary?.main }}
+            >
               {t('label.faqs')}
             </Typography>
           </Box>
@@ -77,13 +79,18 @@ const FAQPage: React.FC = () => {
                     textTransform: 'none',
                     backgroundColor: theme?.primary?.main,
                     '&:hover': { backgroundColor: theme?.primary?.main },
-                  }}>
+                  }}
+                >
                   {t('label.manual')}
                 </Button>
               </Box>
             )}
             {config?.faqShowCallBox && (
-              <Box className={styles.dialerBox} m={3} data-testid="faq-page-call-box">
+              <Box
+                className={styles.dialerBox}
+                m={3}
+                data-testid="faq-page-call-box"
+              >
                 <Box p={1.5}>
                   <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                     {t('message.dial_description')}
@@ -97,7 +104,8 @@ const FAQPage: React.FC = () => {
                         width: '5vh',
                         height: '5vh',
                       }}
-                      alt="Call Icon">
+                      alt="Call Icon"
+                    >
                       <CallRoundedIcon fontSize="medium" />
                     </Avatar>
                   </Box>
@@ -109,7 +117,8 @@ const FAQPage: React.FC = () => {
                       textTransform: 'none',
                       color: theme?.primary?.main,
                       '&:hover': { color: theme?.primary?.main },
-                    }}>
+                    }}
+                  >
                     <Typography variant="h5" fontWeight={600}>{`${t(
                       'label.dial'
                     )} ${config?.faqPhoneNumber}`}</Typography>

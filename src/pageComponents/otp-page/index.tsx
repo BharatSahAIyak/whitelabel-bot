@@ -136,85 +136,91 @@ const OtpPage: React.FC = () => {
     <>
       <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"></meta>
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+      ></meta>
       <div className={styles.rightColumn}>
-        <div style={{width: '100%', height: '100%'}}>
-        <div className="d-flex pt-2 align-items-center justify-content-center mt-2 w-100">
-          <IconButton
-            aria-label="fingerprint"
-            sx={{
-              height: '40px',
-              width: '40px',
-              borderRadius: '12px',
-              border: '1px solid #E8ECF4',
-              m: 1,
-            }}
-            onClick={() => router.push('/login')}>
-            <ArrowBackIosNewRoundedIcon />
-          </IconButton>
+        <div style={{ width: '100%', height: '100%' }}>
+          <div className="d-flex pt-2 align-items-center justify-content-center mt-2 w-100">
+            <IconButton
+              aria-label="fingerprint"
+              sx={{
+                height: '40px',
+                width: '40px',
+                borderRadius: '12px',
+                border: '1px solid #E8ECF4',
+                m: 1,
+              }}
+              onClick={() => router.push('/login')}
+            >
+              <ArrowBackIosNewRoundedIcon />
+            </IconButton>
+            <Typography
+              data-testid="otp-verification-line1"
+              variant="h4"
+              textAlign="center"
+              width="90%"
+              color="#1E232C"
+              sx={{ m: 1 }}
+            >
+              {t('message.otp_verification')}
+            </Typography>
+          </div>
+          {/* Form */}
           <Typography
-            data-testid="otp-verification-line1"
-            variant="h4"
+            data-testid="otp-verification-line2"
+            variant="subtitle1"
             textAlign="center"
-            width="90%"
             color="#1E232C"
-            sx={{ m: 1 }}>
-            {t('message.otp_verification')}
+            sx={{ m: 2 }}
+          >
+            <FormattedMessage
+              id="message.otp_message"
+              defaultMessage="We will send you a 4 digit one time password on this mobile number <br><b>{mobile}</b>"
+              values={{
+                mobile: mobile,
+                br: (chunks) => <br />,
+                b: (chunks) => <b>{chunks}</b>,
+              }}
+            />
           </Typography>
-        </div>
-        {/* Form */}
-        <Typography
-          data-testid="otp-verification-line2"
-          variant="subtitle1"
-          textAlign="center"
-          color="#1E232C"
-          sx={{ m: 2 }}>
-          <FormattedMessage
-            id="message.otp_message"
-            defaultMessage="We will send you a 4 digit one time password on this mobile number <br><b>{mobile}</b>"
-            values={{
-              mobile: mobile,
-              br: (chunks) => <br />,
-              b: (chunks) => <b>{chunks}</b>,
-            }}
-          />
-        </Typography>
-        <Box sx={{display: 'flex', justifyContent: 'center'}}>
-        <OTPInput
-          separator={<></>}
-          value={otp}
-          onChange={setOtp}
-          length={otpLength}
-        />
-        </Box>
-        <div
-          style={{ margin: '10px', textAlign: 'center' }}
-          data-testid="resend-otp">
-          {countdown > 0 ? (
-            <span>
-              <FormattedMessage
-                id="message.wait_minutes"
-                defaultMessage="Please wait {countdown} seconds before resending OTP"
-                values={{ countdown }}
-              />
-            </span>
-          ) : (
-            <>
-              <Typography variant="subtitle1" align="center" color="#838BA1">
-                {t('message.didnt_receive')} &nbsp;
-                <p
-                  onClick={resendOtp}
-                  style={{
-                    color: theme?.primary?.main || '#3da156',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                  }}>
-                  {t('message.resend_again')}
-                </p>
-              </Typography>
-            </>
-          )}
-        </div>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <OTPInput
+              separator={<></>}
+              value={otp}
+              onChange={setOtp}
+              length={otpLength}
+            />
+          </Box>
+          <div
+            style={{ margin: '10px', textAlign: 'center' }}
+            data-testid="resend-otp"
+          >
+            {countdown > 0 ? (
+              <span>
+                <FormattedMessage
+                  id="message.wait_minutes"
+                  defaultMessage="Please wait {countdown} seconds before resending OTP"
+                  values={{ countdown }}
+                />
+              </span>
+            ) : (
+              <>
+                <Typography variant="subtitle1" align="center" color="#838BA1">
+                  {t('message.didnt_receive')} &nbsp;
+                  <p
+                    onClick={resendOtp}
+                    style={{
+                      color: theme?.primary?.main || '#3da156',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {t('message.resend_again')}
+                  </p>
+                </Typography>
+              </>
+            )}
+          </div>
         </div>
         <Button
           data-testid="otp-submit-button"
@@ -228,11 +234,12 @@ const OtpPage: React.FC = () => {
             p: 1,
             background: theme?.primary?.main,
             borderRadius: '10px',
-            width: '90%'
+            width: '90%',
           }}
           onClick={handleLogin}
           disabled={loading}
-          endIcon={<ArrowForwardIcon />}>
+          endIcon={<ArrowForwardIcon />}
+        >
           {loading ? (
             <CircularProgress size={24} color="inherit" />
           ) : (

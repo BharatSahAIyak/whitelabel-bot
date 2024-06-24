@@ -24,7 +24,7 @@
       "showWeatherAdvisory": false,
       "showWeatherPage": false,
       "showPlantProtection": false,
-      "showSchemes": true,
+      "showSchemes": false,
       "weatherAdvisoryImg": "",
       "plantProtectionImg": "",
       "schemesImg": "",
@@ -149,8 +149,8 @@
       "downloadButtonColor": "#1e6231"
     }
   },
-  "translation":{
-    "en":{
+  "translation": {
+    "en": {
       "label.or": "or",
       "label.back": "Back",
       "label.dial": "Dial",

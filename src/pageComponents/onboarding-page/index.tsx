@@ -58,7 +58,9 @@ const OnBoardingPage = (props: any) => {
   const updateUser = async () => {
     try {
       const userID = localStorage.getItem('userID');
-      const res = await axios.put(`/api/updateUser?userID=${userID}`, { onboardingData });
+      const res = await axios.put(`/api/updateUser?userID=${userID}`, {
+        onboardingData,
+      });
       console.log(res);
     } catch (err) {
       console.log(err);
@@ -94,7 +96,8 @@ const OnBoardingPage = (props: any) => {
         containerStyle={{ width: '100%' }}
         variant="dots"
         activeStep={activeStep}
-        steps={steps}>
+        steps={steps}
+      >
         {activeStep === 0 && (
           <UserTypeSelector
             handleNext={handleNext}

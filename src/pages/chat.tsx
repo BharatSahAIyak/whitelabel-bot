@@ -10,57 +10,57 @@ import { useConfig } from '../hooks/useConfig';
 import { useRouter } from 'next/router';
 
 const ChatUi = dynamic(() => import('../components/chat-window'), {
-    ssr: false,
+  ssr: false,
 });
 
 const Chat: NextPage = () => {
-    const t = useLocalization();
-    const context = useContext(AppContext);
-    const config = useConfig('component', 'botDetails');
-    console.log('hola', { config });
-    const router = useRouter();
-    const { message } = router.query;
+  const t = useLocalization();
+  const context = useContext(AppContext);
+  const config = useConfig('component', 'botDetails');
+  console.log('hola', { config });
+  const router = useRouter();
+  const { message } = router.query;
 
-    useEffect(() => {
-        if (message) {
-            router.replace('/chat', '', { shallow: true });
-            setTimeout(() => {
-                context?.sendMessage(message as string, message as string);
-            }, 2000);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+  useEffect(() => {
+    if (message) {
+      router.replace('/chat', '', { shallow: true });
+      setTimeout(() => {
+        context?.sendMessage(message as string, message as string);
+      }, 2000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    return (
-        <>
-            <Head>
-                <title>{t('label.tab_title')}</title>
-                <link rel="icon" href={config?.favicon} />
-            </Head>
-            {context?.showFeedbackPopup && (
-                <div
-                    className={styles.overlay}
-                    // onClick={() => context?.setShowFeedbackPopup(false)}
-                >
-                    {context?.showFeedbackPopup && (
-                        <FeedbackPopup
-                            setShowFeedbackPopup={context?.setShowFeedbackPopup}
-                        />
-                    )}
-                </div>
-            )}
+  return (
+    <>
+      <Head>
+        <title>{t('label.tab_title')}</title>
+        <link rel="icon" href={config?.favicon} />
+      </Head>
+      {context?.showFeedbackPopup && (
+        <div
+          className={styles.overlay}
+          // onClick={() => context?.setShowFeedbackPopup(false)}
+        >
+          {context?.showFeedbackPopup && (
+            <FeedbackPopup
+              setShowFeedbackPopup={context?.setShowFeedbackPopup}
+            />
+          )}
+        </div>
+      )}
 
-            <div
-                style={{
-                    position: 'fixed',
-                    width: '100%',
-                    bottom: '1vh',
-                    top: '100px',
-                }}
-            >
-                <ChatUi />
-            </div>
-        </>
-    );
+      <div
+        style={{
+          position: 'fixed',
+          width: '100%',
+          bottom: '1vh',
+          top: '100px',
+        }}
+      >
+        <ChatUi />
+      </div>
+    </>
+  );
 };
 export default Chat;

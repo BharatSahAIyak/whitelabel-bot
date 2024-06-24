@@ -6,7 +6,7 @@ import {
   Typography,
   Backdrop,
   Fade,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
 // import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import { useLocalization } from '../../hooks';
@@ -59,7 +59,7 @@ const LocationPermissionModal = (props: any) => {
       {
         enableHighAccuracy: true,
         timeout: 5000,
-        maximumAge: 0
+        maximumAge: 0,
       }
     );
   };
@@ -77,34 +77,50 @@ const LocationPermissionModal = (props: any) => {
       >
         <Fade in={open}>
           <Box sx={style}>
-            <div className='d-flex align-items-center justify-content-center'>
+            <div className="d-flex align-items-center justify-content-center">
               {/* <LocationOnOutlinedIcon sx={{width: '35px', height: '35px'}}/> */}
-          <Image src={locationImg} alt="" />
+              <Image src={locationImg} alt="" />
             </div>
-            <Typography data-testid="location-permission-modal-title" variant="h6" component="h2" className='text-center mt-2 font-weight-bold'>
+            <Typography
+              data-testid="location-permission-modal-title"
+              variant="h6"
+              component="h2"
+              className="text-center mt-2 font-weight-bold"
+            >
               {t('message.allow_location')}
             </Typography>
-            <div style={{display: 'flex', flexDirection: 'column', marginTop: '20px', gap: '10px'}}>
-            <Button
-              data-testid="location-permission-modal-allow-button"
-              variant="contained"
-              color="primary"
-              onClick={requestLocationPermission}
-              disabled={loading} // Disable button while loading
-              sx={{padding: '12px'}}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                marginTop: '20px',
+                gap: '10px',
+              }}
             >
-              {loading ? <CircularProgress size={24} color="inherit" /> : t('label.allow_location_access')}
-            </Button>
-            <Button
-              data-testid="location-permission-modal-dont-allow-button"
-              variant="contained"
-              color="primary"
-              onClick={handleClose}
-              disabled={loading} // Disable button while loading
-              sx={{padding: '12px'}}
-            >
-              {t('label.dont_allow_location_access')}
-            </Button>
+              <Button
+                data-testid="location-permission-modal-allow-button"
+                variant="contained"
+                color="primary"
+                onClick={requestLocationPermission}
+                disabled={loading} // Disable button while loading
+                sx={{ padding: '12px' }}
+              >
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  t('label.allow_location_access')
+                )}
+              </Button>
+              <Button
+                data-testid="location-permission-modal-dont-allow-button"
+                variant="contained"
+                color="primary"
+                onClick={handleClose}
+                disabled={loading} // Disable button while loading
+                sx={{ padding: '12px' }}
+              >
+                {t('label.dont_allow_location_access')}
+              </Button>
             </div>
             {/* {location && (
               <Box sx={{ mt: 2 }}>
