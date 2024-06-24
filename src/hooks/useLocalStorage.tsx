@@ -6,9 +6,9 @@ export const useLocalStorage = (
   parseToJson = false
 ): [any, any] => {
   const [value, setValue] = useState(
-    // @ts-ignore
     parseToJson
-      ? JSON.parse(localStorage.getItem(key))
+      ? // @ts-ignore
+        JSON.parse(localStorage.getItem(key))
       : localStorage.getItem(key) ?? initialState
   );
   const updatedSetValue = useCallback(

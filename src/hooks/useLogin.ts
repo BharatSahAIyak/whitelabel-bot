@@ -23,8 +23,8 @@ export const useLogin = () => {
   const login = useCallback(() => {
     // No need to check for auth if access token is not present
     if (localStorage.getItem('auth') || auth) {
-      // @ts-ignore
       const decodedToken: any = jwt.decode(
+        // @ts-ignore
         localStorage.getItem('auth') || auth
       );
 
