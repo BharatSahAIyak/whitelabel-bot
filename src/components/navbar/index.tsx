@@ -180,7 +180,7 @@ const Navbar: React.FC = () => {
               </div>
             )}
 
-            {/* {showHomeIcon &&
+            {showHomeIcon &&
               router.pathname !== '/' &&
               router.pathname !== '/weather' &&
               router.pathname !== '/chat' && (
@@ -196,7 +196,7 @@ const Navbar: React.FC = () => {
                   <HomeIcon sx={{ fontSize: '50px' }} />
                 </IconButton>
               )}
-          </div> */}
+          </div>
 
           <div
             style={{
