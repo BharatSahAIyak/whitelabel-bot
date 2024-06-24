@@ -213,10 +213,7 @@ const Navbar: React.FC = () => {
                     >
                         {showCenterLogo && (
                             <div>
- 
                                 <Image
- 
- 
                                     data-testid="navbar-center-img"
                                     src={centerLogoSrc}
                                     alt="Center Logo"
@@ -228,21 +225,21 @@ const Navbar: React.FC = () => {
 
                     <div data-testid="navbar-right-logos">
                         {showRightLogo1 && (
-                            <img
+                            <Image
                                 src={rightLogo1Src}
                                 alt={`Right Logo 1`}
                                 style={{ maxHeight: '60px' }}
                             />
                         )}
                         {showRightLogo2 && (
-                            <img
+                            <Image
                                 src={rightLogo2Src}
                                 alt={`Right Logo 2`}
                                 style={{ maxHeight: '60px' }}
                             />
                         )}
                         {showRightLogo3 && (
-                            <img
+                            <Image
                                 src={rightLogo3Src}
                                 alt={`Right Logo 3`}
                                 style={{ maxHeight: '60px' }}
