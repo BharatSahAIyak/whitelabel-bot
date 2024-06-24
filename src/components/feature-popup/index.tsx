@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import styles from './styles.module.css';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 
-
 function FeaturePopup() {
   const [popupData, setPopupData] = useState<any>(null);
   const [dbExists, setDbExists] = useState(false);
@@ -13,14 +12,14 @@ function FeaturePopup() {
     if (!dbExists) {
       const request = indexedDB.open('featureDetailsDB', 1); // Define request here
 
-      request.onsuccess = function(event) {
+      request.onsuccess = function (event) {
         setDbExists(true); // If the database exists and opens successfully
       };
 
-      request.onerror = function(event) {
+      request.onerror = function (event) {
         setDbExists(false); // If an error occurs or the database does not exist
       };
-request.onsuccess = (event: any) => {
+      request.onsuccess = (event: any) => {
         const db = event.target.result;
         if (!db.objectStoreNames.contains('featureDetailsStore')) {
           console.log("featureDetailsDB doesn't exist.");
@@ -44,15 +43,14 @@ request.onsuccess = (event: any) => {
               description: details.description,
             });
           }
-        };   
+        };
 
         transaction.oncomplete = () => {
           db.close();
         };
       };
-    } }
-
-  , [dbExists]);
+    }
+  }, [dbExists]);
 
   const handleClose = () => {
     if (popupData) {
@@ -82,9 +80,12 @@ request.onsuccess = (event: any) => {
   if (!popupData) {
     return null;
   }
-  
+
   return (
-    <div className={styles.popup} style={{ backgroundColor: theme?.primary?.main}}>
+    <div
+      className={styles.popup}
+      style={{ backgroundColor: theme?.primary?.main }}
+    >
       <h2>{popupData.title}</h2>
       <p>{popupData.description}</p>
       <button onClick={handleClose}>Close</button>

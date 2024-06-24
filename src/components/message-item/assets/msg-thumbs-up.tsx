@@ -7,7 +7,9 @@ const MsgThumbsUp = (props: any) => (
     {props.fill ? (
       <ThumbUpAltIcon style={{ color: 'green', fontSize: props.width }} />
     ) : (
-      <ThumbUpAltOutlinedIcon style={{ color: 'green', fontSize: props.width }} />
+      <ThumbUpAltOutlinedIcon
+        style={{ color: 'green', fontSize: props.width }}
+      />
     )}
   </React.Fragment>
 );

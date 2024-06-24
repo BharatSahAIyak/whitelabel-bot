@@ -3,7 +3,7 @@
   height: 100%;
 }
 
-.kaliaImg{
+.kaliaImg {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -33,7 +33,7 @@
   font-weight: 700;
 }
 
-.imgButtons{
+.imgButtons {
   position: relative;
   top: 7%;
   display: flex;
@@ -56,15 +56,15 @@
   height: 110px;
 }
 
-.imgBtn:active{
+.imgBtn:active {
   transform: scale(0.9);
 }
 
-.imgBtn img{
+.imgBtn img {
   min-width: 80% !important;
 }
 
-.imgBtn p{
+.imgBtn p {
   font-family: 'NotoSans-Bold';
   text-align: center;
   line-height: 1;
@@ -130,7 +130,7 @@
   font-size: 18px;
 }
 
-.suggestions{
+.suggestions {
   position: absolute;
   display: flex;
   min-width: 50px;
@@ -138,15 +138,16 @@
   bottom: 50px;
   left: 10px;
   background-color: white;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }
 
-.suggestion{
+.suggestion {
   padding: 0 10px;
   cursor: pointer;
 }
 
-.active{
+.active {
   background-color: #65c3d7;
   color: white;
 }
@@ -172,7 +173,7 @@
   width: 100%;
   margin: 0 5px;
   padding: 10px;
-  border: 1px solid #D0D0D0;
+  border: 1px solid #d0d0d0;
   border-radius: 10px;
   outline: none;
   resize: none;

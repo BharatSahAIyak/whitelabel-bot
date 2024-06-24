@@ -7,11 +7,12 @@ const BlinkingSpinner = () => {
   const secondaryColor = useMemo(() => {
     return theme?.primary?.contrastText;
   }, [theme?.primary?.contrastText]);
-  
+
   return (
     <p
       className={styles.spinner}
-      style={{ backgroundColor: secondaryColor }}></p>
+      style={{ backgroundColor: secondaryColor }}
+    ></p>
   );
 };
 

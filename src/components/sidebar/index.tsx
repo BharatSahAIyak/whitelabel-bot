@@ -1,75 +1,77 @@
-import React, { useState, useContext, useEffect } from 'react'
-import Box from '@mui/material/Box'
-import Drawer from '@mui/material/Drawer'
-import List from '@mui/material/List'
-import Divider from '@mui/material/Divider'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import HelpIcon from '@mui/icons-material/QuestionMark'
-import FeedbackIcon from '@mui/icons-material/ThumbUpOffAlt'
-import LogoutIcon from '@mui/icons-material/Logout'
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
-import { useConfig } from '../../hooks/useConfig'
-import { useColorPalates } from '../../providers/theme-provider/hooks'
-import router from 'next/router'
-import { useCookies } from 'react-cookie'
-import { AppContext } from '../../context'
-import { useLocalization } from '../../hooks'
+import React, { useState, useContext, useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import HelpIcon from '@mui/icons-material/QuestionMark';
+import FeedbackIcon from '@mui/icons-material/ThumbUpOffAlt';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import { useConfig } from '../../hooks/useConfig';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
+import router from 'next/router';
+import { useCookies } from 'react-cookie';
+import { AppContext } from '../../context';
+import { useLocalization } from '../../hooks';
 import BhashiniImg from '../../assets/images/bhashinilogo.png';
 import darshanLogo from '../../assets/images/darshan-logo.png';
-import styles from './style.module.css'
-import Image from 'next/image'
-import { Button } from '@mui/material'
+import styles from './style.module.css';
+import Image from 'next/image';
+import { Button } from '@mui/material';
 
 export const Sidebar = ({
   isOpen,
   onToggle,
 }: {
-  isOpen: boolean
-  onToggle: () => void
+  isOpen: boolean;
+  onToggle: () => void;
 }) => {
   const [activeLanguage, setActiveLanguage] = useState<string>(() => {
-    const storedLang = localStorage.getItem('locale')
-    return storedLang || 'en'
-  })
+    const storedLang = localStorage.getItem('locale');
+    return storedLang || 'en';
+  });
 
-  const [cookie, setCookie, removeCookie] = useCookies()
-  const context = useContext(AppContext)
-  const config = useConfig('component', 'sidebar')
-  const theme = useColorPalates()
-  const t = useLocalization()
+  const [cookie, setCookie, removeCookie] = useCookies();
+  const context = useContext(AppContext);
+  const config = useConfig('component', 'sidebar');
+  const theme = useColorPalates();
+  const t = useLocalization();
 
   useEffect(() => {
-    context?.setLocale(activeLanguage)
-  }, [activeLanguage, context])
+    context?.setLocale(activeLanguage);
+  }, [activeLanguage, context]);
 
   const handleLanguageClick = (langCode: string) => {
-    setActiveLanguage(langCode)
-    localStorage.setItem('locale', langCode)
-    onToggle()
-  }
+    setActiveLanguage(langCode);
+    localStorage.setItem('locale', langCode);
+    onToggle();
+  };
 
   const handleItemClick = () => {
-    onToggle()
-  }
+    onToggle();
+  };
 
   function logout() {
-    removeCookie('access_token', { path: '/' })
-    localStorage.clear()
-    sessionStorage.clear()
-    context?.setMessages([])
-    router.push('/login')
-    if (typeof window !== 'undefined') window.location.reload()
+    removeCookie('access_token', { path: '/' });
+    localStorage.clear();
+    sessionStorage.clear();
+    context?.setMessages([]);
+    router.push('/login');
+    if (typeof window !== 'undefined') window.location.reload();
   }
 
-  console.log("debug",{config})
+  console.log('debug', { config });
   return (
-    <div style={{ background: config?.sidebarBackground ?? theme.primary.main }}>
+    <div
+      style={{ background: config?.sidebarBackground ?? theme.primary.main }}
+    >
       <Drawer
         open={isOpen}
         onClose={onToggle}
@@ -84,7 +86,13 @@ export const Sidebar = ({
         }}
       >
         <Box
-          style={{ background: config?.sidebarBackground ?? theme.primary.main, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+          style={{
+            background: config?.sidebarBackground ?? theme.primary.main,
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
           role="presentation"
         >
           {config && (
@@ -207,8 +215,8 @@ export const Sidebar = ({
                       marginBottom: '10px',
                     }}
                     onClick={() => {
-                      handleItemClick()
-                      router.push(`/history`)
+                      handleItemClick();
+                      router.push(`/history`);
                     }}
                   >
                     <ListItemButton>
@@ -238,8 +246,8 @@ export const Sidebar = ({
                       marginBottom: '10px',
                     }}
                     onClick={() => {
-                      handleItemClick()
-                      router.push(`/faq`)
+                      handleItemClick();
+                      router.push(`/faq`);
                     }}
                   >
                     <ListItemButton>
@@ -269,8 +277,8 @@ export const Sidebar = ({
                       marginBottom: '10px',
                     }}
                     onClick={() => {
-                      handleItemClick()
-                      router.push(`/feedback`)
+                      handleItemClick();
+                      router.push(`/feedback`);
                     }}
                   >
                     <ListItemButton>
@@ -312,19 +320,22 @@ export const Sidebar = ({
               )}
             </List>
           )}
-            {(config?.showBhashiniLogo || config?.showDarshanLogo) && <div
+          {(config?.showBhashiniLogo || config?.showDarshanLogo) && (
+            <div
               className={styles.user}
               style={{
                 background: 'var(--bg-color)',
                 flexDirection: 'column',
-                fontSize: '12px'
-              }}>
+                fontSize: '12px',
+              }}
+            >
               <div
                 style={{
                   color: 'var(--secondarygreen)',
                   textAlign: 'left',
                   width: '100%',
-                }}>
+                }}
+              >
                 Powered by:
               </div>
               <div
@@ -332,28 +343,34 @@ export const Sidebar = ({
                   display: 'flex',
                   justifyContent: 'space-between',
                   width: '100%',
-                }}>
-                {config?.showBhashiniLogo && <Image src={BhashiniImg} alt="" width={180} height={45} />}
-                {config?.showDarshanLogo && <Image src={darshanLogo} alt="" width={55} height={45} />}
+                }}
+              >
+                {config?.showBhashiniLogo && (
+                  <Image src={BhashiniImg} alt="" width={180} height={45} />
+                )}
+                {config?.showDarshanLogo && (
+                  <Image src={darshanLogo} alt="" width={55} height={45} />
+                )}
               </div>
-            </div>}
+            </div>
+          )}
         </Box>
       </Drawer>
     </div>
-  )
-}
+  );
+};
 
 const getIconComponent = (iconName: string) => {
   switch (iconName) {
     case 'HistoryIcon':
-      return <ChatBubbleOutlineIcon sx={{ fontSize: '35px' }} />
+      return <ChatBubbleOutlineIcon sx={{ fontSize: '35px' }} />;
     case 'HelpIcon':
-      return <HelpIcon sx={{ fontSize: '35px' }} />
+      return <HelpIcon sx={{ fontSize: '35px' }} />;
     case 'FeedbackIcon':
-      return <FeedbackIcon sx={{ fontSize: '35px' }} />
+      return <FeedbackIcon sx={{ fontSize: '35px' }} />;
     default:
-      return null
+      return null;
   }
-}
+};
 
-export default Sidebar
+export default Sidebar;

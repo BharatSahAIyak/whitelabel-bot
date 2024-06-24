@@ -1,9 +1,9 @@
-import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
-import jwt from "jsonwebtoken";
-import { useRouter } from "next/router";
-import toast from "react-hot-toast";
+import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
+import jwt from 'jsonwebtoken';
+import { useRouter } from 'next/router';
+import toast from 'react-hot-toast';
 
 type User = {
   username: string;
@@ -14,7 +14,7 @@ type User = {
 };
 
 export const useLogin = () => {
-  const [cookies, setCookie, removeCookie] = useCookies(["access_token"]);
+  const [cookies, setCookie, removeCookie] = useCookies(['access_token']);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
@@ -23,8 +23,10 @@ export const useLogin = () => {
   const login = useCallback(() => {
     // No need to check for auth if access token is not present
     if (localStorage.getItem('auth') || auth) {
-      // @ts-ignore
-      const decodedToken: any = jwt.decode(localStorage.getItem('auth') || auth);
+      const decodedToken: any = jwt.decode(
+        // @ts-ignore
+        localStorage.getItem('auth') || auth
+      );
 
       const expires = new Date(decodedToken?.exp * 1000);
 
@@ -34,36 +36,36 @@ export const useLogin = () => {
           .get(`/api/auth?token=${token}`)
           .then((response) => {
             if (response.data === null) {
-              toast.error("Invalid Access Token");
-              removeCookie("access_token", { path: "/" });
+              toast.error('Invalid Access Token');
+              removeCookie('access_token', { path: '/' });
               localStorage.clear();
               sessionStorage.clear();
-              router.push("/login");
-              console.log("response null");
+              router.push('/login');
+              console.log('response null');
             } else {
               setIsAuthenticated(true);
-              console.log("authenticated true");
+              console.log('authenticated true');
             }
           })
           .catch((err: any) => {
             console.error(err);
-            removeCookie("access_token", { path: "/" });
+            removeCookie('access_token', { path: '/' });
             localStorage.clear();
             sessionStorage.clear();
-            router.push("/login");
+            router.push('/login');
           });
       } else {
-        removeCookie("access_token", { path: "/" });
+        removeCookie('access_token', { path: '/' });
         localStorage.clear();
         sessionStorage.clear();
-        router.push("/login");
-        if (typeof window !== "undefined") window.location.reload();
+        router.push('/login');
+        if (typeof window !== 'undefined') window.location.reload();
       }
     }
   }, [removeCookie, router]);
 
   useEffect(() => {
-    if(auth && userId){
+    if (auth && userId) {
       // setCookie('access_token', auth, { path: '/' });
       localStorage.setItem('auth', auth as string);
       localStorage.setItem('userID', userId as string);
@@ -77,6 +79,5 @@ export const useLogin = () => {
     login();
   }, [login]);
 
- 
   return { isAuthenticated, login, loading };
 };
