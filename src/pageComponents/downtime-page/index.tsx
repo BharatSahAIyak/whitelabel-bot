@@ -29,7 +29,7 @@ const DowntimePage: React.FC = () => {
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
       ></meta>
-      <Box className={styles.container} px={18} py={12}>
+      <Box className={styles.container} py={12}>
         <Box>
           <Typography
             variant="h5"
