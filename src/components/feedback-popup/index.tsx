@@ -56,9 +56,10 @@ const FeedbackPopup: React.FC<any> = ({ setShowFeedbackPopup }) => {
       <p>{t('label.comment')}</p>
       <div className={styles.feedbackBox}>
         <TransliterationInput
+          data-testid="feedback-popup-box"
           config={config}
           value={review}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setReview(e.target.value)}
+          setValue={setReview}
           name="experience-feedback"
           id="inputBox"
           multiline={true}

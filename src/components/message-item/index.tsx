@@ -39,6 +39,7 @@ import Loader from '../loader';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
 import { v4 as uuidv4 } from 'uuid';
 import router from 'next/router';
+import TransliterationInput from '../transliteration-input';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
@@ -68,19 +69,26 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   //   return t('toast.reaction_reset');
   // };
 
-  const handleSearchChange = (e: any) => {
-    const query = e.target.value.toLowerCase();
+  const handleSearchChange = () => {
+    const query = searchQuery.toLowerCase();
     setSearchQuery(query);
 
     if (query) {
       const results = content?.data?.choices?.choices
-        .filter((item: any) => item.text.toLowerCase().includes(query))
+        .filter((item: any) => item.text.toLowerCase().includes(query.trim()))
         .slice(0, 3);
       setFilteredChoices(results);
     } else {
       setFilteredChoices([]);
     }
   };
+
+  useEffect(() => {
+    if(searchQuery) {
+      handleSearchChange();
+    }
+  }, [searchQuery])
+  
 
   const displayedChoices = searchQuery
     ? filteredChoices
@@ -747,17 +755,20 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 <div
                   style={{
                     padding: '10px',
-                    background: '#F4F4F4',
+                    background: 'white',
                     position: 'fixed',
                     bottom: 0,
                     left: 0,
                     right: 0,
+                    zIndex: 100
                   }}>
-                  <input
+                  <TransliterationInput
                     placeholder={
                       t('label.buttons_search_placeholder') || 'Search'
                     }
                     value={searchQuery}
+                    setValue={setSearchQuery}
+                    config={config}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -774,7 +785,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       outline: 'none',
                       borderRadius: '10px',
                     }}
-                    onChange={handleSearchChange}
+                    // onChange={handleSearchChange}
                   />
                 </div>
               )}
@@ -1070,13 +1081,20 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 <div
                   style={{
                     padding: '10px',
-                    background: '#F4F4F4',
+                    background: 'white',
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 100
                   }}>
-                  <input
+                  <TransliterationInput
                     placeholder={
                       t('label.buttons_search_placeholder') || 'Search'
                     }
                     value={searchQuery}
+                    setValue={setSearchQuery}
+                    config={config}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -1093,7 +1111,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       outline: 'none',
                       borderRadius: '10px',
                     }}
-                    onChange={handleSearchChange}
+                    // onChange={handleSearchChange}
                   />
                 </div>
               )}

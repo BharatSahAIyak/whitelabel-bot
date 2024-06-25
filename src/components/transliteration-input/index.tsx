@@ -3,23 +3,30 @@ import TextField from '@mui/material/TextField';
 import styles from './index.module.css';
 import { useEffect } from 'react';
 
-const TransliterationInput = ({ config, placeholder, multiline = false, rows = 1, cols = 35, ...props }: any) => {
+const TransliterationInput = ({
+  config,
+  placeholder,
+  multiline = false,
+  rows = 1,
+  cols = 35,
+  value,
+  setValue,
+  ...props
+}: any) => {
   const {
-    inputRef,
-    inputValue,
     suggestions,
     activeSuggestion,
     handleInputChange,
     suggestionClickHandler,
     setActiveSuggestion,
-    handleKeyDown
-  } = useTransliteration(config);
+    handleKeyDown,
+  } = useTransliteration(config, value, setValue);
 
   const suggestionHandler = (index: number) => {
     setActiveSuggestion(index);
   };
 
-    useEffect(() => {
+  useEffect(() => {
     let input = document.getElementById('inputBox');
     input?.addEventListener('textInput', handleKeyDown);
 
@@ -36,15 +43,13 @@ const TransliterationInput = ({ config, placeholder, multiline = false, rows = 1
             key={index}
             onClick={() => suggestionClickHandler(suggestion)}
             className={`${styles.suggestion} ${activeSuggestion === index ? styles.active : ''}`}
-            onMouseEnter={() => suggestionHandler(index)}
-          >
+            onMouseEnter={() => suggestionHandler(index)}>
             {suggestion}
           </div>
         ))}
       </div>
       <TextField
-        inputRef={inputRef}
-        value={inputValue}
+        value={value}
         onChange={handleInputChange}
         placeholder={placeholder}
         variant="outlined"
