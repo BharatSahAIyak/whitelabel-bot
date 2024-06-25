@@ -55,6 +55,7 @@ const WeatherAdvisoryPopup = (props: any) => {
   };
 
   const theme = useColorPalates();
+
   return (
     <div>
       <Modal
@@ -102,7 +103,7 @@ const WeatherAdvisoryPopup = (props: any) => {
                 paddingRight: '10px',
               }}
             >
-              <List dense>
+              <List>
                 <Typography
                   color="black"
                   style={{
@@ -111,7 +112,11 @@ const WeatherAdvisoryPopup = (props: any) => {
                     fontWeight: 500,
                   }}
                 >
-                  {props?.advisory?.descriptor?.long_desc}
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: `&#x2022; ${props?.advisory?.descriptor?.long_desc?.replaceAll('\n', '<br/><br/>&#x2022; ')}`,
+                    }}
+                  />
                 </Typography>
                 {/* {weatherDetails.map((item) => (
                   <div
