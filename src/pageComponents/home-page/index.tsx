@@ -22,6 +22,7 @@ import kaliaStatusImg from './assets/kalia_status.png';
 import plantProtectionImg from './assets/plant_protection.png';
 import weatherAdvisoryImg from './assets/weather_advisory.png';
 import TransliterationInput from '../../components/transliteration-input';
+import saveTelemetryEvent from '../../utils/telemetry';
 
 const HomePage: NextPage = () => {
   const context = useContext(AppContext);
@@ -83,6 +84,24 @@ const HomePage: NextPage = () => {
     sendMessage(`Guided: ${t('label.' + type)}`);
   };
 
+  const sendWeatherTelemetry = async () => {
+    try {
+      const msgId = uuidv4();
+      sessionStorage.setItem('weatherMsgId', msgId);
+      await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || '',
+        messageId: msgId,
+        text: 'Weather',
+        createdAt: Math.floor(new Date().getTime() / 1000),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (context?.isDown) {
     return <DowntimePage />;
@@ -92,7 +111,8 @@ const HomePage: NextPage = () => {
         <div
           className={styles.main}
           // onClick={handleDocumentClick}
-          style={{ color: secondaryColor }}>
+          style={{ color: secondaryColor }}
+        >
           {context?.kaliaClicked ? (
             <div className={styles.kaliaImg}>
               <img
@@ -106,32 +126,37 @@ const HomePage: NextPage = () => {
             <>
               <div
                 className={styles.title}
-                dangerouslySetInnerHTML={{ __html: t('label.ask_me') }}></div>
-              
+                dangerouslySetInnerHTML={{ __html: t('label.ask_me') }}
+              ></div>
+
               {(config?.showKalia ||
                 config?.showWeatherAdvisory ||
                 config?.showPlantProtection ||
                 config?.showSchemes) && (
                 <div
                   className={styles.imgButtons}
-                  data-testid="homepage-action-buttons">
+                  data-testid="homepage-action-buttons"
+                >
                   <div
                     style={{
                       display: 'flex',
                       justifyContent: 'space-evenly',
                       width: '100%',
                       maxWidth: '500px',
-                    }}>
+                    }}
+                  >
                     {config?.showWeatherAdvisory && (
                       <div
                         className={styles.imgBtn}
                         onClick={() => {
                           if (config?.showWeatherPage) {
                             router.push('/weather');
+                            sendWeatherTelemetry();
                           } else {
                             sendGuidedMsg('weather');
                           }
-                        }}>
+                        }}
+                      >
                         <p>{t('label.weather_advisory')}</p>
                         <img
                           src={
@@ -147,7 +172,8 @@ const HomePage: NextPage = () => {
                     {config?.showPlantProtection && (
                       <div
                         className={styles.imgBtn}
-                        onClick={() => sendGuidedMsg('pest')}>
+                        onClick={() => sendGuidedMsg('pest')}
+                      >
                         <p>{t('label.plant_protection')}</p>
                         <img
                           src={
@@ -173,7 +199,8 @@ const HomePage: NextPage = () => {
                     {config?.showSchemes && (
                       <div
                         className={styles.imgBtn}
-                        onClick={() => sendGuidedMsg('scheme')}>
+                        onClick={() => sendGuidedMsg('scheme')}
+                      >
                         <p>{t('label.scheme')}</p>
                         <img
                           src={config?.schemesImg || plantProtectionImg?.src}
@@ -186,8 +213,10 @@ const HomePage: NextPage = () => {
                     {config?.showKalia && (
                       <div
                         className={styles.imgBtn}
-                        onClick={() => {
-                          context?.setKaliaClicked((props: boolean) => !props);
+                        onClick={() =>
+                          context?.setKaliaClicked((props: boolean) => !props)
+                        }
+                      >
                         <p>{t('label.kalia_status')}</p>
                         <img
                           src={config?.kaliaStatusImg || kaliaStatusImg?.src}
@@ -204,6 +233,11 @@ const HomePage: NextPage = () => {
               {config?.showMic && (
                 <div
                   className={styles.voiceRecorder}
+                  style={{
+                    height: micHeight,
+                    width: micWidth,
+                  }}
+                >
                   <RenderVoiceRecorder
                     setInputMsg={setInputMsg}
                     tapToSpeak={config?.showTapToSpeakText}
@@ -234,7 +268,8 @@ const HomePage: NextPage = () => {
                 data-testid="homepage-send-button"
                 type="submit"
                 className={styles.sendButton}
-                onClick={() => sendMessage(inputMsg)}>
+                onClick={() => sendMessage(inputMsg)}
+              >
                 <SendButton
                   width={40}
                   height={40}

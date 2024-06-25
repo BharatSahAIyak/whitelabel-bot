@@ -25,6 +25,7 @@ import SpeakerIcon from './assets/speaker';
 import SpeakerPauseIcon from './assets/speakerPause';
 import MsgThumbsUp from './assets/msg-thumbs-up';
 import MsgThumbsDown from './assets/msg-thumbs-down';
+import Button from '@material-ui/core/Button';
 import { MessageItemPropType } from './index.d';
 import { JsonToTable } from '../json-to-table';
 import moment from 'moment';
@@ -84,11 +85,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   };
 
   useEffect(() => {
-    if(searchQuery) {
+    if (searchQuery) {
       handleSearchChange();
     }
-  }, [searchQuery])
-  
+  }, [searchQuery]);
 
   const displayedChoices = searchQuery
     ? filteredChoices
@@ -823,8 +823,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    zIndex: 100
-                  }}>
+                    zIndex: 100,
+                  }}
+                >
                   <TransliterationInput
                     placeholder={
                       t('label.buttons_search_placeholder') || 'Search'
@@ -1174,8 +1175,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    zIndex: 100
-                  }}>
+                    zIndex: 100,
+                  }}
+                >
                   <TransliterationInput
                     placeholder={
                       t('label.buttons_search_placeholder') || 'Search'
