@@ -66,7 +66,8 @@ export const InstallModal: React.FC = () => {
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description">
+        aria-describedby="modal-modal-description"
+      >
         <>
           <Box sx={style}>
             <IconButton
@@ -78,14 +79,16 @@ export const InstallModal: React.FC = () => {
                 right: 8,
                 top: 8,
                 color: (theme) => theme.palette.grey[500],
-              }}>
+              }}
+            >
               <CloseIcon />
             </IconButton>
             <Typography
               id="modal-modal-title"
               variant="h6"
               component="h2"
-              data-testid="install-app-text">
+              data-testid="install-app-text"
+            >
               Install App
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
@@ -98,7 +101,8 @@ export const InstallModal: React.FC = () => {
                 marginTop: '20px',
                 backgroundColor: theme?.primary?.main,
                 color: 'white',
-              }}>
+              }}
+            >
               Install
             </Button>
           </Box>

@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import '@samagra-x/chatui/dist/index.css';
-import 'bootstrap-css-only/css/bootstrap.min.css'
+import 'bootstrap-css-only/css/bootstrap.min.css';
 import { Toaster } from 'react-hot-toast';
 import { useCookies } from 'react-cookie';
 import { useRouter } from 'next/router';
@@ -44,27 +44,30 @@ const App = ({ Component, pageProps }: AppProps) => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
       // already logged in then send to home
       if (localStorage.getItem('auth') && localStorage.getItem('userID')) {
-        console.log("here")
-        router.push(sessionStorage.getItem("path") ?? '/');
+        console.log('here');
+        router.push(sessionStorage.getItem('path') ?? '/');
       }
     } else {
-      if(router.query.navbar){
-        localStorage.setItem("navbar", router.query.navbar as string);
+      if (router.query.navbar) {
+        sessionStorage.setItem('navbar', router.query.navbar as string);
       }
-      sessionStorage.setItem("path", router.asPath);
-      if(router.query.auth && router.query.userId){
+      sessionStorage.setItem('path', router.asPath);
+      if (router.query.auth && router.query.userId) {
         // setCookie('access_token', router.query.auth, { path: '/' });
         localStorage.setItem('auth', router.query.auth as string);
         localStorage.setItem('userID', router.query.userId as string);
-        sessionStorage.removeItem('conversationId')
-      }else if (!localStorage.getItem('auth') || !localStorage.getItem('userID')) {
+        sessionStorage.removeItem('conversationId');
+      } else if (
+        !localStorage.getItem('auth') ||
+        !localStorage.getItem('userID')
+      ) {
         localStorage.clear();
         sessionStorage.clear();
-        removeCookie('access_token', { path: '/' })
+        removeCookie('access_token', { path: '/' });
         router.push('/login');
       }
     }
-  }, [router]);
+  }, [removeCookie, router]);
 
   useEffect(() => {
     handleLoginRedirect();
@@ -73,63 +76,69 @@ const App = ({ Component, pageProps }: AppProps) => {
   function convertUrl(url: string) {
     // Parse the URL
     const urlObject = new URL(url);
-  
+
     // Change the protocol to https
     urlObject.protocol = 'https:';
-  
+
     // Remove the port if it's 443
     if (urlObject.port === '443') {
       urlObject.port = '';
     }
-  
+
     // Return the new URL as a string
     return urlObject.toString();
   }
 
   useEffect(() => {
     const fetchConfig = async () => {
-      fetch(process.env.NEXT_PUBLIC_CONFIG_BASE_URL || '').then((res) => res.json()).then((data) => {
-        console.log("main data",data?.data?.config);
-        const faviconUrl = data?.data?.config?.component?.botDetails?.favicon;
-        const newFaviconUrl = convertUrl(faviconUrl);
-        console.log({newFaviconUrl})
-        var myDynamicManifest = {
-          "short_name": "Bot",
-          "name": "Bot",
-          "icons": [
-            {
-              "src": newFaviconUrl,
-              "sizes": "64x64 32x32 24x24 16x16",
-              "type": "image/x-icon"
-            },
-            {
-              "src": newFaviconUrl,
-              "type": "image/png",
-              "sizes": "192x192"
-            },
-            {
-              "src": newFaviconUrl,
-              "type": "image/png",
-              "sizes": "512x512"
-            }
-          ],
-          "start_url": window?.location?.href || "/",
-          "display": "fullscreen",
-          "theme_color": "black",
-          "background_color": "white"
-        }
-        
-        const stringManifest = JSON.stringify(myDynamicManifest);
-        const blob = new Blob([stringManifest], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(blob);
-        document.getElementById('manifest-file')?.setAttribute('href', manifestURL);
-      }).catch((err) => {
-        console.log(err)
-      })
-    }
+      fetch(process.env.NEXT_PUBLIC_CONFIG_BASE_URL || '')
+        .then((res) => res.json())
+        .then((data) => {
+          console.log('main data', data?.data?.config);
+          const faviconUrl = data?.data?.config?.component?.botDetails?.favicon;
+          const newFaviconUrl = convertUrl(faviconUrl);
+          console.log({ newFaviconUrl });
+          var myDynamicManifest = {
+            short_name: 'Bot',
+            name: 'Bot',
+            icons: [
+              {
+                src: newFaviconUrl,
+                sizes: '64x64 32x32 24x24 16x16',
+                type: 'image/x-icon',
+              },
+              {
+                src: newFaviconUrl,
+                type: 'image/png',
+                sizes: '192x192',
+              },
+              {
+                src: newFaviconUrl,
+                type: 'image/png',
+                sizes: '512x512',
+              },
+            ],
+            start_url: window?.location?.href || '/',
+            display: 'fullscreen',
+            theme_color: 'black',
+            background_color: 'white',
+          };
+
+          const stringManifest = JSON.stringify(myDynamicManifest);
+          const blob = new Blob([stringManifest], {
+            type: 'application/json',
+          });
+          const manifestURL = URL.createObjectURL(blob);
+          document
+            .getElementById('manifest-file')
+            ?.setAttribute('href', manifestURL);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
     fetchConfig();
-  }, [])
-  
+  }, []);
 
   const fetchUser = async () => {
     try {
@@ -144,8 +153,8 @@ const App = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     if (!isAuthenticated) {
       login();
-    }else if(process.env.NEXT_PUBLIC_SHOW_ONBOARDING === 'true'){
-      fetchUser()
+    } else if (process.env.NEXT_PUBLIC_SHOW_ONBOARDING === 'true') {
+      fetchUser();
     }
   }, [isAuthenticated, login]);
 
@@ -154,29 +163,28 @@ const App = ({ Component, pageProps }: AppProps) => {
   }
 
   if (typeof window === 'undefined') return <FullPageLoader loading />;
-  if(isAuthenticated && user && !user?.data?.profile){
+  if (isAuthenticated && user && !user?.data?.profile) {
     return (
       <Provider>
-      <OnBoardingPage setUser={setUser}/>
-      </Provider>
-    )
-  }
-    return (
-      <Provider>
-        <>
-          <div style={{ height: '100%' }}>
-            <Toaster position="top-center" reverseOrder={false} />
-            <FeaturePopup />
-            {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}
-            {localStorage.getItem("navbar") !== "hidden" && <NavBar />}
-            <SafeHydrate>
-              <Component {...pageProps} />
-            </SafeHydrate>
-          </div>
-        </>
+        <OnBoardingPage setUser={setUser} />
       </Provider>
     );
-  
+  }
+  return (
+    <Provider>
+      <>
+        <div style={{ height: '100%' }}>
+          <Toaster position="top-center" reverseOrder={false} />
+          <FeaturePopup />
+          {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}
+          {sessionStorage.getItem('navbar') !== 'hidden' && <NavBar />}
+          <SafeHydrate>
+            <Component {...pageProps} />
+          </SafeHydrate>
+        </div>
+      </>
+    </Provider>
+  );
 };
 
 export default App;

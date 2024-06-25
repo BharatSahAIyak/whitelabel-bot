@@ -322,12 +322,14 @@ const RecorderControl = ({ status, onClick, tapToSpeak = false }) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-        }}>
+        }}
+      >
         <div
           className={`${classPulse}`}
           style={{
             ...customStylesPulse,
-          }}></div>
+          }}
+        ></div>
         <MicIcon
           sx={{
             height: '70%',
@@ -340,12 +342,14 @@ const RecorderControl = ({ status, onClick, tapToSpeak = false }) => {
           className={`${classProcess}`}
           style={{
             ...customStylesProcess,
-          }}></div>
+          }}
+        ></div>
       </button>
       {tapToSpeak && (
         <p
           style={{ color: 'black', fontSize: '13px', marginTop: '4px' }}
-          dangerouslySetInnerHTML={{ __html: t('label.tap_to_speak') }}></p>
+          dangerouslySetInnerHTML={{ __html: t('label.tap_to_speak') }}
+        ></p>
       )}
     </>
   );

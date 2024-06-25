@@ -21,19 +21,18 @@ const deepMerge = (target, ...sources): any => {
 };
 
 const isObject = (item: any) => {
-  return (item && typeof item === 'object' && !Array.isArray(item));
+  return item && typeof item === 'object' && !Array.isArray(item);
 };
 
 const fetchOverrideConfig = async () => {
   try {
-
     let deploymentIdConfig = {
       method: 'get',
       maxBodyLength: Infinity,
       url: `${process.env.NEXT_PUBLIC_CONFIG_BASE_URL}`,
       headers: {
-        'accept': 'application/json'
-      }
+        accept: 'application/json',
+      },
     };
     const deploymentResp = await axios.request(deploymentIdConfig);
 
@@ -49,16 +48,15 @@ const mergeConfiguration = async () => {
   try {
     // const response = await axios.get('URL_TO_FETCH_OVERRIDE_CONFIG');
     overrideConfig = await fetchOverrideConfig();
-  
+
     //overrideConfig = response.data;
   } catch (error) {
     console.error('Error fetching override configuration:', error);
     // Optionally handle error, such as falling back to default configs
   }
 
-  const mergedConfig =await deepMerge({}, localConfig, overrideConfig);
+  const mergedConfig = await deepMerge({}, localConfig, overrideConfig);
 
-
-  return mergedConfig
-}
-export default mergeConfiguration 
+  return mergedConfig;
+};
+export default mergeConfiguration;

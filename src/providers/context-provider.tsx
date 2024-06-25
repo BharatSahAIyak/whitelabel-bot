@@ -80,7 +80,7 @@ const ContextProvider: FC<{
     };
   }, []);
   useEffect(() => {
-    console.log("trigger", {locale})
+    console.log('trigger', { locale });
     //@ts-ignore
     if (config?.translation && locale) {
       onLocaleUpdate();
@@ -89,7 +89,7 @@ const ContextProvider: FC<{
 
   const onLocaleUpdate = useCallback(() => {
     //@ts-ignore
-    console.log("trigger",{trans:config?.translation,locale})
+    console.log('trigger', { trans: config?.translation, locale });
     //@ts-ignore
     setLocaleMsgs(config?.translation?.[locale]);
   }, [config, locale]);
@@ -179,7 +179,7 @@ const ContextProvider: FC<{
   }, [audioElement, config?.component?.botDetails?.audioPlayback]);
 
   useEffect(() => {
-    if(!isOnline){
+    if (!isOnline) {
       setMessages((prev) => [
         ...prev,
         {
@@ -195,8 +195,7 @@ const ContextProvider: FC<{
         },
       ]);
     }
-  }, [isOnline])
-  
+  }, [isOnline]);
 
   const checkInternetConnection = () => {
     if (!navigator.onLine) {
@@ -260,7 +259,6 @@ const ContextProvider: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStorage.getItem('userID')]);
 
-
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
       console.log('updatemsgstate:', msg);
@@ -319,9 +317,10 @@ const ContextProvider: FC<{
                   orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
                   userId: localStorage.getItem('userID') || '',
                   phoneNumber: localStorage.getItem('phoneNumber') || '',
-                  conversationId: sessionStorage.getItem('conversationId') || '',
+                  conversationId:
+                    sessionStorage.getItem('conversationId') || '',
                   messageId: msg.messageId.replyId,
-                  text: "",
+                  text: '',
                   timeTaken: 0,
                 });
               } catch (err) {
@@ -427,8 +426,13 @@ const ContextProvider: FC<{
   console.log('config:', { config });
   //@ts-ignore
   const sendMessage = useCallback(
-    async (textToSend: string, textToShow: string, media: any, isVisibile = true) => {
-      if(!textToShow) textToShow = textToSend;
+    async (
+      textToSend: string,
+      textToShow: string,
+      media: any,
+      isVisibile = true
+    ) => {
+      if (!textToShow) textToShow = textToSend;
       if (!sessionStorage.getItem('conversationId')) {
         const cId = uuidv4();
         console.log('convId', cId);
@@ -455,12 +459,13 @@ const ContextProvider: FC<{
           payload: {
             text: textToSend?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
             metaData: {
+              phoneNumber: localStorage.getItem('phoneNumber') || '',
               latitude: sessionStorage.getItem('latitude'),
               longitude: sessionStorage.getItem('longitude'),
               city: sessionStorage.getItem('city'),
               state: sessionStorage.getItem('state'),
               ip: sessionStorage.getItem('ip'),
-            }
+            },
           },
           tags: JSON.parse(sessionStorage.getItem('tags') || '[]') || [],
           from: {
@@ -470,7 +475,7 @@ const ContextProvider: FC<{
             Id: messageId,
             channelMessageId: sessionStorage.getItem('conversationId'),
           },
-        } as Partial<XMessage>
+        } as Partial<XMessage>,
       });
 
       setStartTime(Date.now());
@@ -486,9 +491,14 @@ const ContextProvider: FC<{
           //console.log('mssgs:',messages)
           //@ts-ignore
           setMessages((prev: any) => [
-            ...prev.map((prevMsg: any) => ({ ...prevMsg, disabled: true })),
+            ...prev.map((prevMsg: any) => ({
+              ...prevMsg,
+              disabled: true,
+            })),
             {
-              text: textToShow?.replace(/^\s+|\s+$/g, '')?.replace(/^Guided:/, ''),
+              text: textToShow
+                ?.replace(/^\s+|\s+$/g, '')
+                ?.replace(/^Guided:/, ''),
               position: 'right',
               payload: { textToShow },
               time: Date.now(),
@@ -521,7 +531,9 @@ const ContextProvider: FC<{
   const fetchIsDown = useCallback(async () => {
     try {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_BFF_API_URL}/health/${config?.component?.botDetails?.healthCheckTime || 5}`
+        `${process.env.NEXT_PUBLIC_BFF_API_URL}/health/${
+          config?.component?.botDetails?.healthCheckTime || 5
+        }`
       );
       const status = res.data.status;
       console.log('hie', status);
@@ -647,8 +659,8 @@ const ContextProvider: FC<{
                 },
                 messageId: {
                   channelMessageId: sessionStorage.getItem('conversationId'),
-                }
-              } as Partial<XMessage>
+                },
+              } as Partial<XMessage>,
             });
           }
         } else {
@@ -663,7 +675,14 @@ const ContextProvider: FC<{
       clearTimeout(secondTimer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDown, isMsgReceiving, loading, t, config?.component?.botDetails?.timer1, config?.component?.botDetails?.timer2]);
+  }, [
+    isDown,
+    isMsgReceiving,
+    loading,
+    t,
+    config?.component?.botDetails?.timer1,
+    config?.component?.botDetails?.timer2,
+  ]);
 
   const values = useMemo(
     () => ({
@@ -738,9 +757,8 @@ const ContextProvider: FC<{
   if (!config)
     return <FullPageLoader loading label="Loading configuration.." />;
 
-  if (showWelcomePage)
-    return <WelcomePage config={config}/>;
-    
+  if (showWelcomePage) return <WelcomePage config={config} />;
+
   return (
     //@ts-ignore
     <AppContext.Provider value={values}>{children}</AppContext.Provider>

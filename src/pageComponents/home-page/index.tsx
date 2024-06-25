@@ -83,6 +83,7 @@ const HomePage: NextPage = () => {
     sendMessage(`Guided: ${t('label.' + type)}`);
   };
 
+
   if (context?.isDown) {
     return <DowntimePage />;
   } else
@@ -106,6 +107,7 @@ const HomePage: NextPage = () => {
               <div
                 className={styles.title}
                 dangerouslySetInnerHTML={{ __html: t('label.ask_me') }}></div>
+              
               {(config?.showKalia ||
                 config?.showWeatherAdvisory ||
                 config?.showPlantProtection ||
@@ -166,7 +168,8 @@ const HomePage: NextPage = () => {
                       marginTop: '10px',
                       width: '100%',
                       maxWidth: '500px',
-                    }}>
+                    }}
+                  >
                     {config?.showSchemes && (
                       <div
                         className={styles.imgBtn}
@@ -185,7 +188,6 @@ const HomePage: NextPage = () => {
                         className={styles.imgBtn}
                         onClick={() => {
                           context?.setKaliaClicked((props: boolean) => !props);
-                        }}>
                         <p>{t('label.kalia_status')}</p>
                         <img
                           src={config?.kaliaStatusImg || kaliaStatusImg?.src}
@@ -202,7 +204,6 @@ const HomePage: NextPage = () => {
               {config?.showMic && (
                 <div
                   className={styles.voiceRecorder}
-                  style={{ height: micHeight, width: micWidth }}>
                   <RenderVoiceRecorder
                     setInputMsg={setInputMsg}
                     tapToSpeak={config?.showTapToSpeakText}

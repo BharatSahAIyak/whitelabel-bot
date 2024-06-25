@@ -151,7 +151,10 @@ export function OTPInput({
   };
 
   return (
-    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }} data-testid="otp-input-field">
+    <Box
+      sx={{ display: 'flex', gap: 2, alignItems: 'center' }}
+      data-testid="otp-input-field"
+    >
       {new Array(length).fill(null).map((_, index) => (
         <React.Fragment key={index}>
           <BaseInput
@@ -159,7 +162,7 @@ export function OTPInput({
             slots={{
               input: InputElement,
             }}
-           aria-label={`Digit ${index + 1} of OTP`}
+            aria-label={`Digit ${index + 1} of OTP`}
             slotProps={{
               input: {
                 ref: (ele) => {

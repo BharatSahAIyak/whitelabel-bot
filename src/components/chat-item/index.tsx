@@ -18,7 +18,7 @@ const ChatItem: React.FC<ChatItemPropsType> = ({
   date,
   conversationId,
   deleteConversationById,
-  downloadShareHandler
+  downloadShareHandler,
 }) => {
   const context = useContext(AppContext);
   const t = useLocalization();
@@ -64,18 +64,25 @@ const ChatItem: React.FC<ChatItemPropsType> = ({
     <>
       {!isConversationDeleted && (
         <div className={styles.chatContainer}>
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }} onClick={handleChatPage}>
-            <div className={styles.sessionContainer} >
+          <div
+            style={{ display: 'flex', flexDirection: 'column', flex: 1 }}
+            onClick={handleChatPage}
+          >
+            <div className={styles.sessionContainer}>
               <div className={styles.messageIconContainer}>
                 <Image src={messageIcon} alt="messageIcon" />
               </div>
               <div className={styles.name}>{name}</div>
             </div>
-            <div style={{ fontSize: '11px' }}>
-              {formatDate(date)}
-            </div>
+            <div style={{ fontSize: '11px' }}>{formatDate(date)}</div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             {/* <div
               onClick={deleteConversation}
               className={styles.deleteIconContainer}>

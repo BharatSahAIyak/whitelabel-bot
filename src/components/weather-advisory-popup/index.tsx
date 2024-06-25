@@ -34,7 +34,7 @@ const WeatherAdvisoryPopup = (props: any) => {
         {
           text: text,
           language: localStorage.getItem('locale'),
-          disableTelemetry: true
+          disableTelemetry: true,
         },
         {
           headers: {
@@ -55,6 +55,7 @@ const WeatherAdvisoryPopup = (props: any) => {
   };
 
   const theme = useColorPalates();
+
   return (
     <div>
       <Modal
@@ -69,7 +70,8 @@ const WeatherAdvisoryPopup = (props: any) => {
             style: { backgroundColor: 'rgba(0, 0, 0, 0.8)' },
             timeout: 300,
           },
-        }}>
+        }}
+      >
         <Fade in={open}>
           <div className={styles.container}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -79,7 +81,8 @@ const WeatherAdvisoryPopup = (props: any) => {
                   color: '#023035',
                   fontWeight: 600,
                   fontSize: '20px',
-                }}>
+                }}
+              >
                 {t('label.crop_advisory')} - {props?.cropName}
               </p>
               <CloseRoundedIcon onClick={handleClose} />
@@ -90,18 +93,31 @@ const WeatherAdvisoryPopup = (props: any) => {
                 height: '1px',
                 borderColor: 'black',
                 backgroundColor: '#B4B9C5',
-              }}></div>
-            <div className="text-center p-3" style={{maxHeight: '400px', overflow: 'auto', paddingRight: '10px'}}>
-              <List dense>
-              <Typography
-                color="black"
-                style={{
-                  wordBreak: 'break-word',
-                  fontSize: '16px',
-                  fontWeight: 500,
-                }}>
-                {props?.advisory?.descriptor?.long_desc}
-              </Typography>
+              }}
+            ></div>
+            <div
+              className="p-3"
+              style={{
+                maxHeight: '400px',
+                overflow: 'auto',
+                paddingRight: '10px',
+              }}
+            >
+              <List>
+                <Typography
+                  color="black"
+                  style={{
+                    wordBreak: 'break-word',
+                    fontSize: '16px',
+                    fontWeight: 500,
+                  }}
+                >
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: `&#x2022; ${props?.advisory?.descriptor?.long_desc?.replaceAll('\n', '<br/><br/>&#x2022; ')}`,
+                    }}
+                  />
+                </Typography>
                 {/* {weatherDetails.map((item) => (
                   <div
                     style={{
@@ -135,14 +151,16 @@ const WeatherAdvisoryPopup = (props: any) => {
                   fontWeight: 600,
                   display: 'flex',
                   alignItems: 'center',
-                }}>
+                }}
+              >
                 <span
                   className="rounded-circle"
                   style={{
                     width: '20px',
                     height: '20px',
                     marginRight: '4px',
-                  }}>
+                  }}
+                >
                   <CheckCircleRoundedIcon
                     color="success"
                     style={{ fontSize: '16px' }}
@@ -151,35 +169,41 @@ const WeatherAdvisoryPopup = (props: any) => {
                 {t('label.verified_advisory')}
               </p>
               <Button
-              onClick={async () => {
-                const url = await fetchAudio(props?.advisory?.descriptor?.long_desc);
-                const audio = new Audio(url);
-                audio.playbackRate = config?.component?.botDetails?.audioPlayback || 1.5;
-                audio.addEventListener('ended', () => {
-                  setAudioElement(null);
-                });
-                audio.play().then(() => {
-                  console.log('Audio played:', url);
-                  // Update the current audio to the new audio element
-                  //@ts-ignore
-                  setAudioElement(audio);
-                })
-                .catch((error) => {
-                  setAudioElement(null);
-                  toast.error(t('message.no_link'));
-                  console.error('Error playing audio:', error);
-                });
-              }}
+                onClick={async () => {
+                  const url = await fetchAudio(
+                    props?.advisory?.descriptor?.long_desc
+                  );
+                  const audio = new Audio(url);
+                  audio.playbackRate =
+                    config?.component?.botDetails?.audioPlayback || 1.5;
+                  audio.addEventListener('ended', () => {
+                    setAudioElement(null);
+                  });
+                  audio
+                    .play()
+                    .then(() => {
+                      console.log('Audio played:', url);
+                      // Update the current audio to the new audio element
+                      //@ts-ignore
+                      setAudioElement(audio);
+                    })
+                    .catch((error) => {
+                      setAudioElement(null);
+                      toast.error(t('message.no_link'));
+                      console.error('Error playing audio:', error);
+                    });
+                }}
                 fullWidth
                 variant="contained"
                 style={{
                   marginTop: '30px',
                   backgroundColor: `${theme.primary.dark}`,
-                  color: theme.primary.main,
+                  color: theme.primary.contrastText,
                   padding: '8px 0',
-                  textTransform : "none"
+                  textTransform: 'none',
                 }}
-                startIcon={<VolumeUpIcon />}>
+                startIcon={<VolumeUpIcon />}
+              >
                 {t('label.play_advisory')}
               </Button>
             </div>

@@ -74,7 +74,7 @@ const Navbar: React.FC = () => {
   }, [context, t, router]);
 
   console.log({ config, path: router.pathname });
-  if(router.pathname === '/login' || router.pathname === '/otp') return null;
+  if (router.pathname === '/login' || router.pathname === '/otp') return null;
   return (
     <>
       <AppBar
@@ -84,18 +84,19 @@ const Navbar: React.FC = () => {
           boxShadow: 'none',
           borderBottom: '1px solid lightgray',
           height: '80px',
-          fontFamily: 'NotoSans-Regular'
-        }}>
+          fontFamily: 'NotoSans-Regular',
+        }}
+      >
         <Toolbar
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             height: '100%',
-          }}>
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            
             {router.pathname !== '/chat' &&
-            router.pathname !== '/weather' && 
+              router.pathname !== '/weather' &&
               showHamburgerMenu && (
                 <IconButton
                   data-testid="navbar-hamburger-menu"
@@ -103,8 +104,13 @@ const Navbar: React.FC = () => {
                   edge="start"
                   color="primary"
                   aria-label="open drawer"
-                  sx={{ mr: 2, width: '50px', height: '50px' }}
-                  onClick={toggleSidebar}>
+                  sx={{
+                    mr: 2,
+                    width: '50px',
+                    height: '50px',
+                  }}
+                  onClick={toggleSidebar}
+                >
                   <MenuIcon sx={{ fontSize: '50px' }} />
                 </IconButton>
               )}
@@ -115,7 +121,8 @@ const Navbar: React.FC = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexDirection: 'row',
-                }}>
+                }}
+              >
                 <IconButton
                   color="primary"
                   size="large"
@@ -127,7 +134,8 @@ const Navbar: React.FC = () => {
                     height: '28px',
                     margin: 0,
                   }}
-                  onClick={() => router.push('/')}>
+                  onClick={() => router.push('/')}
+                >
                   <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
                 </IconButton>
               </div>
@@ -139,7 +147,8 @@ const Navbar: React.FC = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexDirection: 'row',
-                }}>
+                }}
+              >
                 <IconButton
                   color="primary"
                   size="large"
@@ -151,14 +160,21 @@ const Navbar: React.FC = () => {
                     height: '28px',
                     margin: 0,
                   }}
-                  onClick={newChatHandler}>
+                  onClick={newChatHandler}
+                >
                   <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
                 </IconButton>
                 <Typography
                   data-testid="navbar-new-chat"
                   variant="body1"
                   color={newChatButtonColor ?? 'black'}
-                  sx={{ fontSize: '26px', marginLeft: '5px', fontFamily: 'NotoSans-Medium', fontWeight: '500' }}>
+                  sx={{
+                    fontSize: '26px',
+                    marginLeft: '5px',
+                    fontFamily: 'NotoSans-Medium',
+                    fontWeight: '500',
+                  }}
+                >
                   {t('label.new_chat')}
                 </Typography>
               </div>
@@ -175,7 +191,8 @@ const Navbar: React.FC = () => {
                   edge="start"
                   aria-label="home"
                   style={{ fontSize: '2rem', height: '48px' }}
-                  onClick={() => router.push('/')}>
+                  onClick={() => router.push('/')}
+                >
                   <HomeIcon sx={{ fontSize: '50px' }} />
                 </IconButton>
               )}
@@ -188,7 +205,8 @@ const Navbar: React.FC = () => {
               transform: 'translateX(-50%)',
               textAlign: 'center',
               // marginTop: '20px',
-            }}>
+            }}
+          >
             {showCenterLogo && (
               <div>
                 <img

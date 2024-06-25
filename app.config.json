@@ -24,7 +24,7 @@
       "showWeatherAdvisory": false,
       "showWeatherPage": false,
       "showPlantProtection": false,
-      "showSchemes": true,
+      "showSchemes": false,
       "weatherAdvisoryImg": "",
       "plantProtectionImg": "",
       "schemesImg": "",
@@ -149,8 +149,8 @@
       "downloadButtonColor": "#1e6231"
     }
   },
-  "translation":{
-    "en":{
+  "translation": {
+    "en": {
       "label.or": "or",
       "label.back": "Back",
       "label.dial": "Dial",
@@ -296,9 +296,11 @@
       "label.wind_direction": "Wind Direction",
       "label.wind_speed": "Wind Speed",
       "label.humidity": "Humidity",
-      "label.weather_forecast": "Forecast for next 4 days",
+      "label.weather_forecast": "Next 4 days forecast",
+      "label.high": "High",
+      "label.low": "Low",
       "label.crop_advisory": "Crop Advisory",
-      "label.todays_crop_advisory": "Today's Crop Advisory",
+      "label.todays_advisory": "Today's Advisory",
       "label.verified_advisory": "Verified Advisory",
       "label.play_advisory": "Click here to listen"
     }

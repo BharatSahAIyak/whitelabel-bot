@@ -5,7 +5,7 @@ import { useLocalization } from '../../hooks';
 import { Button, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-
+import Image from 'next/image';
 const UserTypeSelector = (props: any) => {
   const t = useLocalization();
   const theme = useColorPalates();
@@ -22,14 +22,16 @@ const UserTypeSelector = (props: any) => {
         position: 'relative',
         overflow: 'hidden',
         fontWeight: '500',
-      }}>
+      }}
+    >
       <div
         style={{
           position: 'absolute',
           top: '16px',
           left: 'calc(100% - 117px)',
           zIndex: 10,
-        }}>
+        }}
+      >
         <LanguagePicker />
       </div>
       <div
@@ -42,7 +44,8 @@ const UserTypeSelector = (props: any) => {
           borderTopLeftRadius: '30% 5%', // Adjust the curvature
           borderTopRightRadius: '30% 5%',
           overflow: 'hidden', // Ensures content aligns with the curved edges
-        }}>
+        }}
+      >
         <div style={{ padding: '0 10px 10px 10px' }}>
           <p
             data-testid="user-select-type-title"
@@ -51,7 +54,8 @@ const UserTypeSelector = (props: any) => {
               marginBottom: '0px',
               fontSize: '24px',
               color: '#51586B',
-            }}>
+            }}
+          >
             {t('label.who_are_you')}
           </p>
           <div
@@ -61,7 +65,8 @@ const UserTypeSelector = (props: any) => {
               alignItems: 'center',
               marginTop: '20px',
               // height: '180px'
-            }}>
+            }}
+          >
             {/* Two cards/buttons */}
             <div
               data-testid="user-select-type-button-1"
@@ -72,19 +77,24 @@ const UserTypeSelector = (props: any) => {
                 }));
               }}
               style={{
-                backgroundColor: data?.userType === 'user1' ? theme?.primary?.main : '#F4F4F4',
+                backgroundColor:
+                  data?.userType === 'user1' ? theme?.primary?.main : '#F4F4F4',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 borderRadius: '16px',
                 padding: '8px',
                 width: '40%',
                 height: '120px',
-                color: data?.userType === 'user1' ? theme?.primary?.contrastText : 'black',
+                color:
+                  data?.userType === 'user1'
+                    ? theme?.primary?.contrastText
+                    : 'black',
                 // display: 'flex',
                 // flexDirection: 'column',
                 // justifyContent: 'center',
                 // alignItems: 'center',
                 textAlign: 'center',
-              }}>
+              }}
+            >
               <img
                 src={config?.user1Image}
                 alt="user1"
@@ -102,19 +112,24 @@ const UserTypeSelector = (props: any) => {
                 }));
               }}
               style={{
-                backgroundColor: data?.userType === 'user2' ? theme?.primary?.main : '#F4F4F4',
+                backgroundColor:
+                  data?.userType === 'user2' ? theme?.primary?.main : '#F4F4F4',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 borderRadius: '16px',
                 padding: '8px',
                 width: '40%',
                 height: '120px',
-                color: data?.userType === 'user2' ? theme?.primary?.contrastText : 'black',
+                color:
+                  data?.userType === 'user2'
+                    ? theme?.primary?.contrastText
+                    : 'black',
                 // display: 'flex',
                 // flexDirection: 'column',
                 // justifyContent: 'center',
                 // alignItems: 'center',
                 textAlign: 'center',
-              }}>
+              }}
+            >
               <img
                 src={config?.user2Image}
                 alt="user2"
@@ -129,10 +144,11 @@ const UserTypeSelector = (props: any) => {
             data-testid="user-select-name-title"
             style={{
               marginTop: '16px',
-              marginBottom: "0px",
+              marginBottom: '0px',
               fontSize: '24px',
               color: '#51586B',
-            }}>
+            }}
+          >
             {t('label.enter_your_name')}
           </p>
           <div
@@ -143,7 +159,8 @@ const UserTypeSelector = (props: any) => {
               alignItems: 'center',
               // marginTop: '20px',
               // height: '180px'
-            }}>
+            }}
+          >
             <TextField
               data-testid="user-select-name-input"
               margin="normal"
@@ -164,7 +181,7 @@ const UserTypeSelector = (props: any) => {
               type="submit"
               fullWidth
               variant="contained"
-              disabled={(!data?.name) || (!data?.userType)}
+              disabled={!data?.name || !data?.userType}
               sx={{
                 textTransform: 'none',
                 mt: 2,
@@ -182,13 +199,21 @@ const UserTypeSelector = (props: any) => {
                 }));
                 props?.handleNext();
               }}
-              endIcon={<ArrowForwardIcon />}>
+              endIcon={<ArrowForwardIcon />}
+            >
               {t('label.continue')}
             </Button>
           </div>
         </div>
       </div>
-      <div style={{ height: '400px', overflow: 'hidden', objectFit: 'cover' }} data-testid="user-select-bg-image">
+      <div
+        style={{
+          height: '400px',
+          overflow: 'hidden',
+          objectFit: 'cover',
+        }}
+        data-testid="user-select-bg-image"
+      >
         <img src={config?.backgroundImage} alt="bgImage" width={'100%'} />
       </div>
     </div>

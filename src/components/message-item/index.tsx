@@ -202,7 +202,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     }, 4001);
                   }
                 }
-              }}>
+              }}
+            >
               <div
                 className="onHover"
                 style={{
@@ -212,9 +213,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     content?.data?.position === 'right'
                       ? 'white'
                       : optionDisabled
-                      ? 'var(--font)'
-                      : 'var(--secondarygreen)',
-                }}>
+                        ? 'var(--font)'
+                        : 'var(--secondarygreen)',
+                }}
+              >
                 <div>{choice?.text}</div>
                 <div style={{ marginLeft: 'auto' }}>
                   <RightIcon
@@ -399,7 +401,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   useEffect(() => {
     console.log({ popupActive, msg: content?.text });
-  }, [popupActive]);
+  }, [popupActive, content?.text]);
 
   switch (type) {
     case 'loader':
@@ -411,8 +413,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             position: 'relative',
             maxWidth: '50vh',
             fontFamily: 'NotoSans-Medium',
-          }}>
+          }}
+        >
           <Bubble
+            id={content?.data?.messageId || uuidv4()}
             type="text"
             style={
               content?.data?.position === 'right'
@@ -429,66 +433,103 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       : secondaryColor,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                     borderRadius: '15px 15px 15px 0px',
-                    padding: content?.data?.card ? '0':'10px, 15px, 10px, 15px',
+                    padding: content?.data?.card
+                      ? '0'
+                      : '10px, 15px, 10px, 15px',
                     gap: '10px',
                   }
-            }>
+            }
+          >
             {content?.data?.card ? (
               <div>
-                {content?.data?.card?.banner && <div
-                  style={{
-                    background: content?.data?.card?.banner?.color ?? '#EDEDF1',
-                    padding: '10px',
-                    fontWeight: 600,
-                    color: "black",
-                    textAlign: 'center',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: '15px 15px 0 0',
-                    borderBottom: '1px solid black',
-                    fontSize: '18px'
-                  }}>
-                  {content?.data?.card?.banner?.logo && <img src={content?.data?.card?.banner?.logo} alt="" height="35px" style={{flex: 0.12}} />}
-                  <div style={{flex: 1, marginRight: content?.data?.card?.banner?.logo ? '30px' : '0'}}>{content?.data?.card?.banner?.title}</div>
-                </div>}
+                {content?.data?.card?.banner && (
+                  <div
+                    style={{
+                      background:
+                        content?.data?.card?.banner?.color ?? '#EDEDF1',
+                      padding: '10px',
+                      fontWeight: 600,
+                      color: 'black',
+                      textAlign: 'center',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: '15px 15px 0 0',
+                      borderBottom: '1px solid black',
+                      fontSize: '18px',
+                    }}
+                  >
+                    {content?.data?.card?.banner?.logo && (
+                      <img
+                        src={content?.data?.card?.banner?.logo}
+                        alt=""
+                        height="35px"
+                        style={{ flex: 0.12 }}
+                      />
+                    )}
+                    <div
+                      style={{
+                        flex: 1,
+                        marginRight: content?.data?.card?.banner?.logo
+                          ? '30px'
+                          : '0',
+                      }}
+                    >
+                      {content?.data?.card?.banner?.title}
+                    </div>
+                  </div>
+                )}
                 <div
                   style={{
                     background: content?.data?.card?.banner?.color ?? '#EDEDF1',
                     padding: '10px',
                     fontWeight: 600,
-                    color: "black",
+                    color: 'black',
                     textAlign: 'center',
                     // borderRadius: '15px 15px 0 0'
-                  }}>
+                  }}
+                >
                   <div>{content?.data?.card?.header?.title}</div>
                   <div>{content?.data?.card?.header?.description}</div>
                 </div>
                 <div>
-                  {content?.data?.card?.content?.cells?.map((cell: any) => {
-                    return (
-                      <div
-                        style={{
-                          border: '1px solid #EDEDF1',
-                          padding: '10px',
-                          textAlign: 'center',
-                        }}>
+                  {content?.data?.card?.content?.cells?.map(
+                    (cell: any, index: number) => {
+                      return (
                         <div
+                          key={index}
                           style={{
-                            color: theme?.primary?.main,
-                          }}>
-                          <RichText content={cell?.header} />
+                            border: '1px solid #EDEDF1',
+                            padding: '10px',
+                            textAlign: 'center',
+                          }}
+                        >
+                          <div
+                            style={{
+                              color: theme?.primary?.main,
+                            }}
+                          >
+                            <RichText content={cell?.header} />
+                          </div>
+                          <div
+                            style={{
+                              color: 'var(--font)',
+                            }}
+                          >
+                            <RichText content={cell?.footer} />
+                          </div>
                         </div>
-                        <div style={{ color: 'var(--font)' }}>
-                          <RichText content={cell?.footer} />
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    }
+                  )}
                 </div>
                 {content?.data?.card?.footer && (
                   <div
-                    style={{ padding: '20px', borderTop: '1px solid #EDEDF1' }}>
+                    style={{
+                      padding: '20px',
+                      borderTop: '1px solid #EDEDF1',
+                    }}
+                  >
                     <div>
                       <RichText content={content?.data?.card?.footer?.title} />
                     </div>
@@ -509,7 +550,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     content?.data?.position === 'right'
                       ? 'var(--font)'
                       : contrastText,
-                }}>
+                }}
+              >
                 {content?.text}{' '}
                 {content?.data?.position === 'right'
                   ? null
@@ -523,7 +565,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           : 'yellow',
                       fontSize: '12px',
                       fontWeight: 'normal',
-                    }}>
+                    }}
+                  >
                     <br></br>
                     <span>messageId: {content?.data?.messageId}</span>
                     <br></br>
@@ -542,7 +585,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               style={{
                 display: 'flex',
                 justifyContent: 'flex-end',
-              }}>
+              }}
+            >
               <span
                 style={{
                   color:
@@ -550,7 +594,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       ? 'var(--font)'
                       : contrastText,
                   fontSize: '12px',
-                }}>
+                }}
+              >
                 {moment(content?.data?.timestamp).format('hh:mma ')}
               </span>
             </div>
@@ -561,7 +606,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 onClick={() => window?.location?.reload()}
                 style={{
                   border: `2px solid ${secondaryColor}`,
-                }}>
+                }}
+              >
                 Refresh
               </button>
             </div>
@@ -573,7 +619,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   position: 'relative',
                   top: '-10px',
                   justifyContent: 'space-between',
-                }}>
+                }}
+              >
                 {config?.allowTextToSpeech && (
                   <div style={{ display: 'flex' }}>
                     <div
@@ -597,7 +644,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                               filter: 'grayscale(0%)',
                               border: `1px solid ${theme?.primary?.main}`,
                             }
-                      }>
+                      }
+                    >
                       {context?.clickedAudioUrl === content?.data?.audio_url ? (
                         !context?.audioPlaying ? (
                           <SpeakerIcon color={theme?.primary?.main} />
@@ -619,7 +667,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           alignItems: 'flex-end',
                           margin: '0 1px 0 0',
                           padding: '0 5px',
-                        }}>
+                        }}
+                      >
                         {t('message.speaker')}
                       </p>
                     </div>
@@ -632,7 +681,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         className={styles.msgFeedbackIcons}
                         style={{
                           border: `1px solid ${theme?.primary?.main}`,
-                        }}>
+                        }}
+                      >
                         <div
                           style={{
                             display: 'flex',
@@ -645,14 +695,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                               like: 1,
                               msgId: content?.data?.messageId,
                             })
-                          }>
+                          }
+                        >
                           <MsgThumbsUp fill={reaction === 1} width="20px" />
                           <p
                             style={{
                               fontSize: '12px',
                               fontFamily: 'NotoSans-Bold',
                               margin: 0,
-                            }}>
+                            }}
+                          >
                             {t('label.helpful')}
                           </p>
                         </div>
@@ -662,7 +714,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             width: '1px',
                             backgroundColor: theme?.primary?.main,
                             margin: '6px 0',
-                          }}></div>
+                          }}
+                        ></div>
 
                         <div
                           style={{
@@ -676,14 +729,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                               like: -1,
                               msgId: content?.data?.messageId,
                             })
-                          }>
+                          }
+                        >
                           <MsgThumbsDown fill={reaction === -1} width="20px" />
                           <p
                             style={{
                               fontSize: '12px',
                               fontFamily: 'NotoSans-Bold',
                               margin: 0,
-                            }}>
+                            }}
+                          >
                             {t('label.not_helpful')}
                           </p>
                         </div>
@@ -708,10 +763,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 bgColor="transparent"
                 title={content?.data?.choices?.header}
                 titleColor="var(--font)"
-                titleSize="16px">
-                {displayedChoices.map((item: any) => {
+                titleSize="16px"
+              >
+                {displayedChoices.map((item: any, index: number) => {
                   return (
                     <div
+                      key={index}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -723,29 +780,35 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         fontWeight: '500',
                         cursor: 'pointer',
                         borderBottom: '2px solid #DDDDDD',
-                        textAlign: 'center'
+                        textAlign: 'center',
                       }}
                       onClick={() => {
                         setPopupActive(false);
                         if (item?.showTextInput) {
                           context?.setShowInputBox(true);
                           context?.sendMessage(item?.key, item?.text);
-                        }else if(item?.action === "home"){
+                        } else if (item?.action === 'home') {
                           const newConversationId = uuidv4();
-                          sessionStorage.setItem('conversationId', newConversationId);
+                          sessionStorage.setItem(
+                            'conversationId',
+                            newConversationId
+                          );
                           sessionStorage.removeItem('tags');
                           context?.setShowInputBox(true);
-                          if (context?.audioElement) context?.audioElement.pause();
-                          if (context?.setAudioPlaying) context?.setAudioPlaying(false);
+                          if (context?.audioElement)
+                            context?.audioElement.pause();
+                          if (context?.setAudioPlaying)
+                            context?.setAudioPlaying(false);
                           context?.setConversationId(newConversationId);
                           context?.setMessages([]);
                           context?.setIsMsgReceiving(false);
                           context?.setLoading(false);
                           router.push('/');
-                        }else{
+                        } else {
                           context?.sendMessage(item?.key, item?.text);
                         }
-                      }}>
+                      }}
+                    >
                       {item.text}
                     </div>
                   );
@@ -796,7 +859,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               style={{
                 height: popupActive ? '250px' : '0px',
                 width: '100vw',
-              }}></div>
+              }}
+            ></div>
           )}
         </div>
       );
@@ -811,7 +875,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 width: '40px',
                 marginRight: '4px',
                 textAlign: 'center',
-              }}></div>
+              }}
+            ></div>
           )}
           <Bubble type="image">
             <div style={{ padding: '7px' }}>
@@ -821,12 +886,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'self-end',
-                }}>
+                }}
+              >
                 <span
                   style={{
                     color: contrastText,
                     fontSize: '10px',
-                  }}>
+                  }}
+                >
                   {moment(content?.data?.timestamp).format(
                     'hh:mm A DD/MM/YYYY'
                   )}
@@ -848,7 +915,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 width: '40px',
                 marginRight: '4px',
                 textAlign: 'center',
-              }}></div>
+              }}
+            ></div>
           )}
           <Bubble type="image">
             <div style={{ padding: '7px' }}>
@@ -858,12 +926,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'self-end',
-                }}>
+                }}
+              >
                 <span
                   style={{
                     color: contrastText,
                     fontSize: '10px',
-                  }}>
+                  }}
+                >
                   {moment(content?.data?.timestamp).format(
                     'hh:mm A DD/MM/YYYY'
                   )}
@@ -888,18 +958,21 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 src={`https://www.youtube.com/embed/` + videoId}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen></iframe>
+                allowFullScreen
+              ></iframe>
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'self-end',
-                }}>
+                }}
+              >
                 <span
                   style={{
                     color: contrastText,
                     fontSize: '10px',
-                  }}>
+                  }}
+                >
                   {moment(content?.data?.timestamp).format(
                     'hh:mm A DD/MM/YYYY'
                   )}
@@ -923,7 +996,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       color: 'var(--font)',
                       fontSize: '12px',
                       fontWeight: 'normal',
-                    }}>
+                    }}
+                  >
                     <br></br>
                     <span>messageId: {content?.data?.messageId}</span>
                     <br></br>
@@ -951,8 +1025,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             position: 'relative',
             maxWidth: '90vw',
             fontFamily: 'NotoSans-Regular',
-          }}>
+          }}
+        >
           <Bubble
+            id={content?.data?.messageId || uuidv4()}
             type="text"
             style={
               content?.data?.position === 'right'
@@ -970,10 +1046,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     padding: '10px, 15px, 10px, 15px',
                     gap: '10px',
                   }
-            }>
+            }
+          >
             <div
               className={styles.tableContainer}
-              style={{ overflowX: 'scroll' }}>
+              style={{ overflowX: 'scroll' }}
+            >
               {
                 <JsonToTable
                   json={parseWeatherJson(JSON.parse(content?.text)?.table)}
@@ -996,7 +1074,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   content?.data?.position === 'right'
                     ? contrastText
                     : 'var(--font)',
-              }}>
+              }}
+            >
               {`\n` + JSON.parse(content?.text)?.generalAdvice ||
                 '' + `\n\n` + JSON.parse(content?.text)?.buttonDescription ||
                 ''}
@@ -1010,7 +1089,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     color: 'var(--font)',
                     fontSize: '12px',
                     fontWeight: 'normal',
-                  }}>
+                  }}
+                >
                   <br></br>
                   <span>messageId: {content?.data?.messageId}</span>
                   <br></br>
@@ -1034,10 +1114,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 bgColor="transparent"
                 title={content?.data?.choices?.header}
                 titleColor="var(--font)"
-                titleSize="16px">
-                {displayedChoices.map((item: any) => {
+                titleSize="16px"
+              >
+                {displayedChoices.map((item: any, index: number) => {
                   return (
                     <div
+                      key={index}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -1049,29 +1131,35 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         fontWeight: '500',
                         cursor: 'pointer',
                         borderBottom: '2px solid #DDDDDD',
-                        textAlign: 'center'
+                        textAlign: 'center',
                       }}
                       onClick={() => {
                         setPopupActive(false);
                         if (item?.showTextInput) {
                           context?.setShowInputBox(true);
                           context?.sendMessage(item?.key, item?.text);
-                        }else if(item?.action === "home"){
+                        } else if (item?.action === 'home') {
                           const newConversationId = uuidv4();
-                          sessionStorage.setItem('conversationId', newConversationId);
+                          sessionStorage.setItem(
+                            'conversationId',
+                            newConversationId
+                          );
                           sessionStorage.removeItem('tags');
                           context?.setShowInputBox(true);
-                          if (context?.audioElement) context?.audioElement.pause();
-                          if (context?.setAudioPlaying) context?.setAudioPlaying(false);
+                          if (context?.audioElement)
+                            context?.audioElement.pause();
+                          if (context?.setAudioPlaying)
+                            context?.setAudioPlaying(false);
                           context?.setConversationId(newConversationId);
                           context?.setMessages([]);
                           context?.setIsMsgReceiving(false);
                           context?.setLoading(false);
                           router.push('/');
-                        }else{
+                        } else {
                           context?.sendMessage(item?.key, item?.text);
                         }
-                      }}>
+                      }}
+                    >
                       {item.text}
                     </div>
                   );
@@ -1122,7 +1210,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               style={{
                 height: popupActive ? '250px' : '0px',
                 width: '100vw',
-              }}></div>
+              }}
+            ></div>
           )}
         </div>
       );
@@ -1131,8 +1220,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       return (
         <ScrollView
           data={[]}
-          // @ts-ignore
-          renderItem={(item): ReactElement => <Button label={item.text} />}
+          renderItem={(item): ReactElement => (
+            // @ts-ignore
+            <Button label={item.text} />
+          )}
         />
       );
   }

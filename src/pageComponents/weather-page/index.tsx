@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.module.css';
-import RainingCloud from './assets/raining-cloud.png';
-import HeavyRain from './assets/heavy-rain.png';
-import SunRainCloud from './assets/sun-rain-cloud.png';
-import ThunderCloud from './assets/thunder-cloud.png';
-import CloudyBg from './assets/cloudy-bg.png';
-import NightBg from './assets/night-bg.png';
-import RainyBg from './assets/rainy-bg.png';
-import SunnyBg from './assets/sunny-bg.png';
-import ThunderBg from './assets/thunder-bg.png';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import { Chip, Grid } from '@mui/material';
 import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
-import Image from 'next/image';
 import axios from 'axios';
 import { FullPageLoader } from '../../components/fullpage-loader';
 import WeatherAdvisoryPopup from '../../components/weather-advisory-popup';
+import saveTelemetryEvent from '../../utils/telemetry';
+import { v4 as uuidv4 } from 'uuid';
 
 const WeatherPage: React.FC = () => {
   const t = useLocalization();
@@ -27,6 +19,7 @@ const WeatherPage: React.FC = () => {
   const [showWeatherAdvisoryPopup, setShowWeatherAdvisoryPopup] =
     useState(false);
   const [selectedCrop, setSelectedCrop] = useState<any>(null);
+  const [fetchTime, setFetchTime] = useState(0);
   console.log({ config });
 
   useEffect(() => {
@@ -37,6 +30,7 @@ const WeatherPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const startTime = performance.now();
     const fetch = async () => {
       if (
         !sessionStorage.getItem('longitude') ||
@@ -53,6 +47,9 @@ const WeatherPage: React.FC = () => {
             },
           }
         );
+
+        const endTime = performance.now();
+        setFetchTime(endTime - startTime);
         console.log(response.data);
         const providers = response.data.message.catalog.providers;
         // setData(providers);
@@ -111,6 +108,55 @@ const WeatherPage: React.FC = () => {
     fetch();
   }, []);
 
+  useEffect(() => {
+    const sendTelemetry = async () => {
+      try {
+        if (weather?.current) {
+          saveTelemetryEvent('0.1', 'E017', 'userQuery', 'responseAt', {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+            phoneNumber: localStorage.getItem('phoneNumber') || '',
+            conversationId: sessionStorage.getItem('conversationId') || '',
+            messageId: sessionStorage.getItem('weatherMsgId') || '',
+            text: '',
+            timeTaken: 0,
+          });
+          saveTelemetryEvent('0.1', 'E012', 'userQuery', 'llmResponse', {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            transformerId: uuidv4(),
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+            phoneNumber: localStorage.getItem('phoneNumber') || '',
+            conversationId: sessionStorage.getItem('conversationId') || '',
+            replyId: uuidv4(),
+            messageId: sessionStorage.getItem('weatherMsgId') || '',
+            text: JSON.stringify(weather.current),
+            createdAt: Math.floor(new Date().getTime() / 1000),
+            timeTaken: parseInt(`${fetchTime}`),
+          });
+          saveTelemetryEvent('0.1', 'E033', 'messageQuery', 'messageReceived', {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+            phoneNumber: localStorage.getItem('phoneNumber') || '',
+            conversationId: sessionStorage.getItem('conversationId') || '',
+            replyId: uuidv4(),
+            messageId: sessionStorage.getItem('weatherMsgId') || '',
+            text: JSON.stringify(weather.current),
+            createdAt: Math.floor(new Date().getTime() / 1000),
+            timeTaken: parseInt(`${fetchTime}`),
+          });
+          sessionStorage.removeItem('weatherMsgId');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    sendTelemetry();
+  }, [weather]);
+
   const windDirections: any = {
     0: 'Calm',
     20: 'North-northeasterly',
@@ -129,11 +175,6 @@ const WeatherPage: React.FC = () => {
     320: 'Northwesterly',
     340: 'North-northwesterly',
     360: 'Northerly',
-  };
-
-  const weatherImages: any = {
-    'clear-day': SunRainCloud,
-    'partly-cloudy-day': RainingCloud,
   };
 
   function getClosestDirection(degree: number) {
@@ -164,10 +205,11 @@ const WeatherPage: React.FC = () => {
     return <FullPageLoader loading={!weather || !crop} />;
   }
   return (
-    <>
+    <div className={styles.main}>
       <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"></meta>
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+      ></meta>
       {showWeatherAdvisoryPopup && (
         <WeatherAdvisoryPopup
           cropName={selectedCrop?.code}
@@ -175,28 +217,72 @@ const WeatherPage: React.FC = () => {
           advisory={selectedCrop}
         />
       )}
-      <div className={styles.container}>
-        <Image src={isNight ? NightBg : SunnyBg} layout="fill" />
+      <div
+        className={styles.container}
+        style={{
+          background: `url(${
+            weather?.current?.descriptor?.images?.find(
+              (image: any) =>
+                image.type === (isNight ? 'image_night' : 'image_day')
+            )?.url
+          })`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+        }}
+      >
         <div className={styles.weatherText}>
           <div>
-            <h1 style={{ color: 'white' }}>{weather?.current?.tags?.temp}°C</h1>
+            <h1
+              style={{
+                color: 'white',
+                margin: 0,
+                fontSize: '2.75rem',
+              }}
+            >
+              {weather?.current?.tags?.temp}°C
+            </h1>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <h1>{weather?.currentConditions?.conditions}</h1>
+            <h2>
+              {localStorage.getItem('locale') === 'en'
+                ? weather?.current?.tags?.conditions
+                : weather?.current?.tags?.[
+                    `conditions${'_' + localStorage.getItem('locale') || ''}`
+                  ]}
+            </h2>
             {sessionStorage.getItem('city') && (
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'end',
+                }}
+              >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
-                <span style={{fontSize: '1.5rem', fontWeight: '500'}}>{sessionStorage.getItem('city')}</span>
+                <span style={{ fontSize: '1.25rem' }}>
+                  {sessionStorage.getItem('city')}
+                </span>
               </div>
             )}
           </div>
         </div>
 
         <div className={styles.weatherBottom}>
-          <Grid container spacing={{ xs: 2, md: 3 }} columns={3}>
-            {weather?.current?.tags?.winddir && <Grid item xs={1} sm={1} md={1}>
+          <Grid
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '5px 10px',
+              borderBottom: '1px solid #cdcaca',
+            }}
+            spacing={{ xs: 2, md: 3 }}
+            columns={3}
+          >
+            <Grid item xs={1} sm={1} md={1}>
               <Chip
-                label={getClosestDirection(weather?.current?.tags?.winddir)}
+                label={getClosestDirection(
+                  weather?.current?.tags?.winddir || 0
+                )}
                 size="medium"
                 sx={{
                   fontSize: '14px',
@@ -212,13 +298,14 @@ const WeatherPage: React.FC = () => {
                   color: 'black',
                   fontWeight: '600',
                   marginTop: '5px',
-                }}>
+                }}
+              >
                 {t('label.wind_direction')}
               </p>
-            </Grid>}
-            {weather?.current?.tags?.windspeed && <Grid item xs={1} sm={1} md={1}>
+            </Grid>
+            <Grid item xs={1} sm={1} md={1}>
               <Chip
-                label={weather?.current?.tags?.windspeed + ' km/h'}
+                label={(weather?.current?.tags?.windspeed || 0) + ' km/h'}
                 size="medium"
                 sx={{
                   fontSize: '14px',
@@ -235,13 +322,14 @@ const WeatherPage: React.FC = () => {
                   color: 'black',
                   fontWeight: '600',
                   marginTop: '5px',
-                }}>
+                }}
+              >
                 {t('label.wind_speed')}
               </p>
-            </Grid>}
-            {weather?.current?.tags?.humidity && <Grid item xs={1} sm={1} md={1}>
+            </Grid>
+            <Grid item xs={1} sm={1} md={1}>
               <Chip
-                label={weather?.current?.tags?.humidity + '%'}
+                label={(weather?.current?.tags?.humidity || 0) + ' %'}
                 size="medium"
                 sx={{
                   fontSize: '14px',
@@ -258,10 +346,11 @@ const WeatherPage: React.FC = () => {
                   color: 'black',
                   fontWeight: '600',
                   marginTop: '5px',
-                }}>
+                }}
+              >
                 {t('label.humidity')}
               </p>
-            </Grid>}
+            </Grid>
           </Grid>
 
           <div style={{ marginTop: '10px' }}>
@@ -269,51 +358,137 @@ const WeatherPage: React.FC = () => {
               style={{
                 color: 'black',
                 display: 'flex',
-                alignItems: 'center',
-                gap: '20px',
-              }}>
-              <p
+                alignItems: 'flex-start',
+                gap: '0px',
+              }}
+            >
+              <div
                 style={{
-                  width: '15%',
-                  fontWeight: 600,
-                  margin: '0 0 0 10px',
-                }}>
-                {t('label.weather_forecast')}
-              </p>
+                  flex: 0.4,
+                  maxWidth: '110px',
+                  height: '112px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <p
+                  style={{
+                    textAlign: 'left',
+                    color: '#cdcaca',
+                    marginLeft: '10px',
+                  }}
+                >
+                  {t('label.weather_forecast')}
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  <p
+                    style={{
+                      textAlign: 'left',
+                      color: '#cdcaca',
+                      marginBottom: 0,
+                    }}
+                  >
+                    {t('label.high')}
+                  </p>
+                  <div
+                    style={{
+                      backgroundColor: '#cdcaca',
+                      height: '1px',
+                      width: '45px',
+                    }}
+                  ></div>
+                  <p
+                    style={{
+                      textAlign: 'left',
+                      color: '#cdcaca',
+                      marginBottom: 0,
+                    }}
+                  >
+                    {t('label.low')}
+                  </p>
+                </div>
+              </div>
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   flex: '1',
-                }}>
+                }}
+              >
                 {weather?.future?.map((ele: any, index: any) => {
                   if (index > 3) return;
                   return (
-                    <div
-                      key={index}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-around',
-                        alignItems: 'center',
-                        flex: '1',
-                      }}>
-                      <div>
-                        <p style={{ fontWeight: 600 }}>
-                          {getDayAbbreviation(ele?.time?.timestamp)}
-                        </p>
-                        <Image
-                          src={weatherImages?.[ele.icon] || SunRainCloud}
-                          alt=""
-                          height={'32px'}
-                        />
-                        <p style={{ fontWeight: 400 }}>
-                          {(Number(ele?.tags?.temp_max) +
-                            Number(ele?.tags?.temp_min)) /
-                            2 +
-                            '°C'}
-                        </p>
+                    <>
+                      <div
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          flex: '1',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <p>{getDayAbbreviation(ele?.time?.timestamp)}</p>
+                          <img
+                            src={
+                              ele?.descriptor?.images?.find(
+                                (image: any) => image.type === 'icon'
+                              )?.url
+                            }
+                            alt=""
+                            height="32px"
+                            width="32px"
+                          />
+                          <p
+                            style={{
+                              fontWeight: 400,
+                              margin: '0',
+                            }}
+                          >
+                            {Number(ele?.tags?.temp_max)}°
+                          </p>
+                          <div
+                            style={{
+                              width: '80%',
+                              height: '1px',
+                              margin: 'auto',
+                              backgroundColor: '#cdcaca',
+                            }}
+                          ></div>
+                          <p
+                            style={{
+                              fontWeight: 400,
+                              margin: '0',
+                              opacity: '0.5',
+                            }}
+                          >
+                            {Number(ele?.tags?.temp_min)}°
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                      {index < 3 && (
+                        <div
+                          style={{
+                            flex: '0.01 1',
+                            backgroundColor: '#cdcaca',
+                          }}
+                        ></div>
+                      )}
+                    </>
                   );
                 })}
               </div>
@@ -323,24 +498,26 @@ const WeatherPage: React.FC = () => {
       </div>
       <div className={styles.cropContainer}>
         <div className={styles.heading} style={{ background: '#DFF6D1' }}>
-          {t('label.todays_crop_advisory')}
+          {t('label.todays_advisory')}
         </div>
         <Grid
           container
           columns={3}
           overflow={'auto'}
           height={'calc(100% - 50px)'}
-          justifyContent={'center'}>
+          justifyContent={'center'}
+        >
           {(localStorage.getItem('locale') !== 'en'
             ? crop.filter((ele: any) =>
                 ele.category_ids.some((categoryId: string) =>
                   categoryId.endsWith('translated')
                 )
               )
-            : crop.filter((ele: any) =>
-                !ele.category_ids.some(
-                  (categoryId: string) => categoryId.endsWith('translated')
-                )
+            : crop.filter(
+                (ele: any) =>
+                  !ele.category_ids.some((categoryId: string) =>
+                    categoryId.endsWith('translated')
+                  )
               )
           ).map((ele: any, index: number) => {
             return (
@@ -353,18 +530,19 @@ const WeatherPage: React.FC = () => {
                   backgroundColor: 'white',
                   boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
                   borderRadius: '5px',
-                  margin: '5px',
-                  width: '29%',
+                  margin: '10px',
+                  width: '26%',
                 }}
                 onClick={() => {
                   setShowWeatherAdvisoryPopup(true);
                   setSelectedCrop(ele);
-                }}>
-                <Image
-                  src={`/crops/${ele?.code}.jpeg`}
+                }}
+              >
+                <img
+                  src={ele?.descriptor?.images?.[0]?.url}
                   alt=""
-                  width={100}
-                  height={100}
+                  width={80}
+                  height={80}
                 />
                 <p>{ele?.code}</p>
               </Grid>
@@ -372,7 +550,7 @@ const WeatherPage: React.FC = () => {
           })}
         </Grid>
       </div>
-    </>
+    </div>
   );
 };
 

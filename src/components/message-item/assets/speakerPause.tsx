@@ -6,7 +6,8 @@ const SpeakerPauseIcon = (props: any) => (
     height="20"
     viewBox="14 8 28 11"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg">
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       d="M14 7.81446H18.7917L26 2V22L18.7917 16.1856H14V7.81446Z"
       fill={props.color}
@@ -23,8 +24,9 @@ const SpeakerPauseIcon = (props: any) => (
         width="54"
         height="32"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB">
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        colorInterpolationFilters="sRGB"
+      >
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feColorMatrix
           in="SourceAlpha"
           type="matrix"

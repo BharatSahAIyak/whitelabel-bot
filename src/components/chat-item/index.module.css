@@ -11,7 +11,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.sessionContainer{
+.sessionContainer {
   display: flex;
   align-items: center;
   flex: 6;

@@ -68,7 +68,10 @@ const FeedbackPopup: React.FC<any> = ({ setShowFeedbackPopup }) => {
           placeholder={t('message.comment_description')}
         />
 
-        <button onClick={() => submitReview(review)} data-testid="feedback-popup-button">
+        <button
+          onClick={() => submitReview(review)}
+          data-testid="feedback-popup-button"
+        >
           {t('label.submit_feedback')}
         </button>
       </div>
