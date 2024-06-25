@@ -39,7 +39,6 @@ import Loader from '../loader';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
 import { v4 as uuidv4 } from 'uuid';
 import router from 'next/router';
-import Image from 'next/image';
 import Button from '@material-ui/core/Button';
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
@@ -206,8 +205,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     content?.data?.position === 'right'
                       ? 'white'
                       : optionDisabled
-                      ? 'var(--font)'
-                      : 'var(--secondarygreen)',
+                        ? 'var(--font)'
+                        : 'var(--secondarygreen)',
                 }}
               >
                 <div>{choice?.text}</div>
@@ -453,7 +452,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     }}
                   >
                     {content?.data?.card?.banner?.logo && (
-                      <Image
+                      <img
                         src={content?.data?.card?.banner?.logo}
                         alt=""
                         height="35px"

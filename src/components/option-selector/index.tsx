@@ -16,7 +16,6 @@ import { includes } from 'lodash';
 import { useConfig } from '../../hooks/useConfig';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useLocalization } from '../../hooks';
-import Image from 'next/image';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -146,11 +145,10 @@ const OptionSelector = (props: any) => {
                       margin: 'auto',
                     }}
                   >
-                    <Image
+                    <img
                       src={commodity?.image}
                       height="100%"
                       width="100%"
-                      layout="fill"
                       alt=""
                     />
                   </div>
