@@ -219,7 +219,7 @@ const Navbar: React.FC = () => {
                         )}
                     </div>
 
-                    < 
+                    
                     <div data-testid="navbar-right-logos">
                         {showRightLogo1 && (
                             <img
