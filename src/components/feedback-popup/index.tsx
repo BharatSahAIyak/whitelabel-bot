@@ -34,7 +34,7 @@ const FeedbackPopup: React.FC<any> = ({ setShowFeedbackPopup }) => {
           text: r,
         },
         ...negativeFeedbackPayload,
-      } as Partial<XMessage>
+      } as Partial<XMessage>,
     });
     context?.setCurrentQuery('');
     setShowFeedbackPopup(false);
@@ -42,15 +42,18 @@ const FeedbackPopup: React.FC<any> = ({ setShowFeedbackPopup }) => {
 
   return (
     <div className={styles.main}>
-      <div className={styles.crossIconBox} onClick={() => {
-        context?.setCurrentQuery('');
-        setShowFeedbackPopup(false);
-        context?.newSocket.sendMessage({
-          payload: {
-            ...negativeFeedbackPayload
-          } as Partial<XMessage>
-        });
-      }}>
+      <div
+        className={styles.crossIconBox}
+        onClick={() => {
+          context?.setCurrentQuery('');
+          setShowFeedbackPopup(false);
+          context?.newSocket.sendMessage({
+            payload: {
+              ...negativeFeedbackPayload,
+            } as Partial<XMessage>,
+          });
+        }}
+      >
         <Image src={crossIcon} alt="crossIcon" layout="responsive" />
       </div>
       <p>{t('label.comment')}</p>
@@ -63,8 +66,7 @@ const FeedbackPopup: React.FC<any> = ({ setShowFeedbackPopup }) => {
           name="experience-feedback"
           id="inputBox"
           multiline={true}
-          rows={5}
-          cols={35}
+          style={{ minHeight: '120px', minWidth: '250px', padding: '5px' }}
           placeholder={t('message.comment_description')}
         />
 

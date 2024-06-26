@@ -253,10 +253,10 @@ const HomePage: NextPage = () => {
                 data-testid="homepage-input-field"
                 config={botConfig}
                 style={{ fontFamily: 'NotoSans-Regular' }}
-                id="inputBox"
                 rows={1}
                 value={inputMsg}
                 setValue={setInputMsg}
+                onEnter={sendMessage}
                 multiline={false}
                 placeholder={
                   !context?.kaliaClicked

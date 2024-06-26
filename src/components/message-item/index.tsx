@@ -71,12 +71,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   // };
 
   const handleSearchChange = () => {
-    const query = searchQuery.toLowerCase();
+    const query = searchQuery;
     setSearchQuery(query);
 
     if (query) {
       const results = content?.data?.choices?.choices
-        .filter((item: any) => item.text.toLowerCase().includes(query.trim()))
+        .filter((item: any) =>
+          item.text.toLowerCase().includes(query.toLowerCase().trim())
+        )
         .slice(0, 3);
       setFilteredChoices(results);
     } else {
@@ -838,14 +840,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       width: '100%',
-                      height: '45px',
-                      padding: '4px',
+                      height: '35px',
+                      padding: '6px',
                       color: 'var(--font)',
                       fontFamily: 'NotoSans-Medium',
                       fontWeight: '500',
                       fontSize: '14px',
                       cursor: 'pointer',
-                      border: 'none',
+                      border: '1px solid var(--font)',
                       outline: 'none',
                       borderRadius: '10px',
                     }}

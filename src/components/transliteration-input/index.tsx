@@ -1,7 +1,7 @@
 import useTransliteration from '../../hooks/useTransliteration';
-import TextField from '@mui/material/TextField';
+import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import styles from './index.module.css';
-import { useEffect } from 'react';
+import { useRef } from 'react';
 
 const TransliterationInput = ({
   config,
@@ -11,6 +11,7 @@ const TransliterationInput = ({
   cols = 35,
   value,
   setValue,
+  onEnter,
   ...props
 }: any) => {
   const {
@@ -18,22 +19,8 @@ const TransliterationInput = ({
     activeSuggestion,
     handleInputChange,
     suggestionClickHandler,
-    setActiveSuggestion,
-    handleKeyDown,
-  } = useTransliteration(config, value, setValue);
-
-  const suggestionHandler = (index: number) => {
-    setActiveSuggestion(index);
-  };
-
-  useEffect(() => {
-    let input = document.getElementById('inputBox');
-    input?.addEventListener('textInput', handleKeyDown);
-
-    return () => {
-      input?.removeEventListener('textInput', handleKeyDown);
-    };
-  }, [handleKeyDown]);
+    suggestionHandler,
+  } = useTransliteration(config, value, setValue, onEnter);
 
   return (
     <div className={styles.container}>
@@ -43,12 +30,19 @@ const TransliterationInput = ({
             key={index}
             onClick={() => suggestionClickHandler(suggestion)}
             className={`${styles.suggestion} ${activeSuggestion === index ? styles.active : ''}`}
-            onMouseEnter={() => suggestionHandler(index)}>
+            onMouseEnter={() => suggestionHandler(index)}
+          >
             {suggestion}
           </div>
         ))}
       </div>
-      <TextField
+      <TextareaAutosize
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+          }
+        }}
+        id="inputBox"
         value={value}
         onChange={handleInputChange}
         placeholder={placeholder}
@@ -56,7 +50,6 @@ const TransliterationInput = ({
         fullWidth
         multiline={multiline}
         rows={multiline ? rows : 1}
-        inputProps={{ style: { width: `${cols * 8}px` } }}
         {...props}
       />
     </div>

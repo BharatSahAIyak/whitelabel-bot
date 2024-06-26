@@ -6,6 +6,7 @@ const useTransliteration = (
   config: any,
   value: any,
   setValue: any,
+  onEnter: any
 ) => {
   const [suggestions, setSuggestions] = useState([]);
   const [suggestionClicked, setSuggestionClicked] = useState(false);
@@ -64,6 +65,10 @@ const useTransliteration = (
     }
   }, [value, cursorPosition]);
 
+  const suggestionHandler = (index: number) => {
+    setActiveSuggestion(index);
+  };
+
   const handleInputChange = (e: any) => {
     const value = e.target.value;
     setValue(value);
@@ -72,7 +77,9 @@ const useTransliteration = (
 
   const handleKeyDown = useCallback(
     (e: any) => {
-      if (suggestions.length > 0) {
+      if (e.code === 'Enter') {
+        if (onEnter) onEnter(value);
+      } else if (suggestions.length > 0) {
         if (e.code === 'ArrowUp') {
           e.preventDefault();
           setActiveSuggestion((prev) => Math.max(prev - 1, 0));
@@ -93,6 +100,15 @@ const useTransliteration = (
     },
     [suggestions, activeSuggestion]
   );
+
+  useEffect(() => {
+    let input = document.getElementById('inputBox');
+    input?.addEventListener('textInput', handleKeyDown);
+
+    return () => {
+      input?.removeEventListener('textInput', handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -136,6 +152,7 @@ const useTransliteration = (
     activeSuggestion,
     handleInputChange,
     suggestionClickHandler,
+    suggestionHandler,
     setActiveSuggestion,
     handleKeyDown,
   };
