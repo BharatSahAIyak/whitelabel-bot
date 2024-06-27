@@ -37,9 +37,12 @@
   position: relative;
   top: 7%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-width: 260px;
+  margin: auto;
 }
 
 .imgBtn {
@@ -85,7 +88,9 @@
   left: 3px;
   right: 0;
   bottom: calc(40px + 1vh);
-  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out,
+  transition:
+    opacity 0.5s ease-in-out,
+    transform 0.5s ease-in-out,
     visibility 0.5s ease-in-out;
 }
 
@@ -138,7 +143,8 @@
   bottom: 50px;
   left: 10px;
   background-color: white;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+  box-shadow:
+    rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }
 
@@ -171,13 +177,15 @@
 }
 .inputBox textarea {
   width: 100%;
-  margin: 0 5px;
+  /* margin: 0 5px; */
   padding: 10px;
   border: 1px solid #d0d0d0;
   border-radius: 10px;
   outline: none;
   resize: none;
   overflow: hidden;
+  display: flex;
+  align-items: center;
 }
 .inputBox.inputBoxOpen {
   width: 100%;

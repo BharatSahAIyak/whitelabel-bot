@@ -25,6 +25,7 @@ import SpeakerIcon from './assets/speaker';
 import SpeakerPauseIcon from './assets/speakerPause';
 import MsgThumbsUp from './assets/msg-thumbs-up';
 import MsgThumbsDown from './assets/msg-thumbs-down';
+import Button from '@material-ui/core/Button';
 import { MessageItemPropType } from './index.d';
 import { JsonToTable } from '../json-to-table';
 import moment from 'moment';
@@ -39,7 +40,8 @@ import Loader from '../loader';
 import { MessageType, XMessage } from '@samagra-x/xmessage';
 import { v4 as uuidv4 } from 'uuid';
 import router from 'next/router';
-import Button from '@material-ui/core/Button';
+import TransliterationInput from '../transliteration-input';
+
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
   const config = useConfig('component', 'chatUI');
@@ -68,19 +70,27 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   //   return t('toast.reaction_reset');
   // };
 
-  const handleSearchChange = (e: any) => {
-    const query = e.target.value.toLowerCase();
+  const handleSearchChange = () => {
+    const query = searchQuery;
     setSearchQuery(query);
 
     if (query) {
       const results = content?.data?.choices?.choices
-        .filter((item: any) => item.text.toLowerCase().includes(query))
+        .filter((item: any) =>
+          item.text.toLowerCase().includes(query.toLowerCase().trim())
+        )
         .slice(0, 3);
       setFilteredChoices(results);
     } else {
       setFilteredChoices([]);
     }
   };
+
+  useEffect(() => {
+    if (searchQuery) {
+      handleSearchChange();
+    }
+  }, [searchQuery]);
 
   const displayedChoices = searchQuery
     ? filteredChoices
@@ -810,35 +820,38 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 <div
                   style={{
                     padding: '10px',
-                    background: '#F4F4F4',
+                    background: 'white',
                     position: 'fixed',
                     bottom: 0,
                     left: 0,
                     right: 0,
+                    zIndex: 100,
                   }}
                 >
-                  <input
+                  <TransliterationInput
                     placeholder={
                       t('label.buttons_search_placeholder') || 'Search'
                     }
                     value={searchQuery}
+                    setValue={setSearchQuery}
+                    config={config}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       width: '100%',
-                      height: '45px',
-                      padding: '4px',
+                      height: '35px',
+                      padding: '6px',
                       color: 'var(--font)',
                       fontFamily: 'NotoSans-Medium',
                       fontWeight: '500',
                       fontSize: '14px',
                       cursor: 'pointer',
-                      border: 'none',
+                      border: '1px solid var(--font)',
                       outline: 'none',
                       borderRadius: '10px',
                     }}
-                    onChange={handleSearchChange}
+                    // onChange={handleSearchChange}
                   />
                 </div>
               )}
@@ -1159,14 +1172,21 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 <div
                   style={{
                     padding: '10px',
-                    background: '#F4F4F4',
+                    background: 'white',
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 100,
                   }}
                 >
-                  <input
+                  <TransliterationInput
                     placeholder={
                       t('label.buttons_search_placeholder') || 'Search'
                     }
                     value={searchQuery}
+                    setValue={setSearchQuery}
+                    config={config}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -1183,7 +1203,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       outline: 'none',
                       borderRadius: '10px',
                     }}
-                    onChange={handleSearchChange}
+                    // onChange={handleSearchChange}
                   />
                 </div>
               )}
