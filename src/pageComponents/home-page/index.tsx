@@ -137,96 +137,75 @@ const HomePage: NextPage = () => {
                   className={styles.imgButtons}
                   data-testid="homepage-action-buttons"
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-evenly',
-                      width: '100%',
-                      maxWidth: '500px',
-                    }}
-                  >
-                    {config?.showWeatherAdvisory && (
-                      <div
-                        className={styles.imgBtn}
-                        onClick={() => {
-                          if (config?.showWeatherPage) {
-                            router.push('/weather');
-                            sendWeatherTelemetry();
-                          } else {
-                            sendGuidedMsg('weather');
-                          }
-                        }}
-                      >
-                        <p>{t('label.weather_advisory')}</p>
-                        <img
-                          src={
-                            config?.weatherAdvisoryImg ||
-                            weatherAdvisoryImg?.src
-                          }
-                          width={50}
-                          height={70}
-                          alt="weatheradvisory"
-                        />
-                      </div>
-                    )}
-                    {config?.showPlantProtection && (
-                      <div
-                        className={styles.imgBtn}
-                        onClick={() => sendGuidedMsg('pest')}
-                      >
-                        <p>{t('label.plant_protection')}</p>
-                        <img
-                          src={
-                            config?.plantProtectionImg ||
-                            plantProtectionImg?.src
-                          }
-                          width={60}
-                          height={60}
-                          alt="plantprotection"
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-evenly',
-                      marginTop: '10px',
-                      width: '100%',
-                      maxWidth: '500px',
-                    }}
-                  >
-                    {config?.showSchemes && (
-                      <div
-                        className={styles.imgBtn}
-                        onClick={() => sendGuidedMsg('scheme')}
-                      >
-                        <p>{t('label.scheme')}</p>
-                        <img
-                          src={config?.schemesImg || plantProtectionImg?.src}
-                          width={60}
-                          height={60}
-                          alt="schemes"
-                        />
-                      </div>
-                    )}
-                    {config?.showKalia && (
-                      <div
-                        className={styles.imgBtn}
-                        onClick={() =>
-                          context?.setKaliaClicked((props: boolean) => !props)
+                  {config?.showWeatherAdvisory && (
+                    <div
+                      className={styles.imgBtn}
+                      onClick={() => {
+                        if (config?.showWeatherPage) {
+                          router.push('/weather');
+                          sendWeatherTelemetry();
+                        } else {
+                          sendGuidedMsg('weather');
                         }
-                      >
-                        <p>{t('label.kalia_status')}</p>
-                        <img
-                          src={config?.kaliaStatusImg || kaliaStatusImg?.src}
-                          width={60}
-                          height={60}
-                          alt="kaliastatus"
-                        />
-                      </div>
-                    )}
-                  </div>
+                      }}
+                    >
+                      <p>{t('label.weather_advisory')}</p>
+                      <img
+                        src={
+                          config?.weatherAdvisoryImg || weatherAdvisoryImg?.src
+                        }
+                        width={50}
+                        height={70}
+                        alt="weatheradvisory"
+                      />
+                    </div>
+                  )}
+                  {config?.showPlantProtection && (
+                    <div
+                      className={styles.imgBtn}
+                      onClick={() => sendGuidedMsg('pest')}
+                    >
+                      <p>{t('label.plant_protection')}</p>
+                      <img
+                        src={
+                          config?.plantProtectionImg || plantProtectionImg?.src
+                        }
+                        width={60}
+                        height={60}
+                        alt="plantprotection"
+                      />
+                    </div>
+                  )}
+                  {config?.showSchemes && (
+                    <div
+                      className={styles.imgBtn}
+                      onClick={() => sendGuidedMsg('scheme')}
+                    >
+                      <p>{t('label.scheme')}</p>
+                      <img
+                        src={config?.schemesImg || plantProtectionImg?.src}
+                        width={60}
+                        height={60}
+                        alt="schemes"
+                      />
+                    </div>
+                  )}
+                  {config?.showKalia && (
+                    <div
+                      className={styles.imgBtn}
+                      onClick={() =>
+                        context?.setKaliaClicked((props: boolean) => !props)
+                      }
+                    >
+                      <p>{t('label.kalia_status')}</p>
+                      <img
+                        src={config?.kaliaStatusImg || kaliaStatusImg?.src}
+                        width={60}
+                        height={60}
+                        alt="kaliastatus"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
