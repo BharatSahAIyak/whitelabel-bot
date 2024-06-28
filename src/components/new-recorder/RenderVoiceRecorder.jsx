@@ -1,14 +1,15 @@
+// Needed
+
 import React, { useState, useContext } from 'react';
-import MicIcon from '@mui/icons-material/Mic';
-import styles from './styles.module.css';
+import { Button } from '@mui/material';
 import toast from 'react-hot-toast';
 import { useLocalization } from '../../hooks';
 import { useConfig } from '../../hooks/useConfig';
 import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
 import saveTelemetryEvent from '../../utils/telemetry';
-import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { LiveAudioVisualizer } from 'react-audio-visualize'; // Import the LiveAudioVisualizer component
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   const t = useLocalization();
@@ -43,21 +44,21 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
     }
   };
 
-  //record:
+  // Record function:
   function record() {
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      //start recording:
+      // Start recording:
       const recorder = new MediaRecorder(stream);
       recorder.start();
       setMediaRecorder(recorder);
 
-      //save audio chunks:
+      // Save audio chunks:
       const audioChunks = [];
       recorder.addEventListener('dataavailable', (event) => {
         audioChunks.push(event.data);
       });
 
-      //analisys:
+      // Analysis:
       const audioContext = new AudioContext();
       const audioStreamSource = audioContext.createMediaStreamSource(stream);
       const analyser = audioContext.createAnalyser();
@@ -66,25 +67,25 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
       const bufferLength = analyser.frequencyBinCount;
       const domainData = new Uint8Array(bufferLength);
 
-      //loop:
+      // Loop:
       let time = new Date();
       let startTime,
         lastDetectedTime = time.getTime();
       let anySoundDetected = false;
       const detectSound = () => {
-        //recording stoped by user:
+        // Recording stopped by user:
         if (!IS_RECORDING) return;
 
         time = new Date();
         let currentTime = time.getTime();
 
-        //time out:
+        // Timeout:
         if (currentTime > startTime + DIALOG_MAX_LENGTH) {
           recorder.stop();
           return;
         }
 
-        //a dialog detected:
+        // A dialog detected:
         if (
           anySoundDetected === true &&
           currentTime > lastDetectedTime + DELAY_BETWEEN_DIALOGS
@@ -93,7 +94,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
           return;
         }
 
-        //check for detection:
+        // Check for detection:
         analyser.getByteFrequencyData(domainData);
         for (let i = 0; i < bufferLength; i++)
           if (domainData[i] > 0) {
@@ -102,18 +103,18 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
             lastDetectedTime = time.getTime();
           }
 
-        //continue the loop:
+        // Continue the loop:
         window.requestAnimationFrame(detectSound);
       };
       window.requestAnimationFrame(detectSound);
 
-      //stop event:
+      // Stop event:
       recorder.addEventListener('stop', () => {
-        //stop all the tracks:
+        // Stop all the tracks:
         stream.getTracks().forEach((track) => track.stop());
         if (!anySoundDetected) return;
 
-        //send to server:
+        // Send to server:
         const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
         makeComputeAPICall(audioBlob);
       });
@@ -128,13 +129,6 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
       setRecorderStatus('processing');
       console.log('base', blob);
       toast.success(`${t('message.recorder_wait')}`);
-
-      // const audioElement = new Audio();
-
-      // const blobUrl = URL.createObjectURL(blob);
-      // audioElement.src = blobUrl;
-      // console.log(audioElement)
-      // audioElement.play();
 
       // Define the API endpoint
       const apiEndpoint =
@@ -230,7 +224,6 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
 
       // Automatically change back to startIcon after 3 seconds
       setTimeout(() => {
-        // Check if the user has not clicked the error icon again
         if (!isErrorClicked) {
           setRecorderStatus('idle');
         }
@@ -248,118 +241,27 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
       {mediaRecorder && (
         <LiveAudioVisualizer
           mediaRecorder={mediaRecorder}
-          width={200}
+          width={250}
           height={75}
+          gap={2}
+          barColor="white"
         />
       )}
-      <div className={styles.center}>
-        {mediaRecorder && mediaRecorder.state === 'recording' ? (
-          <RecorderControl status={'recording'} onClick={stopRecording} />
-        ) : (
-          <div className={styles.center}>
-            {recorderStatus === 'processing' ? (
-              <RecorderControl status={'processing'} onClick={() => {}} />
-            ) : recorderStatus === 'error' ? (
-              <RecorderControl
-                status={'error'}
-                onClick={() => {
-                  setIsErrorClicked(true);
-                  startRecording();
-                }}
-              />
-            ) : (
-              <div className={styles.center}>
-                <RecorderControl
-                  status={'start'}
-                  onClick={() => {
-                    setIsErrorClicked(true);
-                    startRecording();
-                  }}
-                  tapToSpeak={tapToSpeak}
-                />
-              </div>
-            )}
-          </div>
-        )}
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Button
+          variant="contained"
+          style={{ backgroundColor: 'white', color: 'green' }}
+          to
+          green
+          onClick={() => {
+            setIsErrorClicked(true);
+            startRecording();
+          }}
+          endIcon={<ArrowForwardIcon />}
+        >
+          Ask Me
+        </Button>
       </div>
-    </>
-  );
-};
-
-const RecorderControl = ({ status, onClick, tapToSpeak = false }) => {
-  const t = useLocalization();
-  const handleClick = () => {
-    if (onClick) {
-      onClick();
-    }
-  };
-  const theme = useColorPalates();
-  let customStylesPulse = null;
-  let customStylesProcess = null;
-  let classPulse = '';
-  let classProcess = '';
-
-  if (status === 'error') {
-    customStylesPulse = {
-      background: 'red',
-      border: '5px solid red',
-    };
-    classPulse = styles.pulseRing;
-  } else if (status === 'recording') {
-    customStylesPulse = {
-      background: `${theme?.primary?.light}`,
-      border: `5px solid ${theme?.primary?.light}`,
-    };
-    classPulse = styles.pulseRing;
-  } else if (status === 'processing') {
-    // processing
-    customStylesProcess = {
-      borderColor: `transparent transparent ${theme?.primary?.dark} ${theme?.primary?.dark}`,
-    };
-    classProcess = styles.loader;
-  }
-
-  return (
-    <>
-      <button
-        onClick={handleClick}
-        className={styles.btn}
-        style={{
-          cursor: 'pointer',
-          backgroundColor: theme?.primary?.light,
-          border: `1px solid ${theme?.primary?.light}`,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <div
-          className={`${classPulse}`}
-          style={{
-            ...customStylesPulse,
-          }}
-        ></div>
-        <MicIcon
-          sx={{
-            height: '70%',
-            width: '70%',
-            color: 'white',
-            display: 'block',
-          }}
-        />
-        <div
-          className={`${classProcess}`}
-          style={{
-            ...customStylesProcess,
-          }}
-        ></div>
-      </button>
-      {tapToSpeak && (
-        <p
-          style={{ color: 'black', fontSize: '13px', marginTop: '4px' }}
-          dangerouslySetInnerHTML={{ __html: t('label.tap_to_speak') }}
-        ></p>
-      )}
     </>
   );
 };

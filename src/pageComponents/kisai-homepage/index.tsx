@@ -72,7 +72,6 @@ const Kisai: React.FC = () => {
               } else {
                 setWeather((prev: any) => ({
                   ...prev,
-                  current: provider?.items?.[0],
                 }));
               }
             } else if (
@@ -95,8 +94,8 @@ const Kisai: React.FC = () => {
     fetchWeatherData();
   }, []);
 
-  const handleClick = () => {
-    router.push('/weather');
+  const handleKnowMoreClick = () => {
+    router.push('/chat');
   };
 
   const handleBoxClick = (boxName: string) => {
@@ -349,7 +348,7 @@ const Kisai: React.FC = () => {
                   backgroundColor: '#D6D6DB',
                 },
               }}
-              onClick={handleClick}
+              onClick={handleKnowMoreClick}
             >
               Know more about crops
             </Button>
@@ -373,17 +372,23 @@ const Kisai: React.FC = () => {
               key={index}
               sx={{
                 textAlign: 'center',
-                padding: '5px',
+                padding: '10px',
                 backgroundColor: 'white',
                 boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
                 borderRadius: '15.87px',
                 margin: '10px',
                 cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between', // Add this line
               }}
               onClick={() => handleBoxClick(box.name)}
             >
-              <img src={box.image} alt={box.name} width={80} height={80} />
-              <p style={{ marginTop: '1px' }}>{box.name}</p>
+              <div>
+                <img src={box.image} alt={box.name} width={80} height={80} />
+              </div>
+              <p style={{ marginTop: '10px' }}>{box.name}</p>{' '}
+              {/* Adjusted margin */}
             </Grid>
           ))}
         </Grid>
