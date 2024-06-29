@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
 import HomeIcon from '@mui/icons-material/Home';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import MicNoneIcon from '@mui/icons-material/MicNone';
 import Button from '@mui/material/Button';
 import styles from './style.module.css';
 
@@ -29,9 +30,10 @@ const Menu = () => {
       <div className={styles.middleButton}>
         <Button
           onClick={handleTouchToSpeakClick}
-          className={styles.footerButton}
+          className={`${styles.footerButton} ${styles.touchToSpeakButton}`}
         >
-          Touch to Speak
+          <MicNoneIcon fontSize="large" style={{ marginRight: '8px' }} />
+          <span>Touch to Speak</span>
         </Button>
       </div>
       <div className={styles.buttonWrapper}>
