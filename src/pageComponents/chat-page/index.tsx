@@ -1,5 +1,3 @@
-// Needed
-
 import React, {
   useCallback,
   useContext,
@@ -56,6 +54,19 @@ const ChatPage: NextPage = () => {
       context?.setConversationId(newConversationId);
     }
     recordUserLocation();
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const voice = searchParams.get('voice');
+
+    if (voice === 'true') {
+      handleOpenModal();
+      // Remove the 'voice' query parameter from the URL
+      searchParams.delete('voice');
+      router.replace({
+        pathname: '/newchat',
+        search: searchParams.toString(),
+      });
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

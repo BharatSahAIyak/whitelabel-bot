@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import MicIcon from '@mui/icons-material/Mic';
 import styles from './styles.module.css';
 import toast from 'react-hot-toast';
@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
 import saveTelemetryEvent from '../../utils/telemetry';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
-import { LiveAudioVisualizer } from 'react-audio-visualize'; // Import the LiveAudioVisualizer component
 
 const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   const t = useLocalization();
@@ -242,46 +241,38 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   if (config?.showVoiceRecorder === false) {
     return null;
   }
-
   return (
     <>
-      {mediaRecorder && (
-        <LiveAudioVisualizer
-          mediaRecorder={mediaRecorder}
-          width={200}
-          height={75}
-        />
-      )}
-      <div className={styles.center}>
-        {mediaRecorder && mediaRecorder.state === 'recording' ? (
+      {mediaRecorder && mediaRecorder.state === 'recording' ? (
+        <div className={styles.center}>
           <RecorderControl status={'recording'} onClick={stopRecording} />
-        ) : (
-          <div className={styles.center}>
-            {recorderStatus === 'processing' ? (
-              <RecorderControl status={'processing'} onClick={() => {}} />
-            ) : recorderStatus === 'error' ? (
+        </div>
+      ) : (
+        <div className={styles.center}>
+          {recorderStatus === 'processing' ? (
+            <RecorderControl status={'processing'} onClick={() => {}} />
+          ) : recorderStatus === 'error' ? (
+            <RecorderControl
+              status={'error'}
+              onClick={() => {
+                setIsErrorClicked(true);
+                startRecording();
+              }}
+            />
+          ) : (
+            <div className={styles.center}>
               <RecorderControl
-                status={'error'}
+                status={'start'}
                 onClick={() => {
                   setIsErrorClicked(true);
                   startRecording();
                 }}
+                tapToSpeak={tapToSpeak}
               />
-            ) : (
-              <div className={styles.center}>
-                <RecorderControl
-                  status={'start'}
-                  onClick={() => {
-                    setIsErrorClicked(true);
-                    startRecording();
-                  }}
-                  tapToSpeak={tapToSpeak}
-                />
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 };

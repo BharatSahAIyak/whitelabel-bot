@@ -1,5 +1,3 @@
-// Needed
-
 import React from 'react';
 import { useRouter } from 'next/router';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';

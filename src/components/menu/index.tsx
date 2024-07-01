@@ -16,7 +16,7 @@ const Menu = () => {
   const handleNotificationClick = () => {};
 
   const handleTouchToSpeakClick = () => {
-    router.push('/newchat');
+    router.push('/newchat?voice=true');
   };
 
   return (

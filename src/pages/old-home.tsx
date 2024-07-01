@@ -2,10 +2,9 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { CookiesProvider } from 'react-cookie';
 import { useLocalization } from '../hooks/useLocalization';
-import ChatPage from '../pageComponents/chat-page';
+import HomePage from '../pageComponents/home-page';
 import { useConfig } from '../hooks/useConfig';
-
-const Chat: NextPage = () => {
+const Home: NextPage = () => {
   const t = useLocalization();
   const config = useConfig('component', 'botDetails');
   const homeConfig = useConfig('component', 'homePage');
@@ -28,10 +27,10 @@ const Chat: NextPage = () => {
             top: homeConfig?.topGap || '75px',
           }}
         >
-          <ChatPage />
+          <HomePage />
         </div>
       </CookiesProvider>
     </>
   );
 };
-export default Chat;
+export default Home;
