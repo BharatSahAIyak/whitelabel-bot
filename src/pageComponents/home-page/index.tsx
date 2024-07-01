@@ -348,7 +348,7 @@ const HomePage: NextPage = () => {
                     {config?.showWeatherAdvisory && (
                       <div
                         className={styles.imgBtn}
-                        onClick={() => {
+                        onsClick={() => {
                           if (config?.showWeatherPage) {
                             router.push('/weather');
                             sendWeatherTelemetry();

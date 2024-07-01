@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import styles from './index.module.css';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import { Chip, Grid, Button } from '@mui/material';
 import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
+import { AppContext } from '../../context';
 import axios from 'axios';
 import { FullPageLoader } from '../../components/fullpage-loader';
 import WeatherAdvisoryPopup from '../../components/weather-advisory-popup';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter } from 'next/router';
 import Menu from '../../components/menu';
+import toast from 'react-hot-toast';
 
 const Kisai: React.FC = () => {
   const t = useLocalization();
+  const context = useContext(AppContext);
   const router = useRouter();
   const config = useConfig('component', 'weatherPage');
   const [weather, setWeather] = useState<any>(null);
@@ -95,26 +98,40 @@ const Kisai: React.FC = () => {
   }, []);
 
   const handleKnowMoreClick = () => {
-    router.push('/chat');
+    router.push('/weather');
   };
 
-  const handleBoxClick = (boxName: string) => {
-    switch (boxName) {
-      case 'Weather Information':
-        router.push('/weather');
-        break;
-      case 'Scheme':
+  const sendMessage = useCallback(
+    async (msg: string) => {
+      if (msg.length === 0) {
+        toast.error(t('error.empty_msg'));
+        return;
+      }
+      if (context?.newSocket?.socket?.connected) {
+        console.log('clearing mssgs');
+        context?.setMessages([]);
         router.push('/chat');
-        break;
-      case 'Pest':
-        router.push('/chat');
-        break;
-      case 'Other Information':
-        router.push('/chat');
-        break;
-      default:
-        break;
-    }
+        if (context?.kaliaClicked) {
+          context?.sendMessage(
+            'Aadhaar number - ' + msg,
+            'Aadhaar number - ' + msg,
+            null,
+            true
+          );
+        } else context?.sendMessage(msg, msg);
+      } else {
+        toast.error(t('error.disconnected'));
+        return;
+      }
+    },
+    [context, t]
+  );
+
+  const sendGuidedMsg = (type: string) => {
+    context?.setShowInputBox(false);
+    const tags = [type];
+    sessionStorage.setItem('tags', JSON.stringify(tags));
+    sendMessage(`Guided: ${t('label.' + type)}`);
   };
 
   const windDirections: any = {
@@ -164,16 +181,6 @@ const Kisai: React.FC = () => {
   if (!weather || !crop) {
     return <FullPageLoader loading={!weather || !crop} />;
   }
-
-  const boxes = [
-    {
-      name: 'Weather Information',
-      image: 'https://s6.imgcdn.dev/3A96h.png',
-    },
-    { name: 'Scheme', image: 'https://s6.imgcdn.dev/3Ad2n.png' },
-    { name: 'Pest', image: 'https://s6.imgcdn.dev/3AbIv.png' },
-    { name: 'Other Information', image: 'https://s6.imgcdn.dev/3A3Hg.png' },
-  ];
 
   return (
     <div className={styles.main}>
@@ -362,14 +369,14 @@ const Kisai: React.FC = () => {
         <div className={styles.heading} style={{ background: '#DFF6D1' }}>
           {t('message.ask_ur_question')}
         </div>
-        <Grid container spacing={1} justifyContent="center">
-          {boxes.map((box, index) => (
+        <div className={styles.gridSection}>
+          <Grid container spacing={1} justifyContent="center">
+            {' '}
             <Grid
               item
-              xs={4}
+              xs={5}
               sm={4}
               md={4}
-              key={index}
               sx={{
                 textAlign: 'center',
                 padding: '10px',
@@ -380,19 +387,101 @@ const Kisai: React.FC = () => {
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-between', // Add this line
+                justifyContent: 'center',
               }}
-              onClick={() => handleBoxClick(box.name)}
             >
-              <div>
-                <img src={box.image} alt={box.name} width={80} height={80} />
+              <div onClick={() => router.push('/weather')}>
+                <img
+                  src="https://s6.imgcdn.dev/3A96h.png"
+                  alt="Chat"
+                  className={styles.gridImage}
+                />
+                <p className={styles.gridText}>Weather </p>
               </div>
-              <p style={{ marginTop: '10px' }}>{box.name}</p>{' '}
-              {/* Adjusted margin */}
             </Grid>
-          ))}
-        </Grid>
-
+            <Grid
+              item
+              xs={5}
+              sm={4}
+              md={4}
+              sx={{
+                textAlign: 'center',
+                padding: '10px',
+                backgroundColor: 'white',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                borderRadius: '15.87px',
+                margin: '10px',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div onClick={() => sendGuidedMsg('scheme')}>
+                <img
+                  src="https://s6.imgcdn.dev/3Ad2n.png"
+                  alt="Weather"
+                  className={styles.gridImage}
+                />
+                <p className={styles.gridText}>Schemes</p>
+              </div>
+            </Grid>
+            <Grid
+              item
+              xs={5}
+              sm={5}
+              md={4}
+              sx={{
+                textAlign: 'center',
+                padding: '10px',
+                backgroundColor: 'white',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                borderRadius: '15.87px',
+                margin: '10px',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div onClick={() => sendGuidedMsg('pest')}>
+                <img
+                  src="https://s6.imgcdn.dev/3AbIv.png"
+                  alt="Pest"
+                  className={styles.gridImage}
+                />
+                <p className={styles.gridText}>Pest</p>
+              </div>
+            </Grid>
+            <Grid
+              item
+              xs={5}
+              sm={4}
+              md={4}
+              sx={{
+                textAlign: 'center',
+                padding: '10px',
+                backgroundColor: 'white',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                borderRadius: '15.87px',
+                margin: '10px',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div onClick={() => router.push('/faq')}>
+                <img
+                  src="https://s6.imgcdn.dev/3A3Hg.png"
+                  alt="FAQ"
+                  className={styles.gridImage}
+                />
+                <p className={styles.gridText}>Other Information</p>
+              </div>
+            </Grid>
+          </Grid>
+        </div>
         <div style={{ marginTop: '20px', textAlign: 'center' }}>
           <p
             style={{

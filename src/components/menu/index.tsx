@@ -22,7 +22,7 @@ const Menu = () => {
   return (
     <div className={styles.footer}>
       <div className={styles.buttonWrapper}>
-        <Button onClick={handleHomeClick} className={styles.footerButton}>
+        <Button onClick={handleHomeClick} className={`  ${styles.greenButton}`}>
           <HomeIcon fontSize="large" />
         </Button>
         <p className={styles.buttonText}>Home</p>
@@ -30,16 +30,16 @@ const Menu = () => {
       <div className={styles.middleButton}>
         <Button
           onClick={handleTouchToSpeakClick}
-          className={`${styles.footerButton} ${styles.touchToSpeakButton}`}
+          className={`  ${styles.touchToSpeakButton}`}
+          startIcon={<MicNoneIcon fontSize="inherit" />}
         >
-          <MicNoneIcon fontSize="large" style={{ marginRight: '8px' }} />
-          <span>Touch to Speak</span>
+          Touch to Speak
         </Button>
       </div>
       <div className={styles.buttonWrapper}>
         <Button
           onClick={handleNotificationClick}
-          className={styles.footerButton}
+          className={`  ${styles.greenButton}`}
         >
           <NotificationsNoneIcon fontSize="large" />
         </Button>
