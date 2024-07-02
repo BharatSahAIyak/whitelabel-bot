@@ -2,12 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const useTransliteration = (
-  config: any,
-  value: any,
-  setValue: any,
-  onEnter: any
-) => {
+const useTransliteration = (config: any, value: any, setValue: any) => {
   const [suggestions, setSuggestions] = useState([]);
   const [suggestionClicked, setSuggestionClicked] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(0);
@@ -77,9 +72,7 @@ const useTransliteration = (
 
   const handleKeyDown = useCallback(
     (e: any) => {
-      if (e.code === 'Enter') {
-        if (onEnter) onEnter(value);
-      } else if (suggestions.length > 0) {
+      if (suggestions.length > 0) {
         if (e.code === 'ArrowUp') {
           e.preventDefault();
           setActiveSuggestion((prev) => Math.max(prev - 1, 0));
@@ -144,7 +137,7 @@ const useTransliteration = (
         setValue(newValue);
       }
     },
-    [value, cursorPosition]
+    [cursorPosition]
   );
 
   return {
