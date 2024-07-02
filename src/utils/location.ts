@@ -52,6 +52,7 @@ export async function recordUserLocation() {
 }
 
 function saveUserLocation(position: any) {
+  console.log('position', position);
   sessionStorage.setItem('latitude', position.coords.latitude);
   sessionStorage.setItem('longitude', position.coords.longitude);
 }
