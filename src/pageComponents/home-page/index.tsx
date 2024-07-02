@@ -235,7 +235,12 @@ const HomePage: NextPage = () => {
                 rows={1}
                 value={inputMsg}
                 setValue={setInputMsg}
-                onEnter={sendMessage}
+                onKeyDown={(e: any) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage(inputMsg);
+                  }
+                }}
                 multiline={false}
                 placeholder={
                   !context?.kaliaClicked

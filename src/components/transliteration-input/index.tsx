@@ -11,7 +11,6 @@ const TransliterationInput = ({
   cols = 35,
   value,
   setValue,
-  onEnter,
   ...props
 }: any) => {
   const {
@@ -20,7 +19,7 @@ const TransliterationInput = ({
     handleInputChange,
     suggestionClickHandler,
     suggestionHandler,
-  } = useTransliteration(config, value, setValue, onEnter);
+  } = useTransliteration(config, value, setValue);
 
   return (
     <div className={styles.container}>

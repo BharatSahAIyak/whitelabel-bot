@@ -19,6 +19,9 @@
       "audioPlayback": 1.5,
       "defaultLanguage": "en"
     },
+    "weatherPage":{
+      "provider": "upcar"
+    },
     "homePage": {
       "showKalia": false,
       "showWeatherAdvisory": false,
