@@ -1,6 +1,4 @@
-// Needed
-
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Button } from '@mui/material';
 import toast from 'react-hot-toast';
 import { useLocalization } from '../../hooks';
@@ -11,7 +9,8 @@ import saveTelemetryEvent from '../../utils/telemetry';
 import { LiveAudioVisualizer } from 'react-audio-visualize'; // Import the LiveAudioVisualizer component
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
+const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak, onCloseModal }) => {
+  // Added onCloseModal prop
   const t = useLocalization();
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [recorderStatus, setRecorderStatus] = useState('idle');
@@ -23,6 +22,12 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   let DELAY_BETWEEN_DIALOGS = config?.delayBetweenDialogs || 2500;
   let DIALOG_MAX_LENGTH = 60 * 1000;
   let IS_RECORDING = false;
+
+  useEffect(() => {
+    startRecording();
+    // Cleanup on component unmount
+    return () => stopRecording();
+  }, []);
 
   const startRecording = async () => {
     saveTelemetryEvent('0.1', 'E044', 'micAction', 'micTap', {
@@ -40,6 +45,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
     IS_RECORDING = false;
     if (mediaRecorder !== null) {
       mediaRecorder.stop();
+      mediaRecorder.stream.getTracks().forEach((track) => track.stop());
       setMediaRecorder(null); // Set mediaRecorder state to null after stopping
     }
   };
@@ -251,15 +257,12 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
         <Button
           variant="contained"
           style={{ backgroundColor: 'white', color: 'green' }}
-          to
-          green
           onClick={() => {
-            setIsErrorClicked(true);
-            startRecording();
+            stopRecording();
           }}
           endIcon={<ArrowForwardIcon />}
         >
-          Ask Me
+          {t('label.askMe')}
         </Button>
       </div>
     </>

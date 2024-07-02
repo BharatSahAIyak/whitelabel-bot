@@ -162,6 +162,7 @@ const ChatPage: NextPage = () => {
                 handleCloseModal();
               }}
               tapToSpeak={config?.showTapToSpeakText}
+              onCloseModal={handleCloseModal}
             />
           </Box>
         </Modal>

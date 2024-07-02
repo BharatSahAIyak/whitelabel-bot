@@ -5,9 +5,11 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import MicNoneIcon from '@mui/icons-material/MicNone';
 import Button from '@mui/material/Button';
 import styles from './style.module.css';
+import { useLocalization } from '../../hooks';
 
 const Menu = () => {
   const router = useRouter();
+  const t = useLocalization();
 
   const handleHomeClick = () => {
     router.push('/');
@@ -25,7 +27,7 @@ const Menu = () => {
         <Button onClick={handleHomeClick} className={`  ${styles.greenButton}`}>
           <HomeIcon fontSize="large" />
         </Button>
-        <p className={styles.buttonText}>Home</p>
+        <p className={styles.buttonText}>{t('label.menuHomeButtonText')}</p>
       </div>
       <div className={styles.middleButton}>
         <Button
@@ -33,7 +35,7 @@ const Menu = () => {
           className={`  ${styles.touchToSpeakButton}`}
           startIcon={<MicNoneIcon fontSize="inherit" />}
         >
-          Touch to Speak
+          {t('label.menuTapToSpeakButtonText')}
         </Button>
       </div>
       <div className={styles.buttonWrapper}>
@@ -43,7 +45,9 @@ const Menu = () => {
         >
           <NotificationsNoneIcon fontSize="large" />
         </Button>
-        <p className={styles.buttonText}>Notifications</p>
+        <p className={styles.buttonText}>
+          {t('label.menuNotificationButtonText')}
+        </p>
       </div>
     </div>
   );

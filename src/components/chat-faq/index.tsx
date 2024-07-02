@@ -2,55 +2,57 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import styles from './index.module.css';
+import { useConfig } from '../../hooks/useConfig';
+import { useLocalization } from '../../hooks';
 
 interface FAQProps {
   onQuestionClick: (question: string) => void;
 }
-
 const FAQ: React.FC<FAQProps> = ({ onQuestionClick }) => {
   const router = useRouter();
+  const config = useConfig('component', 'faq');
+  const t = useLocalization();
 
   const handleClick = (question: string) => {
-    onQuestionClick(question);
+    const item = config.faqItems.find(
+      (item: { question: string }) => item.question === question
+    );
+    if (item) {
+      onQuestionClick(item.action);
+    }
   };
 
   const handleKnowMoreClick = () => {
-    router.push('/faq');
+    if (config.showKnowMoreButton) {
+      router.push(config.knowMoreButtonLink);
+    }
   };
 
   return (
     <div className={styles.faqContainer}>
-      <h3>Frequently Asked Questions</h3>
-      <br></br>
-      <div
-        className={styles.faqItem}
-        onClick={() => handleClick('Ask me more about Crops')}
-      >
-        <div className={styles.faqBox}>
-          <h3>Ask me more about Crops</h3>
+      {config.showFAQTitle && <h3>{t('label.faqTitle')}</h3>}
+      <br />
+      {config.faqItems.map(
+        (item: { question: string }, index: React.Key | null | undefined) => (
+          <div
+            key={index}
+            className={styles.faqItem}
+            onClick={() => handleClick(item.question)}
+          >
+            <div className={styles.faqBox}>
+              <h3>{t(`label.faqQuestion${index + 1}`)}</h3>
+            </div>
+          </div>
+        )
+      )}
+
+      {config.showKnowMoreButton && (
+        <div className={styles.knowMoreButton}>
+          <button onClick={handleKnowMoreClick}>
+            {t('label.knowMore')} <ArrowForwardIcon />
+          </button>
         </div>
-      </div>
-      <div
-        className={styles.faqItem}
-        onClick={() => handleClick('Ask about schemes?')}
-      >
-        <div className={styles.faqBox}>
-          <h3>Ask about schemes?</h3>
-        </div>
-      </div>
-      <div
-        className={styles.faqItem}
-        onClick={() => handleClick('What is the weather now?')}
-      >
-        <div className={styles.faqBox}>
-          <h3>What is the weather now?</h3>
-        </div>
-      </div>
-      <div className={styles.knowMoreButton}>
-        <button onClick={handleKnowMoreClick}>
-          Know More <ArrowForwardIcon />
-        </button>
-      </div>
+      )}
     </div>
   );
 };

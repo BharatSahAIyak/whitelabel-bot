@@ -8,6 +8,7 @@ import { AppContext } from '../../context';
 import axios from 'axios';
 import { FullPageLoader } from '../../components/fullpage-loader';
 import WeatherAdvisoryPopup from '../../components/weather-advisory-popup';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter } from 'next/router';
 import Menu from '../../components/menu';
@@ -17,7 +18,8 @@ const Kisai: React.FC = () => {
   const t = useLocalization();
   const context = useContext(AppContext);
   const router = useRouter();
-  const config = useConfig('component', 'weatherPage');
+  const theme = useColorPalates();
+  const config = useConfig('component', 'kisai');
   const [weather, setWeather] = useState<any>(null);
   const [crop, setCrop] = useState<any>(null);
   const [isNight, setIsNight] = useState(false);
@@ -342,18 +344,16 @@ const Kisai: React.FC = () => {
               endIcon={<ArrowForwardIcon />}
               sx={{
                 backgroundColor: '#EDEDF1',
-                color: '#115223',
+                color: '#1e6231',
                 fontSize: '18px',
                 width: '308px',
                 height: '60px',
                 padding: '18px 24px',
                 fontWeight: '500',
-                borderRadius: '6px 0px 0px 0px',
-                border: '1px solid transparent',
+                borderRadius: '6px',
+
                 textTransform: 'none',
-                '&:hover': {
-                  backgroundColor: '#D6D6DB',
-                },
+                boxShadow: 'none',
               }}
               onClick={handleKnowMoreClick}
             >
@@ -392,8 +392,8 @@ const Kisai: React.FC = () => {
             >
               <div onClick={() => router.push('/weather')}>
                 <img
-                  src="https://s6.imgcdn.dev/3A96h.png"
-                  alt="Chat"
+                  src={config.weatherImage}
+                  alt="Weather"
                   className={styles.gridImage}
                 />
                 <p className={styles.gridText}>Weather </p>
@@ -419,8 +419,8 @@ const Kisai: React.FC = () => {
             >
               <div onClick={() => sendGuidedMsg('scheme')}>
                 <img
-                  src="https://s6.imgcdn.dev/3Ad2n.png"
-                  alt="Weather"
+                  src={config.schemeImage}
+                  alt="Schemes"
                   className={styles.gridImage}
                 />
                 <p className={styles.gridText}>Schemes</p>
@@ -446,11 +446,11 @@ const Kisai: React.FC = () => {
             >
               <div onClick={() => sendGuidedMsg('pest')}>
                 <img
-                  src="https://s6.imgcdn.dev/3AbIv.png"
+                  src={config.pestImage}
                   alt="Pest"
                   className={styles.gridImage}
                 />
-                <p className={styles.gridText}>Pest</p>
+                <p className={styles.gridText}>{t('label.pest')}</p>
               </div>
             </Grid>
             <Grid
@@ -473,11 +473,11 @@ const Kisai: React.FC = () => {
             >
               <div onClick={() => router.push('/faq')}>
                 <img
-                  src="https://s6.imgcdn.dev/3A3Hg.png"
+                  src={config.otherInformationImage}
                   alt="FAQ"
                   className={styles.gridImage}
                 />
-                <p className={styles.gridText}>Other Information</p>
+                <p className={styles.gridText}>{t('label.otherInformation')}</p>
               </div>
             </Grid>
           </Grid>
@@ -493,8 +493,7 @@ const Kisai: React.FC = () => {
               margin: '0 20px',
             }}
           >
-            आमा कृषी चैटबॉट गलतियाँ कर सकता है। महत्वपूर्ण जानकारी की जाँच करने
-            पर विचार करें. हमारी शर्तें और गोपनीयता नीति पढ़ें
+            {t('label.askMe2')}
           </p>
           <br></br>
           <br></br>

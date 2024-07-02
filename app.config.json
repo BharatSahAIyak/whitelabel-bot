@@ -142,6 +142,32 @@
       "allowDelete": true,
       "showTimestamp": true
     },
+    "faq":{
+      "showFAQTitle": true,
+       "faqItems": [
+      {
+        "question": "Ask me more about Crops",
+        "action": "Ask me more about Crops"
+      },
+      {
+        "question": "Ask about schemes?",
+        "action": "Ask about schemes?"
+      },
+      {
+        "question": "What is the weather now?",
+        "action": "What is the weather now?"
+      }
+    ],
+      "showKnowMoreButton": false,
+       "knowMoreButtonLink": "/faq" 
+    },
+    "kisai": {
+"otherInformationImage": "https://s6.imgcdn.dev/3A3Hg.png",
+"pestImage": "https://s6.imgcdn.dev/3AbIv.png",
+"weatherImage":"https://s6.imgcdn.dev/3A96h.png",
+"schemeImage": "https://s6.imgcdn.dev/3Ad2n.png"
+    },
+    
     "share-buttons": {
       "allowDownloadChat": true,
       "allowShareChat": true,
@@ -302,7 +328,20 @@
       "label.crop_advisory": "Crop Advisory",
       "label.todays_advisory": "Today's Advisory",
       "label.verified_advisory": "Verified Advisory",
-      "label.play_advisory": "Click here to listen"
+      "label.play_advisory": "Click here to listen",
+      "label.faqTitle": "Frequently Asked Questions",
+      "label.faqQuestion1": "Ask me about anything?",
+      "label.faqQuestion2": "Ask me about Scheme?",
+      "label.faqQuestion3": "What is the weather now?",
+      "label.knowMore": "Know  More",
+      "label.menuHomeButtonText": "Home",
+      "label.menuTapToSpeakButtonText": "Tap to Speak",
+      "label.menuNotificationButtonText": "Notifications",
+      "label.askMe": "Ask Me",
+      "label.askMe2": "Ama Krushi chatbot can make mistakes. To check important information, consider reading our terms and privacy policy ",
+  
+      "label.otherInformation": "Other Information"
+       
     }
   }
 }
