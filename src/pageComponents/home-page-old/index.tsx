@@ -16,7 +16,7 @@ import router from 'next/router';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
-import RenderVoiceRecorder from '../../components/recorder/RenderVoiceRecorder';
+import RenderVoiceRecorder from '../../components/new-recorder/RenderVoiceRecorder';
 import { recordUserLocation } from '../../utils/location';
 import { useConfig } from '../../hooks/useConfig';
 import DowntimePage from '../downtime-page';

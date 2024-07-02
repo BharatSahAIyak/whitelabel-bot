@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { CookiesProvider } from 'react-cookie';
 import { useLocalization } from '../hooks/useLocalization';
-import ChatPage from '../pageComponents/chat-page';
+import ChatPage from '../pageComponents/new-chat-page';
 import { useConfig } from '../hooks/useConfig';
 
 const Chat: NextPage = () => {

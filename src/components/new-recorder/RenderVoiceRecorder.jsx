@@ -262,7 +262,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak, onCloseModal }) => {
           }}
           endIcon={<ArrowForwardIcon />}
         >
-          {t('label.askMe')}
+          {t('label.ask')}
         </Button>
       </div>
     </>

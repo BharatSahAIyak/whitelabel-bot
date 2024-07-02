@@ -27,7 +27,7 @@ const Menu = () => {
         <Button onClick={handleHomeClick} className={`  ${styles.greenButton}`}>
           <HomeIcon fontSize="large" />
         </Button>
-        <p className={styles.buttonText}>{t('label.menuHomeButtonText')}</p>
+        <p className={styles.buttonText}>{t('label.menu_home')}</p>
       </div>
       <div className={styles.middleButton}>
         <Button
@@ -35,7 +35,7 @@ const Menu = () => {
           className={`  ${styles.touchToSpeakButton}`}
           startIcon={<MicNoneIcon fontSize="inherit" />}
         >
-          {t('label.menuTapToSpeakButtonText')}
+          {t('label.menu_tap_text')}
         </Button>
       </div>
       <div className={styles.buttonWrapper}>
@@ -45,9 +45,7 @@ const Menu = () => {
         >
           <NotificationsNoneIcon fontSize="large" />
         </Button>
-        <p className={styles.buttonText}>
-          {t('label.menuNotificationButtonText')}
-        </p>
+        <p className={styles.buttonText}>{t('label.menu_notification')}</p>
       </div>
     </div>
   );

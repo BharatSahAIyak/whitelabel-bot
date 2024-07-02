@@ -14,12 +14,12 @@ import { useRouter } from 'next/router';
 import Menu from '../../components/menu';
 import toast from 'react-hot-toast';
 
-const Kisai: React.FC = () => {
+const Home: React.FC = () => {
   const t = useLocalization();
   const context = useContext(AppContext);
   const router = useRouter();
   const theme = useColorPalates();
-  const config = useConfig('component', 'kisai');
+  const config = useConfig('component', 'homePage');
   const [weather, setWeather] = useState<any>(null);
   const [crop, setCrop] = useState<any>(null);
   const [isNight, setIsNight] = useState(false);
@@ -477,7 +477,9 @@ const Kisai: React.FC = () => {
                   alt="FAQ"
                   className={styles.gridImage}
                 />
-                <p className={styles.gridText}>{t('label.otherInformation')}</p>
+                <p className={styles.gridText}>
+                  {t('label.other_information')}
+                </p>
               </div>
             </Grid>
           </Grid>
@@ -493,7 +495,7 @@ const Kisai: React.FC = () => {
               margin: '0 20px',
             }}
           >
-            {t('label.askMe2')}
+            {t('label.ask_me2')}
           </p>
           <br></br>
           <br></br>
@@ -508,4 +510,4 @@ const Kisai: React.FC = () => {
   );
 };
 
-export default Kisai;
+export default Home;

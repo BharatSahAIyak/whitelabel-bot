@@ -154,7 +154,7 @@ const ChatPage: NextPage = () => {
             }}
           >
             <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-              Hello, how can I help you?
+              {t(`label.help_text`)}
             </Typography>
             <RenderVoiceRecorder
               setInputMsg={(msg: string) => {
