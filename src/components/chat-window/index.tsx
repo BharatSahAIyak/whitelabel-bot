@@ -181,7 +181,7 @@ const ChatUiWindow: React.FC = () => {
           )}
           onSend={handleSend}
           locale="en-US"
-          placeholder="Ask Your Question"
+          placeholder={t('message.ask_ur_question')}
         />
         <ShareButtons />
       </div>
