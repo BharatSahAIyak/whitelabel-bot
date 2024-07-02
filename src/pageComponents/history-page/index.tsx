@@ -119,7 +119,10 @@ const HistoryPage: FC = () => {
         );
         console.log({ sortedConversations });
         const historyList = map(sortedConversations, (chatItem: any) => {
-          const text = chatItem?.payload?.text.replace(/<end\/>/g, '') || '';
+          const text = String(chatItem?.payload?.text || '').replace(
+            /<end\/>/g,
+            ''
+          );
           let label;
           if (text.startsWith('{') && text.endsWith('}')) {
             try {

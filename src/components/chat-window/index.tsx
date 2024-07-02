@@ -72,7 +72,9 @@ const ChatUiWindow: React.FC = () => {
     const history = chats
       .filter(
         (item: any) =>
-          conversationId === 'null' || item?.channelMessageId === conversationId
+          (conversationId === 'null' ||
+            item?.channelMessageId === conversationId) &&
+          (item?.to !== 'admin' || !item.payload?.metaData?.hideMessage)
       )
       .map((item: any) => ({
         text: item?.payload?.text
@@ -84,8 +86,8 @@ const ChatUiWindow: React.FC = () => {
           item?.feedback?.type === 'FEEDBACK_POSITIVE'
             ? 1
             : item?.feedback?.type === 'FEEDBACK_NEGATIVE'
-            ? -1
-            : 0,
+              ? -1
+              : 0,
         msgId: item.messageId,
         messageId: item.messageId,
         replyId: item.replyId,

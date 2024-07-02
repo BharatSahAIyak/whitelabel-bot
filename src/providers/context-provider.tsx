@@ -225,38 +225,45 @@ const ContextProvider: FC<{
 
   useEffect(() => {
     if (localStorage.getItem('userID')) {
-      setNewSocket(
-        new UCI(
-          URL,
-          {
-            transportOptions: {
-              polling: {
-                extraHeaders: {
-                  // Authorization: `Bearer ${cookie.access_token}`,
-                  channel: 'akai',
-                },
+      const socket = new UCI(
+        URL,
+        {
+          transportOptions: {
+            polling: {
+              extraHeaders: {
+                channel: 'akai',
               },
             },
-            path: process.env.NEXT_PUBLIC_SOCKET_PATH || '',
-            query: {
-              deviceId: localStorage.getItem('userID'),
-            },
-            autoConnect: false,
-            transports: ['polling', 'websocket'],
-            upgrade: true,
           },
-          onMessageReceived
-        )
+          path: process.env.NEXT_PUBLIC_SOCKET_PATH || '',
+          query: {
+            deviceId: localStorage.getItem('userID'),
+          },
+          autoConnect: false,
+          transports: ['polling', 'websocket'],
+          upgrade: true,
+        },
+        onMessageReceived
       );
+
+      socket?.socket?.on('connect', () => {
+        console.log('Socket connected');
+        setIsDown(false);
+      });
+
+      socket?.socket?.on('disconnect', () => {
+        console.log('Socket disconnected, attempting to reconnect...');
+        setIsDown(true);
+        socket?.socket?.connect();
+      });
+
+      socket?.socket?.connect();
+      setNewSocket(socket);
+
+      return () => {
+        socket?.socket?.disconnect();
+      };
     }
-    function cleanup() {
-      if (newSocket)
-        newSocket.onDisconnect(() => {
-          console.log('Socket disconnected');
-        });
-    }
-    return cleanup;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStorage.getItem('userID')]);
 
   const updateMsgState = useCallback(
@@ -465,6 +472,7 @@ const ContextProvider: FC<{
               city: sessionStorage.getItem('city'),
               state: sessionStorage.getItem('state'),
               ip: sessionStorage.getItem('ip'),
+              hideMessage: textToSend?.startsWith('Guided:') || false,
             },
           },
           tags: JSON.parse(sessionStorage.getItem('tags') || '[]') || [],
@@ -488,26 +496,23 @@ const ContextProvider: FC<{
           } else {
           }
         } else {
-          //console.log('mssgs:',messages)
-          //@ts-ignore
-          setMessages((prev: any) => [
-            ...prev.map((prevMsg: any) => ({
-              ...prevMsg,
-              disabled: true,
-            })),
-            {
-              text: textToShow
-                ?.replace(/^\s+|\s+$/g, '')
-                ?.replace(/^Guided:/, ''),
-              position: 'right',
-              payload: { textToShow },
-              time: Date.now(),
-              disabled: true,
-              messageId: messageId,
-              conversationId: sessionStorage.getItem('conversationId'),
-              repliedTimestamp: Date.now(),
-            },
-          ]);
+          if (!textToSend?.startsWith('Guided:')) {
+            setMessages((prev: any) => [
+              ...prev.map((prevMsg: any) => ({
+                ...prevMsg,
+              })),
+              {
+                text: textToShow?.replace(/^\s+|\s+$/g, ''),
+                // ?.replace(/^Guided:/, ''),
+                position: 'right',
+                payload: { textToShow },
+                time: Date.now(),
+                messageId: messageId,
+                conversationId: sessionStorage.getItem('conversationId'),
+                repliedTimestamp: Date.now(),
+              },
+            ]);
+          }
         }
       try {
         await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
