@@ -101,6 +101,8 @@ const HistoryPage: FC = () => {
         `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/conversations`,
         {
           userId: localStorage.getItem('userID'),
+          page: 1,
+          perPage: 10,
         },
         {
           headers: {
@@ -111,7 +113,7 @@ const HistoryPage: FC = () => {
       .then((res) => {
         console.log('All chat history:', { res });
         const sortedConversations = _.filter(
-          res?.data,
+          res?.data?.data,
           (conv) => conv?.channelMessageId !== null
         ).sort(
           //@ts-ignore
