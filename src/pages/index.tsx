@@ -3,10 +3,10 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useLocalization } from '../hooks';
 import { useConfig } from '../hooks/useConfig';
-import KisaiHomepage from '../pageComponents/kisai-homepage';
+import Homepage from '../pageComponents/home-page';
 import { recordUserLocation } from '../utils/location';
 
-const Kisai: NextPage = () => {
+const Home: NextPage = () => {
   const t = useLocalization();
   const config = useConfig('component', 'botDetails');
   useEffect(() => {
@@ -19,9 +19,9 @@ const Kisai: NextPage = () => {
         <title>{t('label.tab_title')}</title>
         <link rel="icon" href={config?.favicon} />
       </Head>
-      <KisaiHomepage />
+      <Homepage />
     </React.Fragment>
   );
 };
 
-export default Kisai;
+export default Home;
