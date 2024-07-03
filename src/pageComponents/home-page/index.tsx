@@ -318,7 +318,13 @@ const Home: React.FC = () => {
                 textTransform: 'none',
                 boxShadow: 'none',
               }}
-              onClick={handleKnowMoreClick}
+              onClick={() => {
+                if (config.showWeatherPage) {
+                  handleKnowMoreClick();
+                } else {
+                  router.push('/chat');
+                }
+              }}
             >
               {t('label.weather_button_text')}
             </Button>
@@ -334,128 +340,140 @@ const Home: React.FC = () => {
         </div>
         <div className={styles.gridSection}>
           <Grid container spacing={1} justifyContent="center">
-            {' '}
-            <Grid
-              item
-              xs={5}
-              sm={4}
-              md={4}
-              sx={{
-                textAlign: 'center',
-                padding: '10px',
-                backgroundColor: 'white',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                borderRadius: '15.87px',
-                margin: '10px',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <div
-                onClick={() => {
-                  if (config?.showWeatherPage) {
-                    router.push('/weather');
-                    sendWeatherTelemetry();
-                  } else {
-                    sendGuidedMsg('weather');
-                  }
+            {config.showWeatherAdvisory && (
+              <Grid
+                item
+                xs={5}
+                sm={4}
+                md={4}
+                sx={{
+                  textAlign: 'center',
+                  padding: '10px',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '15.87px',
+                  margin: '10px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
                 }}
               >
-                <img
-                  src={config.weatherAdvisoryImg}
-                  alt="Weather"
-                  className={styles.gridImage}
-                />
-                <p className={styles.gridText}>
-                  {t('label.weather_advisory')}{' '}
-                </p>
-              </div>
-            </Grid>
-            <Grid
-              item
-              xs={5}
-              sm={4}
-              md={4}
-              sx={{
-                textAlign: 'center',
-                padding: '10px',
-                backgroundColor: 'white',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                borderRadius: '15.87px',
-                margin: '10px',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div onClick={() => sendGuidedMsg('scheme')}>
-                <img
-                  src={config.schemesImg}
-                  alt="Schemes"
-                  className={styles.gridImage}
-                />
-                <p className={styles.gridText}>{t('label.scheme')}</p>
-              </div>
-            </Grid>
-            <Grid
-              item
-              xs={5}
-              sm={5}
-              md={4}
-              sx={{
-                textAlign: 'center',
-                padding: '10px',
-                backgroundColor: 'white',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                borderRadius: '15.87px',
-                margin: '10px',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div onClick={() => sendGuidedMsg('pest')}>
-                <img
-                  src={config.plantProtectionImg}
-                  alt="Pest"
-                  className={styles.gridImage}
-                />
-                <p className={styles.gridText}>{t('label.plant_protection')}</p>
-              </div>
-            </Grid>
-            <Grid
-              item
-              xs={5}
-              sm={4}
-              md={4}
-              sx={{
-                textAlign: 'center',
-                padding: '10px',
-                backgroundColor: 'white',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                borderRadius: '15.87px',
-                margin: '10px',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div onClick={() => router.push('/faq')}>
-                <img
-                  src={config.otherInformationImg}
-                  alt="FAQ"
-                  className={styles.gridImage}
-                />
-                <p className={styles.gridText}>
-                  {t('label.other_information')}
-                </p>
-              </div>
-            </Grid>
+                <div
+                  onClick={() => {
+                    if (config?.showWeatherPage) {
+                      router.push('/weather');
+                      sendWeatherTelemetry();
+                    } else {
+                      sendGuidedMsg('weather');
+                    }
+                  }}
+                >
+                  <img
+                    src={config.weatherAdvisoryImg}
+                    alt="Weather"
+                    className={styles.gridImage}
+                  />
+                  <p className={styles.gridText}>
+                    {t('label.weather_advisory')}{' '}
+                  </p>
+                </div>
+              </Grid>
+            )}
+
+            {config.showSchemes && (
+              <Grid
+                item
+                xs={5}
+                sm={4}
+                md={4}
+                sx={{
+                  textAlign: 'center',
+                  padding: '10px',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '15.87px',
+                  margin: '10px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div onClick={() => sendGuidedMsg('scheme')}>
+                  <img
+                    src={config.schemesImg}
+                    alt="Schemes"
+                    className={styles.gridImage}
+                  />
+                  <p className={styles.gridText}>{t('label.scheme')}</p>
+                </div>
+              </Grid>
+            )}
+
+            {config.showPlantProtection && (
+              <Grid
+                item
+                xs={5}
+                sm={5}
+                md={4}
+                sx={{
+                  textAlign: 'center',
+                  padding: '10px',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '15.87px',
+                  margin: '10px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div onClick={() => sendGuidedMsg('pest')}>
+                  <img
+                    src={config.plantProtectionImg}
+                    alt="Pest"
+                    className={styles.gridImage}
+                  />
+                  <p className={styles.gridText}>
+                    {t('label.plant_protection')}
+                  </p>
+                </div>
+              </Grid>
+            )}
+
+            {config.showOtherInformation && (
+              <Grid
+                item
+                xs={5}
+                sm={4}
+                md={4}
+                sx={{
+                  textAlign: 'center',
+                  padding: '10px',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '15.87px',
+                  margin: '10px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div onClick={() => router.push('/faq')}>
+                  <img
+                    src={config.otherInformationImg}
+                    alt="FAQ"
+                    className={styles.gridImage}
+                  />
+                  <p className={styles.gridText}>
+                    {t('label.other_information')}
+                  </p>
+                </div>
+              </Grid>
+            )}
           </Grid>
         </div>
         <div

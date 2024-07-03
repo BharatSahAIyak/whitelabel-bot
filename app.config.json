@@ -23,7 +23,10 @@
       "provider": "upcar"
     },
     "homePage": {
-      "showWeatherPage": true,
+       "showWeatherPage": false,
+      "showPlantProtection": false,
+      "showSchemes": false,
+      "showOtherInformation": true,
       "showWeatherAdvisory": false,
       "showMic": true,
       "micHeight": "143px",
