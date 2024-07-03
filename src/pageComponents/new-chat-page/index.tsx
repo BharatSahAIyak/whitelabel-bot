@@ -13,7 +13,7 @@ import { useLocalization } from '../../hooks';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
-import RenderVoiceRecorder from '../../components/new-recorder/RenderVoiceRecorder';
+import RenderVoiceRecorder from '../../components/recorder-modal/RenderVoiceRecorder';
 import { useConfig } from '../../hooks/useConfig';
 import DowntimePage from '../downtime-page';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
@@ -23,7 +23,6 @@ import FAQ from '../../components/chat-faq';
 import { Modal, Box, IconButton, Typography } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
 import styles from './index.module.css';
-
 const ChatPage: NextPage = () => {
   const context = useContext(AppContext);
   const botConfig = useConfig('component', 'chatUI');

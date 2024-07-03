@@ -6,11 +6,10 @@ import { useConfig } from '../../hooks/useConfig';
 import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
 import saveTelemetryEvent from '../../utils/telemetry';
-import { LiveAudioVisualizer } from 'react-audio-visualize'; // Import the LiveAudioVisualizer component
+import { LiveAudioVisualizer } from 'react-audio-visualize';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak, onCloseModal }) => {
-  // Added onCloseModal prop
   const t = useLocalization();
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [recorderStatus, setRecorderStatus] = useState('idle');
