@@ -23,17 +23,17 @@
       "provider": "upcar"
     },
     "homePage": {
-       
+      "showWeatherPage": true,
       "showWeatherAdvisory": false,
       "showMic": true,
       "micHeight": "143px",
       "micWidth": "143px",
       "topGap": "75px",
       "showTapToSpeakText": false,
-      "otherInformationImage": "https://s6.imgcdn.dev/3A3Hg.png",
-"pestImage": "https://s6.imgcdn.dev/3AbIv.png",
-"weatherImage":"https://s6.imgcdn.dev/3A96h.png",
-"schemeImage": "https://s6.imgcdn.dev/3Ad2n.png"
+      "otherInformationImg": "",
+ "weatherAdvisoryImg": "",
+      "plantProtectionImg": "",
+      "schemesImg": ""
     },
     "chatUI": {
       "allowFeedback": true,

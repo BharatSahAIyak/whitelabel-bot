@@ -12,6 +12,8 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter } from 'next/router';
 import Menu from '../../components/menu';
 import toast from 'react-hot-toast';
+import { v4 as uuidv4 } from 'uuid';
+import saveTelemetryEvent from '../../utils/telemetry';
 
 const Home: React.FC = () => {
   const t = useLocalization();
@@ -20,7 +22,6 @@ const Home: React.FC = () => {
   const theme = useColorPalates();
   const config = useConfig('component', 'homePage');
   const [weather, setWeather] = useState<any>(null);
-  const [crop, setCrop] = useState<any>(null);
   const [isNight, setIsNight] = useState(false);
 
   useEffect(() => {
@@ -32,60 +33,46 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const fetchWeatherData = async () => {
-      if (
-        !sessionStorage.getItem('longitude') ||
-        !sessionStorage.getItem('latitude')
-      )
-        return;
+      const latitude = sessionStorage.getItem('latitude');
+      const longitude = sessionStorage.getItem('longitude');
+      if (!latitude || !longitude) return;
+
       try {
         const response = await axios.get(
           process.env.NEXT_PUBLIC_WEATHER_API || '',
           {
-            params: {
-              latitude: sessionStorage.getItem('latitude'),
-              longitude: sessionStorage.getItem('longitude'),
-            },
+            params: { latitude, longitude },
           }
         );
+
         console.log(response.data);
         const providers = response.data.message.catalog.providers;
 
-        providers.forEach((provider: any) => {
-          if (provider.id.toLowerCase() === 'ouat') {
-            if (provider.category_id === 'crop_advisory_provider') {
-              setCrop(provider?.items);
-            } else if (provider.category_id === 'weather_provider') {
-              setWeather((prev: any) => ({
-                ...prev,
-                future: provider?.items,
-              }));
-            }
-          } else {
-            if (
-              provider.category_id === 'weather_provider' &&
-              provider.id === 'imd'
-            ) {
-              if (!weather) {
-                setWeather((prev: any) => ({
-                  future: provider?.items?.slice(1),
-                  current: provider?.items?.[0],
-                }));
-              } else {
-                setWeather((prev: any) => ({
-                  ...prev,
-                }));
-              }
-            } else if (
-              provider.category_id === 'crop_advisory_provider' &&
-              provider.id === 'upcar'
-            ) {
-              if (!crop) {
-                setCrop(provider?.items);
-              }
-            }
-          }
-        });
-        return providers;
+        const weatherProvider = providers.find(
+          (provider: any) =>
+            provider.id.toLowerCase() === 'ouat' &&
+            provider.category_id === 'weather_provider'
+        );
+
+        const imdWeatherProvider = providers.find(
+          (provider: any) =>
+            provider.id === 'imd' && provider.category_id === 'weather_provider'
+        );
+
+        if (weatherProvider) {
+          setWeather((prev: any) => ({
+            ...prev,
+            future: weatherProvider.items,
+          }));
+        }
+
+        if (imdWeatherProvider) {
+          setWeather((prev: any) => ({
+            ...prev,
+            future: imdWeatherProvider.items?.slice(1),
+            current: imdWeatherProvider.items?.[0],
+          }));
+        }
       } catch (error) {
         console.error('Error fetching advisory data:', error);
         throw error;
@@ -137,6 +124,24 @@ const Home: React.FC = () => {
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     return days[date.getDay()];
   }
+  const sendWeatherTelemetry = async () => {
+    try {
+      const msgId = uuidv4();
+      sessionStorage.setItem('weatherMsgId', msgId);
+      await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || '',
+        messageId: msgId,
+        text: 'Weather',
+        createdAt: Math.floor(new Date().getTime() / 1000),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (!weather) {
     return <FullPageLoader loading={!weather} />;
@@ -152,12 +157,14 @@ const Home: React.FC = () => {
       <div
         className={styles.container}
         style={{
-          background: `url(${
-            weather?.current?.descriptor?.images?.find(
+          background: `url(${weather?.current?.descriptor?.images
+            ?.find(
               (image: any) =>
                 image.type === (isNight ? 'image_night' : 'image_day')
-            )?.url
-          })`,
+            )
+            ?.url?.replace(/ /g, '%20')
+            ?.replace(/\(/g, '%28')
+            ?.replace(/\)/g, '%29')})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
         }}
@@ -346,9 +353,18 @@ const Home: React.FC = () => {
                 justifyContent: 'center',
               }}
             >
-              <div onClick={() => router.push('/weather')}>
+              <div
+                onClick={() => {
+                  if (config?.showWeatherPage) {
+                    router.push('/weather');
+                    sendWeatherTelemetry();
+                  } else {
+                    sendGuidedMsg('weather');
+                  }
+                }}
+              >
                 <img
-                  src={config.weatherImage}
+                  src={config.weatherAdvisoryImg}
                   alt="Weather"
                   className={styles.gridImage}
                 />
@@ -377,7 +393,7 @@ const Home: React.FC = () => {
             >
               <div onClick={() => sendGuidedMsg('scheme')}>
                 <img
-                  src={config.schemeImage}
+                  src={config.schemesImg}
                   alt="Schemes"
                   className={styles.gridImage}
                 />
@@ -404,7 +420,7 @@ const Home: React.FC = () => {
             >
               <div onClick={() => sendGuidedMsg('pest')}>
                 <img
-                  src={config.pestImage}
+                  src={config.plantProtectionImg}
                   alt="Pest"
                   className={styles.gridImage}
                 />
@@ -431,7 +447,7 @@ const Home: React.FC = () => {
             >
               <div onClick={() => router.push('/faq')}>
                 <img
-                  src={config.otherInformationImage}
+                  src={config.otherInformationImg}
                   alt="FAQ"
                   className={styles.gridImage}
                 />

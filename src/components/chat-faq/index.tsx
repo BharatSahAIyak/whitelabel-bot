@@ -15,13 +15,13 @@ const FAQ: React.FC<FAQProps> = ({ onQuestionClick }) => {
   const t = useLocalization();
 
   const questions = [
-    { question: t('label.faq_question1'), action: t('label.faq_question1') },
-    { question: t('label.faq_question2'), action: t('label.faq_question2') },
-    { question: t('label.faq_question3'), action: t('label.faq_question3') },
+    t('label.faq_question1'),
+    t('label.faq_question2'),
+    t('label.faq_question3'),
   ];
 
-  const handleClick = (action: string) => {
-    onQuestionClick(action);
+  const handleClick = (question: string) => {
+    onQuestionClick(question);
   };
 
   // const handleKnowMoreClick = () => {
@@ -34,14 +34,14 @@ const FAQ: React.FC<FAQProps> = ({ onQuestionClick }) => {
     <div className={styles.faqContainer}>
       <h3>{t('label.faq_title')}</h3>
       <br />
-      {questions.map((item, index) => (
+      {questions.map((question, index) => (
         <div
           key={index}
           className={styles.faqItem}
-          onClick={() => handleClick(item.action)}
+          onClick={() => handleClick(question)}
         >
           <div className={styles.faqBox}>
-            <h3>{item.question}</h3>
+            <h3>{question}</h3>
           </div>
         </div>
       ))}
