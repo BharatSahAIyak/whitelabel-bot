@@ -7,7 +7,6 @@ import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
 import axios from 'axios';
 import { FullPageLoader } from '../../components/fullpage-loader';
-import WeatherAdvisoryPopup from '../../components/weather-advisory-popup';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter } from 'next/router';
@@ -23,9 +22,6 @@ const Home: React.FC = () => {
   const [weather, setWeather] = useState<any>(null);
   const [crop, setCrop] = useState<any>(null);
   const [isNight, setIsNight] = useState(false);
-  const [showWeatherAdvisoryPopup, setShowWeatherAdvisoryPopup] =
-    useState(false);
-  const [selectedCrop, setSelectedCrop] = useState<any>(null);
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -136,52 +132,14 @@ const Home: React.FC = () => {
     sendMessage(`Guided: ${t('label.' + type)}`);
   };
 
-  const windDirections: any = {
-    0: 'Calm',
-    20: 'North-northeasterly',
-    50: 'Northeasterly',
-    70: 'East-northeasterly',
-    90: 'Easterly',
-    110: 'East-southeasterly',
-    140: 'Southeasterly',
-    160: 'South-southeasterly',
-    180: 'Southerly',
-    200: 'South-southwesterly',
-    230: 'Southwesterly',
-    250: 'West-southwesterly',
-    270: 'Westerly',
-    290: 'West-northwesterly',
-    320: 'Northwesterly',
-    340: 'North-northwesterly',
-    360: 'Northerly',
-  };
-
-  function getClosestDirection(degree: number) {
-    const keys = Object.keys(windDirections).map(Number);
-    let closestKey = keys[0];
-    let smallestDifference = Math.abs(degree - closestKey);
-
-    for (let i = 1; i < keys.length; i++) {
-      const currentKey = keys[i];
-      const currentDifference = Math.abs(degree - currentKey);
-
-      if (currentDifference < smallestDifference) {
-        closestKey = currentKey;
-        smallestDifference = currentDifference;
-      }
-    }
-
-    return windDirections[closestKey];
-  }
-
   function getDayAbbreviation(dateString: string) {
     const date = new Date(dateString);
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     return days[date.getDay()];
   }
 
-  if (!weather || !crop) {
-    return <FullPageLoader loading={!weather || !crop} />;
+  if (!weather) {
+    return <FullPageLoader loading={!weather} />;
   }
 
   return (
@@ -190,13 +148,7 @@ const Home: React.FC = () => {
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
       ></meta>
-      {showWeatherAdvisoryPopup && (
-        <WeatherAdvisoryPopup
-          cropName={selectedCrop?.code}
-          setShowWeatherAdvisoryPopup={setShowWeatherAdvisoryPopup}
-          advisory={selectedCrop}
-        />
-      )}
+
       <div
         className={styles.container}
         style={{
@@ -259,9 +211,13 @@ const Home: React.FC = () => {
           >
             <Grid item xs={1} sm={1} md={1}>
               <Chip
-                label={getClosestDirection(
-                  weather?.current?.tags?.winddir || 0
-                )}
+                label={
+                  localStorage.getItem('locale') === 'en'
+                    ? weather?.current?.tags?.winddir
+                    : weather?.current?.tags?.[
+                        `winddir${'_' + localStorage.getItem('locale') || ''}`
+                      ]
+                }
                 size="medium"
                 sx={{
                   fontSize: '14px',
@@ -357,7 +313,7 @@ const Home: React.FC = () => {
               }}
               onClick={handleKnowMoreClick}
             >
-              Know more about crops
+              {t('label.weather_button_text')}
             </Button>
           </div>
         </div>
@@ -396,7 +352,9 @@ const Home: React.FC = () => {
                   alt="Weather"
                   className={styles.gridImage}
                 />
-                <p className={styles.gridText}>Weather </p>
+                <p className={styles.gridText}>
+                  {t('label.weather_advisory')}{' '}
+                </p>
               </div>
             </Grid>
             <Grid
@@ -423,7 +381,7 @@ const Home: React.FC = () => {
                   alt="Schemes"
                   className={styles.gridImage}
                 />
-                <p className={styles.gridText}>Schemes</p>
+                <p className={styles.gridText}>{t('label.scheme')}</p>
               </div>
             </Grid>
             <Grid
@@ -450,7 +408,7 @@ const Home: React.FC = () => {
                   alt="Pest"
                   className={styles.gridImage}
                 />
-                <p className={styles.gridText}>{t('label.pest')}</p>
+                <p className={styles.gridText}>{t('label.plant_protection')}</p>
               </div>
             </Grid>
             <Grid
@@ -484,10 +442,15 @@ const Home: React.FC = () => {
             </Grid>
           </Grid>
         </div>
-        <div style={{ marginTop: '20px', textAlign: 'center' }}>
+        <div
+          style={{
+            marginTop: '20px',
+            textAlign: 'center',
+            marginBottom: '120px',
+          }}
+        >
           <p
             style={{
-              fontFamily: 'Noto Sans Devanagari',
               fontSize: '16px',
               fontWeight: 400,
               lineHeight: '20.86px',
@@ -495,13 +458,8 @@ const Home: React.FC = () => {
               margin: '0 20px',
             }}
           >
-            {t('label.ask_me2')}
+            {t('label.homepage_footer')}
           </p>
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
         </div>
       </div>
 
