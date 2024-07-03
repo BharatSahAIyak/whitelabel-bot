@@ -57,6 +57,31 @@ const mergeConfiguration = async () => {
 
   const mergedConfig = await deepMerge({}, localConfig, overrideConfig);
 
-  return mergedConfig;
+  const updatedConfig = convertUrlsInObject(mergedConfig);
+
+  console.log('updated config: ', updatedConfig);
+
+  return updatedConfig;
 };
+
+function convertUrlsInObject(obj: any): any {
+  if (typeof obj === 'string') {
+    return convertToHttps(obj);
+  } else if (Array.isArray(obj)) {
+    return obj.map(convertUrlsInObject);
+  } else if (obj && typeof obj === 'object') {
+    return Object.keys(obj).reduce((acc: any, key) => {
+      acc[key] = convertUrlsInObject(obj[key]);
+      return acc;
+    }, {});
+  }
+  return obj;
+}
+
+function convertToHttps(url: any) {
+  if (url.startsWith('http://') && url.includes(':443')) {
+    return url.replace('http://', 'https://').replace(':443', '');
+  }
+  return url;
+}
 export default mergeConfiguration;

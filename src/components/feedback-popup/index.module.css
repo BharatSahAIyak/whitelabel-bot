@@ -50,11 +50,6 @@
   color: white;
 }
 
-.feedbackBox textarea {
-  padding: 10px;
-  outline: 1px solid var(--secondary);
-}
-
 .feedbackBox button {
   font-weight: 700;
   font-size: 14px;

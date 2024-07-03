@@ -101,6 +101,8 @@ const HistoryPage: FC = () => {
         `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/conversations`,
         {
           userId: localStorage.getItem('userID'),
+          page: 1,
+          perPage: 10,
         },
         {
           headers: {
@@ -111,7 +113,7 @@ const HistoryPage: FC = () => {
       .then((res) => {
         console.log('All chat history:', { res });
         const sortedConversations = _.filter(
-          res?.data,
+          res?.data?.data,
           (conv) => conv?.channelMessageId !== null
         ).sort(
           //@ts-ignore
@@ -119,7 +121,10 @@ const HistoryPage: FC = () => {
         );
         console.log({ sortedConversations });
         const historyList = map(sortedConversations, (chatItem: any) => {
-          const text = chatItem?.payload?.text.replace(/<end\/>/g, '') || '';
+          const text = String(chatItem?.payload?.text || '').replace(
+            /<end\/>/g,
+            ''
+          );
           let label;
           if (text.startsWith('{') && text.endsWith('}')) {
             try {

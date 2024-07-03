@@ -199,52 +199,54 @@ const Navbar: React.FC = () => {
                     </div>
  
 
-          <div
-            style={{
-              position: 'absolute',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              textAlign: 'center',
-              // marginTop: '20px',
-            }}
-          >
-            {showCenterLogo && (
-              <div>
-                <img
-                  data-testid="navbar-center-img"
-                  src={centerLogoSrc}
-                  alt="Center Logo"
-                  style={{ maxHeight: centerLogoSize }}
-                />
-              </div>
-            )}
-          </div>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            textAlign: 'center',
+                            // marginTop: '20px',
+                        }}
+                    >
+                        {showCenterLogo && (
+                            <div>
+                                <img
+                                    data-testid="navbar-center-img"
+                                    src={centerLogoSrc}
+                                    alt="Center Logo"
+                                    style={{ maxHeight: centerLogoSize }}
+                                />
+                            </div>
+                        )}
+                    </div>
 
-          <div data-testid="navbar-right-logos">
-            {showRightLogo1 && (
-              <img
-                src={rightLogo1Src}
-                alt={`Right Logo 1`}
-                style={{ maxHeight: '60px' }}
-              />
-            )}
-            {showRightLogo2 && (
-              <img
-                src={rightLogo2Src}
-                alt={`Right Logo 2`}
-                style={{ maxHeight: '60px' }}
-              />
-            )}
-            {showRightLogo3 && (
-              <img
-                src={rightLogo3Src}
-                alt={`Right Logo 3`}
-                style={{ maxHeight: '60px' }}
-              />
-            )}
-          </div>
-        </Toolbar>
-      </AppBar>
+                    
+                    <div data-testid="navbar-right-logos">
+                        {showRightLogo1 && (
+                            <img
+                                src={rightLogo1Src}
+                                alt={`Right Logo 1`}
+                                style={{ maxHeight: '60px' }}
+                            />
+                        )}
+                        {showRightLogo2 && (
+                            <img
+                                src={rightLogo2Src}
+                                alt={`Right Logo 2`}
+                                style={{ maxHeight: '60px' }}
+                            />
+                        )}
+                        {showRightLogo3 && (
+                            <img
+                                src={rightLogo3Src}
+                                alt={`Right Logo 3`}
+                                style={{ maxHeight: '60px' }}
+                            />
+                        )}
+                    </div>
+                </Toolbar>
+            </AppBar>
+ 
 
       <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
     </>

@@ -44,6 +44,7 @@ const WeatherPage: React.FC = () => {
             params: {
               latitude: sessionStorage.getItem('latitude'),
               longitude: sessionStorage.getItem('longitude'),
+              provider: config?.provider || 'upcar',
             },
           }
         );
@@ -157,44 +158,6 @@ const WeatherPage: React.FC = () => {
     sendTelemetry();
   }, [weather]);
 
-  const windDirections: any = {
-    0: 'Calm',
-    20: 'North-northeasterly',
-    50: 'Northeasterly',
-    70: 'East-northeasterly',
-    90: 'Easterly',
-    110: 'East-southeasterly',
-    140: 'Southeasterly',
-    160: 'South-southeasterly',
-    180: 'Southerly',
-    200: 'South-southwesterly',
-    230: 'Southwesterly',
-    250: 'West-southwesterly',
-    270: 'Westerly',
-    290: 'West-northwesterly',
-    320: 'Northwesterly',
-    340: 'North-northwesterly',
-    360: 'Northerly',
-  };
-
-  function getClosestDirection(degree: number) {
-    const keys = Object.keys(windDirections).map(Number);
-    let closestKey = keys[0];
-    let smallestDifference = Math.abs(degree - closestKey);
-
-    for (let i = 1; i < keys.length; i++) {
-      const currentKey = keys[i];
-      const currentDifference = Math.abs(degree - currentKey);
-
-      if (currentDifference < smallestDifference) {
-        closestKey = currentKey;
-        smallestDifference = currentDifference;
-      }
-    }
-
-    return windDirections[closestKey];
-  }
-
   function getDayAbbreviation(dateString: string) {
     const date = new Date(dateString);
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -220,12 +183,14 @@ const WeatherPage: React.FC = () => {
       <div
         className={styles.container}
         style={{
-          background: `url(${
-            weather?.current?.descriptor?.images?.find(
+          background: `url(${weather?.current?.descriptor?.images
+            ?.find(
               (image: any) =>
                 image.type === (isNight ? 'image_night' : 'image_day')
-            )?.url
-          })`,
+            )
+            ?.url?.replace(/ /g, '%20')
+            ?.replace(/\(/g, '%28')
+            ?.replace(/\)/g, '%29')})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
         }}
@@ -280,9 +245,13 @@ const WeatherPage: React.FC = () => {
           >
             <Grid item xs={1} sm={1} md={1}>
               <Chip
-                label={getClosestDirection(
-                  weather?.current?.tags?.winddir || 0
-                )}
+                label={
+                  localStorage.getItem('locale') === 'en'
+                    ? weather?.current?.tags?.winddir
+                    : weather?.current?.tags?.[
+                        `winddir${'_' + localStorage.getItem('locale') || ''}`
+                      ]
+                }
                 size="medium"
                 sx={{
                   fontSize: '14px',
@@ -544,7 +513,7 @@ const WeatherPage: React.FC = () => {
                   width={80}
                   height={80}
                 />
-                <p>{ele?.code}</p>
+                <p>{ele?.descriptor?.name}</p>
               </Grid>
             );
           })}
