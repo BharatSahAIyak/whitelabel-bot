@@ -253,7 +253,6 @@ const ContextProvider: FC<{
 
       socket?.socket?.on('disconnect', () => {
         console.log('Socket disconnected, attempting to reconnect...');
-        setIsDown(true);
         socket?.socket?.connect();
       });
 
