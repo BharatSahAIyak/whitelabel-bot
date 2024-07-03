@@ -73,22 +73,6 @@ const App = ({ Component, pageProps }: AppProps) => {
     handleLoginRedirect();
   }, [handleLoginRedirect]);
 
-  function convertUrl(url: string) {
-    // Parse the URL
-    const urlObject = new URL(url);
-
-    // Change the protocol to https
-    urlObject.protocol = 'https:';
-
-    // Remove the port if it's 443
-    if (urlObject.port === '443') {
-      urlObject.port = '';
-    }
-
-    // Return the new URL as a string
-    return urlObject.toString();
-  }
-
   useEffect(() => {
     const fetchConfig = async () => {
       fetch(process.env.NEXT_PUBLIC_CONFIG_BASE_URL || '')
@@ -96,24 +80,23 @@ const App = ({ Component, pageProps }: AppProps) => {
         .then((data) => {
           console.log('main data', data?.data?.config);
           const faviconUrl = data?.data?.config?.component?.botDetails?.favicon;
-          const newFaviconUrl = convertUrl(faviconUrl);
-          console.log({ newFaviconUrl });
+          console.log({ faviconUrl });
           var myDynamicManifest = {
             short_name: 'Bot',
             name: 'Bot',
             icons: [
               {
-                src: newFaviconUrl,
+                src: faviconUrl,
                 sizes: '64x64 32x32 24x24 16x16',
                 type: 'image/x-icon',
               },
               {
-                src: newFaviconUrl,
+                src: faviconUrl,
                 type: 'image/png',
                 sizes: '192x192',
               },
               {
-                src: newFaviconUrl,
+                src: faviconUrl,
                 type: 'image/png',
                 sizes: '512x512',
               },
