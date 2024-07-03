@@ -225,44 +225,38 @@ const ContextProvider: FC<{
 
   useEffect(() => {
     if (localStorage.getItem('userID')) {
-      const socket = new UCI(
-        URL,
-        {
-          transportOptions: {
-            polling: {
-              extraHeaders: {
-                channel: 'akai',
+      setNewSocket(
+        new UCI(
+          URL,
+          {
+            transportOptions: {
+              polling: {
+                extraHeaders: {
+                  // Authorization: `Bearer ${cookie.access_token}`,
+                  channel: 'akai',
+                },
               },
             },
+            path: process.env.NEXT_PUBLIC_SOCKET_PATH || '',
+            query: {
+              deviceId: localStorage.getItem('userID'),
+            },
+            autoConnect: false,
+            transports: ['polling', 'websocket'],
+            upgrade: true,
           },
-          path: process.env.NEXT_PUBLIC_SOCKET_PATH || '',
-          query: {
-            deviceId: localStorage.getItem('userID'),
-          },
-          autoConnect: false,
-          transports: ['polling', 'websocket'],
-          upgrade: true,
-        },
-        onMessageReceived
+          onMessageReceived
+        )
       );
-
-      socket?.socket?.on('connect', () => {
-        console.log('Socket connected');
-        setIsDown(false);
-      });
-
-      socket?.socket?.on('disconnect', () => {
-        console.log('Socket disconnected, attempting to reconnect...');
-        socket?.socket?.connect();
-      });
-
-      socket?.socket?.connect();
-      setNewSocket(socket);
-
-      return () => {
-        socket?.socket?.disconnect();
-      };
     }
+    function cleanup() {
+      if (newSocket)
+        newSocket.onDisconnect(() => {
+          console.log('Socket disconnected');
+        });
+    }
+    return cleanup;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStorage.getItem('userID')]);
 
   const updateMsgState = useCallback(
