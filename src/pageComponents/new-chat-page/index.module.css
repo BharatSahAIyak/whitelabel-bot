@@ -1,0 +1,53 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  padding: 20px;
+}
+
+.voiceRecorder {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.faq-section {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.inputBox {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 10px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+}
+
+.inputBox textarea {
+  flex: 1;
+  height: 40px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  resize: none;
+}
+
+.inputBox button {
+  margin-left: 10px;
+
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}

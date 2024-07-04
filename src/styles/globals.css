@@ -111,3 +111,16 @@ input::-webkit-inner-spin-button {
   animation: rotateMenu 400ms ease-in-out forwards;
   transform-origin: top center;
 }
+
+/* Remove the focus outline and border */
+.MuiInputBase-root:focus,
+.MuiOutlinedInput-root:focus,
+.MuiTextField-root:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.MuiInputBase-root:focus .MuiInputAdornment-root,
+.MuiOutlinedInput-root:focus .MuiOutlinedInput-notchedOutline {
+  border: none;
+}

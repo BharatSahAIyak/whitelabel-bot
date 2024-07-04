@@ -23,20 +23,20 @@
       "provider": "upcar"
     },
     "homePage": {
-      "showKalia": false,
-      "showWeatherAdvisory": false,
-      "showWeatherPage": false,
+       "showWeatherPage": false,
       "showPlantProtection": false,
       "showSchemes": false,
-      "weatherAdvisoryImg": "",
-      "plantProtectionImg": "",
-      "schemesImg": "",
-      "kaliaStatusImg": "",
+      "showOtherInformation": true,
+      "showWeatherAdvisory": false,
       "showMic": true,
       "micHeight": "143px",
       "micWidth": "143px",
       "topGap": "75px",
-      "showTapToSpeakText": false
+      "showTapToSpeakText": false,
+      "otherInformationImg": "",
+ "weatherAdvisoryImg": "",
+      "plantProtectionImg": "",
+      "schemesImg": ""
     },
     "chatUI": {
       "allowFeedback": true,
@@ -169,7 +169,7 @@
       "label.title": "Stencil Bot",
       "label.user1": "User1",
       "label.user2": "User2",
-      "label.ask_me": "Ask me anything about farming",
+      "label.weather_button_text": "Know More about Crops",
       "label.farmer": "Farmer",
       "label.logout": "Logout",
       "label.manual": "User Manual - For VAWs",
@@ -305,7 +305,20 @@
       "label.crop_advisory": "Crop Advisory",
       "label.todays_advisory": "Today's Advisory",
       "label.verified_advisory": "Verified Advisory",
-      "label.play_advisory": "Click here to listen"
+      "label.play_advisory": "Click here to listen",
+      "label.faq_title": "Frequently Asked Questions",
+      "label.faq_question1": "Ask me about anything?",
+      "label.faq_question2": "Ask me about Scheme?",
+      "label.faq_question3": "What is the weather now?",
+      "label.know_more": "Know  More",
+      "label.menu_home": "Home",
+      "label.menu_tap_text": "Tap to Speak",
+      "label.menu_notification": "Notifications",
+      "label.ask": "Ask Me",
+      "label.homepage_footer": "Ama Krushi chatbot can make mistakes. To check important information, consider reading our terms and privacy policy ",
+      "label.help_text":"Hello, how can I help you?",
+      "label.other_information": "Other Information"
+       
     }
   }
 }
