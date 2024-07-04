@@ -755,6 +755,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 handleBack={() => {
                   setPopupActive(false);
                   context?.sendMessage('Guided: back', 'Back');
+                  if (
+                    content?.data?.choices?.choices?.find(
+                      (choice: any) =>
+                        choice?.key?.toLowerCase() === 'guided: back'
+                    )?.showTextInput
+                  ) {
+                    context?.setShowInputBox(true);
+                  }
                 }}
                 bottom={content?.data?.choices?.isSearchable ? '65px' : '0px'}
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
@@ -1115,6 +1123,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 handleBack={() => {
                   setPopupActive(false);
                   context?.sendMessage('Guided: back', 'Back');
+                  if (
+                    content?.data?.choices?.choices?.find(
+                      (choice: any) =>
+                        choice?.key?.toLowerCase() === 'guided: back'
+                    )?.showTextInput
+                  ) {
+                    context?.setShowInputBox(true);
+                  }
                 }}
                 bottom={content?.data?.choices?.isSearchable ? '65px' : '0px'}
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
