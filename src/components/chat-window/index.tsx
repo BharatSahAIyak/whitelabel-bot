@@ -77,7 +77,10 @@ const ChatUiWindow: React.FC = () => {
           (item?.to !== 'admin' || !item.payload?.metaData?.hideMessage)
       )
       .map((item: any) => ({
-        text: item?.payload?.text
+        text: (item?.to === 'admin'
+          ? item?.payload?.metaData?.originalText ?? item?.payload?.text
+          : item?.payload?.text
+        )
           ?.replace(/<end\/>/g, '')
           ?.replace(/^Guided:/, ''),
         position: item.to === 'admin' ? 'right' : 'left',

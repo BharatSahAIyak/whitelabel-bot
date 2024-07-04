@@ -466,6 +466,7 @@ const ContextProvider: FC<{
               state: sessionStorage.getItem('state'),
               ip: sessionStorage.getItem('ip'),
               hideMessage: textToSend?.startsWith('Guided:') || false,
+              originalText: textToShow?.replace(/^\s+|\s+$/g, ''),
             },
           },
           tags: JSON.parse(sessionStorage.getItem('tags') || '[]') || [],
