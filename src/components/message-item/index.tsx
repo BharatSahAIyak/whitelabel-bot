@@ -750,7 +750,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <>
               <Popup
                 showBack={content?.data?.choices?.choices?.find(
-                  (choice: any) => choice.key === 'Guided: back'
+                  (choice: any) => choice?.key?.toLowerCase() === 'guided: back'
                 )}
                 handleBack={() => {
                   setPopupActive(false);
@@ -771,7 +771,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 titleSize="16px"
               >
                 {displayedChoices.map((item: any, index: number) => {
-                  if (item?.key === 'Guided: back') return null;
+                  if (item?.key?.toLowerCase() === 'guided: back') return null;
                   return (
                     <div
                       key={index}
@@ -1110,7 +1110,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             <>
               <Popup
                 showBack={content?.data?.choices?.choices?.find(
-                  (choice: any) => choice.key === 'Guided: back'
+                  (choice: any) => choice?.key?.toLowerCase() === 'guided: back'
                 )}
                 handleBack={() => {
                   setPopupActive(false);
@@ -1131,7 +1131,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 titleSize="16px"
               >
                 {displayedChoices.map((item: any, index: number) => {
-                  if (item?.key === 'Guided: back') return null;
+                  if (item?.key?.toLowerCase() === 'guided: back') return null;
                   return (
                     <div
                       key={index}
