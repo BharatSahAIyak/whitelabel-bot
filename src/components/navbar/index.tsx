@@ -179,24 +179,25 @@ const Navbar: React.FC = () => {
                 </Typography>
               </div>
             )}
-
-            {showHomeIcon &&
-              router.pathname !== '/' &&
-              router.pathname !== '/weather' &&
-              router.pathname !== '/chat' && (
-                <IconButton
-                  data-testid="navbar-home-button"
-                  color="primary"
-                  size="large"
-                  edge="start"
-                  aria-label="home"
-                  style={{ fontSize: '2rem', height: '48px' }}
-                  onClick={() => router.push('/')}
-                >
-                  <HomeIcon sx={{ fontSize: '50px' }} />
-                </IconButton>
-              )}
-          </div>
+ 
+                        {/* {showHomeIcon &&
+                            router.pathname !== '/' &&
+                            router.pathname !== '/weather' &&
+                            router.pathname !== '/chat' && (
+                                <IconButton
+                                    data-testid="navbar-home-button"
+                                    color="primary"
+                                    size="large"
+                                    edge="start"
+                                    aria-label="home"
+                                    style={{ fontSize: '2rem', height: '48px' }}
+                                    onClick={() => router.push('/')}
+                                >
+                                    <HomeIcon sx={{ fontSize: '50px' }} />
+                                </IconButton>
+                            )} */}
+                    </div>
+ 
 
                     <div
                         style={{

@@ -401,10 +401,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     return result;
   };
 
-  useEffect(() => {
-    console.log({ popupActive, msg: content?.text });
-  }, [popupActive, content?.text]);
-
   switch (type) {
     case 'loader':
       return <Typing />;
@@ -753,6 +749,21 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {content?.data?.choices?.choices?.length > 0 && (
             <>
               <Popup
+                showBack={content?.data?.choices?.choices?.find(
+                  (choice: any) => choice?.key?.toLowerCase() === 'guided: back'
+                )}
+                handleBack={() => {
+                  setPopupActive(false);
+                  context?.sendMessage('Guided: back', 'Back');
+                  if (
+                    content?.data?.choices?.choices?.find(
+                      (choice: any) =>
+                        choice?.key?.toLowerCase() === 'guided: back'
+                    )?.showTextInput
+                  ) {
+                    context?.setShowInputBox(true);
+                  }
+                }}
                 bottom={content?.data?.choices?.isSearchable ? '65px' : '0px'}
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
                 height={'20vh'}
@@ -768,6 +779,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 titleSize="16px"
               >
                 {displayedChoices.map((item: any, index: number) => {
+                  if (item?.key?.toLowerCase() === 'guided: back') return null;
                   return (
                     <div
                       key={index}
@@ -1105,6 +1117,21 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
           {content?.data?.choices?.choices?.length > 0 && (
             <>
               <Popup
+                showBack={content?.data?.choices?.choices?.find(
+                  (choice: any) => choice?.key?.toLowerCase() === 'guided: back'
+                )}
+                handleBack={() => {
+                  setPopupActive(false);
+                  context?.sendMessage('Guided: back', 'Back');
+                  if (
+                    content?.data?.choices?.choices?.find(
+                      (choice: any) =>
+                        choice?.key?.toLowerCase() === 'guided: back'
+                    )?.showTextInput
+                  ) {
+                    context?.setShowInputBox(true);
+                  }
+                }}
                 bottom={content?.data?.choices?.isSearchable ? '65px' : '0px'}
                 isCollapsed={content?.data?.choices?.isCollapsed ?? false}
                 height={'20vh'}
@@ -1120,6 +1147,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 titleSize="16px"
               >
                 {displayedChoices.map((item: any, index: number) => {
+                  if (item?.key?.toLowerCase() === 'guided: back') return null;
                   return (
                     <div
                       key={index}

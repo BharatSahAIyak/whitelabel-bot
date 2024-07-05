@@ -1,54 +1,90 @@
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import styles from './index.module.css';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { NextPage } from 'next';
-import { AppContext } from '../../context';
-import SendButton from './assets/sendButton';
+import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
+import { Chip, Grid, Button } from '@mui/material';
+import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
-import router from 'next/router';
+import { AppContext } from '../../context';
+import axios from 'axios';
+import { FullPageLoader } from '../../components/fullpage-loader';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useRouter } from 'next/router';
+import Menu from '../../components/menu';
 import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
-import RenderVoiceRecorder from '../../components/recorder/RenderVoiceRecorder';
-import { recordUserLocation } from '../../utils/location';
-import { useConfig } from '../../hooks/useConfig';
-import DowntimePage from '../downtime-page';
-import { useColorPalates } from '../../providers/theme-provider/hooks';
-import kaliaStatusImg from './assets/kalia_status.png';
-import plantProtectionImg from './assets/plant_protection.png';
-import weatherAdvisoryImg from './assets/weather_advisory.png';
-import TransliterationInput from '../../components/transliteration-input';
 import saveTelemetryEvent from '../../utils/telemetry';
 
-const HomePage: NextPage = () => {
-  const context = useContext(AppContext);
-  const botConfig = useConfig('component', 'chatUI');
-  const config = useConfig('component', 'homePage');
-  const { micWidth, micHeight } = config;
+const Home: React.FC = () => {
   const t = useLocalization();
-  const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
-  const [inputMsg, setInputMsg] = useState('');
+  const context = useContext(AppContext);
+  const router = useRouter();
   const theme = useColorPalates();
-  const secondaryColor = useMemo(() => {
-    return theme?.primary?.main;
-  }, [theme?.primary?.main]);
+  const config = useConfig('component', 'homePage');
+  const [weather, setWeather] = useState<any>(null);
+  const [isNight, setIsNight] = useState(false);
 
   useEffect(() => {
-    context?.fetchIsDown(); // check if server is down
-
-    if (!sessionStorage.getItem('conversationId')) {
-      const newConversationId = uuidv4();
-      sessionStorage.setItem('conversationId', newConversationId);
-      context?.setConversationId(newConversationId);
+    const currentHour = new Date().getHours();
+    if (currentHour >= 18 || currentHour < 6) {
+      setIsNight(true);
     }
-    recordUserLocation();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      const latitude = sessionStorage.getItem('latitude');
+      const longitude = sessionStorage.getItem('longitude');
+      if (!latitude || !longitude) return;
+
+      try {
+        const response = await axios.get(
+          process.env.NEXT_PUBLIC_WEATHER_API || '',
+          {
+            params: { latitude, longitude },
+          }
+        );
+
+        console.log(response.data);
+        const providers = response.data.message.catalog.providers;
+
+        const weatherProvider = providers.find(
+          (provider: any) =>
+            provider.id.toLowerCase() === 'ouat' &&
+            provider.category_id === 'weather_provider'
+        );
+
+        const imdWeatherProvider = providers.find(
+          (provider: any) =>
+            provider.id === 'imd' && provider.category_id === 'weather_provider'
+        );
+
+        if (weatherProvider) {
+          setWeather((prev: any) => ({
+            ...prev,
+            future: weatherProvider.items,
+          }));
+        }
+
+        if (imdWeatherProvider) {
+          setWeather((prev: any) => ({
+            ...prev,
+            future: imdWeatherProvider.items?.slice(1),
+            current: imdWeatherProvider.items?.[0],
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching advisory data:', error);
+        throw error;
+      }
+    };
+
+    fetchWeatherData();
+  }, []);
+
+  const handleKnowMoreClick = () => {
+    router.push('/weather');
+  };
 
   const sendMessage = useCallback(
     async (msg: string) => {
@@ -77,13 +113,17 @@ const HomePage: NextPage = () => {
   );
 
   const sendGuidedMsg = (type: string) => {
-    // convert the string type into stringified array
     context?.setShowInputBox(false);
     const tags = [type];
     sessionStorage.setItem('tags', JSON.stringify(tags));
     sendMessage(`Guided: ${t('label.' + type)}`);
   };
 
+  function getDayAbbreviation(dateString: string) {
+    const date = new Date(dateString);
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return days[date.getDay()];
+  }
   const sendWeatherTelemetry = async () => {
     try {
       const msgId = uuidv4();
@@ -103,167 +143,363 @@ const HomePage: NextPage = () => {
     }
   };
 
-  if (context?.isDown) {
-    return <DowntimePage />;
-  } else
-    return (
-      <>
-        <div
-          className={styles.main}
-          // onClick={handleDocumentClick}
-          style={{ color: secondaryColor }}
-        >
-          {context?.kaliaClicked ? (
-            <div className={styles.kaliaImg}>
-              <img
-                src={config?.kaliaStatusImg || kaliaStatusImg?.src}
-                width={200}
-                height={200}
-                alt="kaliastatus"
-              />
-            </div>
-          ) : (
-            <>
+  if (!weather) {
+    return <FullPageLoader loading={!weather} />;
+  }
+
+  return (
+    <div className={styles.main}>
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+      ></meta>
+
+      <div
+        className={styles.container}
+        style={{
+          background: `url(${weather?.current?.descriptor?.images
+            ?.find(
+              (image: any) =>
+                image.type === (isNight ? 'image_night' : 'image_day')
+            )
+            ?.url?.replace(/ /g, '%20')
+            ?.replace(/\(/g, '%28')
+            ?.replace(/\)/g, '%29')})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+        }}
+      >
+        <div className={styles.weatherText}>
+          <div>
+            <h1
+              style={{
+                color: 'white',
+                margin: 0,
+                fontSize: '2.75rem',
+              }}
+            >
+              {weather?.current?.tags?.temp}°C
+            </h1>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <h2>
+              {localStorage.getItem('locale') === 'en'
+                ? weather?.current?.tags?.conditions
+                : weather?.current?.tags?.[
+                    `conditions${'_' + localStorage.getItem('locale') || ''}`
+                  ]}
+            </h2>
+            {sessionStorage.getItem('city') && (
               <div
-                className={styles.title}
-                dangerouslySetInnerHTML={{ __html: t('label.ask_me') }}
-              ></div>
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'end',
+                }}
+              >
+                <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
+                <span style={{ fontSize: '1.25rem' }}>
+                  {sessionStorage.getItem('city')}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
 
-              {(config?.showKalia ||
-                config?.showWeatherAdvisory ||
-                config?.showPlantProtection ||
-                config?.showSchemes) && (
-                <div
-                  className={styles.imgButtons}
-                  data-testid="homepage-action-buttons"
-                >
-                  {config?.showWeatherAdvisory && (
-                    <div
-                      className={styles.imgBtn}
-                      onClick={() => {
-                        if (config?.showWeatherPage) {
-                          router.push('/weather');
-                          sendWeatherTelemetry();
-                        } else {
-                          sendGuidedMsg('weather');
-                        }
-                      }}
-                    >
-                      <p>{t('label.weather_advisory')}</p>
-                      <img
-                        src={
-                          config?.weatherAdvisoryImg || weatherAdvisoryImg?.src
-                        }
-                        width={50}
-                        height={70}
-                        alt="weatheradvisory"
-                      />
-                    </div>
-                  )}
-                  {config?.showPlantProtection && (
-                    <div
-                      className={styles.imgBtn}
-                      onClick={() => sendGuidedMsg('pest')}
-                    >
-                      <p>{t('label.plant_protection')}</p>
-                      <img
-                        src={
-                          config?.plantProtectionImg || plantProtectionImg?.src
-                        }
-                        width={60}
-                        height={60}
-                        alt="plantprotection"
-                      />
-                    </div>
-                  )}
-                  {config?.showSchemes && (
-                    <div
-                      className={styles.imgBtn}
-                      onClick={() => sendGuidedMsg('scheme')}
-                    >
-                      <p>{t('label.scheme')}</p>
-                      <img
-                        src={config?.schemesImg || plantProtectionImg?.src}
-                        width={60}
-                        height={60}
-                        alt="schemes"
-                      />
-                    </div>
-                  )}
-                  {config?.showKalia && (
-                    <div
-                      className={styles.imgBtn}
-                      onClick={() =>
-                        context?.setKaliaClicked((props: boolean) => !props)
-                      }
-                    >
-                      <p>{t('label.kalia_status')}</p>
-                      <img
-                        src={config?.kaliaStatusImg || kaliaStatusImg?.src}
-                        width={60}
-                        height={60}
-                        alt="kaliastatus"
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
+        <div className={styles.weatherBottom}>
+          <Grid
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '5px 10px',
+            }}
+            spacing={{ xs: 2, md: 3 }}
+            columns={3}
+          >
+            <Grid item xs={1} sm={1} md={1}>
+              <Chip
+                label={
+                  localStorage.getItem('locale') === 'en'
+                    ? weather?.current?.tags?.winddir
+                    : weather?.current?.tags?.[
+                        `winddir${'_' + localStorage.getItem('locale') || ''}`
+                      ]
+                }
+                size="medium"
+                sx={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  minWidth: '70px',
+                  background: null,
+                }}
+              />
+              <p
+                style={{
+                  minWidth: '70px',
+                  background: 'white',
+                  color: 'black',
+                  fontWeight: '600',
+                  marginTop: '5px',
+                }}
+              >
+                {t('label.wind_direction')}
+              </p>
+            </Grid>
+            <Grid item xs={1} sm={1} md={1}>
+              <Chip
+                label={(weather?.current?.tags?.windspeed || 0) + ' km/h'}
+                size="medium"
+                sx={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  minWidth: '70px',
+                  background: '#101860',
+                  color: 'white',
+                }}
+              />
+              <p
+                style={{
+                  minWidth: '70px',
+                  background: 'white',
+                  color: 'black',
+                  fontWeight: '600',
+                  marginTop: '5px',
+                }}
+              >
+                {t('label.wind_speed')}
+              </p>
+            </Grid>
+            <Grid item xs={1} sm={1} md={1}>
+              <Chip
+                label={(weather?.current?.tags?.humidity || 0) + ' %'}
+                size="medium"
+                sx={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  minWidth: '70px',
+                  background: '#4CC3CB',
+                  color: 'white',
+                }}
+              />
+              <p
+                style={{
+                  minWidth: '70px',
+                  background: 'white',
+                  color: 'black',
+                  fontWeight: '600',
+                  marginTop: '5px',
+                }}
+              >
+                {t('label.humidity')}
+              </p>
+            </Grid>
+          </Grid>
 
-              {config?.showMic && (
+          <div
+            style={{
+              marginTop: '10px',
+              textAlign: 'center',
+              paddingBottom: '20px',
+            }}
+          >
+            <Button
+              variant="contained"
+              endIcon={<ArrowForwardIcon />}
+              sx={{
+                backgroundColor: '#EDEDF1',
+                color: '#1e6231',
+                fontSize: '18px',
+                width: '308px',
+                height: '60px',
+                padding: '18px 24px',
+                fontWeight: '500',
+                borderRadius: '6px',
+
+                textTransform: 'none',
+                boxShadow: 'none',
+              }}
+              onClick={() => {
+                if (config.showWeatherPage) {
+                  handleKnowMoreClick();
+                } else {
+                  router.push('/chat');
+                }
+              }}
+            >
+              {t('label.weather_button_text')}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.spacing}></div>
+
+      <div className={styles.cropContainer}>
+        <div className={styles.heading} style={{ background: '#DFF6D1' }}>
+          {t('message.ask_ur_question')}
+        </div>
+        <div className={styles.gridSection}>
+          <Grid container spacing={1} justifyContent="center">
+            {config.showWeatherAdvisory && (
+              <Grid
+                item
+                xs={5}
+                sm={4}
+                md={4}
+                sx={{
+                  textAlign: 'center',
+                  padding: '10px',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '15.87px',
+                  margin: '10px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                }}
+              >
                 <div
-                  className={styles.voiceRecorder}
-                  style={{
-                    height: micHeight,
-                    width: micWidth,
+                  onClick={() => {
+                    if (config?.showWeatherPage) {
+                      router.push('/weather');
+                      sendWeatherTelemetry();
+                    } else {
+                      sendGuidedMsg('weather');
+                    }
                   }}
                 >
-                  <RenderVoiceRecorder
-                    setInputMsg={setInputMsg}
-                    tapToSpeak={config?.showTapToSpeakText}
+                  <img
+                    src={config.weatherAdvisoryImg}
+                    alt="Weather"
+                    className={styles.gridImage}
                   />
+                  <p className={styles.gridText}>
+                    {t('label.weather_advisory')}{' '}
+                  </p>
                 </div>
-              )}
-            </>
-          )}
+              </Grid>
+            )}
 
-          <form onSubmit={(event) => event?.preventDefault()}>
-            <div className={`${`${styles.inputBox} ${styles.inputBoxOpen}`}`}>
-              <TransliterationInput
-                data-testid="homepage-input-field"
-                config={botConfig}
-                style={{ fontFamily: 'NotoSans-Regular' }}
-                rows={1}
-                value={inputMsg}
-                setValue={setInputMsg}
-                onKeyDown={(e: any) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    sendMessage(inputMsg);
-                  }
+            {config.showSchemes && (
+              <Grid
+                item
+                xs={5}
+                sm={4}
+                md={4}
+                sx={{
+                  textAlign: 'center',
+                  padding: '10px',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '15.87px',
+                  margin: '10px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
                 }}
-                multiline={false}
-                placeholder={
-                  !context?.kaliaClicked
-                    ? placeholder
-                    : t('label.enter_aadhaar_number')
-                }
-              />
-              <button
-                data-testid="homepage-send-button"
-                type="submit"
-                className={styles.sendButton}
-                onClick={() => sendMessage(inputMsg)}
               >
-                <SendButton
-                  width={40}
-                  height={40}
-                  color={theme?.primary?.light}
-                />
-              </button>
-            </div>
-          </form>
+                <div onClick={() => sendGuidedMsg('scheme')}>
+                  <img
+                    src={config.schemesImg}
+                    alt="Schemes"
+                    className={styles.gridImage}
+                  />
+                  <p className={styles.gridText}>{t('label.scheme')}</p>
+                </div>
+              </Grid>
+            )}
+
+            {config.showPlantProtection && (
+              <Grid
+                item
+                xs={5}
+                sm={5}
+                md={4}
+                sx={{
+                  textAlign: 'center',
+                  padding: '10px',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '15.87px',
+                  margin: '10px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div onClick={() => sendGuidedMsg('pest')}>
+                  <img
+                    src={config.plantProtectionImg}
+                    alt="Pest"
+                    className={styles.gridImage}
+                  />
+                  <p className={styles.gridText}>
+                    {t('label.plant_protection')}
+                  </p>
+                </div>
+              </Grid>
+            )}
+
+            {config.showOtherInformation && (
+              <Grid
+                item
+                xs={5}
+                sm={4}
+                md={4}
+                sx={{
+                  textAlign: 'center',
+                  padding: '10px',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '15.87px',
+                  margin: '10px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div onClick={() => router.push('/faq')}>
+                  <img
+                    src={config.otherInformationImg}
+                    alt="FAQ"
+                    className={styles.gridImage}
+                  />
+                  <p className={styles.gridText}>
+                    {t('label.other_information')}
+                  </p>
+                </div>
+              </Grid>
+            )}
+          </Grid>
         </div>
-      </>
-    );
+        <div
+          style={{
+            marginTop: '20px',
+            textAlign: 'center',
+            marginBottom: '120px',
+          }}
+        >
+          <p
+            style={{
+              fontSize: '16px',
+              fontWeight: 400,
+              lineHeight: '20.86px',
+              textAlign: 'left',
+              margin: '0 20px',
+            }}
+          >
+            {t('label.homepage_footer')}
+          </p>
+        </div>
+      </div>
+
+      <Menu />
+    </div>
+  );
 };
-export default HomePage;
+
+export default Home;
