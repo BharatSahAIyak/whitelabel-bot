@@ -23,6 +23,8 @@ import FAQ from '../../components/chat-faq';
 import { Modal, Box, IconButton, Typography } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
 import styles from './index.module.css';
+import CircularProgress from '@mui/material/CircularProgress';
+
 const ChatPage: NextPage = () => {
   const context = useContext(AppContext);
   const botConfig = useConfig('component', 'chatUI');
@@ -36,6 +38,7 @@ const ChatPage: NextPage = () => {
   const secondaryColor = theme?.primary?.main;
   const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -155,14 +158,20 @@ const ChatPage: NextPage = () => {
             <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
               {t(`label.help_text`)}
             </Typography>
-            <RenderVoiceRecorder
-              setInputMsg={(msg: string) => {
-                setInputMsg(msg);
-                handleCloseModal();
-              }}
-              tapToSpeak={config?.showTapToSpeakText}
-              onCloseModal={handleCloseModal}
-            />
+            {isLoading ? (
+              <CircularProgress style={{ color: 'white' }} />
+            ) : (
+              <RenderVoiceRecorder
+                setInputMsg={(msg: string) => {
+                  setInputMsg(msg);
+                  handleCloseModal();
+                }}
+                tapToSpeak={config?.showTapToSpeakText}
+                onCloseModal={handleCloseModal}
+                onProcessingStart={() => setIsLoading(true)}
+                onProcessingEnd={() => setIsLoading(false)}
+              />
+            )}
           </Box>
         </Modal>
 
