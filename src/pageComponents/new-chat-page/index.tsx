@@ -119,7 +119,7 @@ const ChatPage: NextPage = () => {
                   alignItems: 'center',
                   width: micWidth,
                   height: micHeight,
-                  backgroundColor: 'green',
+                  bgcolor: '#115223',
                   borderRadius: '50%',
                 }}
               >
@@ -140,7 +140,7 @@ const ChatPage: NextPage = () => {
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              bgcolor: 'green',
+              bgcolor: '#115223',
               boxShadow: 24,
               p: 4,
               outline: 'none',

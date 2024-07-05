@@ -32,6 +32,7 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    console.log('Home Config:', config);
     const fetchWeatherData = async () => {
       const latitude = sessionStorage.getItem('latitude');
       const longitude = sessionStorage.getItem('longitude');
@@ -297,9 +298,9 @@ const Home: React.FC = () => {
 
           <div
             style={{
-              marginTop: '10px',
+              marginTop: '5px',
               textAlign: 'center',
-              paddingBottom: '20px',
+              paddingBottom: '10px',
             }}
           >
             <Button
@@ -310,7 +311,7 @@ const Home: React.FC = () => {
                 color: '#1e6231',
                 fontSize: '18px',
                 width: '308px',
-                height: '60px',
+                height: '40px',
                 padding: '18px 24px',
                 fontWeight: '500',
                 borderRadius: '6px',
@@ -332,8 +333,6 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.spacing}></div>
-
       <div className={styles.cropContainer}>
         <div className={styles.heading} style={{ background: '#DFF6D1' }}>
           {t('message.ask_ur_question')}
@@ -343,16 +342,16 @@ const Home: React.FC = () => {
             {config.showWeatherAdvisory && (
               <Grid
                 item
-                xs={5}
-                sm={4}
-                md={4}
+                xs={4}
+                sm={3}
+                md={3}
                 sx={{
                   textAlign: 'center',
-                  padding: '10px',
+                  padding: '8px',
                   backgroundColor: 'white',
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                  borderRadius: '15.87px',
-                  margin: '10px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '12px',
+                  margin: '8px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -384,16 +383,16 @@ const Home: React.FC = () => {
             {config.showSchemes && (
               <Grid
                 item
-                xs={5}
-                sm={4}
-                md={4}
+                xs={4}
+                sm={3}
+                md={3}
                 sx={{
                   textAlign: 'center',
-                  padding: '10px',
+                  padding: '8px',
                   backgroundColor: 'white',
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                  borderRadius: '15.87px',
-                  margin: '10px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '12px',
+                  margin: '8px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -414,16 +413,16 @@ const Home: React.FC = () => {
             {config.showPlantProtection && (
               <Grid
                 item
-                xs={5}
-                sm={5}
-                md={4}
+                xs={4}
+                sm={3}
+                md={3}
                 sx={{
                   textAlign: 'center',
-                  padding: '10px',
+                  padding: '8px',
                   backgroundColor: 'white',
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                  borderRadius: '15.87px',
-                  margin: '10px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '12px',
+                  margin: '8px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -446,16 +445,16 @@ const Home: React.FC = () => {
             {config.showOtherInformation && (
               <Grid
                 item
-                xs={5}
-                sm={4}
-                md={4}
+                xs={4}
+                sm={3}
+                md={3}
                 sx={{
                   textAlign: 'center',
-                  padding: '10px',
+                  padding: '8px',
                   backgroundColor: 'white',
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                  borderRadius: '15.87px',
-                  margin: '10px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '12px',
+                  margin: '8px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -476,25 +475,27 @@ const Home: React.FC = () => {
             )}
           </Grid>
         </div>
-        <div
-          style={{
-            marginTop: '20px',
-            textAlign: 'center',
-            marginBottom: '120px',
-          }}
-        >
-          <p
+        {config.showFooter && (
+          <div
             style={{
-              fontSize: '16px',
-              fontWeight: 400,
-              lineHeight: '20.86px',
-              textAlign: 'left',
-              margin: '0 20px',
+              marginTop: '20px',
+              textAlign: 'center',
+              marginBottom: '120px',
             }}
           >
-            {t('label.homepage_footer')}
-          </p>
-        </div>
+            <p
+              style={{
+                fontSize: '16px',
+                fontWeight: 400,
+                lineHeight: '20.86px',
+                textAlign: 'left',
+                margin: '0 20px',
+              }}
+            >
+              {t('label.homepage_footer')}
+            </p>
+          </div>
+        )}
       </div>
 
       <Menu />

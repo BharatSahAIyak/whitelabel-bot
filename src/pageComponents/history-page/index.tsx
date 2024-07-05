@@ -27,6 +27,7 @@ import { AppContext } from '../../context';
 import { recordUserLocation } from '../../utils/location';
 import { v4 as uuidv4 } from 'uuid';
 import { useCookies } from 'react-cookie';
+import Menu from '../../components/menu';
 
 const HistoryPage: FC = () => {
   const [isFetching, setIsFetching] = useState(true);
@@ -212,6 +213,7 @@ const HistoryPage: FC = () => {
             }}
           />
         </div>
+        <Menu />
       </div>
     </>
   );

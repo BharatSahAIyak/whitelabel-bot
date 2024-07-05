@@ -247,15 +247,16 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak, onCloseModal }) => {
         <LiveAudioVisualizer
           mediaRecorder={mediaRecorder}
           width={250}
-          height={75}
+          height={150}
           gap={2}
+          barWidth={6}
           barColor="white"
         />
       )}
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
         <Button
           variant="contained"
-          style={{ backgroundColor: 'white', color: 'green' }}
+          style={{ backgroundColor: 'white', color: '#115223' }}
           onClick={() => {
             stopRecording();
           }}

@@ -9,6 +9,7 @@ import { useColorPalates } from '../../providers/theme-provider/hooks';
 import ComingSoonPage from '../coming-soon-page';
 import { useLocalization } from '../../hooks';
 import { useConfig } from '../../hooks/useConfig';
+import Menu from '../../components/menu';
 
 const FAQPage: React.FC = () => {
   const t = useLocalization();
@@ -128,6 +129,8 @@ const FAQPage: React.FC = () => {
             )}
           </Box>
         </Box>
+
+        <Menu />
       </>
     );
 };

@@ -9,6 +9,7 @@ import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
 import axios from 'axios';
 import { useLocalization } from '../../hooks';
+import Menu from '../../components/menu';
 
 const FeedbackPage: React.FC = () => {
   const [star, setStar] = useState(1);
@@ -195,6 +196,8 @@ const FeedbackPage: React.FC = () => {
           </Box>
         )}
       </Box>
+
+      <Menu />
     </div>
   );
 };

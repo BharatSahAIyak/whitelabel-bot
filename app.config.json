@@ -36,7 +36,8 @@
       "otherInformationImg": "",
  "weatherAdvisoryImg": "",
       "plantProtectionImg": "",
-      "schemesImg": ""
+      "schemesImg": "",
+      "showFooter" : false
     },
     "chatUI": {
       "allowFeedback": true,
@@ -316,7 +317,7 @@
       "label.menu_notification": "Notifications",
       "label.ask": "Ask Me",
       "label.homepage_footer": "Ama Krushi chatbot can make mistakes. To check important information, consider reading our terms and privacy policy ",
-      "label.help_text":"Hello, how can I help you?",
+      "label.help_text":"Please ask your question",
       "label.other_information": "Other Information"
        
     }
