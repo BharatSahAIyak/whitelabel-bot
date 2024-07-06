@@ -33,8 +33,8 @@ const WeatherPage: React.FC = () => {
     const startTime = performance.now();
     const fetch = async () => {
       if (
-        !sessionStorage.getItem('longitude') ||
-        !sessionStorage.getItem('latitude')
+        !localStorage.getItem('longitude') ||
+        !localStorage.getItem('latitude')
       )
         return;
       try {
@@ -42,8 +42,8 @@ const WeatherPage: React.FC = () => {
           process.env.NEXT_PUBLIC_WEATHER_API || '',
           {
             params: {
-              latitude: sessionStorage.getItem('latitude'),
-              longitude: sessionStorage.getItem('longitude'),
+              latitude: localStorage.getItem('latitude'),
+              longitude: localStorage.getItem('longitude'),
               provider: config?.provider || 'upcar',
             },
           }
