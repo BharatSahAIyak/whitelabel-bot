@@ -344,7 +344,7 @@ const Home: React.FC = () => {
                 item
                 xs={4}
                 sm={3}
-                md={3}
+                md={4}
                 sx={{
                   textAlign: 'center',
                   padding: '8px',
@@ -385,7 +385,7 @@ const Home: React.FC = () => {
                 item
                 xs={4}
                 sm={3}
-                md={3}
+                md={4}
                 sx={{
                   textAlign: 'center',
                   padding: '8px',
@@ -415,7 +415,7 @@ const Home: React.FC = () => {
                 item
                 xs={4}
                 sm={3}
-                md={3}
+                md={4}
                 sx={{
                   textAlign: 'center',
                   padding: '8px',
@@ -447,7 +447,7 @@ const Home: React.FC = () => {
                 item
                 xs={4}
                 sm={3}
-                md={3}
+                md={4}
                 sx={{
                   textAlign: 'center',
                   padding: '8px',
