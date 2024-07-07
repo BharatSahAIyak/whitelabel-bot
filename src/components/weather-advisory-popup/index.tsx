@@ -83,7 +83,7 @@ const WeatherAdvisoryPopup = (props: any) => {
                   fontSize: '20px',
                 }}
               >
-                {t('label.crop_advisory')} - {props?.cropName}
+                {t('label.crop_advisory')} - {props?.advisory?.descriptor?.name}
               </p>
               <CloseRoundedIcon onClick={handleClose} />
             </div>

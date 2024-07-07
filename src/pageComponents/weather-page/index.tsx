@@ -175,7 +175,6 @@ const WeatherPage: React.FC = () => {
       ></meta>
       {showWeatherAdvisoryPopup && (
         <WeatherAdvisoryPopup
-          cropName={selectedCrop?.code}
           setShowWeatherAdvisoryPopup={setShowWeatherAdvisoryPopup}
           advisory={selectedCrop}
         />
