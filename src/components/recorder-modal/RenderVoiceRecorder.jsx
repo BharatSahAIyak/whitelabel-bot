@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Button } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import toast from 'react-hot-toast';
 import { useLocalization } from '../../hooks';
 import { useConfig } from '../../hooks/useConfig';
@@ -9,7 +9,13 @@ import saveTelemetryEvent from '../../utils/telemetry';
 import { LiveAudioVisualizer } from 'react-audio-visualize';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak, onCloseModal }) => {
+const RenderVoiceRecorder = ({
+  setInputMsg,
+  tapToSpeak,
+  onCloseModal,
+  onProcessingStart,
+  onProcessingEnd,
+}) => {
   const t = useLocalization();
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [recorderStatus, setRecorderStatus] = useState('idle');
@@ -131,6 +137,7 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak, onCloseModal }) => {
     const s2tMsgId = uuidv4();
     console.log('s2tMsgId:', s2tMsgId);
     try {
+      onProcessingStart(); // Set loading state to true
       setRecorderStatus('processing');
       console.log('base', blob);
       toast.success(`${t('message.recorder_wait')}`);
@@ -200,9 +207,11 @@ const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak, onCloseModal }) => {
           }
         }, 2500);
       }
+      onProcessingEnd(); // Set loading state to false
       setRecorderStatus('idle');
     } catch (error) {
       console.error(error);
+      onProcessingEnd(); // Set loading state to false
       setRecorderStatus('error');
       toast.error(`${t('message.recorder_error')}`);
       // Set isErrorClicked to true when an error occurs
