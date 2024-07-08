@@ -83,10 +83,6 @@ const Home: React.FC = () => {
     fetchWeatherData();
   }, []);
 
-  const handleKnowMoreClick = () => {
-    router.push('/weather');
-  };
-
   const sendMessage = useCallback(
     async (msg: string) => {
       if (msg.length === 0) {
@@ -118,30 +114,6 @@ const Home: React.FC = () => {
     const tags = [type];
     sessionStorage.setItem('tags', JSON.stringify(tags));
     sendMessage(`Guided: ${t('label.' + type)}`);
-  };
-
-  function getDayAbbreviation(dateString: string) {
-    const date = new Date(dateString);
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    return days[date.getDay()];
-  }
-  const sendWeatherTelemetry = async () => {
-    try {
-      const msgId = uuidv4();
-      sessionStorage.setItem('weatherMsgId', msgId);
-      await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
-        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-        userId: localStorage.getItem('userID') || '',
-        phoneNumber: localStorage.getItem('phoneNumber') || '',
-        conversationId: sessionStorage.getItem('conversationId') || '',
-        messageId: msgId,
-        text: 'Weather',
-        createdAt: Math.floor(new Date().getTime() / 1000),
-      });
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   if (!weather) {
@@ -190,7 +162,7 @@ const Home: React.FC = () => {
                     `conditions${'_' + localStorage.getItem('locale') || ''}`
                   ]}
             </h2>
-            {sessionStorage.getItem('city') && (
+            {localStorage.getItem('city') && (
               <div
                 style={{
                   display: 'flex',
@@ -200,7 +172,7 @@ const Home: React.FC = () => {
               >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
                 <span style={{ fontSize: '1.25rem' }}>
-                  {sessionStorage.getItem('city')}
+                  {localStorage.getItem('city')}
                 </span>
               </div>
             )}
@@ -320,8 +292,8 @@ const Home: React.FC = () => {
                 boxShadow: 'none',
               }}
               onClick={() => {
-                if (config.showWeatherPage) {
-                  handleKnowMoreClick();
+                if (config?.showWeatherPage) {
+                  router.push('/weather');
                 } else {
                   router.push('/chat');
                 }
@@ -362,7 +334,6 @@ const Home: React.FC = () => {
                   onClick={() => {
                     if (config?.showWeatherPage) {
                       router.push('/weather');
-                      sendWeatherTelemetry();
                     } else {
                       sendGuidedMsg('weather');
                     }
