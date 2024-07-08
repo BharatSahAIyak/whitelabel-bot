@@ -1,5 +1,5 @@
 .main {
-  min-height: 110vh;
+  height: 90vh;
   padding-bottom: 80px;
   overflow-x: hidden;
   overflow-y: auto;
@@ -10,8 +10,8 @@
   border-radius: 5px;
   position: relative;
   z-index: 1;
-  height: 300px;
-  max-height: 300px;
+  height: 325px;
+  max-height: 325px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -76,4 +76,15 @@
   width: 100%;
   z-index: 1000;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.footer {
+  margin-top: 20px;
+  text-align: center;
+  margin-bottom: 120px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20.86px;
+  text-align: left;
+  margin: 20px;
 }
