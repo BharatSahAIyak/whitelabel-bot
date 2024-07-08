@@ -12,8 +12,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter } from 'next/router';
 import Menu from '../../components/menu';
 import toast from 'react-hot-toast';
-import { v4 as uuidv4 } from 'uuid';
-import saveTelemetryEvent from '../../utils/telemetry';
 
 const Home: React.FC = () => {
   const t = useLocalization();
@@ -31,61 +29,69 @@ const Home: React.FC = () => {
     }
   }, []);
 
+  const fetchWeatherData = async () => {
+    const latitude = localStorage.getItem('latitude');
+    const longitude = localStorage.getItem('longitude');
+    if (!latitude || !longitude) return;
+
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_WEATHER_API || '',
+        {
+          params: { latitude, longitude },
+        }
+      );
+
+      console.log(response.data);
+      const providers = response.data.message.catalog.providers;
+
+      const weatherProvider = providers.find(
+        (provider: any) =>
+          provider.id.toLowerCase() === 'ouat' &&
+          provider.category_id === 'weather_provider'
+      );
+
+      const imdWeatherProvider = providers.find(
+        (provider: any) =>
+          provider.id === 'imd' && provider.category_id === 'weather_provider'
+      );
+
+      if (weatherProvider) {
+        setWeather((prev: any) => ({
+          ...prev,
+          future: weatherProvider.items,
+        }));
+      }
+
+      if (imdWeatherProvider) {
+        setWeather((prev: any) => ({
+          ...prev,
+          future: imdWeatherProvider.items?.slice(1),
+          current: imdWeatherProvider.items?.[0],
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching advisory data:', error);
+      throw error;
+    }
+  };
+
+  // Keep fetching weather data until it's available
   useEffect(() => {
-    console.log('Home Config:', config);
-    const fetchWeatherData = async () => {
-      const latitude = localStorage.getItem('latitude');
-      const longitude = localStorage.getItem('longitude');
-      if (!latitude || !longitude) return;
+    let interval: NodeJS.Timeout | null = null;
 
-      try {
-        const response = await axios.get(
-          process.env.NEXT_PUBLIC_WEATHER_API || '',
-          {
-            params: { latitude, longitude },
-          }
-        );
+    if (!weather) {
+      interval = setInterval(() => {
+        fetchWeatherData();
+      }, 1000);
+    }
 
-        console.log(response.data);
-        const providers = response.data.message.catalog.providers;
-
-        const weatherProvider = providers.find(
-          (provider: any) =>
-            provider.id.toLowerCase() === 'ouat' &&
-            provider.category_id === 'weather_provider'
-        );
-
-        const imdWeatherProvider = providers.find(
-          (provider: any) =>
-            provider.id === 'imd' && provider.category_id === 'weather_provider'
-        );
-
-        if (weatherProvider) {
-          setWeather((prev: any) => ({
-            ...prev,
-            future: weatherProvider.items,
-          }));
-        }
-
-        if (imdWeatherProvider) {
-          setWeather((prev: any) => ({
-            ...prev,
-            future: imdWeatherProvider.items?.slice(1),
-            current: imdWeatherProvider.items?.[0],
-          }));
-        }
-      } catch (error) {
-        console.error('Error fetching advisory data:', error);
-        throw error;
+    return () => {
+      if (interval) {
+        clearInterval(interval);
       }
     };
-
-    fetchWeatherData();
-  }, []);
-
-  const handleKnowMoreClick = () => {
-    router.push('/weather');
-  };
+  }, [weather, fetchWeatherData]);
 
   const sendMessage = useCallback(
     async (msg: string) => {
@@ -118,30 +124,6 @@ const Home: React.FC = () => {
     const tags = [type];
     sessionStorage.setItem('tags', JSON.stringify(tags));
     sendMessage(`Guided: ${t('label.' + type)}`);
-  };
-
-  function getDayAbbreviation(dateString: string) {
-    const date = new Date(dateString);
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    return days[date.getDay()];
-  }
-  const sendWeatherTelemetry = async () => {
-    try {
-      const msgId = uuidv4();
-      sessionStorage.setItem('weatherMsgId', msgId);
-      await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
-        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-        userId: localStorage.getItem('userID') || '',
-        phoneNumber: localStorage.getItem('phoneNumber') || '',
-        conversationId: sessionStorage.getItem('conversationId') || '',
-        messageId: msgId,
-        text: 'Weather',
-        createdAt: Math.floor(new Date().getTime() / 1000),
-      });
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   if (!weather) {
@@ -190,7 +172,7 @@ const Home: React.FC = () => {
                     `conditions${'_' + localStorage.getItem('locale') || ''}`
                   ]}
             </h2>
-            {sessionStorage.getItem('city') && (
+            {localStorage.getItem('city') && (
               <div
                 style={{
                   display: 'flex',
@@ -200,7 +182,7 @@ const Home: React.FC = () => {
               >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
                 <span style={{ fontSize: '1.25rem' }}>
-                  {sessionStorage.getItem('city')}
+                  {localStorage.getItem('city')}
                 </span>
               </div>
             )}
@@ -320,10 +302,10 @@ const Home: React.FC = () => {
                 boxShadow: 'none',
               }}
               onClick={() => {
-                if (config.showWeatherPage) {
-                  handleKnowMoreClick();
+                if (config?.showWeatherPage) {
+                  router.push('/weather');
                 } else {
-                  router.push('/chat');
+                  router.push('/chat?message=Guided:%20weather');
                 }
               }}
             >
@@ -362,7 +344,6 @@ const Home: React.FC = () => {
                   onClick={() => {
                     if (config?.showWeatherPage) {
                       router.push('/weather');
-                      sendWeatherTelemetry();
                     } else {
                       sendGuidedMsg('weather');
                     }
