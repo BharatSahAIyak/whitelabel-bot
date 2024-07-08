@@ -83,6 +83,10 @@ const Home: React.FC = () => {
     fetchWeatherData();
   }, []);
 
+  const handleKnowMoreClick = () => {
+    router.push('/weather');
+  };
+
   const sendMessage = useCallback(
     async (msg: string) => {
       if (msg.length === 0) {
@@ -114,6 +118,30 @@ const Home: React.FC = () => {
     const tags = [type];
     sessionStorage.setItem('tags', JSON.stringify(tags));
     sendMessage(`Guided: ${t('label.' + type)}`);
+  };
+
+  function getDayAbbreviation(dateString: string) {
+    const date = new Date(dateString);
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return days[date.getDay()];
+  }
+  const sendWeatherTelemetry = async () => {
+    try {
+      const msgId = uuidv4();
+      sessionStorage.setItem('weatherMsgId', msgId);
+      await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || '',
+        messageId: msgId,
+        text: 'Weather',
+        createdAt: Math.floor(new Date().getTime() / 1000),
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   if (!weather) {
@@ -162,7 +190,7 @@ const Home: React.FC = () => {
                     `conditions${'_' + localStorage.getItem('locale') || ''}`
                   ]}
             </h2>
-            {localStorage.getItem('city') && (
+            {sessionStorage.getItem('city') && (
               <div
                 style={{
                   display: 'flex',
@@ -172,7 +200,7 @@ const Home: React.FC = () => {
               >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
                 <span style={{ fontSize: '1.25rem' }}>
-                  {localStorage.getItem('city')}
+                  {sessionStorage.getItem('city')}
                 </span>
               </div>
             )}
@@ -292,8 +320,8 @@ const Home: React.FC = () => {
                 boxShadow: 'none',
               }}
               onClick={() => {
-                if (config?.showWeatherPage) {
-                  router.push('/weather');
+                if (config.showWeatherPage) {
+                  handleKnowMoreClick();
                 } else {
                   router.push('/chat');
                 }
@@ -314,16 +342,16 @@ const Home: React.FC = () => {
             {config.showWeatherAdvisory && (
               <Grid
                 item
-                xs={4}
+                xs={5}
                 sm={3}
                 md={4}
                 sx={{
                   textAlign: 'center',
-                  padding: '8px',
+                  padding: '6px',
                   backgroundColor: 'white',
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
                   borderRadius: '12px',
-                  margin: '8px',
+                  margin: '6px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -334,6 +362,7 @@ const Home: React.FC = () => {
                   onClick={() => {
                     if (config?.showWeatherPage) {
                       router.push('/weather');
+                      sendWeatherTelemetry();
                     } else {
                       sendGuidedMsg('weather');
                     }
@@ -354,16 +383,16 @@ const Home: React.FC = () => {
             {config.showSchemes && (
               <Grid
                 item
-                xs={4}
+                xs={5}
                 sm={3}
                 md={4}
                 sx={{
                   textAlign: 'center',
-                  padding: '8px',
+                  padding: '6px',
                   backgroundColor: 'white',
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
                   borderRadius: '12px',
-                  margin: '8px',
+                  margin: '6px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -384,16 +413,16 @@ const Home: React.FC = () => {
             {config.showPlantProtection && (
               <Grid
                 item
-                xs={4}
+                xs={5}
                 sm={3}
                 md={4}
                 sx={{
                   textAlign: 'center',
-                  padding: '8px',
+                  padding: '6px',
                   backgroundColor: 'white',
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
                   borderRadius: '12px',
-                  margin: '8px',
+                  margin: '6px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -416,16 +445,16 @@ const Home: React.FC = () => {
             {config.showOtherInformation && (
               <Grid
                 item
-                xs={4}
+                xs={5}
                 sm={3}
                 md={4}
                 sx={{
                   textAlign: 'center',
-                  padding: '8px',
+                  padding: '6px',
                   backgroundColor: 'white',
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
                   borderRadius: '12px',
-                  margin: '8px',
+                  margin: '6px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -447,25 +476,7 @@ const Home: React.FC = () => {
           </Grid>
         </div>
         {config.showFooter && (
-          <div
-            style={{
-              marginTop: '20px',
-              textAlign: 'center',
-              marginBottom: '120px',
-            }}
-          >
-            <p
-              style={{
-                fontSize: '16px',
-                fontWeight: 400,
-                lineHeight: '20.86px',
-                textAlign: 'left',
-                margin: '0 20px',
-              }}
-            >
-              {t('label.homepage_footer')}
-            </p>
-          </div>
+          <div className={styles.footer}>{t('label.homepage_footer')}</div>
         )}
       </div>
 
