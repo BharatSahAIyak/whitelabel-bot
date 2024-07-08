@@ -10,6 +10,7 @@ import WeatherAdvisoryPopup from '../../components/weather-advisory-popup';
 import saveTelemetryEvent from '../../utils/telemetry';
 import { v4 as uuidv4 } from 'uuid';
 import Menu from '../../components/menu';
+
 const WeatherPage: React.FC = () => {
   const t = useLocalization();
   const config = useConfig('component', 'weatherPage');
@@ -20,6 +21,7 @@ const WeatherPage: React.FC = () => {
     useState(false);
   const [selectedCrop, setSelectedCrop] = useState<any>(null);
   const [fetchTime, setFetchTime] = useState(0);
+  const [convId, setConvId] = useState(uuidv4());
   console.log({ config });
 
   useEffect(() => {
@@ -29,132 +31,159 @@ const WeatherPage: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
+  const fetchWeatherData = async () => {
     const startTime = performance.now();
-    const fetch = async () => {
-      if (
-        !localStorage.getItem('longitude') ||
-        !localStorage.getItem('latitude')
-      )
-        return;
-      try {
-        const response = await axios.get(
-          process.env.NEXT_PUBLIC_WEATHER_API || '',
-          {
-            params: {
-              latitude: localStorage.getItem('latitude'),
-              longitude: localStorage.getItem('longitude'),
-              provider: config?.provider || 'upcar',
-            },
+    if (!localStorage.getItem('longitude') || !localStorage.getItem('latitude'))
+      return;
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_WEATHER_API || '',
+        {
+          params: {
+            latitude: localStorage.getItem('latitude'),
+            longitude: localStorage.getItem('longitude'),
+            provider: config?.provider || 'upcar',
+          },
+        }
+      );
+
+      const endTime = performance.now();
+      setFetchTime(endTime - startTime);
+      console.log(response.data);
+      const providers = response.data.message.catalog.providers;
+      // setData(providers);
+
+      // providers.forEach((provider: any) => {
+      //   if(provider?.id === 'upcar') {
+      //     setCrop(provider);
+      //   }else{
+      //     setWeather(provider);
+      //   }
+      // });
+
+      providers.forEach((provider: any) => {
+        if (provider.id.toLowerCase() === 'ouat') {
+          if (provider.category_id === 'crop_advisory_provider') {
+            setCrop(provider?.items);
+          } else if (provider.category_id === 'weather_provider') {
+            setWeather((prev: any) => ({
+              ...prev,
+              future: provider?.items,
+            }));
           }
-        );
-
-        const endTime = performance.now();
-        setFetchTime(endTime - startTime);
-        console.log(response.data);
-        const providers = response.data.message.catalog.providers;
-        // setData(providers);
-
-        // providers.forEach((provider: any) => {
-        //   if(provider?.id === 'upcar') {
-        //     setCrop(provider);
-        //   }else{
-        //     setWeather(provider);
-        //   }
-        // });
-
-        providers.forEach((provider: any) => {
-          if (provider.id.toLowerCase() === 'ouat') {
-            if (provider.category_id === 'crop_advisory_provider') {
-              setCrop(provider?.items);
-            } else if (provider.category_id === 'weather_provider') {
+        } else {
+          if (
+            provider.category_id === 'weather_provider' &&
+            provider.id === 'imd'
+          ) {
+            if (!weather) {
+              setWeather((prev: any) => ({
+                future: provider?.items?.slice(1),
+                current: provider?.items?.[0],
+              }));
+            } else {
               setWeather((prev: any) => ({
                 ...prev,
-                future: provider?.items,
+                current: provider?.items?.[0],
               }));
             }
-          } else {
-            if (
-              provider.category_id === 'weather_provider' &&
-              provider.id === 'imd'
-            ) {
-              if (!weather) {
-                setWeather((prev: any) => ({
-                  future: provider?.items?.slice(1),
-                  current: provider?.items?.[0],
-                }));
-              } else {
-                setWeather((prev: any) => ({
-                  ...prev,
-                  current: provider?.items?.[0],
-                }));
-              }
-            } else if (
-              provider.category_id === 'crop_advisory_provider' &&
-              provider.id === 'upcar'
-            ) {
-              if (!crop) {
-                setCrop(provider?.items);
-              }
+          } else if (
+            provider.category_id === 'crop_advisory_provider' &&
+            provider.id === 'upcar'
+          ) {
+            if (!crop) {
+              setCrop(provider?.items);
             }
           }
-        });
-        return providers;
-      } catch (error) {
-        console.error('Error fetching advisory data:', error);
-        throw error;
+        }
+      });
+      return providers;
+    } catch (error) {
+      console.error('Error fetching advisory data:', error);
+      throw error;
+    }
+  };
+
+  // Keep fetching weather data until it's available
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (!weather) {
+      interval = setInterval(() => {
+        fetchWeatherData();
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
       }
     };
+  }, [weather, fetchWeatherData]);
 
-    fetch();
-  }, []);
+  const sendTelemetry = async (messageId?: string, cropData?: any) => {
+    try {
+      if (weather?.current) {
+        const msgId = uuidv4();
+        await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: convId,
+          messageId: msgId || messageId || '',
+          text: cropData?.descriptor?.name || 'Weather',
+          createdAt: Math.floor(new Date().getTime() / 1000),
+        });
+        saveTelemetryEvent('0.1', 'E017', 'userQuery', 'responseAt', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: convId || '',
+          messageId: msgId || messageId || '',
+          text: '',
+          timeTaken: 0,
+          createdAt: Math.floor(new Date().getTime() / 1000),
+        });
+        saveTelemetryEvent('0.1', 'E012', 'userQuery', 'llmResponse', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          transformerId: uuidv4(),
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: convId || '',
+          replyId: uuidv4(),
+          messageId: msgId || messageId || '',
+          text:
+            cropData?.descriptor?.long_desc || JSON.stringify(weather.current),
+          createdAt: Math.floor(new Date().getTime() / 1000),
+          timeTaken: parseInt(`${fetchTime}`),
+          responseType: 'Guided: weather',
+          isGuided: 'true',
+          isFlowEnd: 'false',
+        });
+        saveTelemetryEvent('0.1', 'E033', 'messageQuery', 'messageReceived', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: convId || '',
+          replyId: uuidv4(),
+          messageId: msgId || messageId || '',
+          text:
+            cropData?.descriptor?.long_desc || JSON.stringify(weather.current),
+          createdAt: Math.floor(new Date().getTime() / 1000),
+          timeTaken: parseInt(`${fetchTime}`),
+        });
+        sessionStorage.removeItem('weatherMsgId');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
-    const sendTelemetry = async () => {
-      try {
-        if (weather?.current) {
-          saveTelemetryEvent('0.1', 'E017', 'userQuery', 'responseAt', {
-            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-            userId: localStorage.getItem('userID') || '',
-            phoneNumber: localStorage.getItem('phoneNumber') || '',
-            conversationId: sessionStorage.getItem('conversationId') || '',
-            messageId: sessionStorage.getItem('weatherMsgId') || '',
-            text: '',
-            timeTaken: 0,
-          });
-          saveTelemetryEvent('0.1', 'E012', 'userQuery', 'llmResponse', {
-            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-            transformerId: uuidv4(),
-            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-            userId: localStorage.getItem('userID') || '',
-            phoneNumber: localStorage.getItem('phoneNumber') || '',
-            conversationId: sessionStorage.getItem('conversationId') || '',
-            replyId: uuidv4(),
-            messageId: sessionStorage.getItem('weatherMsgId') || '',
-            text: JSON.stringify(weather.current),
-            createdAt: Math.floor(new Date().getTime() / 1000),
-            timeTaken: parseInt(`${fetchTime}`),
-          });
-          saveTelemetryEvent('0.1', 'E033', 'messageQuery', 'messageReceived', {
-            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-            userId: localStorage.getItem('userID') || '',
-            phoneNumber: localStorage.getItem('phoneNumber') || '',
-            conversationId: sessionStorage.getItem('conversationId') || '',
-            replyId: uuidv4(),
-            messageId: sessionStorage.getItem('weatherMsgId') || '',
-            text: JSON.stringify(weather.current),
-            createdAt: Math.floor(new Date().getTime() / 1000),
-            timeTaken: parseInt(`${fetchTime}`),
-          });
-          sessionStorage.removeItem('weatherMsgId');
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
     sendTelemetry();
   }, [weather]);
 
@@ -215,7 +244,7 @@ const WeatherPage: React.FC = () => {
                     `conditions${'_' + localStorage.getItem('locale') || ''}`
                   ]}
             </h2>
-            {sessionStorage.getItem('city') && (
+            {localStorage.getItem('city') && (
               <div
                 style={{
                   display: 'flex',
@@ -225,7 +254,7 @@ const WeatherPage: React.FC = () => {
               >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
                 <span style={{ fontSize: '1.25rem' }}>
-                  {sessionStorage.getItem('city')}
+                  {localStorage.getItem('city')}
                 </span>
               </div>
             )}
@@ -505,6 +534,7 @@ const WeatherPage: React.FC = () => {
                 onClick={() => {
                   setShowWeatherAdvisoryPopup(true);
                   setSelectedCrop(ele);
+                  sendTelemetry(uuidv4(), ele);
                 }}
               >
                 <img

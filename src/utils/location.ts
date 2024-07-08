@@ -1,5 +1,3 @@
-import { toast } from 'react-hot-toast';
-
 export async function recordUserLocation() {
   try {
     if (navigator.geolocation) {

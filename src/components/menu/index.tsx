@@ -28,9 +28,9 @@ const Menu = () => {
       <div className={styles.buttonWrapper}>
         <Button onClick={handleHomeClick} className={`${styles.greenButton}`}>
           {isHome ? (
-            <HomeOutlinedIcon fontSize="large" />
-          ) : (
             <HomeIcon fontSize="large" />
+          ) : (
+            <HomeOutlinedIcon fontSize="large" />
           )}
         </Button>
         <p className={styles.buttonText}>{t('label.menu_home')}</p>
