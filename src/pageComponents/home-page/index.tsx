@@ -336,7 +336,12 @@ const Home: React.FC = () => {
           {t('message.ask_ur_question')}
         </div>
         <div className={styles.gridSection}>
-          <Grid container spacing={1} justifyContent="center">
+          <Grid
+            container
+            spacing={1}
+            justifyContent="center"
+            data-testid="home-page-action-buttons"
+          >
             {config.showWeatherAdvisory && (
               <Grid
                 item
@@ -357,7 +362,6 @@ const Home: React.FC = () => {
                 }}
               >
                 <div
-                  data-testid="home-page-weather-button"
                   onClick={() => {
                     if (config?.showWeatherPage) {
                       router.push('/weather');
@@ -397,10 +401,7 @@ const Home: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <div
-                  onClick={() => sendGuidedMsg('scheme')}
-                  data-testid="home-page-scheme-button"
-                >
+                <div onClick={() => sendGuidedMsg('scheme')}>
                   <img
                     src={config.schemesImg}
                     alt="Schemes"
@@ -430,10 +431,7 @@ const Home: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <div
-                  onClick={() => sendGuidedMsg('pest')}
-                  data-testid="home-page-pest-button"
-                >
+                <div onClick={() => sendGuidedMsg('pest')}>
                   <img
                     src={config.plantProtectionImg}
                     alt="Pest"
@@ -465,10 +463,7 @@ const Home: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <div
-                  onClick={() => router.push('/chat')}
-                  data-testid="home-page-other-information-button"
-                >
+                <div onClick={() => router.push('/chat')}>
                   <img
                     src={config.otherInformationImg}
                     alt="otherInformation"
