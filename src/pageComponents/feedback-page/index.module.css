@@ -44,4 +44,18 @@
   .textBlock {
     width: 90vw;
   }
+  .container {
+    padding-top: 1px;
+    height: calc(100vh - 140px);
+  }
+
+  .main {
+    width: 90vw;
+    height: 85vh;
+  }
+
+  .section {
+    width: 95vw;
+    margin: 0.25rem;
+  }
 }

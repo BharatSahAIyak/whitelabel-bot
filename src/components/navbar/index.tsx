@@ -75,6 +75,7 @@ const Navbar: React.FC = () => {
 
   console.log({ config, path: router.pathname });
   if (router.pathname === '/login' || router.pathname === '/otp') return null;
+
   return (
     <>
       <AppBar
@@ -97,6 +98,7 @@ const Navbar: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {router.pathname !== '/chat' &&
               router.pathname !== '/weather' &&
+              router.pathname !== '/newchat' &&
               showHamburgerMenu && (
                 <IconButton
                   data-testid="navbar-hamburger-menu"
@@ -140,7 +142,8 @@ const Navbar: React.FC = () => {
                 </IconButton>
               </div>
             )}
-            {router.pathname === '/chat' && (
+            {(router.pathname === '/chat' ||
+              router.pathname === '/newchat') && (
               <div
                 style={{
                   display: 'flex',
@@ -160,7 +163,7 @@ const Navbar: React.FC = () => {
                     height: '28px',
                     margin: 0,
                   }}
-                  onClick={newChatHandler}
+                  onClick={() => router.push('/')}
                 >
                   <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
                 </IconButton>
@@ -179,74 +182,53 @@ const Navbar: React.FC = () => {
                 </Typography>
               </div>
             )}
- 
-                        {/* {showHomeIcon &&
-                            router.pathname !== '/' &&
-                            router.pathname !== '/weather' &&
-                            router.pathname !== '/chat' && (
-                                <IconButton
-                                    data-testid="navbar-home-button"
-                                    color="primary"
-                                    size="large"
-                                    edge="start"
-                                    aria-label="home"
-                                    style={{ fontSize: '2rem', height: '48px' }}
-                                    onClick={() => router.push('/')}
-                                >
-                                    <HomeIcon sx={{ fontSize: '50px' }} />
-                                </IconButton>
-                            )} */}
-                    </div>
- 
+          </div>
 
-                    <div
-                        style={{
-                            position: 'absolute',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            textAlign: 'center',
-                            // marginTop: '20px',
-                        }}
-                    >
-                        {showCenterLogo && (
-                            <div>
-                                <img
-                                    data-testid="navbar-center-img"
-                                    src={centerLogoSrc}
-                                    alt="Center Logo"
-                                    style={{ maxHeight: centerLogoSize }}
-                                />
-                            </div>
-                        )}
-                    </div>
+          <div
+            style={{
+              position: 'absolute',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              textAlign: 'center',
+            }}
+          >
+            {showCenterLogo && (
+              <div>
+                <img
+                  data-testid="navbar-center-img"
+                  src={centerLogoSrc}
+                  alt="Center Logo"
+                  style={{ maxHeight: centerLogoSize }}
+                />
+              </div>
+            )}
+          </div>
 
-                    
-                    <div data-testid="navbar-right-logos">
-                        {showRightLogo1 && (
-                            <img
-                                src={rightLogo1Src}
-                                alt={`Right Logo 1`}
-                                style={{ maxHeight: '60px' }}
-                            />
-                        )}
-                        {showRightLogo2 && (
-                            <img
-                                src={rightLogo2Src}
-                                alt={`Right Logo 2`}
-                                style={{ maxHeight: '60px' }}
-                            />
-                        )}
-                        {showRightLogo3 && (
-                            <img
-                                src={rightLogo3Src}
-                                alt={`Right Logo 3`}
-                                style={{ maxHeight: '60px' }}
-                            />
-                        )}
-                    </div>
-                </Toolbar>
-            </AppBar>
- 
+          <div data-testid="navbar-right-logos">
+            {showRightLogo1 && (
+              <img
+                src={rightLogo1Src}
+                alt={`Right Logo 1`}
+                style={{ maxHeight: '60px' }}
+              />
+            )}
+            {showRightLogo2 && (
+              <img
+                src={rightLogo2Src}
+                alt={`Right Logo 2`}
+                style={{ maxHeight: '60px' }}
+              />
+            )}
+            {showRightLogo3 && (
+              <img
+                src={rightLogo3Src}
+                alt={`Right Logo 3`}
+                style={{ maxHeight: '60px' }}
+              />
+            )}
+          </div>
+        </Toolbar>
+      </AppBar>
 
       <Sidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
     </>

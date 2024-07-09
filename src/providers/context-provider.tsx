@@ -322,6 +322,7 @@ const ContextProvider: FC<{
                   messageId: msg.messageId.replyId,
                   text: '',
                   timeTaken: 0,
+                  createdAt: Math.floor(new Date().getTime() / 1000),
                 });
               } catch (err) {
                 console.error(err);
@@ -460,11 +461,11 @@ const ContextProvider: FC<{
             text: textToSend?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
             metaData: {
               phoneNumber: localStorage.getItem('phoneNumber') || '',
-              latitude: sessionStorage.getItem('latitude'),
-              longitude: sessionStorage.getItem('longitude'),
-              city: sessionStorage.getItem('city'),
-              state: sessionStorage.getItem('state'),
-              ip: sessionStorage.getItem('ip'),
+              latitude: localStorage.getItem('latitude'),
+              longitude: localStorage.getItem('longitude'),
+              city: localStorage.getItem('city'),
+              state: localStorage.getItem('state'),
+              ip: localStorage.getItem('ip'),
               hideMessage: textToSend?.startsWith('Guided:') || false,
               originalText: textToShow?.replace(/^\s+|\s+$/g, ''),
             },

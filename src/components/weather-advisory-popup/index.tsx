@@ -18,7 +18,48 @@ const WeatherAdvisoryPopup = (props: any) => {
   const t = useLocalization();
   const config = useConfig('component', 'botDetails');
   const [open, setOpen] = React.useState(true);
-  const [audioElement, setAudioElement] = useState<any>(null);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
+    null
+  );
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const playPauseAudio = async () => {
+    if (audioElement) {
+      if (isPlaying) {
+        audioElement.pause();
+        setIsPlaying(false);
+      } else {
+        audioElement.play();
+        setIsPlaying(true);
+      }
+    } else {
+      const url = await fetchAudio(props?.advisory?.descriptor?.long_desc);
+      if (url) {
+        const audio = new Audio(url);
+        audio.playbackRate =
+          config?.component?.botDetails?.audioPlayback || 1.5;
+
+        audio.addEventListener('ended', () => {
+          setAudioElement(null);
+          setIsPlaying(false);
+        });
+
+        audio
+          .play()
+          .then(() => {
+            console.log('Audio played:', url);
+            setAudioElement(audio);
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            setAudioElement(null);
+            setIsPlaying(false);
+            toast.error(t('message.no_link'));
+            console.error('Error playing audio:', error);
+          });
+      }
+    }
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -83,7 +124,7 @@ const WeatherAdvisoryPopup = (props: any) => {
                   fontSize: '20px',
                 }}
               >
-                {t('label.crop_advisory')} - {props?.cropName}
+                {t('label.crop_advisory')} - {props?.advisory?.descriptor?.name}
               </p>
               <CloseRoundedIcon onClick={handleClose} />
             </div>
@@ -169,35 +210,12 @@ const WeatherAdvisoryPopup = (props: any) => {
                 {t('label.verified_advisory')}
               </p>
               <Button
-                onClick={async () => {
-                  const url = await fetchAudio(
-                    props?.advisory?.descriptor?.long_desc
-                  );
-                  const audio = new Audio(url);
-                  audio.playbackRate =
-                    config?.component?.botDetails?.audioPlayback || 1.5;
-                  audio.addEventListener('ended', () => {
-                    setAudioElement(null);
-                  });
-                  audio
-                    .play()
-                    .then(() => {
-                      console.log('Audio played:', url);
-                      // Update the current audio to the new audio element
-                      //@ts-ignore
-                      setAudioElement(audio);
-                    })
-                    .catch((error) => {
-                      setAudioElement(null);
-                      toast.error(t('message.no_link'));
-                      console.error('Error playing audio:', error);
-                    });
-                }}
+                onClick={playPauseAudio}
                 fullWidth
                 variant="contained"
                 style={{
                   marginTop: '30px',
-                  backgroundColor: `${theme.primary.dark}`,
+                  backgroundColor: `${theme.primary.main}`,
                   color: theme.primary.contrastText,
                   padding: '8px 0',
                   textTransform: 'none',

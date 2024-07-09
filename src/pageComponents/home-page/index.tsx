@@ -12,8 +12,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter } from 'next/router';
 import Menu from '../../components/menu';
 import toast from 'react-hot-toast';
-import { v4 as uuidv4 } from 'uuid';
-import saveTelemetryEvent from '../../utils/telemetry';
 
 const Home: React.FC = () => {
   const t = useLocalization();
@@ -31,60 +29,69 @@ const Home: React.FC = () => {
     }
   }, []);
 
+  const fetchWeatherData = async () => {
+    const latitude = localStorage.getItem('latitude');
+    const longitude = localStorage.getItem('longitude');
+    if (!latitude || !longitude) return;
+
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_WEATHER_API || '',
+        {
+          params: { latitude, longitude },
+        }
+      );
+
+      console.log(response.data);
+      const providers = response.data.message.catalog.providers;
+
+      const weatherProvider = providers.find(
+        (provider: any) =>
+          provider.id.toLowerCase() === 'ouat' &&
+          provider.category_id === 'weather_provider'
+      );
+
+      const imdWeatherProvider = providers.find(
+        (provider: any) =>
+          provider.id === 'imd' && provider.category_id === 'weather_provider'
+      );
+
+      if (weatherProvider) {
+        setWeather((prev: any) => ({
+          ...prev,
+          future: weatherProvider.items,
+        }));
+      }
+
+      if (imdWeatherProvider) {
+        setWeather((prev: any) => ({
+          ...prev,
+          future: imdWeatherProvider.items?.slice(1),
+          current: imdWeatherProvider.items?.[0],
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching advisory data:', error);
+      throw error;
+    }
+  };
+
+  // Keep fetching weather data until it's available
   useEffect(() => {
-    const fetchWeatherData = async () => {
-      const latitude = sessionStorage.getItem('latitude');
-      const longitude = sessionStorage.getItem('longitude');
-      if (!latitude || !longitude) return;
+    let interval: NodeJS.Timeout | null = null;
 
-      try {
-        const response = await axios.get(
-          process.env.NEXT_PUBLIC_WEATHER_API || '',
-          {
-            params: { latitude, longitude },
-          }
-        );
+    if (!weather) {
+      interval = setInterval(() => {
+        fetchWeatherData();
+      }, 1000);
+    }
 
-        console.log(response.data);
-        const providers = response.data.message.catalog.providers;
-
-        const weatherProvider = providers.find(
-          (provider: any) =>
-            provider.id.toLowerCase() === 'ouat' &&
-            provider.category_id === 'weather_provider'
-        );
-
-        const imdWeatherProvider = providers.find(
-          (provider: any) =>
-            provider.id === 'imd' && provider.category_id === 'weather_provider'
-        );
-
-        if (weatherProvider) {
-          setWeather((prev: any) => ({
-            ...prev,
-            future: weatherProvider.items,
-          }));
-        }
-
-        if (imdWeatherProvider) {
-          setWeather((prev: any) => ({
-            ...prev,
-            future: imdWeatherProvider.items?.slice(1),
-            current: imdWeatherProvider.items?.[0],
-          }));
-        }
-      } catch (error) {
-        console.error('Error fetching advisory data:', error);
-        throw error;
+    return () => {
+      if (interval) {
+        clearInterval(interval);
       }
     };
-
-    fetchWeatherData();
-  }, []);
-
-  const handleKnowMoreClick = () => {
-    router.push('/weather');
-  };
+  }, [weather, fetchWeatherData]);
 
   const sendMessage = useCallback(
     async (msg: string) => {
@@ -119,30 +126,6 @@ const Home: React.FC = () => {
     sendMessage(`Guided: ${t('label.' + type)}`);
   };
 
-  function getDayAbbreviation(dateString: string) {
-    const date = new Date(dateString);
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    return days[date.getDay()];
-  }
-  const sendWeatherTelemetry = async () => {
-    try {
-      const msgId = uuidv4();
-      sessionStorage.setItem('weatherMsgId', msgId);
-      await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
-        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-        userId: localStorage.getItem('userID') || '',
-        phoneNumber: localStorage.getItem('phoneNumber') || '',
-        conversationId: sessionStorage.getItem('conversationId') || '',
-        messageId: msgId,
-        text: 'Weather',
-        createdAt: Math.floor(new Date().getTime() / 1000),
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   if (!weather) {
     return <FullPageLoader loading={!weather} />;
   }
@@ -155,6 +138,7 @@ const Home: React.FC = () => {
       ></meta>
 
       <div
+        data-testid="home-page-bg-image"
         className={styles.container}
         style={{
           background: `url(${weather?.current?.descriptor?.images
@@ -172,6 +156,7 @@ const Home: React.FC = () => {
         <div className={styles.weatherText}>
           <div>
             <h1
+              data-testid="home-page-temperature"
               style={{
                 color: 'white',
                 margin: 0,
@@ -182,14 +167,14 @@ const Home: React.FC = () => {
             </h1>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <h2>
+            <h2 data-testid="home-page-condition">
               {localStorage.getItem('locale') === 'en'
                 ? weather?.current?.tags?.conditions
                 : weather?.current?.tags?.[
                     `conditions${'_' + localStorage.getItem('locale') || ''}`
                   ]}
             </h2>
-            {sessionStorage.getItem('city') && (
+            {localStorage.getItem('city') && (
               <div
                 style={{
                   display: 'flex',
@@ -198,8 +183,11 @@ const Home: React.FC = () => {
                 }}
               >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
-                <span style={{ fontSize: '1.25rem' }}>
-                  {sessionStorage.getItem('city')}
+                <span
+                  style={{ fontSize: '1.25rem' }}
+                  data-testid="home-page-location"
+                >
+                  {localStorage.getItem('city')}
                 </span>
               </div>
             )}
@@ -216,7 +204,13 @@ const Home: React.FC = () => {
             spacing={{ xs: 2, md: 3 }}
             columns={3}
           >
-            <Grid item xs={1} sm={1} md={1}>
+            <Grid
+              item
+              xs={1}
+              sm={1}
+              md={1}
+              data-testid="home-page-wind-direction"
+            >
               <Chip
                 label={
                   localStorage.getItem('locale') === 'en'
@@ -245,7 +239,7 @@ const Home: React.FC = () => {
                 {t('label.wind_direction')}
               </p>
             </Grid>
-            <Grid item xs={1} sm={1} md={1}>
+            <Grid item xs={1} sm={1} md={1} data-testid="home-page-wind-speed">
               <Chip
                 label={(weather?.current?.tags?.windspeed || 0) + ' km/h'}
                 size="medium"
@@ -269,7 +263,7 @@ const Home: React.FC = () => {
                 {t('label.wind_speed')}
               </p>
             </Grid>
-            <Grid item xs={1} sm={1} md={1}>
+            <Grid item xs={1} sm={1} md={1} data-testid="home-page-humidity">
               <Chip
                 label={(weather?.current?.tags?.humidity || 0) + ' %'}
                 size="medium"
@@ -297,12 +291,13 @@ const Home: React.FC = () => {
 
           <div
             style={{
-              marginTop: '10px',
+              marginTop: '5px',
               textAlign: 'center',
-              paddingBottom: '20px',
+              paddingBottom: '10px',
             }}
           >
             <Button
+              data-testid="home-page-crop-advisory-button"
               variant="contained"
               endIcon={<ArrowForwardIcon />}
               sx={{
@@ -310,7 +305,7 @@ const Home: React.FC = () => {
                 color: '#1e6231',
                 fontSize: '18px',
                 width: '308px',
-                height: '60px',
+                height: '40px',
                 padding: '18px 24px',
                 fontWeight: '500',
                 borderRadius: '6px',
@@ -319,10 +314,10 @@ const Home: React.FC = () => {
                 boxShadow: 'none',
               }}
               onClick={() => {
-                if (config.showWeatherPage) {
-                  handleKnowMoreClick();
+                if (config?.showWeatherPage) {
+                  router.push('/weather');
                 } else {
-                  router.push('/chat');
+                  router.push('/chat?message=Guided:%20weather');
                 }
               }}
             >
@@ -332,27 +327,34 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.spacing}></div>
-
       <div className={styles.cropContainer}>
-        <div className={styles.heading} style={{ background: '#DFF6D1' }}>
+        <div
+          className={styles.heading}
+          style={{ background: '#DFF6D1' }}
+          data-testid="home-page-ask-your-question"
+        >
           {t('message.ask_ur_question')}
         </div>
         <div className={styles.gridSection}>
-          <Grid container spacing={1} justifyContent="center">
+          <Grid
+            container
+            spacing={1}
+            justifyContent="center"
+            data-testid="home-page-action-buttons"
+          >
             {config.showWeatherAdvisory && (
               <Grid
                 item
                 xs={5}
-                sm={4}
+                sm={3}
                 md={4}
                 sx={{
                   textAlign: 'center',
-                  padding: '10px',
+                  padding: '6px',
                   backgroundColor: 'white',
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                  borderRadius: '15.87px',
-                  margin: '10px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '12px',
+                  margin: '6px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -363,7 +365,6 @@ const Home: React.FC = () => {
                   onClick={() => {
                     if (config?.showWeatherPage) {
                       router.push('/weather');
-                      sendWeatherTelemetry();
                     } else {
                       sendGuidedMsg('weather');
                     }
@@ -385,15 +386,15 @@ const Home: React.FC = () => {
               <Grid
                 item
                 xs={5}
-                sm={4}
+                sm={3}
                 md={4}
                 sx={{
                   textAlign: 'center',
-                  padding: '10px',
+                  padding: '6px',
                   backgroundColor: 'white',
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                  borderRadius: '15.87px',
-                  margin: '10px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '12px',
+                  margin: '6px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -415,15 +416,15 @@ const Home: React.FC = () => {
               <Grid
                 item
                 xs={5}
-                sm={5}
+                sm={3}
                 md={4}
                 sx={{
                   textAlign: 'center',
-                  padding: '10px',
+                  padding: '6px',
                   backgroundColor: 'white',
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                  borderRadius: '15.87px',
-                  margin: '10px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '12px',
+                  margin: '6px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -447,25 +448,25 @@ const Home: React.FC = () => {
               <Grid
                 item
                 xs={5}
-                sm={4}
+                sm={3}
                 md={4}
                 sx={{
                   textAlign: 'center',
-                  padding: '10px',
+                  padding: '6px',
                   backgroundColor: 'white',
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                  borderRadius: '15.87px',
-                  margin: '10px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '12px',
+                  margin: '6px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                 }}
               >
-                <div onClick={() => router.push('/faq')}>
+                <div onClick={() => router.push('/chat')}>
                   <img
                     src={config.otherInformationImg}
-                    alt="FAQ"
+                    alt="otherInformation"
                     className={styles.gridImage}
                   />
                   <p className={styles.gridText}>
@@ -476,25 +477,11 @@ const Home: React.FC = () => {
             )}
           </Grid>
         </div>
-        <div
-          style={{
-            marginTop: '20px',
-            textAlign: 'center',
-            marginBottom: '120px',
-          }}
-        >
-          <p
-            style={{
-              fontSize: '16px',
-              fontWeight: 400,
-              lineHeight: '20.86px',
-              textAlign: 'left',
-              margin: '0 20px',
-            }}
-          >
+        {config.showFooter && (
+          <div className={styles.footer} data-testid="home-page-footer-text">
             {t('label.homepage_footer')}
-          </p>
-        </div>
+          </div>
+        )}
       </div>
 
       <Menu />
