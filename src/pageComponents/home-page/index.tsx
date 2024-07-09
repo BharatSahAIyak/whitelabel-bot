@@ -138,6 +138,7 @@ const Home: React.FC = () => {
       ></meta>
 
       <div
+        data-testid="home-page-bg-image"
         className={styles.container}
         style={{
           background: `url(${weather?.current?.descriptor?.images
@@ -155,6 +156,7 @@ const Home: React.FC = () => {
         <div className={styles.weatherText}>
           <div>
             <h1
+              data-testid="home-page-temperature"
               style={{
                 color: 'white',
                 margin: 0,
@@ -165,7 +167,7 @@ const Home: React.FC = () => {
             </h1>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <h2>
+            <h2 data-testid="home-page-condition">
               {localStorage.getItem('locale') === 'en'
                 ? weather?.current?.tags?.conditions
                 : weather?.current?.tags?.[
@@ -181,7 +183,10 @@ const Home: React.FC = () => {
                 }}
               >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
-                <span style={{ fontSize: '1.25rem' }}>
+                <span
+                  style={{ fontSize: '1.25rem' }}
+                  data-testid="home-page-location"
+                >
                   {localStorage.getItem('city')}
                 </span>
               </div>
@@ -199,7 +204,13 @@ const Home: React.FC = () => {
             spacing={{ xs: 2, md: 3 }}
             columns={3}
           >
-            <Grid item xs={1} sm={1} md={1}>
+            <Grid
+              item
+              xs={1}
+              sm={1}
+              md={1}
+              data-testid="home-page-wind-direction"
+            >
               <Chip
                 label={
                   localStorage.getItem('locale') === 'en'
@@ -228,7 +239,7 @@ const Home: React.FC = () => {
                 {t('label.wind_direction')}
               </p>
             </Grid>
-            <Grid item xs={1} sm={1} md={1}>
+            <Grid item xs={1} sm={1} md={1} data-testid="home-page-wind-speed">
               <Chip
                 label={(weather?.current?.tags?.windspeed || 0) + ' km/h'}
                 size="medium"
@@ -252,7 +263,7 @@ const Home: React.FC = () => {
                 {t('label.wind_speed')}
               </p>
             </Grid>
-            <Grid item xs={1} sm={1} md={1}>
+            <Grid item xs={1} sm={1} md={1} data-testid="home-page-humidity">
               <Chip
                 label={(weather?.current?.tags?.humidity || 0) + ' %'}
                 size="medium"
@@ -286,6 +297,7 @@ const Home: React.FC = () => {
             }}
           >
             <Button
+              data-testid="home-page-crop-advisory-button"
               variant="contained"
               endIcon={<ArrowForwardIcon />}
               sx={{
@@ -316,7 +328,11 @@ const Home: React.FC = () => {
       </div>
 
       <div className={styles.cropContainer}>
-        <div className={styles.heading} style={{ background: '#DFF6D1' }}>
+        <div
+          className={styles.heading}
+          style={{ background: '#DFF6D1' }}
+          data-testid="home-page-ask-your-question"
+        >
           {t('message.ask_ur_question')}
         </div>
         <div className={styles.gridSection}>
@@ -341,6 +357,7 @@ const Home: React.FC = () => {
                 }}
               >
                 <div
+                  data-testid="home-page-weather-button"
                   onClick={() => {
                     if (config?.showWeatherPage) {
                       router.push('/weather');
@@ -380,7 +397,10 @@ const Home: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <div onClick={() => sendGuidedMsg('scheme')}>
+                <div
+                  onClick={() => sendGuidedMsg('scheme')}
+                  data-testid="home-page-scheme-button"
+                >
                   <img
                     src={config.schemesImg}
                     alt="Schemes"
@@ -410,7 +430,10 @@ const Home: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <div onClick={() => sendGuidedMsg('pest')}>
+                <div
+                  onClick={() => sendGuidedMsg('pest')}
+                  data-testid="home-page-pest-button"
+                >
                   <img
                     src={config.plantProtectionImg}
                     alt="Pest"
@@ -442,10 +465,13 @@ const Home: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <div onClick={() => router.push('/chat')}>
+                <div
+                  onClick={() => router.push('/chat')}
+                  data-testid="home-page-other-information-button"
+                >
                   <img
                     src={config.otherInformationImg}
-                    alt="FAQ"
+                    alt="otherInformation"
                     className={styles.gridImage}
                   />
                   <p className={styles.gridText}>
@@ -457,7 +483,9 @@ const Home: React.FC = () => {
           </Grid>
         </div>
         {config.showFooter && (
-          <div className={styles.footer}>{t('label.homepage_footer')}</div>
+          <div className={styles.footer} data-testid="home-page-footer-text">
+            {t('label.homepage_footer')}
+          </div>
         )}
       </div>
 

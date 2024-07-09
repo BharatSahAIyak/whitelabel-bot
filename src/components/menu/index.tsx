@@ -25,7 +25,7 @@ const Menu = () => {
 
   return (
     <div className={styles.footer}>
-      <div className={styles.buttonWrapper}>
+      <div className={styles.buttonWrapper} data-testid="menu-home-button">
         <Button onClick={handleHomeClick} className={`${styles.greenButton}`}>
           {isHome ? (
             <HomeIcon fontSize="large" />
@@ -35,7 +35,7 @@ const Menu = () => {
         </Button>
         <p className={styles.buttonText}>{t('label.menu_home')}</p>
       </div>
-      <div className={styles.middleButton}>
+      <div className={styles.middleButton} data-testid="menu-mic-button">
         <Button
           onClick={handleTouchToSpeakClick}
           className={`${styles.touchToSpeakButton}`}
@@ -44,7 +44,10 @@ const Menu = () => {
           {t('label.menu_tap_text')}
         </Button>
       </div>
-      <div className={styles.buttonWrapper}>
+      <div
+        className={styles.buttonWrapper}
+        data-testid="menu-notification-button"
+      >
         <Button
           onClick={handleNotificationClick}
           className={`${styles.greenButton}`}

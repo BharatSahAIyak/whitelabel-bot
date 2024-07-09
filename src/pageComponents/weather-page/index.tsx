@@ -210,6 +210,7 @@ const WeatherPage: React.FC = () => {
         />
       )}
       <div
+        data-testid="weather-page-bg-image"
         className={styles.container}
         style={{
           background: `url(${weather?.current?.descriptor?.images
@@ -227,6 +228,7 @@ const WeatherPage: React.FC = () => {
         <div className={styles.weatherText}>
           <div>
             <h1
+              data-testid="weather-page-temperature"
               style={{
                 color: 'white',
                 margin: 0,
@@ -237,7 +239,7 @@ const WeatherPage: React.FC = () => {
             </h1>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <h2>
+            <h2 data-testid="weather-page-condition">
               {localStorage.getItem('locale') === 'en'
                 ? weather?.current?.tags?.conditions
                 : weather?.current?.tags?.[
@@ -253,7 +255,10 @@ const WeatherPage: React.FC = () => {
                 }}
               >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
-                <span style={{ fontSize: '1.25rem' }}>
+                <span
+                  style={{ fontSize: '1.25rem' }}
+                  data-testid="weather-page-location"
+                >
                   {localStorage.getItem('city')}
                 </span>
               </div>
@@ -272,7 +277,13 @@ const WeatherPage: React.FC = () => {
             spacing={{ xs: 2, md: 3 }}
             columns={3}
           >
-            <Grid item xs={1} sm={1} md={1}>
+            <Grid
+              item
+              xs={1}
+              sm={1}
+              md={1}
+              data-testid="weather-page-wind-direction"
+            >
               <Chip
                 label={
                   localStorage.getItem('locale') === 'en'
@@ -301,7 +312,13 @@ const WeatherPage: React.FC = () => {
                 {t('label.wind_direction')}
               </p>
             </Grid>
-            <Grid item xs={1} sm={1} md={1}>
+            <Grid
+              item
+              xs={1}
+              sm={1}
+              md={1}
+              data-testid="weather-page-wind-speed"
+            >
               <Chip
                 label={(weather?.current?.tags?.windspeed || 0) + ' km/h'}
                 size="medium"
@@ -325,7 +342,7 @@ const WeatherPage: React.FC = () => {
                 {t('label.wind_speed')}
               </p>
             </Grid>
-            <Grid item xs={1} sm={1} md={1}>
+            <Grid item xs={1} sm={1} md={1} data-testid="weather-page-humidity">
               <Chip
                 label={(weather?.current?.tags?.humidity || 0) + ' %'}
                 size="medium"
