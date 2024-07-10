@@ -19,11 +19,11 @@
       "audioPlayback": 1.5,
       "defaultLanguage": "en"
     },
-    "weatherPage":{
+    "weatherPage": {
       "provider": "upcar"
     },
     "homePage": {
-       "showWeatherPage": false,
+      "showWeatherPage": false,
       "showPlantProtection": false,
       "showSchemes": false,
       "showOtherInformation": true,
@@ -34,10 +34,10 @@
       "topGap": "75px",
       "showTapToSpeakText": false,
       "otherInformationImg": "",
- "weatherAdvisoryImg": "",
+      "weatherAdvisoryImg": "",
       "plantProtectionImg": "",
       "schemesImg": "",
-      "showFooter" : false
+      "showFooter": false
     },
     "chatUI": {
       "allowFeedback": true,
@@ -317,9 +317,8 @@
       "label.menu_notification": "Notifications",
       "label.ask": "Ask Me",
       "label.homepage_footer": "Ama Krushi chatbot can make mistakes. To check important information, consider reading our terms and privacy policy ",
-      "label.help_text":"Please ask your question",
+      "label.help_text": "Please ask your question",
       "label.other_information": "Other Information"
-       
     }
   }
 }

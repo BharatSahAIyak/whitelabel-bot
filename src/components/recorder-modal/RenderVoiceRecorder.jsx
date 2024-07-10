@@ -97,10 +97,7 @@ const RenderVoiceRecorder = ({
         }
 
         // A dialog detected:
-        if (
-          anySoundDetected === true &&
-          currentTime > lastDetectedTime + DELAY_BETWEEN_DIALOGS
-        ) {
+        if (anySoundDetected === true && currentTime > lastDetectedTime + DELAY_BETWEEN_DIALOGS) {
           recorder.stop();
           return;
         }
@@ -143,8 +140,7 @@ const RenderVoiceRecorder = ({
       toast.success(`${t('message.recorder_wait')}`);
 
       // Define the API endpoint
-      const apiEndpoint =
-        process.env.NEXT_PUBLIC_AI_TOOLS_API + '/speech-to-text';
+      const apiEndpoint = process.env.NEXT_PUBLIC_AI_TOOLS_API + '/speech-to-text';
 
       // Create a FormData object
       const formData = new FormData();
@@ -152,10 +148,7 @@ const RenderVoiceRecorder = ({
       // Append the WAV file to the FormData object
       formData.append('file', blob, 'audio.wav');
       formData.append('messageId', s2tMsgId);
-      formData.append(
-        'conversationId',
-        sessionStorage.getItem('conversationId') || ''
-      );
+      formData.append('conversationId', sessionStorage.getItem('conversationId') || '');
       formData.append('language', localStorage.getItem('locale') || 'en');
 
       // Send the WAV data to the API
@@ -172,27 +165,20 @@ const RenderVoiceRecorder = ({
       if (resp.ok) {
         const rsp_data = await resp.json();
         console.log('hi', rsp_data);
-        if (rsp_data.text === '')
-          throw new Error('Unexpected end of JSON input');
+        if (rsp_data.text === '') throw new Error('Unexpected end of JSON input');
         setInputMsg(rsp_data.text);
         const endTime = Date.now();
         const latency = endTime - startTime;
-        await saveTelemetryEvent(
-          '0.1',
-          'E046',
-          'aiToolProxyToolLatency',
-          's2tLatency',
-          {
-            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-            userId: localStorage.getItem('userID') || '',
-            phoneNumber: localStorage.getItem('phoneNumber') || '',
-            conversationId: sessionStorage.getItem('conversationId') || '',
-            timeTaken: latency,
-            messageId: s2tMsgId,
-            createdAt: Math.floor(startTime / 1000),
-          }
-        );
+        await saveTelemetryEvent('0.1', 'E046', 'aiToolProxyToolLatency', 's2tLatency', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+          timeTaken: latency,
+          messageId: s2tMsgId,
+          createdAt: Math.floor(startTime / 1000),
+        });
       } else {
         toast.error(`${t('message.recorder_error')}`);
         console.log(resp);
@@ -218,23 +204,17 @@ const RenderVoiceRecorder = ({
       setIsErrorClicked(false);
       const endTime = Date.now();
       const latency = endTime - startTime;
-      await saveTelemetryEvent(
-        '0.1',
-        'E046',
-        'aiToolProxyToolLatency',
-        's2tLatency',
-        {
-          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-          userId: localStorage.getItem('userID') || '',
-          phoneNumber: localStorage.getItem('phoneNumber') || '',
-          conversationId: sessionStorage.getItem('conversationId') || '',
-          timeTaken: latency,
-          messageId: s2tMsgId,
-          createdAt: Math.floor(startTime / 1000),
-          error: error?.message || t('message.recorder_error'),
-        }
-      );
+      await saveTelemetryEvent('0.1', 'E046', 'aiToolProxyToolLatency', 's2tLatency', {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || '',
+        timeTaken: latency,
+        messageId: s2tMsgId,
+        createdAt: Math.floor(startTime / 1000),
+        error: error?.message || t('message.recorder_error'),
+      });
 
       // Automatically change back to startIcon after 3 seconds
       setTimeout(() => {

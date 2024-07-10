@@ -13,9 +13,7 @@ export function OTPInput({
   value: string;
   onChange: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const inputRefs = React.useRef<HTMLInputElement[]>(
-    new Array(length).fill(null)
-  );
+  const inputRefs = React.useRef<HTMLInputElement[]>(new Array(length).fill(null));
 
   const focusInput = (targetIndex: number) => {
     const targetInput = inputRefs.current[targetIndex];
@@ -27,10 +25,7 @@ export function OTPInput({
     targetInput.select();
   };
 
-  const handleKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>,
-    currentIndex: number
-  ) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>, currentIndex: number) => {
     switch (event.key) {
       case 'ArrowUp':
       case 'ArrowDown':
@@ -54,8 +49,7 @@ export function OTPInput({
       case 'Delete':
         event.preventDefault();
         onChange((prevOtp) => {
-          const otp =
-            prevOtp.slice(0, currentIndex) + prevOtp.slice(currentIndex + 1);
+          const otp = prevOtp.slice(0, currentIndex) + prevOtp.slice(currentIndex + 1);
           return otp;
         });
 
@@ -68,8 +62,7 @@ export function OTPInput({
         }
 
         onChange((prevOtp) => {
-          const otp =
-            prevOtp.slice(0, currentIndex) + prevOtp.slice(currentIndex + 1);
+          const otp = prevOtp.slice(0, currentIndex) + prevOtp.slice(currentIndex + 1);
           return otp;
         });
         break;
@@ -79,18 +72,12 @@ export function OTPInput({
     }
   };
 
-  const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    currentIndex: number
-  ) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, currentIndex: number) => {
     const currentValue = event.target.value;
     let indexToEnter = 0;
 
     while (indexToEnter <= currentIndex) {
-      if (
-        inputRefs.current[indexToEnter].value &&
-        indexToEnter < currentIndex
-      ) {
+      if (inputRefs.current[indexToEnter].value && indexToEnter < currentIndex) {
         indexToEnter += 1;
       } else {
         break;
@@ -116,10 +103,7 @@ export function OTPInput({
     selectInput(currentIndex);
   };
 
-  const handlePaste = (
-    event: React.ClipboardEvent<HTMLInputElement>,
-    currentIndex: number
-  ) => {
+  const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>, currentIndex: number) => {
     event.preventDefault();
     const clipboardData = event.clipboardData;
 
@@ -130,10 +114,7 @@ export function OTPInput({
       let indexToEnter = 0;
 
       while (indexToEnter <= currentIndex) {
-        if (
-          inputRefs.current[indexToEnter].value &&
-          indexToEnter < currentIndex
-        ) {
+        if (inputRefs.current[indexToEnter].value && indexToEnter < currentIndex) {
           indexToEnter += 1;
         } else {
           break;
@@ -151,10 +132,7 @@ export function OTPInput({
   };
 
   return (
-    <Box
-      sx={{ display: 'flex', gap: 2, alignItems: 'center' }}
-      data-testid="otp-input-field"
-    >
+    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }} data-testid="otp-input-field">
       {new Array(length).fill(null).map((_, index) => (
         <React.Fragment key={index}>
           <BaseInput
@@ -229,9 +207,7 @@ const InputElement = styled('input')(
 
   &:focus {
     border-color: ${blue[400]};
-    box-shadow: 0 0 0 3px ${
-      theme.palette.mode === 'dark' ? blue[600] : blue[200]
-    };
+    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[600] : blue[200]};
   }
 
   // firefox

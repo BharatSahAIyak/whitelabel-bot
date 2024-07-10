@@ -1,14 +1,5 @@
 import React, { useCallback } from 'react';
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  IconButton,
-  Link,
-  Paper,
-  styled,
-} from '@mui/material';
+import { Box, Button, Container, Grid, IconButton, Link, Paper, styled } from '@mui/material';
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
@@ -41,9 +32,7 @@ const OptionSelector = (props: any) => {
         return;
       }
       setActiveElements((prev) =>
-        prev?.includes(item?.id)
-          ? prev?.filter((i) => i !== item?.id)
-          : [...prev, item?.id]
+        prev?.includes(item?.id) ? prev?.filter((i) => i !== item?.id) : [...prev, item?.id]
       );
     },
     [activeElements, config?.optionSelectLength]
@@ -145,12 +134,7 @@ const OptionSelector = (props: any) => {
                       margin: 'auto',
                     }}
                   >
-                    <img
-                      src={commodity?.image}
-                      height="100%"
-                      width="100%"
-                      alt=""
-                    />
+                    <img src={commodity?.image} height="100%" width="100%" alt="" />
                   </div>
                   <p
                     style={{

@@ -142,8 +142,7 @@ const Navbar: React.FC = () => {
                 </IconButton>
               </div>
             )}
-            {(router.pathname === '/chat' ||
-              router.pathname === '/newchat') && (
+            {(router.pathname === '/chat' || router.pathname === '/newchat') && (
               <div
                 style={{
                   display: 'flex',
@@ -206,25 +205,13 @@ const Navbar: React.FC = () => {
 
           <div data-testid="navbar-right-logos">
             {showRightLogo1 && (
-              <img
-                src={rightLogo1Src}
-                alt={`Right Logo 1`}
-                style={{ maxHeight: '60px' }}
-              />
+              <img src={rightLogo1Src} alt={`Right Logo 1`} style={{ maxHeight: '60px' }} />
             )}
             {showRightLogo2 && (
-              <img
-                src={rightLogo2Src}
-                alt={`Right Logo 2`}
-                style={{ maxHeight: '60px' }}
-              />
+              <img src={rightLogo2Src} alt={`Right Logo 2`} style={{ maxHeight: '60px' }} />
             )}
             {showRightLogo3 && (
-              <img
-                src={rightLogo3Src}
-                alt={`Right Logo 3`}
-                style={{ maxHeight: '60px' }}
-              />
+              <img src={rightLogo3Src} alt={`Right Logo 3`} style={{ maxHeight: '60px' }} />
             )}
           </div>
         </Toolbar>

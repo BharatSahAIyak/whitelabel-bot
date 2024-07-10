@@ -7,13 +7,7 @@ const OnBoarding: FC<{
   variant: 'dots' | 'text' | 'progress';
   activeStep: number;
   steps: number;
-}> = ({
-  containerStyle = {},
-  children,
-  variant = 'dots',
-  activeStep = 0,
-  steps = 3,
-}) => {
+}> = ({ containerStyle = {}, children, variant = 'dots', activeStep = 0, steps = 3 }) => {
   return (
     <div>
       <div

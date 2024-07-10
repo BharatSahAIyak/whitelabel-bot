@@ -31,11 +31,7 @@ const DowntimePage: React.FC = () => {
       ></meta>
       <Box className={styles.container} py={12}>
         <Box>
-          <Typography
-            variant="h5"
-            fontWeight={600}
-            color={theme?.primary?.main}
-          >
+          <Typography variant="h5" fontWeight={600} color={theme?.primary?.main}>
             {t('message.down_time_title')}
           </Typography>
         </Box>
@@ -82,12 +78,7 @@ const DowntimePage: React.FC = () => {
           </Box>
         )}
 
-        <Box
-          display={'flex'}
-          justifyContent={'space-around'}
-          width={'100%'}
-          my={4}
-        >
+        <Box display={'flex'} justifyContent={'space-around'} width={'100%'} my={4}>
           <Button
             className={styles.roundedButton}
             onClick={handleRefreshClick}
@@ -98,9 +89,7 @@ const DowntimePage: React.FC = () => {
               backgroundColor: theme?.grey?.[600],
             }}
           >
-            <Typography variant="body1">
-              {t('message.down_time_retry')}
-            </Typography>
+            <Typography variant="body1">{t('message.down_time_retry')}</Typography>
           </Button>
           <Button
             className={styles.roundedButton}
@@ -112,9 +101,7 @@ const DowntimePage: React.FC = () => {
             }}
             onClick={handlePreviousClick}
           >
-            <Typography variant="body1">
-              {t('message.down_time_view_prev_chats')}
-            </Typography>
+            <Typography variant="body1">{t('message.down_time_view_prev_chats')}</Typography>
           </Button>
         </Box>
       </Box>

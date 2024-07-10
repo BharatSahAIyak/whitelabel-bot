@@ -32,8 +32,7 @@ export default class JsonToTableUtils {
 
   public static checkLabelTypes(labels: any[]) {
     const reduced = labels.reduce(
-      (accumulator, value) =>
-        accumulator + (isNaN(Number(value)) ? value : Number(value)),
+      (accumulator, value) => accumulator + (isNaN(Number(value)) ? value : Number(value)),
       0
     );
     return typeof reduced === 'number' ? 'number' : 'string';

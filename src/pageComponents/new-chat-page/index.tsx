@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { NextPage } from 'next';
 import axios from 'axios';
 import { AppContext } from '../../context';
@@ -110,10 +104,7 @@ const ChatPage: NextPage = () => {
     return (
       <div className={styles.main} style={{ color: secondaryColor }}>
         {config?.showMic && (
-          <div
-            className={styles.voiceRecorder}
-            style={{ height: micHeight, width: micWidth }}
-          >
+          <div className={styles.voiceRecorder} style={{ height: micHeight, width: micWidth }}>
             <IconButton onClick={handleOpenModal}>
               <Box
                 sx={{
@@ -195,11 +186,7 @@ const ChatPage: NextPage = () => {
               rows={1}
               value={inputMsg}
               onChange={handleInputChange}
-              placeholder={
-                !context?.kaliaClicked
-                  ? placeholder
-                  : t('label.enter_aadhaar_number')
-              }
+              placeholder={!context?.kaliaClicked ? placeholder : t('label.enter_aadhaar_number')}
             />
 
             <button
@@ -208,11 +195,7 @@ const ChatPage: NextPage = () => {
               className={styles.sendButton}
               onClick={() => sendMessage(inputMsg)}
             >
-              <SendButton
-                width={40}
-                height={40}
-                color={theme?.primary?.light}
-              />
+              <SendButton width={40} height={40} color={theme?.primary?.light} />
             </button>
           </div>
         </form>

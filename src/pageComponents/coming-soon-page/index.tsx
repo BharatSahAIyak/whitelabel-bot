@@ -22,10 +22,7 @@ const ComingSoonPage: React.FC = () => {
       ></meta>
       <Box my={15} className={styles.container}>
         <Box mt={5}>
-          <Typography
-            variant="h4"
-            sx={{ color: theme?.primary?.main, fontWeight: '700' }}
-          >
+          <Typography variant="h4" sx={{ color: theme?.primary?.main, fontWeight: '700' }}>
             {t('message.coming_soon')}
           </Typography>
         </Box>
@@ -33,10 +30,7 @@ const ComingSoonPage: React.FC = () => {
           <Hourglass fillColor={theme?.primary?.main} />
         </Box>
         <Box>
-          <Typography
-            variant="body1"
-            sx={{ fontWeight: '600', textAlign: 'center' }}
-          >
+          <Typography variant="body1" sx={{ fontWeight: '600', textAlign: 'center' }}>
             {t('message.coming_soon_description')}
           </Typography>
         </Box>
