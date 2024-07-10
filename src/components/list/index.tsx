@@ -10,13 +10,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import StarBorder from '@mui/icons-material/StarBorder';
 import { ListType } from './index.d';
 import { map } from 'lodash';
-import {
-  Avatar,
-  Divider,
-  ListItem,
-  ListItemAvatar,
-  Typography,
-} from '@mui/material';
+import { Avatar, Divider, ListItem, ListItemAvatar, Typography } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { useConfig } from '../../hooks/useConfig';
 
@@ -44,11 +38,7 @@ export const List: React.FC<ListType> = ({ items, label, noItem }) => {
       >
         <ListItemButton>
           <ListItemIcon>
-            {noItem?.icon ? (
-              React.cloneElement(noItem?.icon)
-            ) : (
-              <ErrorOutlineIcon />
-            )}
+            {noItem?.icon ? React.cloneElement(noItem?.icon) : <ErrorOutlineIcon />}
           </ListItemIcon>
           <ListItemText primary={noItem?.label ?? 'Nothing available'} />
         </ListItemButton>
@@ -59,9 +49,7 @@ export const List: React.FC<ListType> = ({ items, label, noItem }) => {
       sx={{ width: '100%', bgcolor: 'background.paper' }}
       component="nav"
       aria-labelledby="nested-list-subheader"
-      subheader={
-        <>{label && <ListSubheader component="div">{label}</ListSubheader>}</>
-      }
+      subheader={<>{label && <ListSubheader component="div">{label}</ListSubheader>}</>}
     >
       {map(items, (item) => {
         console.log({ item });
@@ -78,9 +66,7 @@ export const List: React.FC<ListType> = ({ items, label, noItem }) => {
                   return null;
                 }}
               >
-                {item.icon && (
-                  <ListItemIcon>{React.cloneElement(item.icon)}</ListItemIcon>
-                )}
+                {item.icon && <ListItemIcon>{React.cloneElement(item.icon)}</ListItemIcon>}
                 {item.avatar && (
                   <ListItemAvatar>
                     <Avatar alt="Travis Howard" src={item.avatar} />
@@ -105,9 +91,7 @@ export const List: React.FC<ListType> = ({ items, label, noItem }) => {
                     }
                   />
                 )}
-                {item?.items && (
-                  <>{openItem === item?.id ? <ExpandLess /> : <ExpandMore />}</>
-                )}
+                {item?.items && <>{openItem === item?.id ? <ExpandLess /> : <ExpandMore />}</>}
               </ListItemButton>
             </ListItem>
             <Collapse in={openItem === item?.id} timeout="auto" unmountOnExit>

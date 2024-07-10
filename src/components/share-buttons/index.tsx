@@ -108,10 +108,7 @@ const ShareButtons = () => {
       console.error(error);
       setDownloadLoader(false);
       setShareLoader(false);
-      if (
-        error.message ===
-        "Cannot read properties of undefined (reading 'shareUrl')"
-      ) {
+      if (error.message === "Cannot read properties of undefined (reading 'shareUrl')") {
         toast.success(`${t('message.shareUrl_android_error')}`);
       } else toast.error(error.message);
 
@@ -167,11 +164,7 @@ const ShareButtons = () => {
                   }}
                 >
                   <ShareIcon
-                    color={
-                      config.shareButtonColor
-                        ? config.shareButtonColor
-                        : secondaryColor
-                    }
+                    color={config.shareButtonColor ? config.shareButtonColor : secondaryColor}
                   />
                 </div>
               )}
@@ -222,11 +215,7 @@ const ShareButtons = () => {
                   }}
                 >
                   <DownloadIcon
-                    color={
-                      config.downloadButtonColor
-                        ? config.downloadButtonColor
-                        : secondaryColor
-                    }
+                    color={config.downloadButtonColor ? config.downloadButtonColor : secondaryColor}
                   />
                 </div>
               )}

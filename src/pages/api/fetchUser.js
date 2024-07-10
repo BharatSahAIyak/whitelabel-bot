@@ -8,15 +8,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BFF_API_URL}/user/${userID}`,
-      {
-        headers: {
-          Authorization: process.env.FUSIONAUTH_KEY || '',
-          'Service-Url': process.env.FUSIONAUTH_URL || '',
-        },
-      }
-    );
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BFF_API_URL}/user/${userID}`, {
+      headers: {
+        Authorization: process.env.FUSIONAUTH_KEY || '',
+        'Service-Url': process.env.FUSIONAUTH_URL || '',
+      },
+    });
 
     return res.status(200).json({ user: response.data.user });
   } catch (error) {

@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Modal,
-  Box,
-  Typography,
-  Backdrop,
-  Fade,
-  CircularProgress,
-} from '@mui/material';
+import { Button, Modal, Box, Typography, Backdrop, Fade, CircularProgress } from '@mui/material';
 // import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import { useLocalization } from '../../hooks';
 import locationImg from './assets/Precise.png';

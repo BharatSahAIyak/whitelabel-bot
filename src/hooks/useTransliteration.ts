@@ -78,9 +78,7 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
           setActiveSuggestion((prev) => Math.max(prev - 1, 0));
         } else if (e.code === 'ArrowDown') {
           e.preventDefault();
-          setActiveSuggestion((prev) =>
-            Math.min(prev + 1, suggestions.length - 1)
-          );
+          setActiveSuggestion((prev) => Math.min(prev + 1, suggestions.length - 1));
         } else if (e.key === ' ') {
           e.preventDefault();
           if (activeSuggestion >= 0 && activeSuggestion < suggestions.length) {
@@ -116,10 +114,7 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
       let selectedWord = '';
 
       for (let word of words) {
-        if (
-          currentIndex <= cursorPos &&
-          cursorPos <= currentIndex + word.length
-        ) {
+        if (currentIndex <= cursorPos && cursorPos <= currentIndex + word.length) {
           selectedWord = word;
           break;
         }

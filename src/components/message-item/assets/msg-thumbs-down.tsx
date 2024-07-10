@@ -8,9 +8,7 @@ const MsgThumbsDown = (props: any) => (
     {props.fill ? (
       <ThumbDownAltIcon style={{ color: 'red', fontSize: props.width }} />
     ) : (
-      <ThumbDownAltOutlinedIcon
-        style={{ color: 'red', fontSize: props.width }}
-      />
+      <ThumbDownAltOutlinedIcon style={{ color: 'red', fontSize: props.width }} />
     )}
   </React.Fragment>
 );

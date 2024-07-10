@@ -21,11 +21,7 @@ const NavBar = dynamic(() => import('../components/navbar'), {
 });
 
 function SafeHydrate({ children }: { children: ReactElement }) {
-  return (
-    <div suppressHydrationWarning>
-      {typeof window === 'undefined' ? null : children}
-    </div>
-  );
+  return <div suppressHydrationWarning>{typeof window === 'undefined' ? null : children}</div>;
 }
 
 const App = ({ Component, pageProps }: AppProps) => {
@@ -57,10 +53,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         localStorage.setItem('auth', router.query.auth as string);
         localStorage.setItem('userID', router.query.userId as string);
         sessionStorage.removeItem('conversationId');
-      } else if (
-        !localStorage.getItem('auth') ||
-        !localStorage.getItem('userID')
-      ) {
+      } else if (!localStorage.getItem('auth') || !localStorage.getItem('userID')) {
         localStorage.clear();
         sessionStorage.clear();
         removeCookie('access_token', { path: '/' });
@@ -112,9 +105,7 @@ const App = ({ Component, pageProps }: AppProps) => {
             type: 'application/json',
           });
           const manifestURL = URL.createObjectURL(blob);
-          document
-            .getElementById('manifest-file')
-            ?.setAttribute('href', manifestURL);
+          document.getElementById('manifest-file')?.setAttribute('href', manifestURL);
         })
         .catch((err) => {
           console.log(err);

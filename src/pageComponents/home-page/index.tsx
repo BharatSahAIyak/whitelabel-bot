@@ -35,25 +35,20 @@ const Home: React.FC = () => {
     if (!latitude || !longitude) return;
 
     try {
-      const response = await axios.get(
-        process.env.NEXT_PUBLIC_WEATHER_API || '',
-        {
-          params: { latitude, longitude },
-        }
-      );
+      const response = await axios.get(process.env.NEXT_PUBLIC_WEATHER_API || '', {
+        params: { latitude, longitude },
+      });
 
       console.log(response.data);
       const providers = response.data.message.catalog.providers;
 
       const weatherProvider = providers.find(
         (provider: any) =>
-          provider.id.toLowerCase() === 'ouat' &&
-          provider.category_id === 'weather_provider'
+          provider.id.toLowerCase() === 'ouat' && provider.category_id === 'weather_provider'
       );
 
       const imdWeatherProvider = providers.find(
-        (provider: any) =>
-          provider.id === 'imd' && provider.category_id === 'weather_provider'
+        (provider: any) => provider.id === 'imd' && provider.category_id === 'weather_provider'
       );
 
       if (weatherProvider) {
@@ -104,12 +99,7 @@ const Home: React.FC = () => {
         context?.setMessages([]);
         router.push('/chat');
         if (context?.kaliaClicked) {
-          context?.sendMessage(
-            'Aadhaar number - ' + msg,
-            'Aadhaar number - ' + msg,
-            null,
-            true
-          );
+          context?.sendMessage('Aadhaar number - ' + msg, 'Aadhaar number - ' + msg, null, true);
         } else context?.sendMessage(msg, msg);
       } else {
         toast.error(t('error.disconnected'));
@@ -142,10 +132,7 @@ const Home: React.FC = () => {
         className={styles.container}
         style={{
           background: `url(${weather?.current?.descriptor?.images
-            ?.find(
-              (image: any) =>
-                image.type === (isNight ? 'image_night' : 'image_day')
-            )
+            ?.find((image: any) => image.type === (isNight ? 'image_night' : 'image_day'))
             ?.url?.replace(/ /g, '%20')
             ?.replace(/\(/g, '%28')
             ?.replace(/\)/g, '%29')})`,
@@ -183,10 +170,7 @@ const Home: React.FC = () => {
                 }}
               >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
-                <span
-                  style={{ fontSize: '1.25rem' }}
-                  data-testid="home-page-location"
-                >
+                <span style={{ fontSize: '1.25rem' }} data-testid="home-page-location">
                   {localStorage.getItem('city')}
                 </span>
               </div>
@@ -204,13 +188,7 @@ const Home: React.FC = () => {
             spacing={{ xs: 2, md: 3 }}
             columns={3}
           >
-            <Grid
-              item
-              xs={1}
-              sm={1}
-              md={1}
-              data-testid="home-page-wind-direction"
-            >
+            <Grid item xs={1} sm={1} md={1} data-testid="home-page-wind-direction">
               <Chip
                 label={
                   localStorage.getItem('locale') === 'en'
@@ -370,14 +348,8 @@ const Home: React.FC = () => {
                     }
                   }}
                 >
-                  <img
-                    src={config.weatherAdvisoryImg}
-                    alt="Weather"
-                    className={styles.gridImage}
-                  />
-                  <p className={styles.gridText}>
-                    {t('label.weather_advisory')}{' '}
-                  </p>
+                  <img src={config.weatherAdvisoryImg} alt="Weather" className={styles.gridImage} />
+                  <p className={styles.gridText}>{t('label.weather_advisory')} </p>
                 </div>
               </Grid>
             )}
@@ -402,11 +374,7 @@ const Home: React.FC = () => {
                 }}
               >
                 <div onClick={() => sendGuidedMsg('scheme')}>
-                  <img
-                    src={config.schemesImg}
-                    alt="Schemes"
-                    className={styles.gridImage}
-                  />
+                  <img src={config.schemesImg} alt="Schemes" className={styles.gridImage} />
                   <p className={styles.gridText}>{t('label.scheme')}</p>
                 </div>
               </Grid>
@@ -432,14 +400,8 @@ const Home: React.FC = () => {
                 }}
               >
                 <div onClick={() => sendGuidedMsg('pest')}>
-                  <img
-                    src={config.plantProtectionImg}
-                    alt="Pest"
-                    className={styles.gridImage}
-                  />
-                  <p className={styles.gridText}>
-                    {t('label.plant_protection')}
-                  </p>
+                  <img src={config.plantProtectionImg} alt="Pest" className={styles.gridImage} />
+                  <p className={styles.gridText}>{t('label.plant_protection')}</p>
                 </div>
               </Grid>
             )}
@@ -469,9 +431,7 @@ const Home: React.FC = () => {
                     alt="otherInformation"
                     className={styles.gridImage}
                   />
-                  <p className={styles.gridText}>
-                    {t('label.other_information')}
-                  </p>
+                  <p className={styles.gridText}>{t('label.other_information')}</p>
                 </div>
               </Grid>
             )}

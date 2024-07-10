@@ -1,8 +1,5 @@
 export default function handler(req, res) {
-  const shaFull = require('child_process')
-    .execSync(`git rev-parse HEAD`)
-    .toString()
-    .trim();
+  const shaFull = require('child_process').execSync(`git rev-parse HEAD`).toString().trim();
 
   switch (req.method) {
     case 'GET':

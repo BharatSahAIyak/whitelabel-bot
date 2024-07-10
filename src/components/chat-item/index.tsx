@@ -34,14 +34,11 @@ const ChatItem: React.FC<ChatItemPropsType> = ({
     const confirmed = window?.confirm(`${t('label.confirm_delete')}`);
     if (confirmed) {
       axios
-        .get(
-          `${process.env.NEXT_PUBLIC_BFF_API_URL}/user/conversations/delete/${conversationId}`,
-          {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('auth')}`,
-            },
-          }
-        )
+        .get(`${process.env.NEXT_PUBLIC_BFF_API_URL}/user/conversations/delete/${conversationId}`, {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('auth')}`,
+          },
+        })
         .then((res) => {
           console.log('deleting conversation');
           if (conversationId === sessionStorage.getItem('conversationId')) {

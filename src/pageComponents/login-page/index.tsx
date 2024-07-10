@@ -54,10 +54,9 @@ const LoginPage: React.FC = () => {
         console.log('hello');
         setLoading(true);
         if (navigator.onLine) {
-          fetch(
-            `${process.env.NEXT_PUBLIC_USER_SERVICE_URL}/api/sendOTP?phone=${input}`,
-            { method: 'GET' }
-          )
+          fetch(`${process.env.NEXT_PUBLIC_USER_SERVICE_URL}/api/sendOTP?phone=${input}`, {
+            method: 'GET',
+          })
             .then((response) => {
               setLoading(false);
               if (response.status === 200) {
@@ -107,12 +106,7 @@ const LoginPage: React.FC = () => {
               margin: '0 auto',
             }}
           >
-            <img
-              data-testid="login-page-img"
-              src={logo}
-              alt="loginPageImg"
-              width={'100%'}
-            />
+            <img data-testid="login-page-img" src={logo} alt="loginPageImg" width={'100%'} />
           </div>
         )}
         <div className={styles.form}>
@@ -174,11 +168,7 @@ const LoginPage: React.FC = () => {
               disabled={!valid || loading}
               endIcon={<ArrowForwardIcon />}
             >
-              {loading ? (
-                <CircularProgress size={24} color="inherit" />
-              ) : (
-                `${t('label.continue')}`
-              )}
+              {loading ? <CircularProgress size={24} color="inherit" /> : `${t('label.continue')}`}
             </Button>
           </Box>
         </div>

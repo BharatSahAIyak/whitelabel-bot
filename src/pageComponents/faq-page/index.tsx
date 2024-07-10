@@ -87,11 +87,7 @@ const FAQPage: React.FC = () => {
               </Box>
             )}
             {config?.faqShowCallBox && (
-              <Box
-                className={styles.dialerBox}
-                m={3}
-                data-testid="faq-page-call-box"
-              >
+              <Box className={styles.dialerBox} m={3} data-testid="faq-page-call-box">
                 <Box p={1.5}>
                   <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                     {t('message.dial_description')}
