@@ -23,7 +23,17 @@ const Chat: NextPage = () => {
 
   useEffect(() => {
     if (message) {
-      router.replace('/chat', '', { shallow: true });
+      const { lang } = router.query;
+      const newQuery = lang ? { lang } : {};
+
+      router.replace(
+        {
+          pathname: '/chat',
+          query: newQuery,
+        },
+        '',
+        { shallow: true }
+      );
       setTimeout(() => {
         context?.sendMessage(message as string, message as string);
       }, 2000);
