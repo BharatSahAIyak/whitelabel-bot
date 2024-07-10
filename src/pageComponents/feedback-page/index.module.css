@@ -4,14 +4,12 @@
   align-items: center;
   justify-content: center;
   padding-top: 20px;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 151px);
   width: 100vw;
   overflow-y: auto;
 }
 
 .main {
-  width: 80vw;
-  height: 90vh;
   display: flex;
   align-items: center;
   flex-direction: column;
