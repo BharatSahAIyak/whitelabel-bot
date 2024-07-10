@@ -13,6 +13,7 @@ import { IntlProvider } from 'react-intl';
 import { useConfig } from '../hooks/useConfig';
 import mergeConfigurations from '../utils/mergeConfigurations';
 import { ThemeContext } from './theme-provider/theme-context';
+import router from 'next/router';
 
 // function loadMessages(locale: string) {
 //     switch (locale) {
@@ -35,20 +36,24 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({
       !localStorage.getItem('locale') &&
         localStorage.setItem(
           'locale',
-          res?.component?.botDetails?.defaultLanguage
+          (router?.query?.lang as string) ??
+            res?.component?.botDetails?.defaultLanguage
         );
       themeContext?.modifyPaletes(res?.theme?.palette);
     });
   }, []);
   const defaultLang = useMemo(
     () =>
+      (router?.query?.lang as string) ||
       localStorage.getItem('locale') ||
       config?.component?.botDetails?.defaultLanguage ||
       'en',
     [config]
   );
   const [locale, setLocale] = useState(
-    localStorage.getItem('locale') || defaultLang
+    (router?.query?.lang as string) ||
+      localStorage.getItem('locale') ||
+      defaultLang
   );
 
   useEffect(() => {
@@ -56,7 +61,10 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({
   }, [defaultLang]);
 
   !localStorage.getItem('locale') && defaultLang !== 'en'
-    ? localStorage.setItem('locale', defaultLang as string)
+    ? localStorage.setItem(
+        'locale',
+        (router?.query?.lang as string) ?? (defaultLang as string)
+      )
     : '';
 
   const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(

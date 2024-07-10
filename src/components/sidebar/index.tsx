@@ -35,7 +35,10 @@ export const Sidebar = ({
 }) => {
   const [activeLanguage, setActiveLanguage] = useState<string>(() => {
     const storedLang = localStorage.getItem('locale');
-    return storedLang || 'en';
+    if (storedLang !== router?.query?.lang) {
+      localStorage.setItem('locale', (router?.query?.lang as string) ?? 'en');
+    }
+    return (router?.query?.lang as string) || storedLang || 'en';
   });
 
   const [cookie, setCookie, removeCookie] = useCookies();
@@ -191,6 +194,7 @@ export const Sidebar = ({
                         primary={t('label.welcome')}
                         secondary={
                           config?.showPhoneNumber &&
+                          localStorage.getItem('phoneNumber') &&
                           `+91 ${localStorage.getItem('phoneNumber')}`
                         }
                         secondaryTypographyProps={{ color: 'white' }}
