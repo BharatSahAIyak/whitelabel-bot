@@ -1,13 +1,5 @@
 'use client';
-import {
-  FC,
-  ReactElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { FC, ReactElement, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { AppContext } from '../context';
 import _ from 'underscore';
 import { v4 as uuidv4 } from 'uuid';
@@ -262,15 +254,8 @@ const ContextProvider: FC<{
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
       console.log('updatemsgstate:', msg);
-      if (
-        msg?.messageId?.Id &&
-        msg?.messageId?.channelMessageId &&
-        msg?.messageId?.replyId
-      ) {
-        if (
-          sessionStorage.getItem('conversationId') ===
-          msg.messageId.channelMessageId
-        ) {
+      if (msg?.messageId?.Id && msg?.messageId?.channelMessageId && msg?.messageId?.replyId) {
+        if (sessionStorage.getItem('conversationId') === msg.messageId.channelMessageId) {
           const word = msg.payload.text;
 
           setMessages((prev: any) => {
@@ -285,8 +270,7 @@ const ContextProvider: FC<{
               if (word.endsWith('<end/>')) {
                 updatedMessages[existingMsgIndex].isEnd = true;
               }
-              updatedMessages[existingMsgIndex].text =
-                word.replace(/<end\/>/g, '') + ' ';
+              updatedMessages[existingMsgIndex].text = word.replace(/<end\/>/g, '') + ' ';
             } else {
               // If the message doesn't exist, create a new one
               const newMsg = {
@@ -317,8 +301,7 @@ const ContextProvider: FC<{
                   orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
                   userId: localStorage.getItem('userID') || '',
                   phoneNumber: localStorage.getItem('phoneNumber') || '',
-                  conversationId:
-                    sessionStorage.getItem('conversationId') || '',
+                  conversationId: sessionStorage.getItem('conversationId') || '',
                   messageId: msg.messageId.replyId,
                   text: '',
                   timeTaken: 0,
@@ -346,24 +329,18 @@ const ContextProvider: FC<{
       console.log('MESSAGE:', messages);
       if (messages.length > 0)
         try {
-          await saveTelemetryEvent(
-            '0.1',
-            'E033',
-            'messageQuery',
-            'messageReceived',
-            {
-              botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-              orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-              userId: localStorage.getItem('userID') || '',
-              phoneNumber: localStorage.getItem('phoneNumber') || '',
-              conversationId: sessionStorage.getItem('conversationId') || '',
-              replyId: messages?.[messages.length - 2]?.messageId,
-              messageId: messages?.[messages.length - 1]?.messageId,
-              text: messages[messages.length - 1]?.text,
-              createdAt: Math.floor(new Date().getTime() / 1000),
-              timeTaken: endTime - startTime,
-            }
-          );
+          await saveTelemetryEvent('0.1', 'E033', 'messageQuery', 'messageReceived', {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            userId: localStorage.getItem('userID') || '',
+            phoneNumber: localStorage.getItem('phoneNumber') || '',
+            conversationId: sessionStorage.getItem('conversationId') || '',
+            replyId: messages?.[messages.length - 2]?.messageId,
+            messageId: messages?.[messages.length - 1]?.messageId,
+            text: messages[messages.length - 1]?.text,
+            createdAt: Math.floor(new Date().getTime() / 1000),
+            timeTaken: endTime - startTime,
+          });
         } catch (err) {
           console.log(err);
         }
@@ -427,12 +404,7 @@ const ContextProvider: FC<{
   console.log('config:', { config });
   //@ts-ignore
   const sendMessage = useCallback(
-    async (
-      textToSend: string,
-      textToShow: string,
-      media: any,
-      isVisibile = true
-    ) => {
+    async (textToSend: string, textToShow: string, media: any, isVisibile = true) => {
       if (!textToShow) textToShow = textToSend;
       if (!sessionStorage.getItem('conversationId')) {
         const cId = uuidv4();
@@ -552,10 +524,7 @@ const ContextProvider: FC<{
     console.log('in normalized', chats);
     const conversationId = sessionStorage.getItem('conversationId');
     const history = chats
-      .filter(
-        (item: any) =>
-          conversationId === 'null' || item.conversationId === conversationId
-      )
+      .filter((item: any) => conversationId === 'null' || item.conversationId === conversationId)
       .flatMap((item: any) =>
         [
           item.query?.length && {
@@ -615,9 +584,7 @@ const ContextProvider: FC<{
             console.log('history:', chatHistory.data);
 
             if (!chatHistory.data[chatHistory.data.length - 1].response) {
-              chatHistory.data[chatHistory.data.length - 1].response = `${t(
-                'message.no_signal'
-              )}`;
+              chatHistory.data[chatHistory.data.length - 1].response = `${t('message.no_signal')}`;
             }
             const normalizedChats = normalizedChat(chatHistory);
             console.log('normalized chats', normalizedChats);
@@ -633,8 +600,7 @@ const ContextProvider: FC<{
           }
         } else if (isMsgReceiving) {
           console.log('log: here');
-          const secondLastMsg =
-            messages.length > 2 ? messages[messages.length - 2] : null;
+          const secondLastMsg = messages.length > 2 ? messages[messages.length - 2] : null;
           setMessages((prev: any) => {
             if (prev.length > 0) {
               // Create a new array without the last element
@@ -754,8 +720,7 @@ const ContextProvider: FC<{
     ]
   );
 
-  if (!config)
-    return <FullPageLoader loading label="Loading configuration.." />;
+  if (!config) return <FullPageLoader loading label="Loading configuration.." />;
 
   if (showWelcomePage) return <WelcomePage config={config} />;
 

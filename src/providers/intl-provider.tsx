@@ -1,12 +1,5 @@
 'use client';
-import React, {
-  FC,
-  ReactElement,
-  useState,
-  useEffect,
-  useContext,
-  useMemo,
-} from 'react';
+import React, { FC, ReactElement, useState, useEffect, useContext, useMemo } from 'react';
 import { FullPageLoader } from '../components/fullpage-loader';
 import ContextProvider from './context-provider';
 import { IntlProvider } from 'react-intl';
@@ -25,9 +18,7 @@ import router from 'next/router';
 //             return import('../lang/en.json');
 //     }
 // }
-export const LocaleProvider: FC<{ children: ReactElement }> = ({
-  children,
-}) => {
+export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => {
   const themeContext = useContext(ThemeContext);
   const [config, setConfig] = useState<any>(null);
   useEffect(() => {
@@ -36,8 +27,7 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({
       !localStorage.getItem('locale') &&
         localStorage.setItem(
           'locale',
-          (router?.query?.lang as string) ??
-            res?.component?.botDetails?.defaultLanguage
+          (router?.query?.lang as string) ?? res?.component?.botDetails?.defaultLanguage
         );
       themeContext?.modifyPaletes(res?.theme?.palette);
     });
@@ -51,9 +41,7 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({
     [config]
   );
   const [locale, setLocale] = useState(
-    (router?.query?.lang as string) ||
-      localStorage.getItem('locale') ||
-      defaultLang
+    (router?.query?.lang as string) || localStorage.getItem('locale') || defaultLang
   );
 
   useEffect(() => {
@@ -61,15 +49,10 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({
   }, [defaultLang]);
 
   !localStorage.getItem('locale') && defaultLang !== 'en'
-    ? localStorage.setItem(
-        'locale',
-        (router?.query?.lang as string) ?? (defaultLang as string)
-      )
+    ? localStorage.setItem('locale', (router?.query?.lang as string) ?? (defaultLang as string))
     : '';
 
-  const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
-    null
-  );
+  const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(null);
 
   // useEffect(() => {
   //         //@ts-ignore
@@ -77,8 +60,7 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({
   //         setLocaleMsgs(config.translation.en);
   // }, [config]);
 
-  if (typeof window === 'undefined')
-    return <FullPageLoader loading label="Fetching Locale" />;
+  if (typeof window === 'undefined') return <FullPageLoader loading label="Fetching Locale" />;
   return (
     //@ts-ignore
     <IntlProvider locale={locale} messages={localeMsgs}>

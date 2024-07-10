@@ -21,7 +21,5 @@ export const getFormatedTime = (timeinstance: any) => {
 
   return `${timeinstance.getDate()}/${
     timeinstance.getMonth() + 1
-  }/${timeinstance.getFullYear()} ${formattedHours}:${
-    minutes < 10 ? '0' : ''
-  }${minutes} ${amPM}`;
+  }/${timeinstance.getFullYear()} ${formattedHours}:${minutes < 10 ? '0' : ''}${minutes} ${amPM}`;
 };

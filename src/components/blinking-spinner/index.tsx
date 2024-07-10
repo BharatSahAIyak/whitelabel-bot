@@ -8,12 +8,7 @@ const BlinkingSpinner = () => {
     return theme?.primary?.contrastText;
   }, [theme?.primary?.contrastText]);
 
-  return (
-    <p
-      className={styles.spinner}
-      style={{ backgroundColor: secondaryColor }}
-    ></p>
-  );
+  return <p className={styles.spinner} style={{ backgroundColor: secondaryColor }}></p>;
 };
 
 export default BlinkingSpinner;

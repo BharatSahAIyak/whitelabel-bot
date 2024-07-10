@@ -7,9 +7,7 @@ import { useLocalization } from '../../hooks';
 
 const WelcomePage = (props: any) => {
   const t = useLocalization();
-  const config =
-    useConfig('component', 'welcomePage') ||
-    props?.config?.component?.welcomePage;
+  const config = useConfig('component', 'welcomePage') || props?.config?.component?.welcomePage;
 
   const theme = useColorPalates();
   return (
@@ -38,15 +36,9 @@ const WelcomePage = (props: any) => {
             justifyContent: 'space-evenly',
           }}
         >
-          {config?.showTopLeftLogo1 && (
-            <img src={config?.topLeftLogo1} height="100%" width="30%" />
-          )}
-          {config?.showTopLeftLogo2 && (
-            <img src={config?.topLeftLogo2} height="100%" width="30%" />
-          )}
-          {config?.showTopLeftLogo3 && (
-            <img src={config?.topLeftLogo3} height="100%" width="30%" />
-          )}
+          {config?.showTopLeftLogo1 && <img src={config?.topLeftLogo1} height="100%" width="30%" />}
+          {config?.showTopLeftLogo2 && <img src={config?.topLeftLogo2} height="100%" width="30%" />}
+          {config?.showTopLeftLogo3 && <img src={config?.topLeftLogo3} height="100%" width="30%" />}
         </div>
         {/* <LanguagePicker /> */}
       </div>

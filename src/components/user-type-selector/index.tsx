@@ -77,17 +77,13 @@ const UserTypeSelector = (props: any) => {
                 }));
               }}
               style={{
-                backgroundColor:
-                  data?.userType === 'user1' ? theme?.primary?.main : '#F4F4F4',
+                backgroundColor: data?.userType === 'user1' ? theme?.primary?.main : '#F4F4F4',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 borderRadius: '16px',
                 padding: '8px',
                 width: '40%',
                 height: '120px',
-                color:
-                  data?.userType === 'user1'
-                    ? theme?.primary?.contrastText
-                    : 'black',
+                color: data?.userType === 'user1' ? theme?.primary?.contrastText : 'black',
                 // display: 'flex',
                 // flexDirection: 'column',
                 // justifyContent: 'center',
@@ -112,17 +108,13 @@ const UserTypeSelector = (props: any) => {
                 }));
               }}
               style={{
-                backgroundColor:
-                  data?.userType === 'user2' ? theme?.primary?.main : '#F4F4F4',
+                backgroundColor: data?.userType === 'user2' ? theme?.primary?.main : '#F4F4F4',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 borderRadius: '16px',
                 padding: '8px',
                 width: '40%',
                 height: '120px',
-                color:
-                  data?.userType === 'user2'
-                    ? theme?.primary?.contrastText
-                    : 'black',
+                color: data?.userType === 'user2' ? theme?.primary?.contrastText : 'black',
                 // display: 'flex',
                 // flexDirection: 'column',
                 // justifyContent: 'center',

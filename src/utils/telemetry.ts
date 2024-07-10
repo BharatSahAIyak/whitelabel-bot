@@ -8,8 +8,7 @@ const saveTelemetryEvent = async (
   subEvent: string,
   eventData: any
 ) => {
-  const telemetryApi =
-    process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
+  const telemetryApi = process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '';
 
   if (!sessionStorage.getItem('sessionId')) {
     sessionStorage.setItem('sessionId', uuidv4());
@@ -32,9 +31,7 @@ const saveTelemetryEvent = async (
       browser: window.navigator.userAgent,
       ip: localStorage.getItem('ip') || '',
       // @ts-ignore
-      deviceType: window.navigator?.userAgentData?.mobile
-        ? 'mobile'
-        : 'desktop',
+      deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
       sessionId: sessionStorage.getItem('sessionId') || '',
       eventData,
     };

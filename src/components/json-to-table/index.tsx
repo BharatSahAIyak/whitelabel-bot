@@ -14,11 +14,7 @@ interface IJsonToTableProps {
   styles?: React.CSSProperties;
 }
 
-export const JsonToTable: React.FC<IJsonToTableProps> = ({
-  json,
-  id,
-  styles,
-}) => {
+export const JsonToTable: React.FC<IJsonToTableProps> = ({ json, id, styles }) => {
   const renderObject = (
     obj: any,
     header: string | undefined,
@@ -57,9 +53,7 @@ export const JsonToTable: React.FC<IJsonToTableProps> = ({
 
     phrase.push(tmp);
     return header ? (
-      <TableRow key={`__j2t_trObj${idx}`}>
-        {renderCell({ content: phrase, colspan: 2 })}
-      </TableRow>
+      <TableRow key={`__j2t_trObj${idx}`}>{renderCell({ content: phrase, colspan: 2 })}</TableRow>
     ) : (
       phrase
     );
@@ -83,11 +77,7 @@ export const JsonToTable: React.FC<IJsonToTableProps> = ({
     //@ts-ignore
     return (
       <TableCell colSpan={colspan} key={`__j2t_td${content}`}>
-        {isHeader ? (
-          <strong>{capitalize(valueDisplay)}</strong>
-        ) : (
-          capitalize(valueDisplay)
-        )}
+        {isHeader ? <strong>{capitalize(valueDisplay)}</strong> : capitalize(valueDisplay)}
       </TableCell>
     );
   };
@@ -109,9 +99,7 @@ export const JsonToTable: React.FC<IJsonToTableProps> = ({
   const renderValues = (values: any[]): JSX.Element => {
     return (
       <TableRow key={`__j2t_trArrString`}>
-        {values.map((k, index) =>
-          renderCell({ content: k, key: `value-${index}` })
-        )}
+        {values.map((k, index) => renderCell({ content: k, key: `value-${index}` }))}
       </TableRow>
     );
   };
@@ -122,8 +110,7 @@ export const JsonToTable: React.FC<IJsonToTableProps> = ({
         <TableRow key={`__j2t_Arr${idx}`}>
           {labels.map((k, index) => {
             const isValuePrimitive =
-              JSONToTableUtils.getObjectType(item[k]) ===
-              JSONObjectType.Primitive;
+              JSONToTableUtils.getObjectType(item[k]) === JSONObjectType.Primitive;
             return isValuePrimitive
               ? renderCell({
                   content: item[k],
@@ -138,8 +125,7 @@ export const JsonToTable: React.FC<IJsonToTableProps> = ({
 
   const parseArray = (anArray: any[]): JSX.Element[] => {
     const phrase: JSX.Element[] = [];
-    const labels: JSONObjectKeys =
-      JSONToTableUtils.getUniqueObjectKeys(anArray);
+    const labels: JSONObjectKeys = JSONToTableUtils.getUniqueObjectKeys(anArray);
     if (JSONToTableUtils.checkLabelTypes(labels.labels) !== 'number') {
       phrase.push(renderHeader(labels.labels));
       phrase.push(...renderRowValues(anArray, labels.labels));
@@ -152,8 +138,7 @@ export const JsonToTable: React.FC<IJsonToTableProps> = ({
   const renderRows = (obj: any): any => {
     return Object.keys(obj).map((k, idx) => {
       const value = obj[k];
-      const isValuePrimitive =
-        JSONToTableUtils.getObjectType(value) === JSONObjectType.Primitive;
+      const isValuePrimitive = JSONToTableUtils.getObjectType(value) === JSONObjectType.Primitive;
       return isValuePrimitive ? (
         <TableRow key={`__j2t_tr${idx}`}>
           <TableCell>
@@ -179,9 +164,7 @@ export const JsonToTable: React.FC<IJsonToTableProps> = ({
     <div className={css.jsonToTable} style={styles} id={id}>
       <TableContainer>
         <Table stickyHeader key={`__j2t_root_Table`} size="small">
-          <TableBody key={`__j2t_root_tbody`}>
-            {renderObject(json, undefined, 0)}
-          </TableBody>
+          <TableBody key={`__j2t_root_tbody`}>{renderObject(json, undefined, 0)}</TableBody>
         </Table>
       </TableContainer>
     </div>

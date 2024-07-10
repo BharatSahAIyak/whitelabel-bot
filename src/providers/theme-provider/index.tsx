@@ -1,9 +1,5 @@
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
-import {
-  ThemeProvider as MuiThemeProvider,
-  Theme,
-  createTheme,
-} from '@mui/material/styles';
+import { ThemeProvider as MuiThemeProvider, Theme, createTheme } from '@mui/material/styles';
 import { initialTheme } from './theme';
 import { Color, ThemeContext } from './theme-context';
 import { useGetInitTheme } from '../../hooks/useConfig';
@@ -12,9 +8,7 @@ interface CustomThemeProviderProps {
   children: ReactNode;
 }
 
-const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({
-  children,
-}) => {
+const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({ children }) => {
   const _initialTheme = useGetInitTheme();
 
   const [theme, setTheme] = useState<Theme | null>(null);

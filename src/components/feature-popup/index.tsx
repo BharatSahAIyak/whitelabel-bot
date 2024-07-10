@@ -82,10 +82,7 @@ function FeaturePopup() {
   }
 
   return (
-    <div
-      className={styles.popup}
-      style={{ backgroundColor: theme?.primary?.main }}
-    >
+    <div className={styles.popup} style={{ backgroundColor: theme?.primary?.main }}>
       <h2>{popupData.title}</h2>
       <p>{popupData.description}</p>
       <button onClick={handleClose}>Close</button>

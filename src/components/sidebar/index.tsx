@@ -26,13 +26,7 @@ import styles from './style.module.css';
 import Image from 'next/image';
 import { Button } from '@mui/material';
 
-export const Sidebar = ({
-  isOpen,
-  onToggle,
-}: {
-  isOpen: boolean;
-  onToggle: () => void;
-}) => {
+export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) => {
   const [activeLanguage, setActiveLanguage] = useState<string>(() => {
     const storedLang = localStorage.getItem('locale');
     if (storedLang !== router?.query?.lang) {
@@ -72,9 +66,7 @@ export const Sidebar = ({
 
   console.log('debug', { config });
   return (
-    <div
-      style={{ background: config?.sidebarBackground ?? theme.primary.main }}
-    >
+    <div style={{ background: config?.sidebarBackground ?? theme.primary.main }}>
       <Drawer
         open={isOpen}
         onClose={onToggle}
@@ -121,9 +113,7 @@ export const Sidebar = ({
                     >
                       <Button
                         className={`Sidemenu_button ${
-                          activeLanguage === config?.languageCode1
-                            ? 'active'
-                            : ''
+                          activeLanguage === config?.languageCode1 ? 'active' : ''
                         }`}
                         style={{
                           borderTopLeftRadius: '10px',
@@ -139,18 +129,14 @@ export const Sidebar = ({
                           height: '30px',
                           padding: '5px',
                         }}
-                        onClick={() =>
-                          handleLanguageClick(config?.languageCode1)
-                        }
+                        onClick={() => handleLanguageClick(config?.languageCode1)}
                       >
                         {config?.languageName1}
                       </Button>
 
                       <Button
                         className={`Sidemenu_button ${
-                          activeLanguage === config?.languageCode2
-                            ? 'active'
-                            : ''
+                          activeLanguage === config?.languageCode2 ? 'active' : ''
                         }`}
                         style={{
                           borderTopLeftRadius: '0',
@@ -166,9 +152,7 @@ export const Sidebar = ({
                           height: '30px',
                           padding: '5px',
                         }}
-                        onClick={() =>
-                          handleLanguageClick(config?.languageCode2)
-                        }
+                        onClick={() => handleLanguageClick(config?.languageCode2)}
                       >
                         {config?.languageName2}
                       </Button>
