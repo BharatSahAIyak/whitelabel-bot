@@ -20,17 +20,12 @@ const FeedbackPage: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get(
-        `${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback/${localStorage.getItem(
-          'userID'
-        )}`,
-        {
-          headers: {
-            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-          },
-        }
-      )
+      .get(`${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback/${localStorage.getItem('userID')}`, {
+        headers: {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        },
+      })
       .then((res) => {
         setStar(res?.data?.rating);
         setReview(res?.data?.review);
@@ -55,9 +50,7 @@ const FeedbackPage: React.FC = () => {
 
     axios
       .post(
-        `${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback/${localStorage.getItem(
-          'userID'
-        )}`,
+        `${process.env.NEXT_PUBLIC_BFF_API_URL}/feedback/${localStorage.getItem('userID')}`,
         {
           rating: star,
           review: review,

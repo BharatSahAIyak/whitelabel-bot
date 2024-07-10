@@ -43,10 +43,7 @@ const OtpPage: React.FC = () => {
         userData
       );
       console.log({ response });
-      localStorage.setItem(
-        'user',
-        JSON.stringify(response?.data?.result?.data?.user)
-      );
+      localStorage.setItem('user', JSON.stringify(response?.data?.result?.data?.user));
       return response.data;
     } catch (error) {
       toast.error(`${t('message.invalid_otp')}`);
@@ -73,10 +70,7 @@ const OtpPage: React.FC = () => {
 
   useEffect(() => {
     if (countdown > 0) {
-      const timer = setTimeout(
-        () => setCountdown((prevCountdown) => prevCountdown - 1),
-        1000
-      );
+      const timer = setTimeout(() => setCountdown((prevCountdown) => prevCountdown - 1), 1000);
       return () => clearTimeout(timer);
     }
   }, [countdown]);
@@ -98,8 +92,7 @@ const OtpPage: React.FC = () => {
             if (res.params.status === 'Success') {
               let expires = new Date();
               expires.setTime(
-                expires.getTime() +
-                  res.result.data.user.tokenExpirationInstant * 1000
+                expires.getTime() + res.result.data.user.tokenExpirationInstant * 1000
               );
               removeCookie('access_token');
 
@@ -184,17 +177,9 @@ const OtpPage: React.FC = () => {
             />
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <OTPInput
-              separator={<></>}
-              value={otp}
-              onChange={setOtp}
-              length={otpLength}
-            />
+            <OTPInput separator={<></>} value={otp} onChange={setOtp} length={otpLength} />
           </Box>
-          <div
-            style={{ margin: '10px', textAlign: 'center' }}
-            data-testid="resend-otp"
-          >
+          <div style={{ margin: '10px', textAlign: 'center' }} data-testid="resend-otp">
             {countdown > 0 ? (
               <span>
                 <FormattedMessage
@@ -240,11 +225,7 @@ const OtpPage: React.FC = () => {
           disabled={loading}
           endIcon={<ArrowForwardIcon />}
         >
-          {loading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            `${t('label.submit')}`
-          )}
+          {loading ? <CircularProgress size={24} color="inherit" /> : `${t('label.submit')}`}
         </Button>
       </div>
     </>

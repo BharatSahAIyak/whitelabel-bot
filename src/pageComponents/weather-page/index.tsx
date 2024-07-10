@@ -17,8 +17,7 @@ const WeatherPage: React.FC = () => {
   const [weather, setWeather] = useState<any>(null);
   const [crop, setCrop] = useState<any>(null);
   const [isNight, setIsNight] = useState(false);
-  const [showWeatherAdvisoryPopup, setShowWeatherAdvisoryPopup] =
-    useState(false);
+  const [showWeatherAdvisoryPopup, setShowWeatherAdvisoryPopup] = useState(false);
   const [selectedCrop, setSelectedCrop] = useState<any>(null);
   const [fetchTime, setFetchTime] = useState(0);
   const [convId, setConvId] = useState(uuidv4());
@@ -33,19 +32,15 @@ const WeatherPage: React.FC = () => {
 
   const fetchWeatherData = async () => {
     const startTime = performance.now();
-    if (!localStorage.getItem('longitude') || !localStorage.getItem('latitude'))
-      return;
+    if (!localStorage.getItem('longitude') || !localStorage.getItem('latitude')) return;
     try {
-      const response = await axios.get(
-        process.env.NEXT_PUBLIC_WEATHER_API || '',
-        {
-          params: {
-            latitude: localStorage.getItem('latitude'),
-            longitude: localStorage.getItem('longitude'),
-            provider: config?.provider || 'upcar',
-          },
-        }
-      );
+      const response = await axios.get(process.env.NEXT_PUBLIC_WEATHER_API || '', {
+        params: {
+          latitude: localStorage.getItem('latitude'),
+          longitude: localStorage.getItem('longitude'),
+          provider: config?.provider || 'upcar',
+        },
+      });
 
       const endTime = performance.now();
       setFetchTime(endTime - startTime);
@@ -72,10 +67,7 @@ const WeatherPage: React.FC = () => {
             }));
           }
         } else {
-          if (
-            provider.category_id === 'weather_provider' &&
-            provider.id === 'imd'
-          ) {
+          if (provider.category_id === 'weather_provider' && provider.id === 'imd') {
             if (!weather) {
               setWeather((prev: any) => ({
                 future: provider?.items?.slice(1),
@@ -87,10 +79,7 @@ const WeatherPage: React.FC = () => {
                 current: provider?.items?.[0],
               }));
             }
-          } else if (
-            provider.category_id === 'crop_advisory_provider' &&
-            provider.id === 'upcar'
-          ) {
+          } else if (provider.category_id === 'crop_advisory_provider' && provider.id === 'upcar') {
             if (!crop) {
               setCrop(provider?.items);
             }
@@ -155,8 +144,7 @@ const WeatherPage: React.FC = () => {
           conversationId: convId || '',
           replyId: uuidv4(),
           messageId: msgId || messageId || '',
-          text:
-            cropData?.descriptor?.long_desc || JSON.stringify(weather.current),
+          text: cropData?.descriptor?.long_desc || JSON.stringify(weather.current),
           createdAt: Math.floor(new Date().getTime() / 1000),
           timeTaken: parseInt(`${fetchTime}`),
           responseType: 'Guided: weather',
@@ -171,8 +159,7 @@ const WeatherPage: React.FC = () => {
           conversationId: convId || '',
           replyId: uuidv4(),
           messageId: msgId || messageId || '',
-          text:
-            cropData?.descriptor?.long_desc || JSON.stringify(weather.current),
+          text: cropData?.descriptor?.long_desc || JSON.stringify(weather.current),
           createdAt: Math.floor(new Date().getTime() / 1000),
           timeTaken: parseInt(`${fetchTime}`),
         });
@@ -214,10 +201,7 @@ const WeatherPage: React.FC = () => {
         className={styles.container}
         style={{
           background: `url(${weather?.current?.descriptor?.images
-            ?.find(
-              (image: any) =>
-                image.type === (isNight ? 'image_night' : 'image_day')
-            )
+            ?.find((image: any) => image.type === (isNight ? 'image_night' : 'image_day'))
             ?.url?.replace(/ /g, '%20')
             ?.replace(/\(/g, '%28')
             ?.replace(/\)/g, '%29')})`,
@@ -255,10 +239,7 @@ const WeatherPage: React.FC = () => {
                 }}
               >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
-                <span
-                  style={{ fontSize: '1.25rem' }}
-                  data-testid="weather-page-location"
-                >
+                <span style={{ fontSize: '1.25rem' }} data-testid="weather-page-location">
                   {localStorage.getItem('city')}
                 </span>
               </div>
@@ -277,13 +258,7 @@ const WeatherPage: React.FC = () => {
             spacing={{ xs: 2, md: 3 }}
             columns={3}
           >
-            <Grid
-              item
-              xs={1}
-              sm={1}
-              md={1}
-              data-testid="weather-page-wind-direction"
-            >
+            <Grid item xs={1} sm={1} md={1} data-testid="weather-page-wind-direction">
               <Chip
                 label={
                   localStorage.getItem('locale') === 'en'
@@ -312,13 +287,7 @@ const WeatherPage: React.FC = () => {
                 {t('label.wind_direction')}
               </p>
             </Grid>
-            <Grid
-              item
-              xs={1}
-              sm={1}
-              md={1}
-              data-testid="weather-page-wind-speed"
-            >
+            <Grid item xs={1} sm={1} md={1} data-testid="weather-page-wind-speed">
               <Chip
                 label={(weather?.current?.tags?.windspeed || 0) + ' km/h'}
                 size="medium"
@@ -370,6 +339,7 @@ const WeatherPage: React.FC = () => {
 
           <div style={{ marginTop: '10px' }}>
             <div
+              data-testid="weather-page-forecast"
               style={{
                 color: 'black',
                 display: 'flex',
@@ -460,9 +430,8 @@ const WeatherPage: React.FC = () => {
                           <p>{getDayAbbreviation(ele?.time?.timestamp)}</p>
                           <img
                             src={
-                              ele?.descriptor?.images?.find(
-                                (image: any) => image.type === 'icon'
-                              )?.url
+                              ele?.descriptor?.images?.find((image: any) => image.type === 'icon')
+                                ?.url
                             }
                             alt=""
                             height="32px"
@@ -512,10 +481,15 @@ const WeatherPage: React.FC = () => {
         </div>
       </div>
       <div className={styles.cropContainer}>
-        <div className={styles.heading} style={{ background: '#DFF6D1' }}>
+        <div
+          className={styles.heading}
+          style={{ background: '#DFF6D1' }}
+          data-testid="weather-page-advisory-text"
+        >
           {t('label.todays_advisory')}
         </div>
         <Grid
+          data-testid="weather-page-crop-list"
           container
           columns={3}
           overflow={'auto'}
@@ -524,15 +498,11 @@ const WeatherPage: React.FC = () => {
         >
           {(localStorage.getItem('locale') !== 'en'
             ? crop.filter((ele: any) =>
-                ele.category_ids.some((categoryId: string) =>
-                  categoryId.endsWith('translated')
-                )
+                ele.category_ids.some((categoryId: string) => categoryId.endsWith('translated'))
               )
             : crop.filter(
                 (ele: any) =>
-                  !ele.category_ids.some((categoryId: string) =>
-                    categoryId.endsWith('translated')
-                  )
+                  !ele.category_ids.some((categoryId: string) => categoryId.endsWith('translated'))
               )
           ).map((ele: any, index: number) => {
             return (
@@ -554,12 +524,7 @@ const WeatherPage: React.FC = () => {
                   sendTelemetry(uuidv4(), ele);
                 }}
               >
-                <img
-                  src={ele?.descriptor?.images?.[0]?.url}
-                  alt=""
-                  width={80}
-                  height={80}
-                />
+                <img src={ele?.descriptor?.images?.[0]?.url} alt="" width={80} height={80} />
                 <p>{ele?.descriptor?.name}</p>
               </Grid>
             );

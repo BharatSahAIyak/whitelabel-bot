@@ -14,11 +14,7 @@ const FAQ: React.FC<FAQProps> = ({ onQuestionClick }) => {
   const config = useConfig('component', 'faq');
   const t = useLocalization();
 
-  const questions = [
-    t('label.faq_question1'),
-    t('label.faq_question2'),
-    t('label.faq_question3'),
-  ];
+  const questions = [t('label.faq_question1'), t('label.faq_question2'), t('label.faq_question3')];
 
   const handleClick = (question: string) => {
     onQuestionClick(question);
@@ -35,11 +31,7 @@ const FAQ: React.FC<FAQProps> = ({ onQuestionClick }) => {
       <h3>{t('label.faq_title')}</h3>
       <br />
       {questions.map((question, index) => (
-        <div
-          key={index}
-          className={styles.faqItem}
-          onClick={() => handleClick(question)}
-        >
+        <div key={index} className={styles.faqItem} onClick={() => handleClick(question)}>
           <div className={styles.faqBox}>
             <h3>{question}</h3>
           </div>

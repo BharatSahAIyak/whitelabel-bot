@@ -99,10 +99,7 @@ const OnBoardingPage = (props: any) => {
         steps={steps}
       >
         {activeStep === 0 && (
-          <UserTypeSelector
-            handleNext={handleNext}
-            setOnboardingData={setOnboardingData}
-          />
+          <UserTypeSelector handleNext={handleNext} setOnboardingData={setOnboardingData} />
         )}
         {activeStep === 1 && (
           <LocationInput

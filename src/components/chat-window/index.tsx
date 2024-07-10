@@ -1,13 +1,7 @@
 import axios from 'axios';
 //@ts-ignore
 import Chat from '@samagra-x/chatui';
-import React, {
-  ReactElement,
-  useCallback,
-  useContext,
-  useMemo,
-  useEffect,
-} from 'react';
+import React, { ReactElement, useCallback, useContext, useMemo, useEffect } from 'react';
 import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
 import MessageItem from '../message-item';
@@ -36,9 +30,7 @@ const ChatUiWindow: React.FC = () => {
         await context?.fetchIsDown();
         if (!context?.isDown) {
           const chatHistory = await axios.get(
-            `${
-              process.env.NEXT_PUBLIC_BFF_API_URL
-            }/history?userId=${localStorage.getItem(
+            `${process.env.NEXT_PUBLIC_BFF_API_URL}/history?userId=${localStorage.getItem(
               'userID'
             )}&conversationId=${sessionStorage.getItem('conversationId')}`,
             {
@@ -72,8 +64,7 @@ const ChatUiWindow: React.FC = () => {
     const history = chats
       .filter(
         (item: any) =>
-          (conversationId === 'null' ||
-            item?.channelMessageId === conversationId) &&
+          (conversationId === 'null' || item?.channelMessageId === conversationId) &&
           (item?.to !== 'admin' || !item.payload?.metaData?.hideMessage)
       )
       .map((item: any) => ({
@@ -164,14 +155,12 @@ const ChatUiWindow: React.FC = () => {
           translation={t}
           showTransliteration={
             config?.allowTransliteration &&
-            localStorage.getItem('locale') ===
-              config?.transliterationOutputLanguage
+            localStorage.getItem('locale') === config?.transliterationOutputLanguage
           }
           transliterationConfig={{
             transliterationApi: config?.transliterationApi + '/transliterate',
             transliterationInputLanguage: config?.transliterationInputLanguage,
-            transliterationOutputLanguage:
-              config?.transliterationOutputLanguage,
+            transliterationOutputLanguage: config?.transliterationOutputLanguage,
             transliterationProvider: config?.transliterationProvider,
             transliterationSuggestions: config?.transliterationSuggestions,
           }}
@@ -179,9 +168,7 @@ const ChatUiWindow: React.FC = () => {
           messages={msgToRender}
           voiceToText={RenderVoiceRecorder}
           //@ts-ignore
-          renderMessageContent={(props): ReactElement => (
-            <MessageItem message={props} />
-          )}
+          renderMessageContent={(props): ReactElement => <MessageItem message={props} />}
           onSend={handleSend}
           locale="en-US"
           placeholder={t('message.ask_ur_question')}

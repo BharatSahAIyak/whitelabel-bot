@@ -2,11 +2,7 @@ import React from 'react';
 
 const MsgThumbsUp = (props) => (
   <React.Fragment>
-    <svg
-      width={props.width}
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width={props.width} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title />
 
       <g id="Complete">

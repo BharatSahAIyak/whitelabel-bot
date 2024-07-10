@@ -28,9 +28,7 @@ const LocationInput = (props: any) => {
 
   const fetchLocation = async (lat: any, long: any) => {
     try {
-      let res: any = await fetch(
-        `https://geoip.samagra.io/georev?lat=${lat}&lon=${long}`
-      );
+      let res: any = await fetch(`https://geoip.samagra.io/georev?lat=${lat}&lon=${long}`);
       res = await res.json();
       console.log(res);
       props?.setOnboardingData((prev: any) => ({

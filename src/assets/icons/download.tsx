@@ -2,12 +2,7 @@ import React from 'react';
 
 const DownloadIcon = (props: any) => {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      width="24px"
-      height="24px"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 24 24" width="24px" height="24px" xmlns="http://www.w3.org/2000/svg">
       <title />
 
       <g id="Complete">

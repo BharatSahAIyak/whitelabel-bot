@@ -53,9 +53,7 @@ const Chat: NextPage = () => {
           // onClick={() => context?.setShowFeedbackPopup(false)}
         >
           {context?.showFeedbackPopup && (
-            <FeedbackPopup
-              setShowFeedbackPopup={context?.setShowFeedbackPopup}
-            />
+            <FeedbackPopup setShowFeedbackPopup={context?.setShowFeedbackPopup} />
           )}
         </div>
       )}

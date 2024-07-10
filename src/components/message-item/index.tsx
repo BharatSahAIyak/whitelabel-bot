@@ -9,15 +9,7 @@ import {
   Popup,
   RichText,
 } from '@samagra-x/chatui';
-import {
-  FC,
-  ReactElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { FC, ReactElement, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import styles from './index.module.css';
 import RightIcon from './assets/right';
@@ -47,9 +39,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const config = useConfig('component', 'chatUI');
   const context = useContext(AppContext);
   const [reaction, setReaction] = useState(content?.data?.reaction?.type);
-  const [optionDisabled, setOptionDisabled] = useState(
-    content?.data?.optionClicked || false
-  );
+  const [optionDisabled, setOptionDisabled] = useState(content?.data?.optionClicked || false);
   const [audioFetched, setAudioFetched] = useState(false);
   const [ttsLoader, setTtsLoader] = useState(false);
   const [popupActive, setPopupActive] = useState(true);
@@ -76,9 +66,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
     if (query) {
       const results = content?.data?.choices?.choices
-        .filter((item: any) =>
-          item.text.toLowerCase().includes(query.toLowerCase().trim())
-        )
+        .filter((item: any) => item.text.toLowerCase().includes(query.toLowerCase().trim()))
         .slice(0, 3);
       setFilteredChoices(results);
     } else {
@@ -96,9 +84,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     ? filteredChoices
     : content?.data?.choices?.choices?.slice(
         0,
-        content?.data?.choices?.isSearchable
-          ? content?.data?.choices?.choices?.length
-          : undefined
+        content?.data?.choices?.isSearchable ? content?.data?.choices?.choices?.length : undefined
       );
 
   useEffect(() => {
@@ -188,13 +174,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   setOptionDisabled(true);
                   setTimeout(
                     () =>
-                      document
-                        .getElementsByClassName('PullToRefresh')?.[0]
-                        ?.scrollTo({
-                          top: 999999,
-                          left: 0,
-                          behavior: 'smooth',
-                        }),
+                      document.getElementsByClassName('PullToRefresh')?.[0]?.scrollTo({
+                        top: 999999,
+                        left: 0,
+                        behavior: 'smooth',
+                      }),
                     500
                   );
                   if (isWeather) {
@@ -223,9 +207,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 <div style={{ marginLeft: 'auto' }}>
                   <RightIcon
                     width="30px"
-                    color={
-                      optionDisabled ? 'var(--font)' : 'var(--secondarygreen)'
-                    }
+                    color={optionDisabled ? 'var(--font)' : 'var(--secondarygreen)'}
                   />
                 </div>
               </div>
@@ -291,24 +273,18 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         setAudioFetched(true);
         const endTime = Date.now();
         const latency = endTime - startTime;
-        await saveTelemetryEvent(
-          '0.1',
-          'E045',
-          'aiToolProxyToolLatency',
-          't2sLatency',
-          {
-            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-            userId: localStorage.getItem('userID') || '',
-            phoneNumber: localStorage.getItem('phoneNumber') || '',
-            conversationId: sessionStorage.getItem('conversationId') || '',
-            text: text,
-            messageId: content?.data?.replyId,
-            timeTaken: latency,
-            createdAt: Math.floor(startTime / 1000),
-            audioUrl: response?.data?.url || 'No audio URL',
-          }
-        );
+        await saveTelemetryEvent('0.1', 'E045', 'aiToolProxyToolLatency', 't2sLatency', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+          text: text,
+          messageId: content?.data?.replyId,
+          timeTaken: latency,
+          createdAt: Math.floor(startTime / 1000),
+          audioUrl: response?.data?.url || 'No audio URL',
+        });
         // cacheAudio(response.data);
         return response?.data?.url;
       } catch (error: any) {
@@ -316,24 +292,18 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         setAudioFetched(true);
         const endTime = Date.now();
         const latency = endTime - startTime;
-        await saveTelemetryEvent(
-          '0.1',
-          'E045',
-          'aiToolProxyToolLatency',
-          't2sLatency',
-          {
-            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-            userId: localStorage.getItem('userID') || '',
-            phoneNumber: localStorage.getItem('phoneNumber') || '',
-            conversationId: sessionStorage.getItem('conversationId') || '',
-            text: text,
-            msgId: content?.data?.replyId,
-            timeTaken: latency,
-            createdAt: Math.floor(startTime / 1000),
-            error: error?.message || 'Error fetching audio',
-          }
-        );
+        await saveTelemetryEvent('0.1', 'E045', 'aiToolProxyToolLatency', 't2sLatency', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+          text: text,
+          msgId: content?.data?.replyId,
+          timeTaken: latency,
+          createdAt: Math.floor(startTime / 1000),
+          error: error?.message || 'Error fetching audio',
+        });
         return null;
       }
     };
@@ -426,14 +396,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     gap: '10px',
                   }
                 : {
-                    background: content?.data?.card
-                      ? contrastText
-                      : secondaryColor,
+                    background: content?.data?.card ? contrastText : secondaryColor,
                     boxShadow: '0 3px 8px rgba(0,0,0,.24)',
                     borderRadius: '15px 15px 15px 0px',
-                    padding: content?.data?.card
-                      ? '0'
-                      : '10px, 15px, 10px, 15px',
+                    padding: content?.data?.card ? '0' : '10px, 15px, 10px, 15px',
                     gap: '10px',
                   }
             }
@@ -443,8 +409,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 {content?.data?.card?.banner && (
                   <div
                     style={{
-                      background:
-                        content?.data?.card?.banner?.color ?? '#EDEDF1',
+                      background: content?.data?.card?.banner?.color ?? '#EDEDF1',
                       padding: '10px',
                       fontWeight: 600,
                       color: 'black',
@@ -468,9 +433,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     <div
                       style={{
                         flex: 1,
-                        marginRight: content?.data?.card?.banner?.logo
-                          ? '30px'
-                          : '0',
+                        marginRight: content?.data?.card?.banner?.logo ? '30px' : '0',
                       }}
                     >
                       {content?.data?.card?.banner?.title}
@@ -491,35 +454,33 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   <div>{content?.data?.card?.header?.description}</div>
                 </div>
                 <div>
-                  {content?.data?.card?.content?.cells?.map(
-                    (cell: any, index: number) => {
-                      return (
+                  {content?.data?.card?.content?.cells?.map((cell: any, index: number) => {
+                    return (
+                      <div
+                        key={index}
+                        style={{
+                          border: '1px solid #EDEDF1',
+                          padding: '10px',
+                          textAlign: 'center',
+                        }}
+                      >
                         <div
-                          key={index}
                           style={{
-                            border: '1px solid #EDEDF1',
-                            padding: '10px',
-                            textAlign: 'center',
+                            color: theme?.primary?.main,
                           }}
                         >
-                          <div
-                            style={{
-                              color: theme?.primary?.main,
-                            }}
-                          >
-                            <RichText content={cell?.header} />
-                          </div>
-                          <div
-                            style={{
-                              color: 'var(--font)',
-                            }}
-                          >
-                            <RichText content={cell?.footer} />
-                          </div>
+                          <RichText content={cell?.header} />
                         </div>
-                      );
-                    }
-                  )}
+                        <div
+                          style={{
+                            color: 'var(--font)',
+                          }}
+                        >
+                          <RichText content={cell?.footer} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
                 {content?.data?.card?.footer && (
                   <div
@@ -532,9 +493,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       <RichText content={content?.data?.card?.footer?.title} />
                     </div>
                     <div>
-                      <RichText
-                        content={content?.data?.card?.footer?.description}
-                      />
+                      <RichText content={content?.data?.card?.footer?.description} />
                     </div>
                   </div>
                 )}
@@ -544,10 +503,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 style={{
                   // fontWeight: 600,
                   fontSize: '16px',
-                  color:
-                    content?.data?.position === 'right'
-                      ? 'var(--font)'
-                      : contrastText,
+                  color: content?.data?.position === 'right' ? 'var(--font)' : contrastText,
                 }}
               >
                 {content?.text}{' '}
@@ -557,10 +513,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                 {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
                   <div
                     style={{
-                      color:
-                        content?.data?.position === 'right'
-                          ? 'var(--font)'
-                          : 'yellow',
+                      color: content?.data?.position === 'right' ? 'var(--font)' : 'yellow',
                       fontSize: '12px',
                       fontWeight: 'normal',
                     }}
@@ -587,10 +540,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             >
               <span
                 style={{
-                  color:
-                    content?.data?.position === 'right'
-                      ? 'var(--font)'
-                      : contrastText,
+                  color: content?.data?.position === 'right' ? 'var(--font)' : contrastText,
                   fontSize: '12px',
                 }}
               >
@@ -672,77 +622,76 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     </div>
                   </div>
                 )}
-                {config?.allowFeedback &&
-                  (!content?.data?.isGuided || content?.data?.card) && (
-                    <div className={styles.msgFeedback}>
+                {config?.allowFeedback && (!content?.data?.isGuided || content?.data?.card) && (
+                  <div className={styles.msgFeedback}>
+                    <div
+                      className={styles.msgFeedbackIcons}
+                      style={{
+                        border: `1px solid ${theme?.primary?.main}`,
+                      }}
+                    >
                       <div
-                        className={styles.msgFeedbackIcons}
                         style={{
-                          border: `1px solid ${theme?.primary?.main}`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          flexDirection: 'column',
                         }}
+                        data-testid="message-like-button"
+                        onClick={() =>
+                          feedbackHandler({
+                            like: 1,
+                            msgId: content?.data?.messageId,
+                          })
+                        }
                       >
-                        <div
+                        <MsgThumbsUp fill={reaction === 1} width="20px" />
+                        <p
                           style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexDirection: 'column',
+                            fontSize: '12px',
+                            fontFamily: 'NotoSans-Bold',
+                            margin: 0,
                           }}
-                          data-testid="message-like-button"
-                          onClick={() =>
-                            feedbackHandler({
-                              like: 1,
-                              msgId: content?.data?.messageId,
-                            })
-                          }
                         >
-                          <MsgThumbsUp fill={reaction === 1} width="20px" />
-                          <p
-                            style={{
-                              fontSize: '12px',
-                              fontFamily: 'NotoSans-Bold',
-                              margin: 0,
-                            }}
-                          >
-                            {t('label.helpful')}
-                          </p>
-                        </div>
-                        <div
-                          style={{
-                            height: '32px',
-                            width: '1px',
-                            backgroundColor: theme?.primary?.main,
-                            margin: '6px 0',
-                          }}
-                        ></div>
+                          {t('label.helpful')}
+                        </p>
+                      </div>
+                      <div
+                        style={{
+                          height: '32px',
+                          width: '1px',
+                          backgroundColor: theme?.primary?.main,
+                          margin: '6px 0',
+                        }}
+                      ></div>
 
-                        <div
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          flexDirection: 'column',
+                        }}
+                        data-testid="message-dislike-button"
+                        onClick={() =>
+                          feedbackHandler({
+                            like: -1,
+                            msgId: content?.data?.messageId,
+                          })
+                        }
+                      >
+                        <MsgThumbsDown fill={reaction === -1} width="20px" />
+                        <p
                           style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexDirection: 'column',
+                            fontSize: '12px',
+                            fontFamily: 'NotoSans-Bold',
+                            margin: 0,
                           }}
-                          data-testid="message-dislike-button"
-                          onClick={() =>
-                            feedbackHandler({
-                              like: -1,
-                              msgId: content?.data?.messageId,
-                            })
-                          }
                         >
-                          <MsgThumbsDown fill={reaction === -1} width="20px" />
-                          <p
-                            style={{
-                              fontSize: '12px',
-                              fontFamily: 'NotoSans-Bold',
-                              margin: 0,
-                            }}
-                          >
-                            {t('label.not_helpful')}
-                          </p>
-                        </div>
+                          {t('label.not_helpful')}
+                        </p>
                       </div>
                     </div>
-                  )}
+                  </div>
+                )}
               </div>
             )
           )}
@@ -757,8 +706,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   context?.sendMessage('Guided: back', 'Back');
                   if (
                     content?.data?.choices?.choices?.find(
-                      (choice: any) =>
-                        choice?.key?.toLowerCase() === 'guided: back'
+                      (choice: any) => choice?.key?.toLowerCase() === 'guided: back'
                     )?.showTextInput
                   ) {
                     context?.setShowInputBox(true);
@@ -803,16 +751,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           context?.sendMessage(item?.key, item?.text);
                         } else if (item?.action === 'home') {
                           const newConversationId = uuidv4();
-                          sessionStorage.setItem(
-                            'conversationId',
-                            newConversationId
-                          );
+                          sessionStorage.setItem('conversationId', newConversationId);
                           sessionStorage.removeItem('tags');
                           context?.setShowInputBox(true);
-                          if (context?.audioElement)
-                            context?.audioElement.pause();
-                          if (context?.setAudioPlaying)
-                            context?.setAudioPlaying(false);
+                          if (context?.audioElement) context?.audioElement.pause();
+                          if (context?.setAudioPlaying) context?.setAudioPlaying(false);
                           context?.setConversationId(newConversationId);
                           context?.setMessages([]);
                           context?.setIsMsgReceiving(false);
@@ -841,9 +784,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   }}
                 >
                   <TransliterationInput
-                    placeholder={
-                      t('label.buttons_search_placeholder') || 'Search'
-                    }
+                    placeholder={t('label.buttons_search_placeholder') || 'Search'}
                     value={searchQuery}
                     setValue={setSearchQuery}
                     config={config}
@@ -909,9 +850,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     fontSize: '10px',
                   }}
                 >
-                  {moment(content?.data?.timestamp).format(
-                    'hh:mm A DD/MM/YYYY'
-                  )}
+                  {moment(content?.data?.timestamp).format('hh:mm A DD/MM/YYYY')}
                 </span>
               </div>
             </div>
@@ -949,9 +888,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     fontSize: '10px',
                   }}
                 >
-                  {moment(content?.data?.timestamp).format(
-                    'hh:mm A DD/MM/YYYY'
-                  )}
+                  {moment(content?.data?.timestamp).format('hh:mm A DD/MM/YYYY')}
                 </span>
               </div>
             </div>
@@ -988,9 +925,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                     fontSize: '10px',
                   }}
                 >
-                  {moment(content?.data?.timestamp).format(
-                    'hh:mm A DD/MM/YYYY'
-                  )}
+                  {moment(content?.data?.timestamp).format('hh:mm A DD/MM/YYYY')}
                 </span>
               </div>
             </div>
@@ -1063,15 +998,8 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   }
             }
           >
-            <div
-              className={styles.tableContainer}
-              style={{ overflowX: 'scroll' }}
-            >
-              {
-                <JsonToTable
-                  json={parseWeatherJson(JSON.parse(content?.text)?.table)}
-                />
-              }
+            <div className={styles.tableContainer} style={{ overflowX: 'scroll' }}>
+              {<JsonToTable json={parseWeatherJson(JSON.parse(content?.text)?.table)} />}
               <style>
                 {`
           div::-webkit-scrollbar-thumb {
@@ -1085,10 +1013,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
               style={{
                 // fontWeight: 600,
                 fontSize: '16px',
-                color:
-                  content?.data?.position === 'right'
-                    ? contrastText
-                    : 'var(--font)',
+                color: content?.data?.position === 'right' ? contrastText : 'var(--font)',
               }}
             >
               {`\n` + JSON.parse(content?.text)?.generalAdvice ||
@@ -1125,8 +1050,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   context?.sendMessage('Guided: back', 'Back');
                   if (
                     content?.data?.choices?.choices?.find(
-                      (choice: any) =>
-                        choice?.key?.toLowerCase() === 'guided: back'
+                      (choice: any) => choice?.key?.toLowerCase() === 'guided: back'
                     )?.showTextInput
                   ) {
                     context?.setShowInputBox(true);
@@ -1171,16 +1095,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           context?.sendMessage(item?.key, item?.text);
                         } else if (item?.action === 'home') {
                           const newConversationId = uuidv4();
-                          sessionStorage.setItem(
-                            'conversationId',
-                            newConversationId
-                          );
+                          sessionStorage.setItem('conversationId', newConversationId);
                           sessionStorage.removeItem('tags');
                           context?.setShowInputBox(true);
-                          if (context?.audioElement)
-                            context?.audioElement.pause();
-                          if (context?.setAudioPlaying)
-                            context?.setAudioPlaying(false);
+                          if (context?.audioElement) context?.audioElement.pause();
+                          if (context?.setAudioPlaying) context?.setAudioPlaying(false);
                           context?.setConversationId(newConversationId);
                           context?.setMessages([]);
                           context?.setIsMsgReceiving(false);
@@ -1209,9 +1128,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   }}
                 >
                   <TransliterationInput
-                    placeholder={
-                      t('label.buttons_search_placeholder') || 'Search'
-                    }
+                    placeholder={t('label.buttons_search_placeholder') || 'Search'}
                     value={searchQuery}
                     setValue={setSearchQuery}
                     config={config}
