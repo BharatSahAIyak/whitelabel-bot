@@ -4,13 +4,15 @@ import {
   useEffect,
   useState,
   useContext,
-  useMemo,
+  useRef,
 } from 'react';
 import styles from './style.module.css';
 import { List } from '../../components/list';
 import ForumIcon from '@mui/icons-material/Forum';
 import { IconButton } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import moment from 'moment';
 import _ from 'underscore';
 import { ChatItem, HistoryItem } from './index.d';
@@ -34,8 +36,11 @@ const HistoryPage: FC = () => {
   const [cookie] = useCookies();
   const theme = useColorPalates();
   const [conversations, setConversations] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const context = useContext(AppContext);
   const t = useLocalization();
+  const chatListRef = useRef<HTMLDivElement>(null);
 
   const config = useConfig('component', 'historyPage');
   const handleClick = useCallback((activeItem: ChatItem) => {
@@ -70,14 +75,14 @@ const HistoryPage: FC = () => {
               context?.setMessages([]);
             }
             deleteConversationById(conversationId);
-            fetchHistory();
+            fetchHistory(currentPage);
           })
           .catch((error) => {
             console.error(error);
           });
       }
     },
-    [context?.setConversationId, context?.setMessages, t]
+    [context?.setConversationId, context?.setMessages, t, currentPage]
   );
 
   const deleteConversationById = useCallback(
@@ -92,17 +97,17 @@ const HistoryPage: FC = () => {
   );
 
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    fetchHistory(currentPage);
+  }, [currentPage]);
 
-  const fetchHistory = () => {
+  const fetchHistory = (page: number) => {
     setIsFetching(true);
     axios
       .post(
         `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/conversations`,
         {
           userId: localStorage.getItem('userID'),
-          page: 1,
+          page: page,
           perPage: 10,
         },
         {
@@ -178,6 +183,7 @@ const HistoryPage: FC = () => {
         });
         //@ts-ignore
         setConversations(historyList);
+        setTotalPages(res?.data?.pagination?.totalPages || 1);
         setIsFetching(false);
       })
       .catch((error) => {
@@ -204,7 +210,11 @@ const HistoryPage: FC = () => {
         >
           {t('label.chats') ?? 'No Label Provided'}
         </div>
-        <div className={styles.chatList} data-testid="history-list">
+        <div
+          className={styles.chatList}
+          data-testid="history-list"
+          ref={chatListRef}
+        >
           <List
             items={conversations}
             noItem={{
@@ -212,6 +222,27 @@ const HistoryPage: FC = () => {
               icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
             }}
           />
+        </div>
+        <div className={styles.pagination}>
+          <IconButton
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            style={{ position: 'absolute', left: 0 }}
+          >
+            <ChevronLeftIcon />
+          </IconButton>
+          <span>
+            {currentPage} / {totalPages}
+          </span>
+          <IconButton
+            disabled={currentPage === totalPages}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            style={{ position: 'absolute', right: 0 }}
+          >
+            <ChevronRightIcon />
+          </IconButton>
         </div>
         <Menu />
       </div>
