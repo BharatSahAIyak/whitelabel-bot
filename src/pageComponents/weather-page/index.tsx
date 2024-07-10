@@ -339,6 +339,7 @@ const WeatherPage: React.FC = () => {
 
           <div style={{ marginTop: '10px' }}>
             <div
+              data-testid="weather-page-forecast"
               style={{
                 color: 'black',
                 display: 'flex',
@@ -480,10 +481,15 @@ const WeatherPage: React.FC = () => {
         </div>
       </div>
       <div className={styles.cropContainer}>
-        <div className={styles.heading} style={{ background: '#DFF6D1' }}>
+        <div
+          className={styles.heading}
+          style={{ background: '#DFF6D1' }}
+          data-testid="weather-page-advisory-text"
+        >
           {t('label.todays_advisory')}
         </div>
         <Grid
+          data-testid="weather-page-crop-list"
           container
           columns={3}
           overflow={'auto'}
