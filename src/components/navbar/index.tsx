@@ -162,7 +162,7 @@ const Navbar: React.FC = () => {
                     height: '28px',
                     margin: 0,
                   }}
-                  onClick={() => router.push('/')}
+                  onClick={newChatHandler}
                 >
                   <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
                 </IconButton>

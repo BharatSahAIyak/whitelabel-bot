@@ -30,7 +30,7 @@ const ContextProvider: FC<{
   const [newSocket, setNewSocket] = useState<any>();
   const [showWelcomePage, setShowWelcomePage] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(
-    sessionStorage.getItem('conversationId')
+    sessionStorage.getItem('conversationId') || uuidv4()
   );
   const [isDown, setIsDown] = useState(false);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
@@ -448,7 +448,7 @@ const ContextProvider: FC<{
           },
           messageId: {
             Id: messageId,
-            channelMessageId: sessionStorage.getItem('conversationId'),
+            channelMessageId: conversationId,
           },
         } as Partial<XMessage>,
       });
@@ -475,7 +475,7 @@ const ContextProvider: FC<{
                 payload: { textToShow },
                 time: Date.now(),
                 messageId: messageId,
-                conversationId: sessionStorage.getItem('conversationId'),
+                conversationId: conversationId,
                 repliedTimestamp: Date.now(),
               },
             ]);
@@ -487,7 +487,7 @@ const ContextProvider: FC<{
           orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
           userId: localStorage.getItem('userID') || '',
           phoneNumber: localStorage.getItem('phoneNumber') || '',
-          conversationId: sessionStorage.getItem('conversationId') || '',
+          conversationId: conversationId || '',
           messageId: messageId,
           text: textToSend,
           createdAt: Math.floor(new Date().getTime() / 1000),
