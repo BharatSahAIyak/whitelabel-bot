@@ -526,26 +526,41 @@ const ContextProvider: FC<{
     console.log('in normalized', chats);
     const conversationId = sessionStorage.getItem('conversationId');
     const history = chats
-      .filter((item: any) => conversationId === 'null' || item.conversationId === conversationId)
-      .flatMap((item: any) =>
-        [
-          item.query?.length && {
-            text: item.query,
-            position: 'right',
-            repliedTimestamp: item.createdAt,
-            messageId: uuidv4(),
-          },
-          {
-            text: item.response,
-            position: 'left',
-            sentTimestamp: item.createdAt,
-            reaction: item.reaction,
-            msgId: item.id,
-            messageId: item.id,
-            audio_url: item.audioURL,
-            isEnd: true,
-          },
-        ].filter(Boolean)
+      .filter(
+        (item: any) =>
+          (conversationId === 'null' || item?.channelMessageId === conversationId) &&
+          (item?.to !== 'admin' || !item.payload?.metaData?.hideMessage)
+      )
+      .map((item: any) => ({
+        text: (item?.to === 'admin'
+          ? item?.payload?.metaData?.originalText ?? item?.payload?.text
+          : item?.payload?.text
+        )
+          ?.replace(/<end\/>/g, '')
+          ?.replace(/^Guided:/, ''),
+        position: item.to === 'admin' ? 'right' : 'left',
+        timestamp: item.timestamp,
+        reaction:
+          item?.feedback?.type === 'FEEDBACK_POSITIVE'
+            ? 1
+            : item?.feedback?.type === 'FEEDBACK_NEGATIVE'
+              ? -1
+              : 0,
+        msgId: item.messageId,
+        messageId: item.messageId,
+        replyId: item.replyId,
+        audio_url: item?.audioURL,
+        isEnd: true,
+        optionClicked: true,
+        // choices: item?.payload?.buttonChoices,
+        isGuided: item?.metaData?.isGuided,
+        card: item?.payload?.card,
+        choices: [],
+        conversationId: item?.channelMessageId,
+      }))
+      .sort(
+        //@ts-ignore
+        (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
       );
 
     console.log('historyyy', history);
@@ -573,12 +588,12 @@ const ContextProvider: FC<{
           console.log('log:', loading);
           try {
             const chatHistory = await axios.get(
-              `${
-                process.env.NEXT_PUBLIC_BFF_API_URL
-              }/user/chathistory/${sessionStorage.getItem('conversationId')}`,
+              `${process.env.NEXT_PUBLIC_BFF_API_URL}/history?userId=${localStorage.getItem(
+                'userID'
+              )}&conversationId=${sessionStorage.getItem('conversationId')}`,
               {
                 headers: {
-                  authorization: `Bearer ${localStorage.getItem('auth')}`,
+                  botId: process.env.NEXT_PUBLIC_BOT_ID || '',
                 },
               }
             );
