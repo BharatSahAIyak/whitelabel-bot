@@ -28,7 +28,7 @@
 }
 
 .title {
-  margin-top: 4vh;
+  /* margin-top: 4vh; */
   margin-left: 2vh;
   font-family: 'NotoSans-Bold';
   font-size: 4.265vh;
@@ -58,9 +58,28 @@
   text-align: center;
   color: var(--secondarygreen);
 }
+
 .pagination {
-  margin: 5px;
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
+  z-index: 1500;
+}
+
+.pagination button {
+  margin: 0 10px;
+  color: #115223;
+  font-size: 1.5em;
+  padding: 10px 20px;
+}
+.chatList {
+  height: 71dvh;
+  overflow-x: hidden;
+  overflow-y: scroll !important;
+}
+
+@media (min-width: 768px) {
+  .chatList {
+    height: 71dvh;
+  }
 }
