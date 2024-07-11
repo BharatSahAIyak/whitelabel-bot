@@ -406,14 +406,7 @@ const ContextProvider: FC<{
   const sendMessage = useCallback(
     async (textToSend: string, textToShow: string, media: any, isVisibile = true) => {
       if (!textToShow) textToShow = textToSend;
-      if (!sessionStorage.getItem('conversationId')) {
-        const cId = uuidv4();
-        console.log('convId', cId);
-        setConversationId(() => {
-          sessionStorage.setItem('conversationId', cId);
-          return cId;
-        });
-      } else sessionStorage.setItem('conversationId', conversationId || '');
+
       // if (!localStorage.getItem('userID')) {
       //   removeCookie('access_token', { path: '/' });
       //   location?.reload();
@@ -426,6 +419,7 @@ const ContextProvider: FC<{
       console.log('s2tMsgId:', s2tMsgId);
       const messageId = s2tMsgId ? s2tMsgId : uuidv4();
       console.log('s2t messageId:', messageId);
+      const cId = uuidv4();
       newSocket.sendMessage({
         payload: {
           app: process.env.NEXT_PUBLIC_BOT_ID || '',
@@ -448,10 +442,18 @@ const ContextProvider: FC<{
           },
           messageId: {
             Id: messageId,
-            channelMessageId: conversationId,
+            channelMessageId: sessionStorage.getItem('conversationId') || cId,
           },
         } as Partial<XMessage>,
       });
+
+      if (!sessionStorage.getItem('conversationId')) {
+        console.log('convId', cId);
+        setConversationId(() => {
+          sessionStorage.setItem('conversationId', cId);
+          return cId;
+        });
+      } else sessionStorage.setItem('conversationId', conversationId || '');
 
       setStartTime(Date.now());
       if (isVisibile)
