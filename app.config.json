@@ -39,6 +39,9 @@
       "schemesImg": "",
       "showFooter": false
     },
+    "notificationsPage": {
+      "showNotificationsPage": true
+    },
     "chatUI": {
       "allowFeedback": true,
       "allowTextToSpeech": true,
@@ -164,6 +167,7 @@
       "label.send": "Send",
       "label.type": "Type",
       "label.chats": "Chats",
+      "label.notifications": "Notifications",
       "label.click": "Reload",
       "label.share": "Share",
       "label.speak": "Speak",
@@ -199,6 +203,7 @@
       "message.sharing": "Sharing...",
       "message.speaker": "Click to hear",
       "label.no_history": "No Chats",
+      "label.no_notifications": "No Notifications",
       "lable.disclaimer": "Disclaimer",
       "error.sending_otp": "Error sending OTP",
       "label.no_internet": "No Internet",
@@ -318,7 +323,11 @@
       "label.ask": "Ask Me",
       "label.homepage_footer": "Ama Krushi chatbot can make mistakes. To check important information, consider reading our terms and privacy policy ",
       "label.help_text": "Please ask your question",
-      "label.other_information": "Other Information"
+      "label.other_information": "Other Information",
+      "label.notification1_label": "Learn About Our Chatbot",
+      "label.notification1_description": "Read the user manual for detailed information.",
+      "label.notification2_label": "Need More Help?",
+      "label.notification2_description": "Call the Ama Krushi call center at 155333 for additional information."
     }
   }
 }
