@@ -1,6 +1,5 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { NextPage } from 'next';
-import axios from 'axios';
 import { AppContext } from '../../context';
 import SendButton from './assets/sendButton';
 import { useLocalization } from '../../hooks';
@@ -12,12 +11,12 @@ import { useConfig } from '../../hooks/useConfig';
 import DowntimePage from '../downtime-page';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { recordUserLocation } from '../../utils/location';
-import saveTelemetryEvent from '../../utils/telemetry';
 import FAQ from '../../components/chat-faq';
 import { Modal, Box, IconButton, Typography } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
 import styles from './index.module.css';
 import CircularProgress from '@mui/material/CircularProgress';
+import TransliterationInput from '../../components/transliteration-input';
 
 const ChatPage: NextPage = () => {
   const context = useContext(AppContext);
@@ -25,7 +24,6 @@ const ChatPage: NextPage = () => {
   const config = useConfig('component', 'homePage');
   const { micWidth, micHeight } = config;
   const t = useLocalization();
-  const inputRef = useRef(null);
   const placeholder = t('message.ask_ur_question');
   const [inputMsg, setInputMsg] = useState('');
   const theme = useColorPalates();
@@ -82,20 +80,6 @@ const ChatPage: NextPage = () => {
       }
     },
     [context, t, router]
-  );
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputMsg(e.target.value);
-  };
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        sendMessage(inputMsg);
-      }
-    },
-    [inputMsg, sendMessage]
   );
 
   if (context?.isDown) {
@@ -171,24 +155,23 @@ const ChatPage: NextPage = () => {
         </div>
 
         <form onSubmit={(event) => event?.preventDefault()}>
-          <div className={styles.inputBox}>
-            <textarea
+          <div className={`${`${styles.inputBox} ${styles.inputBoxOpen}`}`}>
+            <TransliterationInput
               data-testid="homepage-input-field"
-              onKeyDown={(e) => {
+              config={botConfig}
+              style={{ fontFamily: 'NotoSans-Regular' }}
+              rows={1}
+              value={inputMsg}
+              setValue={setInputMsg}
+              onKeyDown={(e: any) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
                   sendMessage(inputMsg);
                 }
               }}
-              style={{ fontFamily: 'NotoSans-Regular' }}
-              id="inputBox"
-              ref={inputRef}
-              rows={1}
-              value={inputMsg}
-              onChange={handleInputChange}
+              multiline={false}
               placeholder={!context?.kaliaClicked ? placeholder : t('label.enter_aadhaar_number')}
             />
-
             <button
               data-testid="homepage-send-button"
               type="submit"

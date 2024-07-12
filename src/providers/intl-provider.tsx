@@ -32,13 +32,14 @@ export const LocaleProvider: FC<{ children: ReactElement }> = ({ children }) => 
       themeContext?.modifyPaletes(res?.theme?.palette);
     });
   }, []);
+
   const defaultLang = useMemo(
     () =>
       (router?.query?.lang as string) ||
       localStorage.getItem('locale') ||
       config?.component?.botDetails?.defaultLanguage ||
       'en',
-    [config]
+    [config?.component?.botDetails?.defaultLanguage]
   );
   const [locale, setLocale] = useState(
     (router?.query?.lang as string) || localStorage.getItem('locale') || defaultLang
