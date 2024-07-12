@@ -40,7 +40,7 @@
       "showFooter": false
     },
     "notificationsPage": {
-      "showNotificationsPage": true
+      "showNotificationsPage": false
     },
     "chatUI": {
       "allowFeedback": true,
