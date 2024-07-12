@@ -28,38 +28,46 @@ export const useLogin = () => {
         localStorage.getItem('auth') || auth
       );
 
-      const expires = new Date(decodedToken?.exp * 1000);
-
-      if (expires > new Date()) {
-        const token = localStorage.getItem('auth') || auth;
-        axios
-          .get(`/api/auth?token=${token}`)
-          .then((response) => {
-            if (response.data === null) {
-              toast.error('Invalid Access Token');
-              removeCookie('access_token', { path: '/' });
-              localStorage.clear();
-              sessionStorage.clear();
-              router.push('/login');
-              console.log('response null');
-            } else {
-              setIsAuthenticated(true);
-              console.log('authenticated true');
-            }
-          })
-          .catch((err: any) => {
-            console.error(err);
-            removeCookie('access_token', { path: '/' });
-            localStorage.clear();
-            sessionStorage.clear();
-            router.push('/login');
-          });
-      } else {
+      if (decodedToken.applicationId !== process.env.NEXT_PUBLIC_USER_SERVICE_APP_ID) {
         removeCookie('access_token', { path: '/' });
         localStorage.clear();
         sessionStorage.clear();
         router.push('/login');
         if (typeof window !== 'undefined') window.location.reload();
+      } else {
+        const expires = new Date(decodedToken?.exp * 1000);
+        // if token not expired then check for auth
+        if (expires > new Date()) {
+          const token = localStorage.getItem('auth') || auth;
+          axios
+            .get(`/api/auth?token=${token}`)
+            .then((response) => {
+              if (response.data === null) {
+                toast.error('Invalid Access Token');
+                removeCookie('access_token', { path: '/' });
+                localStorage.clear();
+                sessionStorage.clear();
+                router.push('/login');
+                console.log('response null');
+              } else {
+                setIsAuthenticated(true);
+                console.log('authenticated true');
+              }
+            })
+            .catch((err: any) => {
+              console.error(err);
+              removeCookie('access_token', { path: '/' });
+              localStorage.clear();
+              sessionStorage.clear();
+              router.push('/login');
+            });
+        } else {
+          removeCookie('access_token', { path: '/' });
+          localStorage.clear();
+          sessionStorage.clear();
+          router.push('/login');
+          if (typeof window !== 'undefined') window.location.reload();
+        }
       }
     }
   }, [removeCookie, router]);
