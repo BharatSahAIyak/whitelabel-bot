@@ -81,14 +81,14 @@ const NotificationsPage: FC = () => {
     const notificationList = map(
       [
         {
-          label: 'Learn About Our Chatbot',
-          secondaryLabel: 'Read the user manual for detailed information.',
+          label: t('label.notification1_label'),
+          secondaryLabel: t('label.notification1_description'),
           icon: <InfoIcon style={{ color: theme?.primary?.main }} />,
           action: 'downloadManual',
         },
         {
-          label: 'Need More Help?',
-          secondaryLabel: 'Call the Ama Krushi call center at 155333 for additional information.',
+          label: t('label.notification2_label'),
+          secondaryLabel: t('label.notification2_description'),
           icon: <CallIcon style={{ color: theme?.primary?.main }} />,
           action: 'callCenter',
         },
