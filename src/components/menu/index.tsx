@@ -8,9 +8,11 @@ import MicNoneIcon from '@mui/icons-material/MicNone';
 import Button from '@mui/material/Button';
 import styles from './style.module.css';
 import { useLocalization } from '../../hooks';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
 const Menu = () => {
   const router = useRouter();
+  const theme = useColorPalates();
   const t = useLocalization();
   const isHome = router.pathname === '/';
   const isNotification = router.pathname === '/notifications';
@@ -39,6 +41,11 @@ const Menu = () => {
         <Button
           onClick={handleTouchToSpeakClick}
           className={`${styles.touchToSpeakButton}`}
+          sx={{
+            backgroundColor: theme?.primary?.main,
+            color: theme?.primary?.contrastText,
+            '&:hover': { backgroundColor: theme?.primary?.main },
+          }}
           startIcon={<MicNoneIcon fontSize="inherit" />}
         >
           {t('label.menu_tap_text')}

@@ -1,11 +1,4 @@
-import {
-  FC,
-  useCallback,
-  useEffect,
-  useState,
-  useContext,
-  useRef,
-} from 'react';
+import { FC, useCallback, useEffect, useState, useContext, useRef } from 'react';
 import styles from './style.module.css';
 import { List } from '../../components/list';
 import ForumIcon from '@mui/icons-material/Forum';
@@ -45,10 +38,7 @@ const HistoryPage: FC = () => {
   const config = useConfig('component', 'historyPage');
   const handleClick = useCallback((activeItem: ChatItem) => {
     sessionStorage.setItem('tags', JSON.stringify(activeItem?.tags || '[]'));
-    sessionStorage.setItem(
-      'conversationId',
-      activeItem?.conversationId || 'null'
-    );
+    sessionStorage.setItem('conversationId', activeItem?.conversationId || 'null');
     context?.setConversationId(activeItem?.conversationId);
     router.push('/chat');
   }, []);
@@ -88,8 +78,7 @@ const HistoryPage: FC = () => {
   const deleteConversationById = useCallback(
     (conversationIdToDelete: any) => {
       const filteredConversations = [...conversations].filter(
-        (conversation: any) =>
-          conversation.conversationId !== conversationIdToDelete
+        (conversation: any) => conversation.conversationId !== conversationIdToDelete
       );
       setConversations(filteredConversations);
     },
@@ -127,10 +116,7 @@ const HistoryPage: FC = () => {
         );
         console.log({ sortedConversations });
         const historyList = map(sortedConversations, (chatItem: any) => {
-          const text = String(chatItem?.payload?.text || '').replace(
-            /<end\/>/g,
-            ''
-          );
+          const text = String(chatItem?.payload?.text || '').replace(/<end\/>/g, '');
           let label;
           if (text.startsWith('{') && text.endsWith('}')) {
             try {
@@ -147,13 +133,11 @@ const HistoryPage: FC = () => {
               }
             } catch (error) {
               label =
-                text.split(' ').slice(0, 12).join(' ') +
-                (text.split(' ').length > 12 ? '...' : '');
+                text.split(' ').slice(0, 12).join(' ') + (text.split(' ').length > 12 ? '...' : '');
             }
           } else {
             label =
-              text.split(' ').slice(0, 12).join(' ') +
-              (text.split(' ').length > 12 ? '...' : '');
+              text.split(' ').slice(0, 12).join(' ') + (text.split(' ').length > 12 ? '...' : '');
           }
 
           return {
@@ -162,17 +146,13 @@ const HistoryPage: FC = () => {
             conversationId: chatItem?.channelMessageId,
             userId: chatItem?.from,
             tags: chatItem?.tags,
-            secondaryLabel: moment(chatItem?.timestamp).format(
-              'hh:mm A DD/MM/YYYY'
-            ),
+            secondaryLabel: moment(chatItem?.timestamp).format('hh:mm A DD/MM/YYYY'),
             icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
             secondaryAction: (
               <IconButton edge="end" aria-label="comments">
                 {config?.allowDelete && (
                   <DeleteOutlineIcon
-                    onClick={() =>
-                      deleteConversation(chatItem?.channelMessageId)
-                    }
+                    onClick={() => deleteConversation(chatItem?.channelMessageId)}
                   />
                 )}
               </IconButton>
@@ -210,11 +190,7 @@ const HistoryPage: FC = () => {
         >
           {t('label.chats') ?? 'No Label Provided'}
         </div>
-        <div
-          className={styles.chatList}
-          data-testid="history-list"
-          ref={chatListRef}
-        >
+        <div className={styles.chatList} data-testid="history-list" ref={chatListRef}>
           <List
             items={conversations}
             noItem={{
@@ -223,7 +199,7 @@ const HistoryPage: FC = () => {
             }}
           />
         </div>
-        <div className={styles.pagination}>
+        <div className={styles.pagination} style={{ color: theme?.primary?.main }}>
           <IconButton
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -236,9 +212,7 @@ const HistoryPage: FC = () => {
           </span>
           <IconButton
             disabled={currentPage === totalPages}
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             style={{ position: 'absolute', right: 0 }}
           >
             <ChevronRightIcon />

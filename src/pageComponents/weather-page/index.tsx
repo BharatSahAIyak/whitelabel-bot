@@ -121,8 +121,33 @@ const WeatherPage: React.FC = () => {
           phoneNumber: localStorage.getItem('phoneNumber') || '',
           conversationId: convId,
           messageId: msgId || messageId || '',
-          text: cropData?.descriptor?.name || 'Weather',
+          text: cropData?.descriptor?.name || t('label.weather'),
           createdAt: Math.floor(new Date().getTime() / 1000),
+        });
+        await saveTelemetryEvent('0.1', 'E005', 'userQuery', 'userHistory', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: convId,
+          messageId: msgId || messageId || '',
+          text: cropData?.descriptor?.name || t('label.weather'),
+          createdAt: Math.floor(new Date().getTime() / 1000),
+          timeTaken: 0,
+          did: uuidv4(),
+        });
+        await saveTelemetryEvent('0.1', 'E006', 'userQuery', 'userInfo', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: convId,
+          messageId: msgId || messageId || '',
+          text: cropData?.descriptor?.name || t('label.weather'),
+          createdAt: Math.floor(new Date().getTime() / 1000),
+          block: localStorage.getItem('block') || '',
+          district: localStorage.getItem('city') || '',
+          transformerId: uuidv4(),
         });
         saveTelemetryEvent('0.1', 'E017', 'userQuery', 'responseAt', {
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
@@ -147,7 +172,7 @@ const WeatherPage: React.FC = () => {
           text: cropData?.descriptor?.long_desc || JSON.stringify(weather.current),
           createdAt: Math.floor(new Date().getTime() / 1000),
           timeTaken: parseInt(`${fetchTime}`),
-          responseType: 'Guided: weather',
+          responseType: `Guided: weather`,
           isGuided: 'true',
           isFlowEnd: 'false',
         });
@@ -163,7 +188,6 @@ const WeatherPage: React.FC = () => {
           createdAt: Math.floor(new Date().getTime() / 1000),
           timeTaken: parseInt(`${fetchTime}`),
         });
-        sessionStorage.removeItem('weatherMsgId');
       }
     } catch (err) {
       console.error(err);

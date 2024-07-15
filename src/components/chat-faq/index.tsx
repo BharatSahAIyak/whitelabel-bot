@@ -40,7 +40,7 @@ const FAQ: React.FC<FAQProps> = ({ onQuestionClick }) => {
 
       {/* {config.showKnowMoreButton && (
         <div className={styles.knowMoreButton}>
-          <button onClick={handleKnowMoreClick}>
+          <button onClick={handleKnowMoreClick} style={{color: theme?.primary?.light}}>
             {t('label.know_more')} <ArrowForwardIcon />
           </button>
         </div>
