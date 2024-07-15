@@ -425,7 +425,7 @@ const Home: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <div onClick={() => router.push('/chat')}>
+                <div onClick={() => router.push('/newchat')}>
                   <img
                     src={config.otherInformationImg}
                     alt="otherInformation"

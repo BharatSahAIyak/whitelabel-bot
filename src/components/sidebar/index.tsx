@@ -29,7 +29,7 @@ import { Button } from '@mui/material';
 export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) => {
   const [activeLanguage, setActiveLanguage] = useState<string>(() => {
     const storedLang = localStorage.getItem('locale');
-    if (storedLang !== router?.query?.lang) {
+    if (storedLang && router?.query?.lang && storedLang !== router?.query?.lang) {
       localStorage.setItem('locale', (router?.query?.lang as string) ?? 'en');
     }
     return (router?.query?.lang as string) || storedLang || 'en';
