@@ -321,13 +321,13 @@
       "label.menu_tap_text": "Tap to Speak",
       "label.menu_notification": "Notifications",
       "label.ask": "Ask Me",
-      "label.homepage_footer": "Ama Krushi chatbot can make mistakes. To check important information, consider reading our terms and privacy policy ",
+      "label.homepage_footer": "Chatbot can make mistakes. To check important information, consider reading our terms and privacy policy ",
       "label.help_text": "Please ask your question",
       "label.other_information": "Other Information",
       "label.notification1_label": "Learn About Our Chatbot",
       "label.notification1_description": "Read the user manual for detailed information.",
       "label.notification2_label": "Need More Help?",
-      "label.notification2_description": "Call the Ama Krushi call center at 155333 for additional information."
+      "label.notification2_description": "Call the call center for additional information."
     }
   }
 }
