@@ -280,14 +280,16 @@ const Home: React.FC = () => {
               endIcon={<ArrowForwardIcon />}
               sx={{
                 backgroundColor: '#EDEDF1',
-                color: '#1e6231',
+                '&:hover': {
+                  backgroundColor: '#EDEDF1',
+                },
+                color: theme?.primary?.light,
                 fontSize: '18px',
                 width: '308px',
                 height: '40px',
                 padding: '18px 24px',
                 fontWeight: '500',
                 borderRadius: '6px',
-
                 textTransform: 'none',
                 boxShadow: 'none',
               }}
@@ -308,7 +310,7 @@ const Home: React.FC = () => {
       <div className={styles.cropContainer}>
         <div
           className={styles.heading}
-          style={{ background: '#DFF6D1' }}
+          style={{ background: config?.askYourQuestionBgColor }}
           data-testid="home-page-ask-your-question"
         >
           {t('message.ask_ur_question')}

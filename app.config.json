@@ -37,7 +37,8 @@
       "weatherAdvisoryImg": "",
       "plantProtectionImg": "",
       "schemesImg": "",
-      "showFooter": false
+      "showFooter": false,
+      "askYourQuestionBgColor": "#DFF6D1"
     },
     "notificationsPage": {
       "showNotificationsPage": false
