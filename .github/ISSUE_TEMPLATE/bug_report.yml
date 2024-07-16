@@ -2,6 +2,9 @@ name: BHASAI - Product Bug Report Template
 description: Create a new Ticket for a bug report on BHASAI Products
 title: "[Bug]: "
 labels: ["bug"]
+projects:
+  - KISAI Pod 🚀
+
 body:
   - type: textarea
     id: bug-description
