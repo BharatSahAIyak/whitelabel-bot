@@ -4,7 +4,7 @@ title: "[Bug]: "
 labels: ["bug"]
 body:
   - type: textarea
-    id: "Bug Description"
+    id: bug-description
     validations:
       required: true
     attributes:
@@ -14,18 +14,18 @@ body:
         [Provide a brief bug description, outlining the buggy behaviour.]
 
   - type: textarea
-    id: "Steps To Reproduce"
+    id: steps-to-reproduce
     validations:
       required: true
     attributes:
       label: Steps to reproduce
       description: Define the sequene of steps (in order) which lead to this bug/unexpected behaviour.
       value: |
-      ## Steps to Reproduce
-      [Provide the sequence of steps (in order) which lead to this bug/unexpected behaviour]
+        ## Steps to Reproduce
+        [Provide the sequence of steps (in order) which lead to this bug/unexpected behaviour]
 
   - type: textarea
-    id: "Expected Behaviour/Acceptance Criteria"
+    id: expected-behaviour
     validations:
       required: true
     attributes:
@@ -40,7 +40,6 @@ body:
     id: "bhasai-product"
     attributes:
       label: Product Name
-      placeholder: Enter Product Name
       multiple: true
       options:
         - AKAI
@@ -54,7 +53,6 @@ body:
     id: "deployment-environment"
     attributes:
       label: Deployment Environment
-      placeholder: Enter Deployment Environment
       multiple: true
       options:
         - Dev
@@ -77,12 +75,12 @@ body:
       required: true
 
   - type: dropdown
-    id: "Frequency/Persistence of the issue"
+    id: frequency
     attributes:
       label: Frequency/Persistence of the issue
       description: Define the frequency with which this issue is existing or how persistent this is
       multiple: false
-      option:
+      options:
          - Persistent - Always Replicates
          - Intermittent - Comes on and off (replicates 1/5 times or something on those lines)
          - Rare - (replicates in 1/100 types)
@@ -90,7 +88,7 @@ body:
       required: true
 
   - type: textarea
-    id: "Additional Information"
+    id: additional-information
     validations:
       required: false
     attributes:
