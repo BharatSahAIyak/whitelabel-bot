@@ -246,14 +246,16 @@ const WeatherPage: React.FC = () => {
               {weather?.current?.tags?.temp}°C
             </h1>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <h2 data-testid="weather-page-condition">
-              {localStorage.getItem('locale') === 'en'
-                ? weather?.current?.tags?.conditions
-                : weather?.current?.tags?.[
-                    `conditions${'_' + localStorage.getItem('locale') || ''}`
-                  ]}
-            </h2>
+
+          <div
+            style={{
+              textAlign: 'right',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%',
+            }}
+          >
             {localStorage.getItem('city') && (
               <div
                 style={{
@@ -263,11 +265,26 @@ const WeatherPage: React.FC = () => {
                 }}
               >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
-                <span style={{ fontSize: '1.25rem' }} data-testid="weather-page-location">
+                <span style={{ fontSize: '1.5rem' }} data-testid="weather-page-location">
                   {localStorage.getItem('city')}
                 </span>
               </div>
             )}
+            <h2
+              data-testid="weather-page-condition"
+              style={{
+                color: 'white',
+                margin: 0,
+                fontSize: '1.75rem',
+                wordBreak: 'break-word',
+              }}
+            >
+              {localStorage.getItem('locale') === 'en'
+                ? weather?.current?.tags?.conditions
+                : weather?.current?.tags?.[
+                    `conditions${'_' + localStorage.getItem('locale') || ''}`
+                  ]}
+            </h2>
           </div>
         </div>
 
@@ -537,7 +554,7 @@ const WeatherPage: React.FC = () => {
                   textAlign: 'center',
                   padding: '5px',
                   backgroundColor: 'white',
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
                   borderRadius: '5px',
                   margin: '10px',
                   width: '26%',
