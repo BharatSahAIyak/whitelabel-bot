@@ -12,26 +12,26 @@ export async function recordUserLocation() {
           if (locationRes?.subDistrict) localStorage.setItem('block', locationRes.subDistrict);
           if (locationRes?.district) localStorage.setItem('city', locationRes.district);
           if (locationRes?.state) localStorage.setItem('state', locationRes.state);
-          let apiRes: any = await fetch('https://api.ipify.org?format=json');
+          let apiRes: any = await fetch('https://ip-retriever-production.up.railway.app/');
 
-          apiRes = await apiRes.json();
+          apiRes = await apiRes.text();
 
-          if (apiRes?.ip) {
-            let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes.ip}`);
+          if (apiRes) {
+            let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes}`);
             locationRes = await locationRes.json();
-            localStorage.setItem('ip', apiRes?.ip);
+            localStorage.setItem('ip', apiRes);
           }
         },
         async (error) => {
           if (error.code === error.PERMISSION_DENIED) {
-            let apiRes: any = await fetch('https://api.ipify.org?format=json');
+            let apiRes: any = await fetch('https://ip-retriever-production.up.railway.app/');
 
-            apiRes = await apiRes.json();
+            apiRes = await apiRes.text();
 
-            if (apiRes?.ip) {
-              let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes.ip}`);
+            if (apiRes) {
+              let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes}`);
               locationRes = await locationRes.json();
-              localStorage.setItem('ip', apiRes?.ip);
+              localStorage.setItem('ip', apiRes);
               if (!localStorage.getItem('city')) localStorage.setItem('city', locationRes.city);
               if (!localStorage.getItem('state'))
                 localStorage.setItem('state', locationRes.regionName);
@@ -39,17 +39,17 @@ export async function recordUserLocation() {
               localStorage.setItem('longitude', locationRes.lon);
             }
           } else {
-            let apiRes: any = await fetch('https://api.ipify.org?format=json');
+            let apiRes: any = await fetch('https://ip-retriever-production.up.railway.app/');
 
-            apiRes = await apiRes.json();
+            apiRes = await apiRes.text();
 
-            if (apiRes?.ip) {
-              let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes.ip}`);
+            if (apiRes) {
+              let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes}`);
               locationRes = await locationRes.json();
+              localStorage.setItem('ip', apiRes);
               if (!localStorage.getItem('city')) localStorage.setItem('city', locationRes.city);
               if (!localStorage.getItem('state'))
                 localStorage.setItem('state', locationRes.regionName);
-              localStorage.setItem('ip', apiRes?.ip);
               localStorage.setItem('latitude', locationRes.lat);
               localStorage.setItem('longitude', locationRes.lon);
             }
