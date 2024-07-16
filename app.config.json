@@ -23,6 +23,9 @@
       "provider": "upcar"
     },
     "homePage": {
+      "showHomeBgImg": false,
+      "homeBgImg": "",
+      "showWeather": false,
       "showWeatherPage": false,
       "showPlantProtection": false,
       "showSchemes": false,
@@ -39,9 +42,6 @@
       "schemesImg": "",
       "showFooter": false,
       "askYourQuestionBgColor": "#DFF6D1"
-    },
-    "notificationsPage": {
-      "showNotificationsPage": false
     },
     "chatUI": {
       "allowFeedback": true,
@@ -96,6 +96,9 @@
       "centerLogoSize": "60px",
       "logoTitleColor": "#1e6231",
       "newChatButtonColor": "#1e6231"
+    },
+    "menu": {
+      "showNotificationsPage": false
     },
     "sidebar": {
       "showLangSwitcher": true,

@@ -9,7 +9,6 @@ import { map } from 'lodash';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { FullPageLoader } from '../../components/fullpage-loader';
 import { useLocalization } from '../../hooks';
-import ComingSoonPage from '../coming-soon-page';
 import { useConfig } from '../../hooks/useConfig';
 import Menu from '../../components/menu';
 
@@ -18,8 +17,6 @@ const NotificationsPage: FC = () => {
   const theme = useColorPalates();
   const [notifications, setNotifications] = useState<any>([]);
   const t = useLocalization();
-
-  const config = useConfig('component', 'notificationsPage');
 
   const faqConfig = useConfig('component', 'faqPage');
 
@@ -108,9 +105,6 @@ const NotificationsPage: FC = () => {
     setIsFetching(false);
   };
 
-  if (!config?.showNotificationsPage) {
-    return <ComingSoonPage />;
-  }
   return (
     <>
       <div className={styles.main}>

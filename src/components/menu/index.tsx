@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import styles from './style.module.css';
 import { useLocalization } from '../../hooks';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
+import { useConfig } from '../../hooks/useConfig';
 
 const Menu = () => {
   const router = useRouter();
@@ -16,6 +17,7 @@ const Menu = () => {
   const t = useLocalization();
   const isHome = router.pathname === '/';
   const isNotification = router.pathname === '/notifications';
+  const config = useConfig('component', 'menu');
 
   const handleHomeClick = () => {
     router.push('/');
@@ -32,7 +34,7 @@ const Menu = () => {
   return (
     <div className={styles.footer}>
       <div className={styles.buttonWrapper} data-testid="menu-home-button">
-        <Button onClick={handleHomeClick} className={`${styles.greenButton}`}>
+        <Button onClick={handleHomeClick} className={`${styles.btn}`}>
           {isHome ? <HomeIcon fontSize="large" /> : <HomeOutlinedIcon fontSize="large" />}
         </Button>
         <p className={styles.buttonText}>{t('label.menu_home')}</p>
@@ -52,7 +54,11 @@ const Menu = () => {
         </Button>
       </div>
       <div className={styles.buttonWrapper} data-testid="menu-notification-button">
-        <Button onClick={handleNotificationClick} className={`${styles.greenButton}`}>
+        <Button
+          onClick={handleNotificationClick}
+          className={styles.btn}
+          disabled={!config?.showNotificationsPage}
+        >
           {isNotification ? (
             <NotificationsIcon fontSize="large" />
           ) : (

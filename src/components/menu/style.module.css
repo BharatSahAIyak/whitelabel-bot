@@ -23,13 +23,13 @@
   margin: 2px 0;
 }
 
-.greenButton {
+.btn {
   border-radius: 20px;
   padding: 4px 8px;
   font-size: 12px;
 }
 
-.greenButton .MuiButton-startIcon {
+.btn .MuiButton-startIcon {
   font-size: 18px;
   margin-right: 0;
 }
