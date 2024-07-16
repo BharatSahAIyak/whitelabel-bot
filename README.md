@@ -1,6 +1,6 @@
 # Kisai Bot
 
-Kisai Bot is an advanced chatbot designed to assist farmers with various tasks farming techniques and problems
+Kisai Bot is an advanced chatbot designed to assist farmers with various tasks farming techniques and problems.
 
 ## Table of Contents
 
@@ -74,14 +74,16 @@ cd kisai-bot
 ## Usage
 
 After setting up and running the application, you can access it at http://localhost:3000 (or the port specified in your environment variables). Follow the on-screen instructions to interact with the Kisai Bot.
+![image](https://github.com/user-attachments/assets/b2583cd2-5180-47fc-b2e2-2fedfb229dae)
+
 
 ## Figma Link
 
-The Figma Design Link for the Kisai-Bot ( [Figma Link](https://www.figma.com/design/RdtZTj500mtpGL97sLau9T/KSAI-Flow?node-id=166-2362&t=hI0KiIi4F2gBdH8y-0) ) where we regulary update the design and add new features.
+The Figma Design Link for the Kisai-Bot ( [Figma Link](https://www.figma.com/design/RdtZTj500mtpGL97sLau9T/KSAI-Flow?node-id=166-2362&t=hI0KiIi4F2gBdH8y-0) ) where we regularly update the design and add new features.
 
 ## Contribution Guidelines
 
-We welcome contributions to enhance the Kisai Bot. You can solve the issues which are currently present or raise an issue.
+We welcome contributions to enhance the Kisai Bot. You can solve the issues that are currently present or raise an issue.
 
 Please follow these steps to contribute:
 
