@@ -154,14 +154,15 @@ const Home: React.FC = () => {
                 {weather?.current?.tags?.temp}°C
               </h1>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <h2 data-testid="home-page-condition">
-                {localStorage.getItem('locale') === 'en'
-                  ? weather?.current?.tags?.conditions
-                  : weather?.current?.tags?.[
-                      `conditions${'_' + localStorage.getItem('locale') || ''}`
-                    ]}
-              </h2>
+            <div
+              style={{
+                textAlign: 'right',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                height: '100%',
+              }}
+            >
               {localStorage.getItem('city') && (
                 <div
                   style={{
@@ -171,11 +172,26 @@ const Home: React.FC = () => {
                   }}
                 >
                   <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
-                  <span style={{ fontSize: '1.25rem' }} data-testid="home-page-location">
+                  <span style={{ fontSize: '1.5rem' }} data-testid="weather-page-location">
                     {localStorage.getItem('city')}
                   </span>
                 </div>
               )}
+              <h2
+                data-testid="weather-page-condition"
+                style={{
+                  color: 'white',
+                  margin: 0,
+                  fontSize: '1.75rem',
+                  wordBreak: 'break-word',
+                }}
+              >
+                {localStorage.getItem('locale') === 'en'
+                  ? weather?.current?.tags?.conditions
+                  : weather?.current?.tags?.[
+                      `conditions${'_' + localStorage.getItem('locale') || ''}`
+                    ]}
+              </h2>
             </div>
           </div>
 
