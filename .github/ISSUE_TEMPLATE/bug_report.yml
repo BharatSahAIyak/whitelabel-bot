@@ -1,0 +1,105 @@
+name: BHASAI - Product Bug Report Template
+description: Create a new Ticket for a bug report on BHASAI Products
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: "Bug Description"
+    validations:
+      required: true
+    attributes:
+      label: Bug Description
+      value: |
+        ## Description
+        [Provide a brief bug description, outlining the buggy behaviour.]
+
+  - type: textarea
+    id: "Steps To Reproduce"
+    validations:
+      required: true
+    attributes:
+      label: Steps to reproduce
+      description: Define the sequene of steps (in order) which lead to this bug/unexpected behaviour.
+      value: |
+      ## Steps to Reproduce
+      [Provide the sequence of steps (in order) which lead to this bug/unexpected behaviour]
+
+  - type: textarea
+    id: "Expected Behaviour/Acceptance Criteria"
+    validations:
+      required: true
+    attributes:
+      label: "Expected Behaviour/Acceptance Criteria"
+      description: Define what should have been the ideal expected behaviour and the acceptance criteria (behaviour once this bug is fixed)
+      value: |
+        ## Expected Behaviour/Acceptance Criteria
+        [Kindly, state the expected behaviour and acceptance criteria in this section]
+
+
+  - type: dropdown
+    id: "bhasai-product"
+    attributes:
+      label: Product Name
+      placeholder: Enter Product Name
+      multiple: true
+      options:
+        - AKAI
+        - KMAI
+        - RAJAI
+        - Samagra Bot
+    validations:
+      required: true
+
+  - type: dropdown
+    id: "deployment-environment"
+    attributes:
+      label: Deployment Environment
+      placeholder: Enter Deployment Environment
+      multiple: true
+      options:
+        - Dev
+        - Staging
+        - UAT
+        - Prod
+    validations:
+      required: true
+
+  - type: dropdown
+    id: "application-environment"
+    attributes:
+      label: Application Environment
+      description: Enter Application Environment
+      multiple: true
+      options:
+        - PWA (Website)
+        - App Shell (Integrated in a state app)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: "Frequency/Persistence of the issue"
+    attributes:
+      label: Frequency/Persistence of the issue
+      description: Define the frequency with which this issue is existing or how persistent this is
+      multiple: false
+      option:
+         - Persistent - Always Replicates
+         - Intermittent - Comes on and off (replicates 1/5 times or something on those lines)
+         - Rare - (replicates in 1/100 types)
+    validations:
+      required: true
+
+  - type: textarea
+    id: "Additional Information"
+    validations:
+      required: false
+    attributes:
+      label: Additional Information
+      value: |
+        ## Additional Information
+        [Any additional information you'd like the engg team to know.]
+ 
+  
+  
+
+  
