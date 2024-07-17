@@ -21,6 +21,7 @@ const WeatherPage: React.FC = () => {
   const [selectedCrop, setSelectedCrop] = useState<any>(null);
   const [fetchTime, setFetchTime] = useState(0);
   const [convId, setConvId] = useState(uuidv4());
+  const [telemetrySent, setTelemetrySent] = useState(false);
   console.log({ config });
 
   useEffect(() => {
@@ -113,6 +114,7 @@ const WeatherPage: React.FC = () => {
   const sendTelemetry = async (messageId?: string, cropData?: any) => {
     try {
       if (weather?.current) {
+        setTelemetrySent(true);
         const msgId = uuidv4();
         await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
@@ -195,7 +197,9 @@ const WeatherPage: React.FC = () => {
   };
 
   useEffect(() => {
-    sendTelemetry();
+    if (!telemetrySent) {
+      sendTelemetry();
+    }
   }, [weather]);
 
   function getDayAbbreviation(dateString: string) {
