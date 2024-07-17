@@ -1,6 +1,6 @@
 # Kisai Bot
 
-Kisai Bot is an advanced chatbot designed to assist farmers with various tasks farming techniques and problems.
+Kisai Bot is an advanced chatbot designed to assist farmers with various tasks farming techniques and problems. This application is based on [Stencil UI](https://github.com/SamagraX-Stencil/stencil-web) and it's components.
 
 ## Table of Contents
 
