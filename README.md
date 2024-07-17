@@ -76,7 +76,6 @@ cd kisai-bot
 After setting up and running the application, you can access it at http://localhost:3000 (or the port specified in your environment variables). Follow the on-screen instructions to interact with the Kisai Bot.
 ![image](https://github.com/user-attachments/assets/b2583cd2-5180-47fc-b2e2-2fedfb229dae)
 
-
 ## Figma Link
 
 The Figma Design Link for the Kisai-Bot ( [Figma Link](https://www.figma.com/design/RdtZTj500mtpGL97sLau9T/KSAI-Flow?node-id=166-2362&t=hI0KiIi4F2gBdH8y-0) ) where we regularly update the design and add new features.
