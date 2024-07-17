@@ -30,7 +30,7 @@ const OnBoardingPage = (props: any) => {
           '/dataset/execute/' +
           process.env.NEXT_PUBLIC_ENTITY_DATASET_ID,
         {
-          sqlQuery: `SELECT * from "prioritized_commodity" where "type"='${type}' and "botId"='${process.env.NEXT_PUBLIC_BOT_ID}' ORDER BY "priority"`,
+          sqlQuery: `SELECT * from "prioritized_commodity" where "type"='${type}' and "datasetId" = '${process.env.NEXT_PUBLIC_ENTITY_DATASET_ID}' and "botId"='${process.env.NEXT_PUBLIC_BOT_ID}' ORDER BY "priority"`,
         },
         {
           headers: {

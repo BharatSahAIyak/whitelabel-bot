@@ -236,6 +236,8 @@ const ContextProvider: FC<{
             autoConnect: false,
             transports: ['polling', 'websocket'],
             upgrade: true,
+            reconnection: true,
+            timeout: 2000,
           },
           onMessageReceived
         )
