@@ -49,7 +49,7 @@ In the provided code, a new Socket instance is created to establish a WebSocket 
 
 ### Sending Messages
 
-Once the UCI instance is created, you can use the sendMessage function to send messages to the WebSocket server. This function takes a message object conforming to the XMessage interface.
+Once the Socket instance is created, you can use the sendMessage function to send messages to the WebSocket server. This function takes a message object conforming to the XMessage interface.
 
 ```typescript
 const sendMessage = useCallback(() => {
