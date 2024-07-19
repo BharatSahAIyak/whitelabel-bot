@@ -98,7 +98,8 @@
       "newChatButtonColor": "#1e6231"
     },
     "menu": {
-      "showNotificationsPage": false
+      "showNotificationsPage": false,
+      "showMicButton": true
     },
     "sidebar": {
       "showLangSwitcher": true,

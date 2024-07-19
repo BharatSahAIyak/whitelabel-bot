@@ -47,7 +47,7 @@ const OptionSelector = (props: any) => {
 
   return (
     <Container className="p-2">
-      <div className="d-flex pt-2 align-items-center justify-content-center mt-2">
+      <div className="d-flex pt-2 align-items-center justify-content-center">
         <IconButton
           data-testid="option-selector-back-button"
           aria-label="fingerprint"
@@ -66,7 +66,7 @@ const OptionSelector = (props: any) => {
             data-testid="option-selector-title"
             style={{
               fontWeight: '500',
-              fontSize: '32px',
+              fontSize: '28px',
               color: theme?.primary?.main,
               margin: 0,
             }}
@@ -205,7 +205,7 @@ const OptionSelector = (props: any) => {
             variant="body2"
             onClick={props?.handleNext}
             className="mt-2"
-            sx={{ fontSize: '16px', color: '#6D6D6D' }}
+            sx={{ fontSize: '16px', color: '#6D6D6D', textDecoration: 'none' }}
           >
             {t('label.skip_for_now')}
           </Link>

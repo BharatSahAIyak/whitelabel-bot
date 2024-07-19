@@ -182,7 +182,7 @@ const Home: React.FC = () => {
                 style={{
                   color: 'white',
                   margin: 0,
-                  fontSize: '1.75rem',
+                  fontSize: '1.5rem',
                   wordBreak: 'break-word',
                 }}
               >
@@ -228,7 +228,7 @@ const Home: React.FC = () => {
                     background: 'white',
                     color: 'black',
                     fontWeight: '600',
-                    marginTop: '5px',
+                    margin: '5px 0 0 0',
                   }}
                 >
                   {t('label.wind_direction')}
@@ -252,7 +252,7 @@ const Home: React.FC = () => {
                     background: 'white',
                     color: 'black',
                     fontWeight: '600',
-                    marginTop: '5px',
+                    margin: '5px 0 0 0',
                   }}
                 >
                   {t('label.wind_speed')}
@@ -276,7 +276,7 @@ const Home: React.FC = () => {
                     background: 'white',
                     color: 'black',
                     fontWeight: '600',
-                    marginTop: '5px',
+                    margin: '5px 0 0 0',
                   }}
                 >
                   {t('label.humidity')}

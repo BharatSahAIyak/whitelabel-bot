@@ -16,11 +16,11 @@ const UserTypeSelector = (props: any) => {
     <div
       style={{
         color: '#333',
-        margin: 'auto',
+        // margin: 'auto',
         backgroundColor: '#fff',
         height: '100dvh',
-        position: 'relative',
-        overflow: 'hidden',
+        // position: 'relative',
+        overflowY: 'auto',
         fontWeight: '500',
       }}
     >
@@ -36,7 +36,17 @@ const UserTypeSelector = (props: any) => {
       </div>
       <div
         style={{
-          position: 'absolute',
+          height: '400px',
+          overflow: 'hidden',
+          objectFit: 'cover',
+        }}
+        data-testid="user-select-bg-image"
+      >
+        <img src={config?.backgroundImage} alt="bgImage" width={'100%'} />
+      </div>
+      <div
+        style={{
+          // position: 'absolute',
           top: '45%', // Adjust this value to move the container up or down
           width: '100%',
           bottom: '0',
@@ -177,6 +187,7 @@ const UserTypeSelector = (props: any) => {
               sx={{
                 textTransform: 'none',
                 mt: 2,
+                mb: 2,
                 width: '80%',
                 height: '60px',
                 fontSize: '16px',
@@ -197,16 +208,6 @@ const UserTypeSelector = (props: any) => {
             </Button>
           </div>
         </div>
-      </div>
-      <div
-        style={{
-          height: '400px',
-          overflow: 'hidden',
-          objectFit: 'cover',
-        }}
-        data-testid="user-select-bg-image"
-      >
-        <img src={config?.backgroundImage} alt="bgImage" width={'100%'} />
       </div>
     </div>
   );

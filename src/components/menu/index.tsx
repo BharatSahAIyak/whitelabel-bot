@@ -39,20 +39,22 @@ const Menu = () => {
         </Button>
         <p className={styles.buttonText}>{t('label.menu_home')}</p>
       </div>
-      <div className={styles.middleButton} data-testid="menu-mic-button">
-        <Button
-          onClick={handleTouchToSpeakClick}
-          className={`${styles.touchToSpeakButton}`}
-          sx={{
-            backgroundColor: theme?.primary?.main,
-            color: theme?.primary?.contrastText,
-            '&:hover': { backgroundColor: theme?.primary?.main },
-          }}
-          startIcon={<MicNoneIcon fontSize="inherit" />}
-        >
-          {t('label.menu_tap_text')}
-        </Button>
-      </div>
+      {config?.showMicButton && (
+        <div className={styles.middleButton} data-testid="menu-mic-button">
+          <Button
+            onClick={handleTouchToSpeakClick}
+            className={`${styles.touchToSpeakButton}`}
+            sx={{
+              backgroundColor: theme?.primary?.main,
+              color: theme?.primary?.contrastText,
+              '&:hover': { backgroundColor: theme?.primary?.main },
+            }}
+            startIcon={<MicNoneIcon fontSize="inherit" />}
+          >
+            {t('label.menu_tap_text')}
+          </Button>
+        </div>
+      )}
       <div className={styles.buttonWrapper} data-testid="menu-notification-button">
         <Button
           onClick={handleNotificationClick}
