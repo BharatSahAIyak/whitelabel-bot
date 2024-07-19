@@ -4,8 +4,6 @@ import { List } from '../../components/list';
 import ForumIcon from '@mui/icons-material/Forum';
 import InfoIcon from '@mui/icons-material/Info';
 import CallIcon from '@mui/icons-material/Call';
-import _ from 'underscore';
-import { map } from 'lodash';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { FullPageLoader } from '../../components/fullpage-loader';
 import { useLocalization } from '../../hooks';
@@ -72,38 +70,35 @@ const NotificationsPage: FC = () => {
     fetchHistory();
   }, []);
 
-  const fetchHistory = () => {
+  const fetchHistory = useCallback(() => {
     setIsFetching(true);
 
-    const notificationList = map(
-      [
-        {
-          label: t('label.notification1_label'),
-          secondaryLabel: t('label.notification1_description'),
-          icon: <InfoIcon style={{ color: theme?.primary?.main }} />,
-          action: 'downloadManual',
-        },
-        {
-          label: t('label.notification2_label'),
-          secondaryLabel: t('label.notification2_description'),
-          icon: <CallIcon style={{ color: theme?.primary?.main }} />,
-          action: 'callCenter',
-        },
-      ],
-      (item: any) => {
-        return {
-          label: item?.label,
-          secondaryLabel: item?.secondaryLabel,
-          icon: item?.icon,
-          action: item?.action,
-          onClick: handleClick,
-          isDivider: true,
-        };
-      }
-    );
+    const notificationList = [
+      {
+        label: t('label.notification1_label'),
+        secondaryLabel: t('label.notification1_description'),
+        icon: <InfoIcon style={{ color: theme?.primary?.main }} />,
+        action: 'downloadManual',
+        onClick: handleClick,
+        isDivider: true,
+      },
+      {
+        label: t('label.notification2_label'),
+        secondaryLabel: t('label.notification2_description'),
+        icon: <CallIcon style={{ color: theme?.primary?.main }} />,
+        action: 'callCenter',
+        onClick: handleClick,
+        isDivider: true,
+      },
+    ];
+
     setNotifications(notificationList);
     setIsFetching(false);
-  };
+  }, [t, theme, handleClick]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
 
   return (
     <>
