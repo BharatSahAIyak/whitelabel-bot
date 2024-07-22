@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
 import { NextPage } from 'next';
 import { AppContext } from '../../context';
 import SendButton from './assets/sendButton';
@@ -31,9 +31,16 @@ const ChatPage: NextPage = () => {
   const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const voiceRecorderRef = useRef<{ stopRecording: () => void } | null>(null);
 
   const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    // Stop recording when modal is closed
+    if (voiceRecorderRef.current && voiceRecorderRef.current.stopRecording) {
+      voiceRecorderRef.current.stopRecording();
+    }
+  };
 
   const handleQuestionClick = (question: string) => {
     setInputMsg(question);
@@ -137,6 +144,7 @@ const ChatPage: NextPage = () => {
               <CircularProgress style={{ color: 'white' }} />
             ) : (
               <RenderVoiceRecorder
+                ref={voiceRecorderRef}
                 setInputMsg={(msg: string) => {
                   setInputMsg(msg);
                   handleCloseModal();
@@ -177,6 +185,7 @@ const ChatPage: NextPage = () => {
               type="submit"
               className={styles.sendButton}
               onClick={() => sendMessage(inputMsg)}
+              title="Send Message"
             >
               <SendButton width={40} height={40} color={theme?.primary?.light} />
             </button>
