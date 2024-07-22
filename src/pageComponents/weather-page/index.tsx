@@ -202,10 +202,12 @@ const WeatherPage: React.FC = () => {
     }
   }, [weather]);
 
-  function getDayAbbreviation(dateString: string) {
-    const date = new Date(dateString);
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    return days[date.getDay()];
+  function getDayAbbreviation(index: number): string {
+    const date = new Date();
+    const days: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const currentDayIndex: number = date.getDay();
+    const futureDayIndex: number = (currentDayIndex + index + 1) % 7;
+    return days[futureDayIndex];
   }
 
   if (!weather || !crop) {
@@ -472,7 +474,7 @@ const WeatherPage: React.FC = () => {
                             alignItems: 'center',
                           }}
                         >
-                          <p>{getDayAbbreviation(ele?.time?.timestamp)}</p>
+                          <p>{getDayAbbreviation(index)}</p>
                           <img
                             src={
                               ele?.descriptor?.images?.find((image: any) => image.type === 'icon')
