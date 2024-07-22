@@ -1,5 +1,6 @@
 import localConfig from '../../app.config.json';
 import axios from 'axios';
+import router from 'next/router';
 
 //@ts-ignore
 const deepMerge = (target, ...sources): any => {
@@ -42,12 +43,33 @@ const fetchOverrideConfig = async () => {
   }
   return {};
 };
+const fetchFeatureFlags = async () => {
+  try {
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `/api/flags?userType=${router.query.userType}`,
+      headers: {
+        accept: 'application/json',
+      },
+    };
+    const flags = await axios.request(config);
+    console.log('featureFlags:', flags?.data?.flags, router.query.userType);
+    return flags?.data?.flags;
+  } catch (err) {
+    console.error(err);
+  }
+  return {};
+};
 
 const mergeConfiguration = async () => {
   let overrideConfig: any = {};
+  let featureFlags: any = {};
   try {
     // const response = await axios.get('URL_TO_FETCH_OVERRIDE_CONFIG');
     overrideConfig = await fetchOverrideConfig();
+    console.log('overrideConfig:', overrideConfig);
+    featureFlags = await fetchFeatureFlags();
 
     //overrideConfig = response.data;
   } catch (error) {
@@ -55,7 +77,7 @@ const mergeConfiguration = async () => {
     // Optionally handle error, such as falling back to default configs
   }
 
-  const mergedConfig = await deepMerge({}, localConfig, overrideConfig);
+  const mergedConfig = await deepMerge({}, localConfig, overrideConfig, featureFlags);
 
   const updatedConfig = convertUrlsInObject(mergedConfig);
 
