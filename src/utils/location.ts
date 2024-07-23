@@ -33,6 +33,10 @@ export async function recordUserLocation() {
               locationRes = await locationRes.json();
               localStorage.setItem('ip', apiRes);
               if (!localStorage.getItem('city')) localStorage.setItem('city', locationRes.city);
+              if (!localStorage.getItem('district'))
+                localStorage.setItem('district', locationRes.city);
+              if (!localStorage.getItem('block'))
+                localStorage.setItem('block', locationRes.regionName);
               if (!localStorage.getItem('state'))
                 localStorage.setItem('state', locationRes.regionName);
               localStorage.setItem('latitude', locationRes.lat);
@@ -48,6 +52,10 @@ export async function recordUserLocation() {
               locationRes = await locationRes.json();
               localStorage.setItem('ip', apiRes);
               if (!localStorage.getItem('city')) localStorage.setItem('city', locationRes.city);
+              if (!localStorage.getItem('district'))
+                localStorage.setItem('district', locationRes.city);
+              if (!localStorage.getItem('block'))
+                localStorage.setItem('block', locationRes.regionName);
               if (!localStorage.getItem('state'))
                 localStorage.setItem('state', locationRes.regionName);
               localStorage.setItem('latitude', locationRes.lat);
