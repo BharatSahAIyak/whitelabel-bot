@@ -20,7 +20,8 @@
       "defaultLanguage": "en"
     },
     "weatherPage": {
-      "provider": "upcar"
+      "provider": "upcar",
+      "showCropAdvisory": true
     },
     "homePage": {
       "showHomeBgImg": false,

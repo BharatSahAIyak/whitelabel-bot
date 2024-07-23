@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Button, CircularProgress } from '@mui/material';
+import React, { useState, useContext, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { Button } from '@mui/material';
 import toast from 'react-hot-toast';
 import { useLocalization } from '../../hooks';
 import { useConfig } from '../../hooks/useConfig';
@@ -9,23 +9,32 @@ import saveTelemetryEvent from '../../utils/telemetry';
 import { LiveAudioVisualizer } from 'react-audio-visualize';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-const RenderVoiceRecorder = ({
-  setInputMsg,
-  tapToSpeak,
-  onCloseModal,
-  onProcessingStart,
-  onProcessingEnd,
-}) => {
+type RenderVoiceRecorderProps = {
+  setInputMsg: (msg: string) => void;
+  tapToSpeak: boolean;
+  onCloseModal: () => void;
+  onProcessingStart: () => void;
+  onProcessingEnd: () => void;
+};
+
+type RenderVoiceRecorderRef = {
+  stopRecording: () => void;
+};
+
+const RenderVoiceRecorder: React.ForwardRefRenderFunction<
+  RenderVoiceRecorderRef,
+  RenderVoiceRecorderProps
+> = ({ setInputMsg, tapToSpeak, onCloseModal, onProcessingStart, onProcessingEnd }, ref) => {
   const t = useLocalization();
-  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [recorderStatus, setRecorderStatus] = useState('idle');
   const [isErrorClicked, setIsErrorClicked] = useState(false);
   const config = useConfig('component', 'voiceRecorder');
   const context = useContext(AppContext);
 
-  let VOICE_MIN_DECIBELS = -35;
-  let DELAY_BETWEEN_DIALOGS = config?.delayBetweenDialogs || 2500;
-  let DIALOG_MAX_LENGTH = 60 * 1000;
+  const VOICE_MIN_DECIBELS = -35;
+  const DELAY_BETWEEN_DIALOGS = config?.delayBetweenDialogs || 2500;
+  const DIALOG_MAX_LENGTH = 60 * 1000;
   let IS_RECORDING = false;
 
   useEffect(() => {
@@ -33,6 +42,12 @@ const RenderVoiceRecorder = ({
     // Cleanup on component unmount
     return () => stopRecording();
   }, []);
+
+  useImperativeHandle(ref, () => ({
+    stopRecording: () => {
+      stopRecording();
+    },
+  }));
 
   const startRecording = async () => {
     saveTelemetryEvent('0.1', 'E044', 'micAction', 'micTap', {
@@ -51,25 +66,21 @@ const RenderVoiceRecorder = ({
     if (mediaRecorder !== null) {
       mediaRecorder.stop();
       mediaRecorder.stream.getTracks().forEach((track) => track.stop());
-      setMediaRecorder(null); // Set mediaRecorder state to null after stopping
+      setMediaRecorder(null);
     }
   };
 
-  // Record function:
   function record() {
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      // Start recording:
       const recorder = new MediaRecorder(stream);
       recorder.start();
       setMediaRecorder(recorder);
 
-      // Save audio chunks:
-      const audioChunks = [];
+      const audioChunks: Blob[] = [];
       recorder.addEventListener('dataavailable', (event) => {
         audioChunks.push(event.data);
       });
 
-      // Analysis:
       const audioContext = new AudioContext();
       const audioStreamSource = audioContext.createMediaStreamSource(stream);
       const analyser = audioContext.createAnalyser();
@@ -78,31 +89,26 @@ const RenderVoiceRecorder = ({
       const bufferLength = analyser.frequencyBinCount;
       const domainData = new Uint8Array(bufferLength);
 
-      // Loop:
       let time = new Date();
-      let startTime,
+      let startTime = time.getTime(),
         lastDetectedTime = time.getTime();
       let anySoundDetected = false;
       const detectSound = () => {
-        // Recording stopped by user:
         if (!IS_RECORDING) return;
 
         time = new Date();
         let currentTime = time.getTime();
 
-        // Timeout:
         if (currentTime > startTime + DIALOG_MAX_LENGTH) {
           recorder.stop();
           return;
         }
 
-        // A dialog detected:
         if (anySoundDetected === true && currentTime > lastDetectedTime + DELAY_BETWEEN_DIALOGS) {
           recorder.stop();
           return;
         }
 
-        // Check for detection:
         analyser.getByteFrequencyData(domainData);
         for (let i = 0; i < bufferLength; i++)
           if (domainData[i] > 0) {
@@ -111,47 +117,37 @@ const RenderVoiceRecorder = ({
             lastDetectedTime = time.getTime();
           }
 
-        // Continue the loop:
         window.requestAnimationFrame(detectSound);
       };
       window.requestAnimationFrame(detectSound);
 
-      // Stop event:
       recorder.addEventListener('stop', () => {
-        // Stop all the tracks:
         stream.getTracks().forEach((track) => track.stop());
         if (!anySoundDetected) return;
 
-        // Send to server:
         const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
         makeComputeAPICall(audioBlob);
       });
     });
   }
 
-  const makeComputeAPICall = async (blob) => {
+  const makeComputeAPICall = async (blob: Blob) => {
     const startTime = Date.now();
     const s2tMsgId = uuidv4();
     console.log('s2tMsgId:', s2tMsgId);
     try {
-      onProcessingStart(); // Set loading state to true
+      onProcessingStart();
       setRecorderStatus('processing');
       console.log('base', blob);
-      toast.success(`${t('message.recorder_wait')}`);
+      toast.success(t('message.recorder_wait'));
 
-      // Define the API endpoint
       const apiEndpoint = process.env.NEXT_PUBLIC_AI_TOOLS_API + '/speech-to-text';
-
-      // Create a FormData object
       const formData = new FormData();
-
-      // Append the WAV file to the FormData object
       formData.append('file', blob, 'audio.wav');
       formData.append('messageId', s2tMsgId);
       formData.append('conversationId', sessionStorage.getItem('conversationId') || '');
       formData.append('language', localStorage.getItem('locale') || 'en');
 
-      // Send the WAV data to the API
       const resp = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
@@ -180,27 +176,22 @@ const RenderVoiceRecorder = ({
           createdAt: Math.floor(startTime / 1000),
         });
       } else {
-        toast.error(`${t('message.recorder_error')}`);
+        toast.error(t('message.recorder_error'));
         console.log(resp);
-        // Set isErrorClicked to true when an error occurs
         setIsErrorClicked(false);
-
-        // Automatically change back to startIcon after 3 seconds
         setTimeout(() => {
-          // Check if the user has not clicked the error icon again
           if (!isErrorClicked) {
             setRecorderStatus('idle');
           }
         }, 2500);
       }
-      onProcessingEnd(); // Set loading state to false
+      onProcessingEnd();
       setRecorderStatus('idle');
     } catch (error) {
       console.error(error);
-      onProcessingEnd(); // Set loading state to false
+      onProcessingEnd();
       setRecorderStatus('error');
-      toast.error(`${t('message.recorder_error')}`);
-      // Set isErrorClicked to true when an error occurs
+      toast.error(t('message.recorder_error'));
       setIsErrorClicked(false);
       const endTime = Date.now();
       const latency = endTime - startTime;
@@ -213,17 +204,16 @@ const RenderVoiceRecorder = ({
         timeTaken: latency,
         messageId: s2tMsgId,
         createdAt: Math.floor(startTime / 1000),
-        error: error?.message || t('message.recorder_error'),
+        error: error instanceof Error ? error.message : t('message.recorder_error'),
       });
 
-      // Automatically change back to startIcon after 3 seconds
       setTimeout(() => {
         if (!isErrorClicked) {
           setRecorderStatus('idle');
         }
       }, 2500);
     }
-    context?.sets2tMsgId((prev) => (prev = s2tMsgId));
+    context?.sets2tMsgId((prev: any) => s2tMsgId);
   };
 
   if (config?.showVoiceRecorder === false) {
@@ -246,9 +236,7 @@ const RenderVoiceRecorder = ({
         <Button
           variant="contained"
           style={{ backgroundColor: 'white', color: '#115223' }}
-          onClick={() => {
-            stopRecording();
-          }}
+          onClick={stopRecording}
           endIcon={<ArrowForwardIcon />}
         >
           {t('label.ask')}
@@ -258,4 +246,4 @@ const RenderVoiceRecorder = ({
   );
 };
 
-export default RenderVoiceRecorder;
+export default forwardRef(RenderVoiceRecorder);
