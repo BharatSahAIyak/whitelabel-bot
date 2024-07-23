@@ -527,57 +527,61 @@ const WeatherPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className={styles.cropContainer}>
-        <div
-          className={styles.heading}
-          style={{ background: '#DFF6D1' }}
-          data-testid="weather-page-advisory-text"
-        >
-          {t('label.todays_advisory')}
+      {config?.showCropAdvisory && (
+        <div className={styles.cropContainer}>
+          <div
+            className={styles.heading}
+            style={{ background: '#DFF6D1' }}
+            data-testid="weather-page-advisory-text"
+          >
+            {t('label.todays_advisory')}
+          </div>
+          <Grid
+            data-testid="weather-page-crop-list"
+            container
+            columns={3}
+            overflow={'auto'}
+            height={'calc(100% - 50px)'}
+            justifyContent={'center'}
+          >
+            {(localStorage.getItem('locale') !== 'en'
+              ? crop.filter((ele: any) =>
+                  ele.category_ids.some((categoryId: string) => categoryId.endsWith('translated'))
+                )
+              : crop.filter(
+                  (ele: any) =>
+                    !ele.category_ids.some((categoryId: string) =>
+                      categoryId.endsWith('translated')
+                    )
+                )
+            ).map((ele: any, index: number) => {
+              return (
+                <Grid
+                  item
+                  key={index}
+                  sx={{
+                    textAlign: 'center',
+                    padding: '5px',
+                    backgroundColor: 'white',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                    borderRadius: '5px',
+                    margin: '10px',
+                    width: '26%',
+                  }}
+                  onClick={() => {
+                    setShowWeatherAdvisoryPopup(true);
+                    setSelectedCrop(ele);
+                    sendTelemetry(uuidv4(), ele);
+                  }}
+                >
+                  <img src={ele?.descriptor?.images?.[0]?.url} alt="" width={80} height={80} />
+                  <p>{ele?.descriptor?.name}</p>
+                </Grid>
+              );
+            })}
+          </Grid>
         </div>
-        <Grid
-          data-testid="weather-page-crop-list"
-          container
-          columns={3}
-          overflow={'auto'}
-          height={'calc(100% - 50px)'}
-          justifyContent={'center'}
-        >
-          {(localStorage.getItem('locale') !== 'en'
-            ? crop.filter((ele: any) =>
-                ele.category_ids.some((categoryId: string) => categoryId.endsWith('translated'))
-              )
-            : crop.filter(
-                (ele: any) =>
-                  !ele.category_ids.some((categoryId: string) => categoryId.endsWith('translated'))
-              )
-          ).map((ele: any, index: number) => {
-            return (
-              <Grid
-                item
-                key={index}
-                sx={{
-                  textAlign: 'center',
-                  padding: '5px',
-                  backgroundColor: 'white',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
-                  borderRadius: '5px',
-                  margin: '10px',
-                  width: '26%',
-                }}
-                onClick={() => {
-                  setShowWeatherAdvisoryPopup(true);
-                  setSelectedCrop(ele);
-                  sendTelemetry(uuidv4(), ele);
-                }}
-              >
-                <img src={ele?.descriptor?.images?.[0]?.url} alt="" width={80} height={80} />
-                <p>{ele?.descriptor?.name}</p>
-              </Grid>
-            );
-          })}
-        </Grid>
-      </div>
+      )}
       <Menu />
     </div>
   );
