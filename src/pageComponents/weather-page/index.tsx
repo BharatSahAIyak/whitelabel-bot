@@ -61,10 +61,10 @@ const WeatherPage: React.FC = () => {
         if (provider.id.toLowerCase() === 'ouat') {
           if (provider.category_id === 'crop_advisory_provider') {
             setCrop(provider?.items);
-          } else if (provider.category_id === 'weather_provider') {
+          } else if (provider.category_id === 'weather_provider' && provider.items?.length >= 5) {
             setWeather((prev: any) => ({
               ...prev,
-              future: provider?.items,
+              future: provider?.items?.slice(1),
             }));
           }
         } else {
