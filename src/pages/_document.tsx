@@ -7,6 +7,10 @@ export default function Document() {
       <Head>
         <link rel="manifest" id="manifest-file" />
         <meta name="theme-color" content="#fff" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+        ></meta>
         <script
           // id="ms-clarity"
           // strategy="afterInteractive"
