@@ -147,7 +147,11 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider>
       <>
-        <div style={{ height: '100%' }}>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+        ></meta>
+        <div style={{ height: '100dvh', width: '100dvw', position: 'fixed' }}>
           <Toaster position="top-center" reverseOrder={false} />
           <FeaturePopup />
           {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}

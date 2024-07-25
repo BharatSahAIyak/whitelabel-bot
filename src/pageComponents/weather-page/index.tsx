@@ -33,12 +33,14 @@ const WeatherPage: React.FC = () => {
 
   const fetchWeatherData = async () => {
     const startTime = performance.now();
-    if (!localStorage.getItem('longitude') || !localStorage.getItem('latitude')) return;
+    const latitude = localStorage.getItem('latitude');
+    const longitude = localStorage.getItem('longitude');
+    if (!latitude || !longitude) return;
     try {
       const response = await axios.get(process.env.NEXT_PUBLIC_WEATHER_API || '', {
         params: {
-          latitude: localStorage.getItem('latitude'),
-          longitude: localStorage.getItem('longitude'),
+          latitude,
+          longitude,
           provider: config?.provider || 'upcar',
         },
       });
@@ -217,7 +219,7 @@ const WeatherPage: React.FC = () => {
     <div className={styles.main}>
       <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
       ></meta>
       {showWeatherAdvisoryPopup && (
         <WeatherAdvisoryPopup

@@ -19,7 +19,7 @@ const Home: React.FC = () => {
   const router = useRouter();
   const theme = useColorPalates();
   const config = useConfig('component', 'homePage');
-  const [weather, setWeather] = useState<any>(null);
+  const [weather, setWeather] = useState<any>(context?.weather);
   const [isNight, setIsNight] = useState(false);
 
   useEffect(() => {
@@ -56,10 +56,19 @@ const Home: React.FC = () => {
           ...prev,
           future: weatherProvider.items,
         }));
+        context?.setWeather((prev: any) => ({
+          ...prev,
+          future: weatherProvider.items,
+        }));
       }
 
       if (imdWeatherProvider) {
         setWeather((prev: any) => ({
+          ...prev,
+          future: imdWeatherProvider.items?.slice(1),
+          current: imdWeatherProvider.items?.[0],
+        }));
+        context?.setWeather((prev: any) => ({
           ...prev,
           future: imdWeatherProvider.items?.slice(1),
           current: imdWeatherProvider.items?.[0],
@@ -124,7 +133,7 @@ const Home: React.FC = () => {
     <div className={styles.main}>
       <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
       ></meta>
 
       {config?.showWeather && (

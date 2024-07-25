@@ -46,6 +46,7 @@ const ContextProvider: FC<{
   const [s2tMsgId, sets2tMsgId] = useState('');
   const [kaliaClicked, setKaliaClicked] = useState(false);
   const [showInputBox, setShowInputBox] = useState(true);
+  const [weather, setWeather] = useState<any>(null);
 
   useEffect(() => {
     if (
@@ -537,7 +538,7 @@ const ContextProvider: FC<{
       )
       .map((item: any) => ({
         text: (item?.to === 'admin'
-          ? item?.payload?.metaData?.originalText ?? item?.payload?.text
+          ? (item?.payload?.metaData?.originalText ?? item?.payload?.text)
           : item?.payload?.text
         )
           ?.replace(/<end\/>/g, '')
@@ -705,6 +706,8 @@ const ContextProvider: FC<{
       sets2tMsgId,
       showInputBox,
       setShowInputBox,
+      weather,
+      setWeather,
     }),
     [
       locale,
@@ -738,6 +741,8 @@ const ContextProvider: FC<{
       sets2tMsgId,
       showInputBox,
       setShowInputBox,
+      weather,
+      setWeather,
     ]
   );
 
