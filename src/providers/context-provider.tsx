@@ -437,7 +437,7 @@ const ContextProvider: FC<{
               ip: localStorage.getItem('ip') || '',
               block: localStorage.getItem('block') || '',
               district: localStorage.getItem('city') || '',
-              hideMessage: textToSend?.startsWith('Guided:') || false,
+              hideMessage: textToShow?.startsWith('Guided:') || false,
               originalText: textToShow?.replace(/^\s+|\s+$/g, ''),
             },
           },
@@ -470,7 +470,7 @@ const ContextProvider: FC<{
           } else {
           }
         } else {
-          if (!textToSend?.startsWith('Guided:')) {
+          if (!textToShow?.startsWith('Guided:')) {
             setMessages((prev: any) => [
               ...prev.map((prevMsg: any) => ({
                 ...prevMsg,
