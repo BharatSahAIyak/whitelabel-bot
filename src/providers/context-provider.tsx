@@ -47,6 +47,8 @@ const ContextProvider: FC<{
   const [kaliaClicked, setKaliaClicked] = useState(false);
   const [showInputBox, setShowInputBox] = useState(true);
   const [weather, setWeather] = useState<any>(null);
+  const [showLanguagePopup, setShowLanguagePopup] = useState(false);
+  const [languagePopupFlag, setLanguagePopupFlag] = useState(true); // To not show the popup again until message is sent
 
   useEffect(() => {
     if (
@@ -410,6 +412,8 @@ const ContextProvider: FC<{
     async (textToSend: string, textToShow: string, media: any, isVisibile = true) => {
       if (!textToShow) textToShow = textToSend;
 
+      setLanguagePopupFlag(true);
+
       // if (!localStorage.getItem('userID')) {
       //   removeCookie('access_token', { path: '/' });
       //   location?.reload();
@@ -708,6 +712,10 @@ const ContextProvider: FC<{
       setShowInputBox,
       weather,
       setWeather,
+      showLanguagePopup,
+      setShowLanguagePopup,
+      languagePopupFlag,
+      setLanguagePopupFlag,
     }),
     [
       locale,
@@ -743,6 +751,10 @@ const ContextProvider: FC<{
       setShowInputBox,
       weather,
       setWeather,
+      showLanguagePopup,
+      setShowLanguagePopup,
+      languagePopupFlag,
+      setLanguagePopupFlag,
     ]
   );
 

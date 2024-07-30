@@ -1,19 +1,39 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { AppContext } from '../context';
 
 const useTransliteration = (config: any, value: any, setValue: any) => {
   const [suggestions, setSuggestions] = useState([]);
   const [suggestionClicked, setSuggestionClicked] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(0);
   const [cursorPosition, setCursorPosition] = useState(0);
+  const context = useContext(AppContext);
+
+  const detectLanguage = async (input: string | number) => {
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/language-detect/is-hinglish`,
+        {
+          input,
+        },
+        {
+          headers: {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error detecting language:', error);
+    }
+  };
 
   useEffect(() => {
-    if (
-      value.length > 0 &&
-      config?.allowTransliteration &&
-      localStorage.getItem('locale') === config?.transliterationOutputLanguage
-    ) {
+    if (value.length > 0) {
       if (suggestionClicked) {
         setSuggestionClicked(false);
         return;
@@ -30,31 +50,42 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
 
       if (!wordUnderCursor) return;
 
-      const data = JSON.stringify({
-        inputLanguage: config?.transliterationInputLanguage,
-        outputLanguage: config?.transliterationOutputLanguage,
-        input: wordUnderCursor,
-        provider: config?.transliterationProvider || 'bhashini',
-        numSuggestions: config?.transliterationSuggestions || 3,
-      });
+      if (
+        config?.allowTransliteration &&
+        localStorage.getItem('locale') === config?.transliterationOutputLanguage
+      ) {
+        const data = JSON.stringify({
+          inputLanguage: config?.transliterationInputLanguage,
+          outputLanguage: config?.transliterationOutputLanguage,
+          input: wordUnderCursor,
+          provider: config?.transliterationProvider || 'bhashini',
+          numSuggestions: config?.transliterationSuggestions || 3,
+        });
 
-      const axiosConfig = {
-        method: 'post',
-        maxBodyLength: Infinity,
-        url: `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/transliterate`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: data,
-      };
+        const axiosConfig = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/transliterate`,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        };
 
-      axios
-        .request(axiosConfig)
-        .then((res) => {
-          setSuggestions(res?.data?.suggestions);
-          console.log('api suggestions', res?.data?.suggestions);
-        })
-        .catch(() => toast.error('Transliteration failed'));
+        axios
+          .request(axiosConfig)
+          .then((res) => {
+            setSuggestions(res?.data?.suggestions);
+            console.log('api suggestions', res?.data?.suggestions);
+          })
+          .catch(() => toast.error('Transliteration failed'));
+      } else if (context?.languagePopupFlag) {
+        detectLanguage(wordUnderCursor).then((res) => {
+          if (res?.language === 'Hinglish') {
+            context?.setShowLanguagePopup(true);
+          }
+        });
+      }
     } else {
       setSuggestions([]);
     }
