@@ -54,6 +54,9 @@
       "transliterationInputLanguage": "",
       "transliterationOutputLanguage": ""
     },
+    "langPopup": {
+      "lang": "hi"
+    },
     "welcomePage": {
       "showWelcomePage": false,
       "showTopLeftLogo1": true,

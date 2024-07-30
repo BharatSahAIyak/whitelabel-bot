@@ -21,12 +21,11 @@ const LanguagePicker = () => {
   });
 
   useEffect(() => {
-    context?.setLocale(activeLanguage);
-  }, [activeLanguage, context]);
+    setActiveLanguage(context?.locale);
+    localStorage.setItem('locale', context?.locale);
+  }, [context?.locale]);
 
   const handleChange = (event: SelectChangeEvent) => {
-    setActiveLanguage(event.target.value);
-    localStorage.setItem('locale', event.target.value);
     context?.setLocale(event.target.value);
   };
   const theme = useColorPalates();
