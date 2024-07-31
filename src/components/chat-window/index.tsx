@@ -13,9 +13,11 @@ import DowntimePage from '../../pageComponents/downtime-page';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { getMsgType } from '../../utils/getMsgType';
 import { recordUserLocation } from '../../utils/location';
+import { detectLanguage } from '../../utils/detectLang';
 
 const ChatUiWindow: React.FC = () => {
   const config = useConfig('component', 'chatUI');
+  const langPopupConfig = useConfig('component', 'langPopup');
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
     return theme?.primary?.light;
@@ -69,7 +71,7 @@ const ChatUiWindow: React.FC = () => {
       )
       .map((item: any) => ({
         text: (item?.to === 'admin'
-          ? item?.payload?.metaData?.originalText ?? item?.payload?.text
+          ? (item?.payload?.metaData?.originalText ?? item?.payload?.text)
           : item?.payload?.text
         )
           ?.replace(/<end\/>/g, '')
@@ -163,6 +165,12 @@ const ChatUiWindow: React.FC = () => {
             transliterationOutputLanguage: config?.transliterationOutputLanguage,
             transliterationProvider: config?.transliterationProvider,
             transliterationSuggestions: config?.transliterationSuggestions,
+          }}
+          langDetectionConfig={{
+            detectLanguage: detectLanguage,
+            languagePopupFlag: context?.languagePopupFlag,
+            setShowLanguagePopup: context?.setShowLanguagePopup,
+            match: langPopupConfig?.match,
           }}
           //@ts-ignore
           messages={msgToRender}
