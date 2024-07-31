@@ -55,7 +55,8 @@
       "transliterationOutputLanguage": ""
     },
     "langPopup": {
-      "lang": "hi"
+      "lang": "hi",
+      "match": "hing"
     },
     "welcomePage": {
       "showWelcomePage": false,

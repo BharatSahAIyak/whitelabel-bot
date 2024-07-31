@@ -12,6 +12,7 @@ import { XMessage } from '@samagra-x/xmessage';
 import { FullPageLoader } from '../components/fullpage-loader';
 import WelcomePage from '../pageComponents/welcome-page';
 import saveTelemetryEvent from '../utils/telemetry';
+import { detectLanguage } from '../utils/detectLang';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
 
@@ -412,7 +413,15 @@ const ContextProvider: FC<{
     async (textToSend: string, textToShow: string, media: any, isVisibile = true) => {
       if (!textToShow) textToShow = textToSend;
 
-      setLanguagePopupFlag(true);
+      if (languagePopupFlag && locale !== config?.component?.langPopup?.lang) {
+        const res = await detectLanguage(textToSend);
+        if (res?.language === config?.component?.langPopup?.match) {
+          setShowLanguagePopup(true);
+          return;
+        }
+      } else {
+        setLanguagePopupFlag(true);
+      }
 
       // if (!localStorage.getItem('userID')) {
       //   removeCookie('access_token', { path: '/' });
@@ -508,7 +517,7 @@ const ContextProvider: FC<{
       }
       sets2tMsgId('');
     },
-    [conversationId, newSocket, removeCookie, s2tMsgId]
+    [conversationId, newSocket, removeCookie, s2tMsgId, languagePopupFlag]
   );
 
   const fetchIsDown = useCallback(async () => {

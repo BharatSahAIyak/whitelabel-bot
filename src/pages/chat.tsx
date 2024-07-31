@@ -8,6 +8,7 @@ import styles from '../components/feedback-popup/index.module.css';
 import FeedbackPopup from '../components/feedback-popup';
 import { useConfig } from '../hooks/useConfig';
 import { useRouter } from 'next/router';
+import LanguagePopup from '../components/language-popup';
 
 const ChatUi = dynamic(() => import('../components/chat-window'), {
   ssr: false,
@@ -66,6 +67,7 @@ const Chat: NextPage = () => {
           top: '100px',
         }}
       >
+        <LanguagePopup />
         <ChatUi />
       </div>
     </>

@@ -18,11 +18,15 @@ const style = {
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 2,
+  borderRadius: '8px',
 };
 
 const headerStyle = {
   display: 'flex',
   justifyContent: 'flex-end',
+  position: 'absolute',
+  right: 0,
+  top: 0,
 };
 
 const LanguagePopup: React.FC = () => {
