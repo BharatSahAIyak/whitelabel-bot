@@ -1,5 +1,14 @@
 'use client';
-import { FC, ReactElement, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  FC,
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { AppContext } from '../context';
 import _ from 'underscore';
 import { v4 as uuidv4 } from 'uuid';
@@ -29,6 +38,7 @@ const ContextProvider: FC<{
   const [isMsgReceiving, setIsMsgReceiving] = useState(false);
   const [messages, setMessages] = useState<Array<any>>([]);
   const [newSocket, setNewSocket] = useState<any>();
+  const socketRef = useRef<any>(null);
   const [showWelcomePage, setShowWelcomePage] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(
     sessionStorage.getItem('conversationId') || uuidv4()
@@ -257,6 +267,10 @@ const ContextProvider: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStorage.getItem('userID')]);
 
+  useEffect(() => {
+    socketRef.current = newSocket;
+  }, [newSocket]);
+
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
       console.log('updatemsgstate:', msg);
@@ -358,6 +372,12 @@ const ContextProvider: FC<{
 
   const onMessageReceived = useCallback(
     async (msg: any) => {
+      const ackMessage = JSON.parse(JSON.stringify(msg));
+      ackMessage.messageType = 'ACKNOWLEDGEMENT';
+      console.log(msg);
+      socketRef?.current?.sendMessage({
+        payload: ackMessage,
+      });
       // if (!msg?.content?.id) msg.content.id = '';
       if (msg.messageType.toUpperCase() === 'IMAGE') {
         if (
@@ -404,7 +424,7 @@ const ContextProvider: FC<{
         }
       }
     },
-    [isOnline, updateMsgState]
+    [isOnline, newSocket, updateMsgState]
   );
 
   console.log('config:', { config });
@@ -543,7 +563,7 @@ const ContextProvider: FC<{
       )
       .map((item: any) => ({
         text: (item?.to === 'admin'
-          ? (item?.payload?.metaData?.originalText ?? item?.payload?.text)
+          ? item?.payload?.metaData?.originalText ?? item?.payload?.text
           : item?.payload?.text
         )
           ?.replace(/<end\/>/g, '')
