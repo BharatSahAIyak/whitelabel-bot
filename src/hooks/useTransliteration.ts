@@ -94,7 +94,7 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
         }
       } else if (e.key === ' ') {
         if (context?.languagePopupFlag) {
-          detectLanguage(value).then((res) => {
+          detectLanguage(value?.trim()?.split(' ')?.pop() || '').then((res) => {
             if (res?.language === langPopupConfig?.match) {
               context?.setShowLanguagePopup(true);
             }

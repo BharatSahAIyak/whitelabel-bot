@@ -17,12 +17,14 @@ import MicIcon from '@mui/icons-material/Mic';
 import styles from './index.module.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import TransliterationInput from '../../components/transliteration-input';
+import { detectLanguage } from '../../utils/detectLang';
 
 const ChatPage: NextPage = () => {
   const context = useContext(AppContext);
   const botConfig = useConfig('component', 'chatUI');
   const config = useConfig('component', 'homePage');
   const { micWidth, micHeight } = config;
+  const langPopupConfig = useConfig('component', 'langPopup');
   const t = useLocalization();
   const placeholder = t('message.ask_ur_question');
   const [inputMsg, setInputMsg] = useState('');
@@ -79,9 +81,20 @@ const ChatPage: NextPage = () => {
         return;
       }
       if (context?.newSocket?.socket?.connected) {
-        context?.setMessages([]);
-        router.push('/chat');
-        context?.sendMessage(msg, msg);
+        if (context?.languagePopupFlag && context?.locale !== langPopupConfig?.lang) {
+          const res = await detectLanguage(msg?.trim()?.split(' ')?.pop() || '');
+          if (res?.language === langPopupConfig?.match) {
+            context?.setShowLanguagePopup(true);
+          } else {
+            context?.setMessages([]);
+            router.push('/chat');
+            context?.sendMessage(msg, msg);
+          }
+        } else {
+          context?.setMessages([]);
+          router.push('/chat');
+          context?.sendMessage(msg, msg);
+        }
       } else {
         toast.error(t('error.disconnected'));
       }

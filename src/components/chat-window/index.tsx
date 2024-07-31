@@ -115,7 +115,12 @@ const ChatUiWindow: React.FC = () => {
       }
       console.log('mssgs:', context?.messages);
       if (type === 'text' && msg.trim()) {
-        context?.sendMessage(msg.trim(), msg.trim());
+        if (context?.languagePopupFlag && context?.locale !== langPopupConfig?.lang) {
+          const res = await detectLanguage(msg?.trim()?.split(' ')?.pop() || '');
+          if (res?.language === langPopupConfig?.match) {
+            context?.setShowLanguagePopup(true);
+          } else context?.sendMessage(msg.trim(), msg.trim());
+        } else context?.sendMessage(msg.trim(), msg.trim());
       }
     },
     [context, t]

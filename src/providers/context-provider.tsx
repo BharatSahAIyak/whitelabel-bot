@@ -413,15 +413,7 @@ const ContextProvider: FC<{
     async (textToSend: string, textToShow: string, media: any, isVisibile = true) => {
       if (!textToShow) textToShow = textToSend;
 
-      if (languagePopupFlag && locale !== config?.component?.langPopup?.lang) {
-        const res = await detectLanguage(textToSend);
-        if (res?.language === config?.component?.langPopup?.match) {
-          setShowLanguagePopup(true);
-          return;
-        }
-      } else {
-        setLanguagePopupFlag(true);
-      }
+      setLanguagePopupFlag(true);
 
       // if (!localStorage.getItem('userID')) {
       //   removeCookie('access_token', { path: '/' });
