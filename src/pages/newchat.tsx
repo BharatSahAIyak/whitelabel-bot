@@ -6,7 +6,7 @@ import ChatPage from '../pageComponents/new-chat-page';
 import { useConfig } from '../hooks/useConfig';
 import LanguagePopup from '../components/language-popup';
 
-const Chat: NextPage = () => {
+const NewChat: NextPage = () => {
   const t = useLocalization();
   const config = useConfig('component', 'botDetails');
   const homeConfig = useConfig('component', 'homePage');
@@ -36,4 +36,4 @@ const Chat: NextPage = () => {
     </>
   );
 };
-export default Chat;
+export default NewChat;

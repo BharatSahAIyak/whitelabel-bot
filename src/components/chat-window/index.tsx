@@ -115,7 +115,11 @@ const ChatUiWindow: React.FC = () => {
       }
       console.log('mssgs:', context?.messages);
       if (type === 'text' && msg.trim()) {
-        if (context?.languagePopupFlag && context?.locale !== langPopupConfig?.lang) {
+        if (
+          context?.languagePopupFlag &&
+          context?.locale !== langPopupConfig?.lang &&
+          langPopupConfig?.langCheck
+        ) {
           const res = await detectLanguage(msg?.trim()?.split(' ')?.pop() || '');
           if (res?.language === langPopupConfig?.match) {
             context?.setShowLanguagePopup(true);
@@ -176,6 +180,7 @@ const ChatUiWindow: React.FC = () => {
             languagePopupFlag: context?.languagePopupFlag,
             setShowLanguagePopup: context?.setShowLanguagePopup,
             match: langPopupConfig?.match,
+            langCheck: langPopupConfig?.langCheck,
           }}
           //@ts-ignore
           messages={msgToRender}

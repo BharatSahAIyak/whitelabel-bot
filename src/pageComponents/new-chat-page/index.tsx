@@ -81,7 +81,11 @@ const ChatPage: NextPage = () => {
         return;
       }
       if (context?.newSocket?.socket?.connected) {
-        if (context?.languagePopupFlag && context?.locale !== langPopupConfig?.lang) {
+        if (
+          context?.languagePopupFlag &&
+          context?.locale !== langPopupConfig?.lang &&
+          langPopupConfig?.langCheck
+        ) {
           const res = await detectLanguage(msg?.trim()?.split(' ')?.pop() || '');
           if (res?.language === langPopupConfig?.match) {
             context?.setShowLanguagePopup(true);

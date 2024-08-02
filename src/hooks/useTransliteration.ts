@@ -93,7 +93,7 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
           }
         }
       } else if (e.key === ' ') {
-        if (context?.languagePopupFlag) {
+        if (context?.languagePopupFlag && langPopupConfig?.langCheck) {
           detectLanguage(value?.trim()?.split(' ')?.pop() || '').then((res) => {
             if (res?.language === langPopupConfig?.match) {
               context?.setShowLanguagePopup(true);

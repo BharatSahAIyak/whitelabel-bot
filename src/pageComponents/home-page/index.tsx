@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useContext, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import styles from './index.module.css';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
-import { Chip, Grid, Button, Modal, Box, Typography } from '@mui/material';
+import { Chip, Grid, Button } from '@mui/material';
 import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
@@ -12,7 +12,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter } from 'next/router';
 import Menu from '../../components/menu';
 import toast from 'react-hot-toast';
-import { compressImage } from '../../utils/imageCompression';
 
 const Home: React.FC = () => {
   const t = useLocalization();
@@ -22,25 +21,6 @@ const Home: React.FC = () => {
   const config = useConfig('component', 'homePage');
   const [weather, setWeather] = useState<any>(context?.weather);
   const [isNight, setIsNight] = useState(false);
-  const fileInputRef = useRef<any>(null);
-
-  const [open, setOpen] = useState(false);
-  const [originalImage, setOriginalImage] = useState<string | null>(null);
-  const [compressedImage, setCompressedImage] = useState<string | null>(null);
-  const [originalImageSize, setOriginalImageSize] = useState<number | null>(null);
-  const [compressedImageSize, setCompressedImageSize] = useState<number | null>(null);
-
-  const handleOpen = (original: string, compressed: string) => {
-    setOriginalImage(original);
-    setCompressedImage(compressed);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setOriginalImage(null);
-    setCompressedImage(null);
-  };
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -149,20 +129,6 @@ const Home: React.FC = () => {
     return <FullPageLoader loading={!weather} />;
   }
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const compressedFile = await compressImage(file);
-      const originalUrl = URL.createObjectURL(file);
-      const compressedUrl = compressedFile ? URL.createObjectURL(compressedFile) : '';
-      setOriginalImageSize(file.size / 1024);
-      compressedFile
-        ? setCompressedImageSize(compressedFile.size / 1024)
-        : setCompressedImageSize(0);
-      handleOpen(originalUrl, compressedUrl);
-    }
-  };
-
   return (
     <div className={styles.main}>
       <meta
@@ -179,9 +145,7 @@ const Home: React.FC = () => {
               ?.find((image: any) => image.type === (isNight ? 'image_night' : 'image_day'))
               ?.url?.replace(/ /g, '%20')
               ?.replace(/\(/g, '%28')
-              ?.replace(/\)/g, '%29')})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
+              ?.replace(/\)/g, '%29')}) 0% 0% / cover no-repeat`,
           }}
         >
           <div className={styles.weatherText}>
@@ -327,43 +291,45 @@ const Home: React.FC = () => {
               </Grid>
             </Grid>
 
-            <div
-              style={{
-                marginTop: '5px',
-                textAlign: 'center',
-                paddingBottom: '10px',
-              }}
-            >
-              <Button
-                data-testid="home-page-crop-advisory-button"
-                variant="contained"
-                endIcon={<ArrowForwardIcon />}
-                sx={{
-                  backgroundColor: '#EDEDF1',
-                  '&:hover': {
-                    backgroundColor: '#EDEDF1',
-                  },
-                  color: theme?.primary?.light,
-                  fontSize: '18px',
-                  width: '308px',
-                  height: '40px',
-                  padding: '18px 24px',
-                  fontWeight: '500',
-                  borderRadius: '6px',
-                  textTransform: 'none',
-                  boxShadow: 'none',
-                }}
-                onClick={() => {
-                  if (config?.showWeatherPage) {
-                    router.push('/weather');
-                  } else {
-                    router.push('/chat?message=Guided:%20weather');
-                  }
+            {config.showWeatherButton && (
+              <div
+                style={{
+                  marginTop: '5px',
+                  textAlign: 'center',
+                  paddingBottom: '10px',
                 }}
               >
-                {t('label.weather_button_text')}
-              </Button>
-            </div>
+                <Button
+                  data-testid="home-page-crop-advisory-button"
+                  variant="contained"
+                  endIcon={<ArrowForwardIcon />}
+                  sx={{
+                    backgroundColor: '#EDEDF1',
+                    '&:hover': {
+                      backgroundColor: '#EDEDF1',
+                    },
+                    color: theme?.primary?.light,
+                    fontSize: '18px',
+                    width: '308px',
+                    height: '40px',
+                    padding: '18px 24px',
+                    fontWeight: '500',
+                    borderRadius: '6px',
+                    textTransform: 'none',
+                    boxShadow: 'none',
+                  }}
+                  onClick={() => {
+                    if (config?.showWeatherPage) {
+                      router.push('/weather');
+                    } else {
+                      router.push('/chat?message=Guided:%20weather');
+                    }
+                  }}
+                >
+                  {t('label.weather_button_text')}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -394,7 +360,7 @@ const Home: React.FC = () => {
             justifyContent="center"
             data-testid="home-page-action-buttons"
           >
-            {config.showWeatherAdvisory && (
+            {config.showPestIdentification && (
               <Grid
                 item
                 xs={5}
@@ -415,69 +381,18 @@ const Home: React.FC = () => {
               >
                 <div
                   onClick={() => {
-                    if (fileInputRef.current) {
-                      fileInputRef.current.click();
-                    }
+                    // TODO
                   }}
                 >
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    accept="image/*"
-                    capture="environment" // or capture="user" or capture={true} if you don't want to specify
-                    style={{ display: 'none' }}
-                    onChange={handleFileChange}
+                  <img
+                    src={config.pestIdentificationImg}
+                    alt="pestIdentification"
+                    className={styles.gridImage}
                   />
-                  <img src={config.weatherAdvisoryImg} alt="Weather" className={styles.gridImage} />
-                  <p className={styles.gridText}>{t('label.weather_advisory')} </p>
+                  <p className={styles.gridText}>{t('label.pest_identification')} </p>
                 </div>
               </Grid>
             )}
-
-            <Modal open={open} onClose={handleClose}>
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: '80%',
-                  bgcolor: 'background.paper',
-                  border: '2px solid #000',
-                  boxShadow: 24,
-                  p: 4,
-                }}
-              >
-                <Typography variant="body1" component="h2" fontWeight={600}>
-                  Original and Compressed Images
-                </Typography>
-                <Grid
-                  container
-                  spacing={2}
-                  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-                >
-                  <Grid item xs={6}>
-                    <Typography variant="subtitle2">
-                      Original Image ({originalImageSize?.toFixed(2)} kB)
-                    </Typography>
-                    {originalImage && (
-                      <img src={originalImage} alt="Original" style={{ width: '100%' }} />
-                    )}
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="subtitle2">
-                      Compressed Image ({compressedImageSize?.toFixed(2)} kB)
-                    </Typography>
-                    {compressedImage && (
-                      <img src={compressedImage} alt="Compressed" style={{ width: '100%' }} />
-                    )}
-                  </Grid>
-                </Grid>
-                <Button onClick={handleClose} variant="contained" sx={{ mt: 2 }}>
-                  Close
-                </Button>
-              </Box>
-            </Modal>
 
             {config.showSchemes && (
               <Grid

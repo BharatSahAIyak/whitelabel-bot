@@ -25,7 +25,6 @@ const getFlags = (userType) => {
           },
           homePage: {
             showWeather: false,
-            showWeatherAdvisory: false,
             showOtherInformation: false,
           },
           sidebar: {
