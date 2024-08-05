@@ -82,6 +82,8 @@ const Home: React.FC = () => {
 
   // Keep fetching weather data until it's available
   useEffect(() => {
+    if (!config?.showWeather) return;
+
     let interval: NodeJS.Timeout | null = null;
 
     if (!weather) {
@@ -125,7 +127,7 @@ const Home: React.FC = () => {
     sendMessage(`Guided: ${t('label.' + type)}`);
   };
 
-  if (!weather) {
+  if (!weather && config?.showWeather) {
     return <FullPageLoader loading={!weather} />;
   }
 
