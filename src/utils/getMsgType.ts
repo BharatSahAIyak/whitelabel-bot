@@ -1,4 +1,5 @@
 export const getMsgType = (msg: any): string => {
+  console.log('getMsgType', msg);
   if (isJsonString(msg?.text)) {
     if (JSON.parse(msg?.text) && msg?.position === 'left') return 'table';
   }

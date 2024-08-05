@@ -276,7 +276,7 @@ const ContextProvider: FC<{
       console.log('updatemsgstate:', msg);
       if (msg?.messageId?.Id && msg?.messageId?.channelMessageId && msg?.messageId?.replyId) {
         if (sessionStorage.getItem('conversationId') === msg.messageId.channelMessageId) {
-          const word = msg.payload.text;
+          const word = msg?.payload?.text || '';
 
           setMessages((prev: any) => {
             const updatedMessages = [...prev];
@@ -334,7 +334,7 @@ const ContextProvider: FC<{
             return updatedMessages;
           });
           setIsMsgReceiving(false);
-          if (msg.payload.text.endsWith('<end/>')) {
+          if (msg?.payload?.text?.endsWith('<end/>')) {
             setEndTime(Date.now());
           }
           setLoading(false);
@@ -430,7 +430,7 @@ const ContextProvider: FC<{
   console.log('config:', { config });
   //@ts-ignore
   const sendMessage = useCallback(
-    async (textToSend: string, textToShow: string, media: any, isVisibile = true) => {
+    async (textToSend: string, textToShow: string, media: any) => {
       if (!textToShow) textToShow = textToSend;
 
       setLanguagePopupFlag(true);
@@ -453,6 +453,7 @@ const ContextProvider: FC<{
           app: process.env.NEXT_PUBLIC_BOT_ID || '',
           payload: {
             text: textToSend?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
+            media,
             metaData: {
               phoneNumber: localStorage.getItem('phoneNumber') || '',
               latitude: localStorage.getItem('latitude'),
@@ -486,33 +487,48 @@ const ContextProvider: FC<{
       } else sessionStorage.setItem('conversationId', conversationId || '');
 
       setStartTime(Date.now());
-      if (isVisibile)
-        if (media) {
-          if (media.mimeType.slice(0, 5) === 'image') {
-          } else if (media.mimeType.slice(0, 5) === 'audio' && isVisibile) {
-          } else if (media.mimeType.slice(0, 5) === 'video') {
-          } else if (media.mimeType.slice(0, 11) === 'application') {
-          } else {
-          }
+      if (media) {
+        if (media.mimeType.slice(0, 5) === 'image') {
+          console.log('media', media);
+          setMessages((prev: any) => [
+            ...prev.map((prevMsg: any) => ({
+              ...prevMsg,
+            })),
+            {
+              text: textToShow?.replace(/^\s+|\s+$/g, ''),
+              // ?.replace(/^Guided:/, ''),
+              position: 'right',
+              payload: { media },
+              time: Date.now(),
+              messageId: messageId,
+              conversationId: conversationId,
+              repliedTimestamp: Date.now(),
+            },
+          ]);
+        } else if (media.mimeType.slice(0, 5) === 'audio') {
+        } else if (media.mimeType.slice(0, 5) === 'video') {
+        } else if (media.mimeType.slice(0, 11) === 'application') {
         } else {
-          if (!textToShow?.startsWith('Guided:')) {
-            setMessages((prev: any) => [
-              ...prev.map((prevMsg: any) => ({
-                ...prevMsg,
-              })),
-              {
-                text: textToShow?.replace(/^\s+|\s+$/g, ''),
-                // ?.replace(/^Guided:/, ''),
-                position: 'right',
-                payload: { textToShow },
-                time: Date.now(),
-                messageId: messageId,
-                conversationId: conversationId,
-                repliedTimestamp: Date.now(),
-              },
-            ]);
-          }
         }
+      } else {
+        if (!textToShow?.startsWith('Guided:')) {
+          setMessages((prev: any) => [
+            ...prev.map((prevMsg: any) => ({
+              ...prevMsg,
+            })),
+            {
+              text: textToShow?.replace(/^\s+|\s+$/g, ''),
+              // ?.replace(/^Guided:/, ''),
+              position: 'right',
+              payload: { textToShow },
+              time: Date.now(),
+              messageId: messageId,
+              conversationId: conversationId,
+              repliedTimestamp: Date.now(),
+            },
+          ]);
+        }
+      }
       try {
         await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
@@ -563,7 +579,7 @@ const ContextProvider: FC<{
       )
       .map((item: any) => ({
         text: (item?.to === 'admin'
-          ? item?.payload?.metaData?.originalText ?? item?.payload?.text
+          ? (item?.payload?.metaData?.originalText ?? item?.payload?.text)
           : item?.payload?.text
         )
           ?.replace(/<end\/>/g, '')
