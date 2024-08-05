@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
 
 var client = jwksClient({
-  jwksUri: process.env.NEXT_PUBLIC_JWKS_URI,
+  jwksUri: process.env.JWKS_URI,
   requestHeaders: {}, // Optional
   timeout: 30000, // Defaults to 30
 });
