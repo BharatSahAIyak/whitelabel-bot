@@ -383,7 +383,7 @@ const Home: React.FC = () => {
               >
                 <div
                   onClick={() => {
-                    // TODO
+                    sendGuidedMsg('identification');
                   }}
                 >
                   <img

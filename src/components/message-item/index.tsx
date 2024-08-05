@@ -33,6 +33,7 @@ import { MessageType, XMessage } from '@samagra-x/xmessage';
 import { v4 as uuidv4 } from 'uuid';
 import router from 'next/router';
 import TransliterationInput from '../transliteration-input';
+import { compressImage } from '../../utils/imageCompression';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
@@ -369,6 +370,34 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
     }, []);
     console.log({ result, data });
     return result;
+  };
+
+  function convertToHttps(url: any) {
+    if (url && url?.startsWith('http://') && url?.includes(':443')) {
+      return url?.replace('http://', 'https://').replace(':443', '');
+    }
+    return url;
+  }
+
+  const uploadToCdn = async (file: any) => {
+    try {
+      const compressedFile = await compressImage(file);
+      const data = new FormData();
+      if (compressedFile) data.append('file', compressedFile);
+      let config = {
+        method: 'post',
+        url: `${process.env.NEXT_PUBLIC_DEPLOYER_API}/files/upload-file?destination=uploads&filename=${compressedFile?.name || '' + Date.now()}`,
+        data: data,
+      };
+      const res = await axios.request(config);
+      if (res?.data?.file?.url) return convertToHttps(res?.data?.file?.url);
+      else {
+        toast.error('Could not upload image!');
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message);
+    }
   };
 
   switch (type) {
@@ -761,6 +790,43 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           context?.setIsMsgReceiving(false);
                           context?.setLoading(false);
                           router.push('/');
+                        } else if (item?.action === 'gallery') {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = async (event: any) => {
+                            const file = event?.target?.files?.[0];
+                            if (file) {
+                              console.log(file);
+                              const url = await uploadToCdn(file);
+                              context?.sendMessage(null, null, {
+                                mimeType: file.type,
+                                category: 'IMAGE',
+                                url,
+                              });
+                            }
+                          };
+                          input.click();
+                        } else if (item?.action === 'camera') {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.capture = 'environment';
+
+                          input.onchange = async (event: any) => {
+                            const file = event?.target?.files?.[0];
+                            if (file) {
+                              console.log(file);
+                              const url = await uploadToCdn(file);
+                              context?.sendMessage(null, null, {
+                                mimeType: file.type,
+                                category: 'IMAGE',
+                                url,
+                              });
+                            }
+                          };
+
+                          input.click();
                         } else {
                           context?.sendMessage(item?.key, item?.text);
                         }
@@ -822,35 +888,60 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       );
 
     case 'image': {
+      console.log('content:', content);
       const url = content?.data?.payload?.media?.url || content?.data?.imageUrl;
       return (
         <div style={{ fontFamily: 'NotoSans-Regular' }}>
-          {content?.data?.position === 'left' && (
-            <div
-              style={{
-                width: '40px',
-                marginRight: '4px',
-                textAlign: 'center',
-              }}
-            ></div>
-          )}
-          <Bubble type="image">
-            <div style={{ padding: '7px' }}>
-              <Img src={url} width="299" height="200" alt="image" lazy fluid />
+          <Bubble
+            id={content?.data?.messageId || uuidv4()}
+            type="image"
+            style={
+              content?.data?.position === 'right'
+                ? {
+                    background: contrastText,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 0px 15px',
+                    padding: '10px, 15px, 10px, 15px',
+                    gap: '10px',
+                  }
+                : {
+                    background: content?.data?.card ? contrastText : secondaryColor,
+                    boxShadow: '0 3px 8px rgba(0,0,0,.24)',
+                    borderRadius: '15px 15px 15px 0px',
+                    padding: content?.data?.card ? '0' : '10px, 15px, 10px, 15px',
+                    gap: '10px',
+                  }
+            }
+          >
+            <div style={{ padding: '15px' }}>
+              <Img src={url} width="100%" height="100%" alt="image" lazy fluid />
+              {process.env.NEXT_PUBLIC_DEBUG === 'true' && (
+                <div
+                  style={{
+                    color: content?.data?.position === 'right' ? 'var(--font)' : 'yellow',
+                    fontSize: '12px',
+                    fontWeight: 'normal',
+                  }}
+                >
+                  <br></br>
+                  <span>messageId: {content?.data?.messageId}</span>
+                  <br></br>
+                  <span>conversationId: {content?.data?.conversationId}</span>
+                </div>
+              )}
               <div
                 style={{
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'self-end',
+                  justifyContent: 'flex-end',
                 }}
               >
                 <span
                   style={{
-                    color: contrastText,
-                    fontSize: '10px',
+                    color: content?.data?.position === 'right' ? 'var(--font)' : contrastText,
+                    fontSize: '12px',
                   }}
                 >
-                  {moment(content?.data?.timestamp).format('hh:mm A DD/MM/YYYY')}
+                  {moment(content?.data?.timestamp).format('hh:mma ')}
                 </span>
               </div>
             </div>
@@ -1105,6 +1196,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           context?.setIsMsgReceiving(false);
                           context?.setLoading(false);
                           router.push('/');
+                        } else if (item?.action === 'gallery') {
+                          alert('open gallery');
+                        } else if (item?.action === 'camera') {
+                          alert('open camera');
                         } else {
                           context?.sendMessage(item?.key, item?.text);
                         }

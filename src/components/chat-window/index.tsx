@@ -88,6 +88,7 @@ const ChatUiWindow: React.FC = () => {
         messageId: item.messageId,
         replyId: item.replyId,
         audio_url: item?.audioURL,
+        imageUrl: item?.payload?.media?.url,
         isEnd: true,
         optionClicked: true,
         // choices: item?.payload?.buttonChoices,
@@ -138,7 +139,7 @@ const ChatUiWindow: React.FC = () => {
       })),
     [context?.messages]
   );
-  console.log('fghj:', { messages: context?.messages });
+  console.log('fghj:', { messages: context?.messages, normalizeMsgs });
   const msgToRender = useMemo(() => {
     return context?.loading
       ? [
