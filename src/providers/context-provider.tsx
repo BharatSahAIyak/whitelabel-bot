@@ -465,6 +465,7 @@ const ContextProvider: FC<{
               district: localStorage.getItem('city') || '',
               hideMessage: textToShow?.startsWith('Guided:') || false,
               originalText: textToShow?.replace(/^\s+|\s+$/g, ''),
+              userType: sessionStorage.getItem('userType') || '',
             },
           },
           tags: JSON.parse(sessionStorage.getItem('tags') || '[]') || [],
