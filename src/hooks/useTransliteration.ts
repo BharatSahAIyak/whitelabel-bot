@@ -106,6 +106,38 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
   );
 
   useEffect(() => {
+    if (context?.transliterate) {
+      const data = JSON.stringify({
+        inputLanguage: config?.transliterationInputLanguage,
+        outputLanguage: config?.transliterationOutputLanguage,
+        input: value,
+        provider: config?.transliterationProvider || 'bhashini',
+        numSuggestions: config?.transliterationSuggestions || 3,
+      });
+
+      const axiosConfig = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/transliterate`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: data,
+      };
+
+      axios
+        .request(axiosConfig)
+        .then((res) => {
+          setSuggestions([]);
+          setValue(res?.data?.suggestions[0] || value);
+          context?.setTransliterate(false);
+          console.log('api suggestions', res?.data?.suggestions);
+        })
+        .catch(() => toast.error('Transliteration failed'));
+    }
+  }, [context?.transliterate]);
+
+  useEffect(() => {
     let input = document.getElementById('inputBox');
     input?.addEventListener('textInput', handleKeyDown);
 

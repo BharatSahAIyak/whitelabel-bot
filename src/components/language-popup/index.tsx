@@ -38,6 +38,7 @@ const LanguagePopup: React.FC = () => {
   const clickHandler = () => {
     localStorage.setItem('locale', config?.lang);
     context?.setLocale(config?.lang);
+    context?.setTransliterate(true);
     context?.setShowLanguagePopup(false);
     context?.setLanguagePopupFlag(false);
   };

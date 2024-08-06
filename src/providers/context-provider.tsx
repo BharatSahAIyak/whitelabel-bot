@@ -60,6 +60,7 @@ const ContextProvider: FC<{
   const [weather, setWeather] = useState<any>(null);
   const [showLanguagePopup, setShowLanguagePopup] = useState(false);
   const [languagePopupFlag, setLanguagePopupFlag] = useState(true); // To not show the popup again until message is sent
+  const [transliterate, setTransliterate] = useState(false); // To know whether to transliterate or not
 
   useEffect(() => {
     if (
@@ -754,6 +755,8 @@ const ContextProvider: FC<{
       setShowLanguagePopup,
       languagePopupFlag,
       setLanguagePopupFlag,
+      transliterate,
+      setTransliterate,
     }),
     [
       locale,
@@ -793,6 +796,8 @@ const ContextProvider: FC<{
       setShowLanguagePopup,
       languagePopupFlag,
       setLanguagePopupFlag,
+      transliterate,
+      setTransliterate,
     ]
   );
 

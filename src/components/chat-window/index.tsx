@@ -109,7 +109,7 @@ const ChatUiWindow: React.FC = () => {
   };
 
   const handleSend = useCallback(
-    async (type: string, msg: any) => {
+    async (type: string, msg: any, setMsg?: any) => {
       if (msg.length === 0) {
         toast.error(t('error.empty_msg'));
         return;
@@ -124,8 +124,14 @@ const ChatUiWindow: React.FC = () => {
           const res = await detectLanguage(msg?.trim()?.split(' ')?.pop() || '');
           if (res?.language === langPopupConfig?.match) {
             context?.setShowLanguagePopup(true);
-          } else context?.sendMessage(msg.trim(), msg.trim());
-        } else context?.sendMessage(msg.trim(), msg.trim());
+          } else {
+            context?.sendMessage(msg.trim(), msg.trim());
+            setMsg('');
+          }
+        } else {
+          context?.sendMessage(msg.trim(), msg.trim());
+          setMsg('');
+        }
       }
     },
     [context, t]
@@ -182,6 +188,8 @@ const ChatUiWindow: React.FC = () => {
             setShowLanguagePopup: context?.setShowLanguagePopup,
             match: langPopupConfig?.match,
             langCheck: langPopupConfig?.langCheck,
+            transliterate: context?.transliterate,
+            setTransliterate: context?.setTransliterate,
           }}
           //@ts-ignore
           messages={msgToRender}
