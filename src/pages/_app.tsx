@@ -47,6 +47,9 @@ const App = ({ Component, pageProps }: AppProps) => {
       if (router.query.navbar) {
         sessionStorage.setItem('navbar', router.query.navbar as string);
       }
+      if (router.query.userType) {
+        sessionStorage.setItem('userType', router.query.userType as string);
+      }
       sessionStorage.setItem('path', router.asPath);
       if (router.query.auth && router.query.userId) {
         // setCookie('access_token', router.query.auth, { path: '/' });
