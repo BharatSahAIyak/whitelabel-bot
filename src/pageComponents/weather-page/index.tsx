@@ -178,7 +178,7 @@ const WeatherPage: React.FC = () => {
           timeTaken: parseInt(`${fetchTime}`),
           responseType: `Guided: weather`,
           isGuided: 'true',
-          isFlowEnd: 'false',
+          isFlowEnd: cropData ? 'true' : 'false',
         });
         saveTelemetryEvent('0.1', 'E033', 'messageQuery', 'messageReceived', {
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
