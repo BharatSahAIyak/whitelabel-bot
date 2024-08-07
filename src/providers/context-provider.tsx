@@ -1,5 +1,14 @@
 'use client';
-import { FC, ReactElement, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  FC,
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { AppContext } from '../context';
 import _ from 'underscore';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,6 +21,7 @@ import { XMessage } from '@samagra-x/xmessage';
 import { FullPageLoader } from '../components/fullpage-loader';
 import WelcomePage from '../pageComponents/welcome-page';
 import saveTelemetryEvent from '../utils/telemetry';
+import { detectLanguage } from '../utils/detectLang';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
 
@@ -28,6 +38,7 @@ const ContextProvider: FC<{
   const [isMsgReceiving, setIsMsgReceiving] = useState(false);
   const [messages, setMessages] = useState<Array<any>>([]);
   const [newSocket, setNewSocket] = useState<any>();
+  const socketRef = useRef<any>(null);
   const [showWelcomePage, setShowWelcomePage] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(
     sessionStorage.getItem('conversationId') || uuidv4()
@@ -47,6 +58,9 @@ const ContextProvider: FC<{
   const [kaliaClicked, setKaliaClicked] = useState(false);
   const [showInputBox, setShowInputBox] = useState(true);
   const [weather, setWeather] = useState<any>(null);
+  const [showLanguagePopup, setShowLanguagePopup] = useState(false);
+  const [languagePopupFlag, setLanguagePopupFlag] = useState(true); // To not show the popup again until message is sent
+  const [transliterate, setTransliterate] = useState(false); // To know whether to transliterate or not
 
   useEffect(() => {
     if (
@@ -254,12 +268,16 @@ const ContextProvider: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localStorage.getItem('userID')]);
 
+  useEffect(() => {
+    socketRef.current = newSocket;
+  }, [newSocket]);
+
   const updateMsgState = useCallback(
     async ({ msg, media }: { msg: any; media: any }) => {
       console.log('updatemsgstate:', msg);
       if (msg?.messageId?.Id && msg?.messageId?.channelMessageId && msg?.messageId?.replyId) {
         if (sessionStorage.getItem('conversationId') === msg.messageId.channelMessageId) {
-          const word = msg.payload.text;
+          const word = msg?.payload?.text || '';
 
           setMessages((prev: any) => {
             const updatedMessages = [...prev];
@@ -317,7 +335,7 @@ const ContextProvider: FC<{
             return updatedMessages;
           });
           setIsMsgReceiving(false);
-          if (msg.payload.text.endsWith('<end/>')) {
+          if (msg?.payload?.text?.endsWith('<end/>')) {
             setEndTime(Date.now());
           }
           setLoading(false);
@@ -355,6 +373,12 @@ const ContextProvider: FC<{
 
   const onMessageReceived = useCallback(
     async (msg: any) => {
+      const ackMessage = JSON.parse(JSON.stringify(msg));
+      ackMessage.messageType = 'ACKNOWLEDGEMENT';
+      console.log(msg);
+      socketRef?.current?.sendMessage({
+        payload: ackMessage,
+      });
       // if (!msg?.content?.id) msg.content.id = '';
       if (msg.messageType.toUpperCase() === 'IMAGE') {
         if (
@@ -401,14 +425,16 @@ const ContextProvider: FC<{
         }
       }
     },
-    [isOnline, updateMsgState]
+    [isOnline, newSocket, updateMsgState]
   );
 
   console.log('config:', { config });
   //@ts-ignore
   const sendMessage = useCallback(
-    async (textToSend: string, textToShow: string, media: any, isVisibile = true) => {
+    async (textToSend: string, textToShow: string, media: any) => {
       if (!textToShow) textToShow = textToSend;
+
+      setLanguagePopupFlag(true);
 
       // if (!localStorage.getItem('userID')) {
       //   removeCookie('access_token', { path: '/' });
@@ -428,6 +454,7 @@ const ContextProvider: FC<{
           app: process.env.NEXT_PUBLIC_BOT_ID || '',
           payload: {
             text: textToSend?.replace('&', '%26')?.replace(/^\s+|\s+$/g, ''),
+            media,
             metaData: {
               phoneNumber: localStorage.getItem('phoneNumber') || '',
               latitude: localStorage.getItem('latitude'),
@@ -439,6 +466,7 @@ const ContextProvider: FC<{
               district: localStorage.getItem('city') || '',
               hideMessage: textToShow?.startsWith('Guided:') || false,
               originalText: textToShow?.replace(/^\s+|\s+$/g, ''),
+              userType: sessionStorage.getItem('userType') || '',
             },
           },
           tags: JSON.parse(sessionStorage.getItem('tags') || '[]') || [],
@@ -461,33 +489,48 @@ const ContextProvider: FC<{
       } else sessionStorage.setItem('conversationId', conversationId || '');
 
       setStartTime(Date.now());
-      if (isVisibile)
-        if (media) {
-          if (media.mimeType.slice(0, 5) === 'image') {
-          } else if (media.mimeType.slice(0, 5) === 'audio' && isVisibile) {
-          } else if (media.mimeType.slice(0, 5) === 'video') {
-          } else if (media.mimeType.slice(0, 11) === 'application') {
-          } else {
-          }
+      if (media) {
+        if (media.mimeType.slice(0, 5) === 'image') {
+          console.log('media', media);
+          setMessages((prev: any) => [
+            ...prev.map((prevMsg: any) => ({
+              ...prevMsg,
+            })),
+            {
+              text: textToShow?.replace(/^\s+|\s+$/g, ''),
+              // ?.replace(/^Guided:/, ''),
+              position: 'right',
+              payload: { media },
+              time: Date.now(),
+              messageId: messageId,
+              conversationId: conversationId,
+              repliedTimestamp: Date.now(),
+            },
+          ]);
+        } else if (media.mimeType.slice(0, 5) === 'audio') {
+        } else if (media.mimeType.slice(0, 5) === 'video') {
+        } else if (media.mimeType.slice(0, 11) === 'application') {
         } else {
-          if (!textToShow?.startsWith('Guided:')) {
-            setMessages((prev: any) => [
-              ...prev.map((prevMsg: any) => ({
-                ...prevMsg,
-              })),
-              {
-                text: textToShow?.replace(/^\s+|\s+$/g, ''),
-                // ?.replace(/^Guided:/, ''),
-                position: 'right',
-                payload: { textToShow },
-                time: Date.now(),
-                messageId: messageId,
-                conversationId: conversationId,
-                repliedTimestamp: Date.now(),
-              },
-            ]);
-          }
         }
+      } else {
+        if (!textToShow?.startsWith('Guided:')) {
+          setMessages((prev: any) => [
+            ...prev.map((prevMsg: any) => ({
+              ...prevMsg,
+            })),
+            {
+              text: textToShow?.replace(/^\s+|\s+$/g, ''),
+              // ?.replace(/^Guided:/, ''),
+              position: 'right',
+              payload: { textToShow },
+              time: Date.now(),
+              messageId: messageId,
+              conversationId: conversationId,
+              repliedTimestamp: Date.now(),
+            },
+          ]);
+        }
+      }
       try {
         await saveTelemetryEvent('0.1', 'E032', 'messageQuery', 'messageSent', {
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
@@ -504,7 +547,7 @@ const ContextProvider: FC<{
       }
       sets2tMsgId('');
     },
-    [conversationId, newSocket, removeCookie, s2tMsgId]
+    [conversationId, newSocket, removeCookie, s2tMsgId, languagePopupFlag]
   );
 
   const fetchIsDown = useCallback(async () => {
@@ -708,6 +751,12 @@ const ContextProvider: FC<{
       setShowInputBox,
       weather,
       setWeather,
+      showLanguagePopup,
+      setShowLanguagePopup,
+      languagePopupFlag,
+      setLanguagePopupFlag,
+      transliterate,
+      setTransliterate,
     }),
     [
       locale,
@@ -743,6 +792,12 @@ const ContextProvider: FC<{
       setShowInputBox,
       weather,
       setWeather,
+      showLanguagePopup,
+      setShowLanguagePopup,
+      languagePopupFlag,
+      setLanguagePopupFlag,
+      transliterate,
+      setTransliterate,
     ]
   );
 

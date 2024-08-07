@@ -17,22 +17,7 @@ export default async function handler(req, res) {
 const getFlags = (userType) => {
   switch (userType) {
     case 'farmer':
-      return {
-        component: {
-          menu: {
-            showMicButton: false,
-            showNotificationsPage: false,
-          },
-          homePage: {
-            showWeather: false,
-            showWeatherAdvisory: false,
-            showOtherInformation: false,
-          },
-          sidebar: {
-            historyPage: false,
-          },
-        },
-      };
+      return {};
     default:
       return {};
   }

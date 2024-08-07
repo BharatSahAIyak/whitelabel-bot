@@ -82,6 +82,8 @@ const Home: React.FC = () => {
 
   // Keep fetching weather data until it's available
   useEffect(() => {
+    if (!config?.showWeather) return;
+
     let interval: NodeJS.Timeout | null = null;
 
     if (!weather) {
@@ -125,7 +127,7 @@ const Home: React.FC = () => {
     sendMessage(`Guided: ${t('label.' + type)}`);
   };
 
-  if (!weather) {
+  if (!weather && config?.showWeather) {
     return <FullPageLoader loading={!weather} />;
   }
 
@@ -145,9 +147,7 @@ const Home: React.FC = () => {
               ?.find((image: any) => image.type === (isNight ? 'image_night' : 'image_day'))
               ?.url?.replace(/ /g, '%20')
               ?.replace(/\(/g, '%28')
-              ?.replace(/\)/g, '%29')})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
+              ?.replace(/\)/g, '%29')}) 0% 0% / cover no-repeat`,
           }}
         >
           <div className={styles.weatherText}>
@@ -293,43 +293,45 @@ const Home: React.FC = () => {
               </Grid>
             </Grid>
 
-            <div
-              style={{
-                marginTop: '5px',
-                textAlign: 'center',
-                paddingBottom: '10px',
-              }}
-            >
-              <Button
-                data-testid="home-page-crop-advisory-button"
-                variant="contained"
-                endIcon={<ArrowForwardIcon />}
-                sx={{
-                  backgroundColor: '#EDEDF1',
-                  '&:hover': {
-                    backgroundColor: '#EDEDF1',
-                  },
-                  color: theme?.primary?.light,
-                  fontSize: '18px',
-                  width: '308px',
-                  height: '40px',
-                  padding: '18px 24px',
-                  fontWeight: '500',
-                  borderRadius: '6px',
-                  textTransform: 'none',
-                  boxShadow: 'none',
-                }}
-                onClick={() => {
-                  if (config?.showWeatherPage) {
-                    router.push('/weather');
-                  } else {
-                    router.push('/chat?message=Guided:%20weather');
-                  }
+            {config.showWeatherButton && (
+              <div
+                style={{
+                  marginTop: '5px',
+                  textAlign: 'center',
+                  paddingBottom: '10px',
                 }}
               >
-                {t('label.weather_button_text')}
-              </Button>
-            </div>
+                <Button
+                  data-testid="home-page-crop-advisory-button"
+                  variant="contained"
+                  endIcon={<ArrowForwardIcon />}
+                  sx={{
+                    backgroundColor: '#EDEDF1',
+                    '&:hover': {
+                      backgroundColor: '#EDEDF1',
+                    },
+                    color: theme?.primary?.light,
+                    fontSize: '18px',
+                    width: '308px',
+                    height: '40px',
+                    padding: '18px 24px',
+                    fontWeight: '500',
+                    borderRadius: '6px',
+                    textTransform: 'none',
+                    boxShadow: 'none',
+                  }}
+                  onClick={() => {
+                    if (config?.showWeatherPage) {
+                      router.push('/weather');
+                    } else {
+                      router.push('/chat?message=Guided:%20weather');
+                    }
+                  }}
+                >
+                  {t('label.weather_button_text')}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -360,7 +362,7 @@ const Home: React.FC = () => {
             justifyContent="center"
             data-testid="home-page-action-buttons"
           >
-            {config.showWeatherAdvisory && (
+            {config.showPestIdentification && (
               <Grid
                 item
                 xs={5}
@@ -381,15 +383,15 @@ const Home: React.FC = () => {
               >
                 <div
                   onClick={() => {
-                    if (config?.showWeatherPage) {
-                      router.push('/weather');
-                    } else {
-                      sendGuidedMsg('weather');
-                    }
+                    sendGuidedMsg('identification');
                   }}
                 >
-                  <img src={config.weatherAdvisoryImg} alt="Weather" className={styles.gridImage} />
-                  <p className={styles.gridText}>{t('label.weather_advisory')} </p>
+                  <img
+                    src={config.pestIdentificationImg}
+                    alt="pestIdentification"
+                    className={styles.gridImage}
+                  />
+                  <p className={styles.gridText}>{t('label.pest_identification')} </p>
                 </div>
               </Grid>
             )}

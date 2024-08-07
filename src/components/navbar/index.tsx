@@ -70,6 +70,7 @@ const Navbar: React.FC = () => {
     context?.setMessages([]);
     context?.setIsMsgReceiving(false);
     context?.setLoading(false);
+    context?.setLanguagePopupFlag(true);
     router.push('/');
   }, [context, t, router]);
 

@@ -85,6 +85,11 @@ input::-webkit-inner-spin-button {
   border-top: 1px solid lightgray !important;
 }
 
+.Bubble.image img {
+  max-height: none !important;
+  max-width: none !important;
+}
+
 .Popup {
   overflow: auto;
   scrollbar-width: auto;
