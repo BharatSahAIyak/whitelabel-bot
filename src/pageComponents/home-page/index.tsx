@@ -20,6 +20,7 @@ const Home: React.FC = () => {
   const theme = useColorPalates();
   const config = useConfig('component', 'homePage');
   const [weather, setWeather] = useState<any>(context?.weather);
+  const [isFetching, setIsFetching] = useState(false);
   const [isNight, setIsNight] = useState(false);
 
   useEffect(() => {
@@ -35,6 +36,7 @@ const Home: React.FC = () => {
     if (!latitude || !longitude) return;
 
     try {
+      setIsFetching(true);
       const response = await axios.get(process.env.NEXT_PUBLIC_WEATHER_API || '', {
         params: { latitude, longitude },
       });
@@ -74,8 +76,10 @@ const Home: React.FC = () => {
           current: imdWeatherProvider.items?.[0],
         }));
       }
+      setIsFetching(false);
     } catch (error) {
       console.error('Error fetching advisory data:', error);
+      setIsFetching(false);
       throw error;
     }
   };
@@ -86,7 +90,7 @@ const Home: React.FC = () => {
 
     let interval: NodeJS.Timeout | null = null;
 
-    if (!weather) {
+    if (!weather && !isFetching) {
       interval = setInterval(() => {
         fetchWeatherData();
       }, 1000);
