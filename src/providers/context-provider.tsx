@@ -324,7 +324,7 @@ const ContextProvider: FC<{
                   phoneNumber: localStorage.getItem('phoneNumber') || '',
                   conversationId: sessionStorage.getItem('conversationId') || '',
                   messageId: msg.messageId.replyId,
-                  text: '',
+                  text: word,
                   timeTaken: 0,
                   createdAt: Math.floor(new Date().getTime() / 1000),
                 });
