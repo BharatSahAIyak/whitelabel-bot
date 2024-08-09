@@ -1,9 +1,10 @@
 .main {
-  margin: 1vh 0 1vh 1vh;
+  margin: 1vh 0 0 1vh;
+  position: relative;
 }
 
 .chatList {
-  height: 73dvh;
+  height: calc(73dvh - 1em);
   overflow-x: hidden;
   overflow-y: scroll !important;
 }
@@ -67,11 +68,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1500;
-
-  padding: 5px;
-
+  z-index: 1000;
   position: relative;
+  margin-bottom: 1em;
 }
 
 .pagination button {
@@ -80,18 +79,17 @@
   padding: 10px 20px;
 }
 
-@media (max-width: 800px) {
+@media (min-height: 785px) {
   .pagination {
-    position: fixed;
-    bottom: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
+    flex-direction: column;
+    position: static;
   }
 }
 
-@media (min-width: 768px) {
+@media (max-height: 785px) {
   .chatList {
-    height: 71dvh;
+    height: calc(73dvh - 3em);
+    overflow-x: hidden;
+    overflow-y: scroll !important;
   }
 }
