@@ -12,23 +12,26 @@
   width: 4px;
   height: 6px;
 }
+
 .chatList::-webkit-scrollbar-track {
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.1);
 }
+
 .chatList::-webkit-scrollbar-thumb {
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.2);
 }
+
 .chatList::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.4);
 }
+
 .chatList::-webkit-scrollbar-thumb:active {
   background: rgba(0, 0, 0, 0.9);
 }
 
 .title {
-  /* margin-top: 4vh; */
   margin-left: 2vh;
   font-family: 'NotoSans-Bold';
   font-size: 4.265vh;
@@ -50,6 +53,7 @@
   text-align: center;
   color: var(--grey);
 }
+
 .noHistory p {
   margin-top: 4vh;
   margin-left: 2vh;
@@ -64,6 +68,10 @@
   justify-content: center;
   align-items: center;
   z-index: 1500;
+
+  padding: 5px;
+
+  position: relative;
 }
 
 .pagination button {
@@ -71,10 +79,15 @@
   font-size: 1.5em;
   padding: 10px 20px;
 }
-.chatList {
-  height: 71dvh;
-  overflow-x: hidden;
-  overflow-y: scroll !important;
+
+@media (max-width: 800px) {
+  .pagination {
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+  }
 }
 
 @media (min-width: 768px) {
