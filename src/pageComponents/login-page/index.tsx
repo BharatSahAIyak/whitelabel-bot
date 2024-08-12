@@ -102,7 +102,7 @@ const LoginPage: React.FC = () => {
               height: '400px',
               overflow: 'hidden',
               objectFit: 'cover',
-              maxWidth: '400px',
+              maxWidth: '415px',
               margin: '0 auto',
             }}
           >
