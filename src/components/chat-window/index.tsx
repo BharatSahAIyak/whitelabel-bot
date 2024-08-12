@@ -13,9 +13,11 @@ import DowntimePage from '../../pageComponents/downtime-page';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { getMsgType } from '../../utils/getMsgType';
 import { recordUserLocation } from '../../utils/location';
+import { detectLanguage } from '../../utils/detectLang';
 
 const ChatUiWindow: React.FC = () => {
   const config = useConfig('component', 'chatUI');
+  const langPopupConfig = useConfig('component', 'langPopup');
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
     return theme?.primary?.light;
@@ -69,7 +71,7 @@ const ChatUiWindow: React.FC = () => {
       )
       .map((item: any) => ({
         text: (item?.to === 'admin'
-          ? item?.payload?.metaData?.originalText ?? item?.payload?.text
+          ? (item?.payload?.metaData?.originalText ?? item?.payload?.text)
           : item?.payload?.text
         )
           ?.replace(/<end\/>/g, '')
@@ -86,6 +88,7 @@ const ChatUiWindow: React.FC = () => {
         messageId: item.messageId,
         replyId: item.replyId,
         audio_url: item?.audioURL,
+        imageUrl: item?.payload?.media?.url,
         isEnd: true,
         optionClicked: true,
         // choices: item?.payload?.buttonChoices,
@@ -106,14 +109,29 @@ const ChatUiWindow: React.FC = () => {
   };
 
   const handleSend = useCallback(
-    async (type: string, msg: any) => {
+    async (type: string, msg: any, setMsg?: any) => {
       if (msg.length === 0) {
         toast.error(t('error.empty_msg'));
         return;
       }
       console.log('mssgs:', context?.messages);
       if (type === 'text' && msg.trim()) {
-        context?.sendMessage(msg.trim(), msg.trim());
+        if (
+          context?.languagePopupFlag &&
+          context?.locale !== langPopupConfig?.lang &&
+          langPopupConfig?.langCheck
+        ) {
+          const res = await detectLanguage(msg?.trim()?.split(' ')?.pop() || '');
+          if (res?.language === langPopupConfig?.match) {
+            context?.setShowLanguagePopup(true);
+          } else {
+            context?.sendMessage(msg.trim(), msg.trim());
+            setMsg('');
+          }
+        } else {
+          context?.sendMessage(msg.trim(), msg.trim());
+          setMsg('');
+        }
       }
     },
     [context, t]
@@ -127,7 +145,7 @@ const ChatUiWindow: React.FC = () => {
       })),
     [context?.messages]
   );
-  console.log('fghj:', { messages: context?.messages });
+  console.log('fghj:', { messages: context?.messages, normalizeMsgs });
   const msgToRender = useMemo(() => {
     return context?.loading
       ? [
@@ -163,6 +181,15 @@ const ChatUiWindow: React.FC = () => {
             transliterationOutputLanguage: config?.transliterationOutputLanguage,
             transliterationProvider: config?.transliterationProvider,
             transliterationSuggestions: config?.transliterationSuggestions,
+          }}
+          langDetectionConfig={{
+            detectLanguage: detectLanguage,
+            languagePopupFlag: context?.languagePopupFlag,
+            setShowLanguagePopup: context?.setShowLanguagePopup,
+            match: langPopupConfig?.match,
+            langCheck: langPopupConfig?.langCheck,
+            transliterate: context?.transliterate,
+            setTransliterate: context?.setTransliterate,
           }}
           //@ts-ignore
           messages={msgToRender}

@@ -40,12 +40,12 @@ export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
   const t = useLocalization();
 
   useEffect(() => {
-    context?.setLocale(activeLanguage);
-  }, [activeLanguage, context]);
+    setActiveLanguage(context?.locale);
+    localStorage.setItem('locale', context?.locale);
+  }, [context?.locale]);
 
   const handleLanguageClick = (langCode: string) => {
-    setActiveLanguage(langCode);
-    localStorage.setItem('locale', langCode);
+    context?.setLocale(langCode);
     onToggle();
   };
 

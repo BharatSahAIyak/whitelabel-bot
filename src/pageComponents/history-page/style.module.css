@@ -1,9 +1,10 @@
 .main {
-  margin: 1vh 0 1vh 1vh;
+  margin: 1vh 0 0 1vh;
+  position: relative;
 }
 
 .chatList {
-  height: 73dvh;
+  height: calc(73dvh - 1em);
   overflow-x: hidden;
   overflow-y: scroll !important;
 }
@@ -12,23 +13,26 @@
   width: 4px;
   height: 6px;
 }
+
 .chatList::-webkit-scrollbar-track {
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.1);
 }
+
 .chatList::-webkit-scrollbar-thumb {
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.2);
 }
+
 .chatList::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.4);
 }
+
 .chatList::-webkit-scrollbar-thumb:active {
   background: rgba(0, 0, 0, 0.9);
 }
 
 .title {
-  /* margin-top: 4vh; */
   margin-left: 2vh;
   font-family: 'NotoSans-Bold';
   font-size: 4.265vh;
@@ -50,6 +54,7 @@
   text-align: center;
   color: var(--grey);
 }
+
 .noHistory p {
   margin-top: 4vh;
   margin-left: 2vh;
@@ -63,7 +68,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1500;
+  z-index: 1000;
+  position: relative;
+  margin-bottom: 1em;
 }
 
 .pagination button {
@@ -71,14 +78,18 @@
   font-size: 1.5em;
   padding: 10px 20px;
 }
-.chatList {
-  height: 71dvh;
-  overflow-x: hidden;
-  overflow-y: scroll !important;
+
+@media (min-height: 785px) {
+  .pagination {
+    flex-direction: column;
+    position: static;
+  }
 }
 
-@media (min-width: 768px) {
+@media (max-height: 785px) {
   .chatList {
-    height: 71dvh;
+    height: calc(73dvh - 3em);
+    overflow-x: hidden;
+    overflow-y: scroll !important;
   }
 }

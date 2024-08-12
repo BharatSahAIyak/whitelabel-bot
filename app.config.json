@@ -33,14 +33,15 @@
       "showSchemes": false,
       "disableSchemes": false,
       "showOtherInformation": true,
-      "showWeatherAdvisory": false,
+      "showWeatherButton": false,
+      "showPestIdentification": true,
+      "pestIdentificationImg": "",
       "showMic": true,
       "micHeight": "143px",
       "micWidth": "143px",
       "topGap": "75px",
       "showTapToSpeakText": false,
       "otherInformationImg": "",
-      "weatherAdvisoryImg": "",
       "plantProtectionImg": "",
       "schemesImg": "",
       "showFooter": false,
@@ -55,6 +56,11 @@
       "transliterationSuggestions": "",
       "transliterationInputLanguage": "",
       "transliterationOutputLanguage": ""
+    },
+    "langPopup": {
+      "lang": "hi",
+      "match": "hing",
+      "langCheck": false
     },
     "welcomePage": {
       "showWelcomePage": false,
@@ -337,7 +343,10 @@
       "label.notification1_label": "Learn About Our Chatbot",
       "label.notification1_description": "Read the user manual for detailed information.",
       "label.notification2_label": "Need More Help?",
-      "label.notification2_description": "Call the call center for additional information."
+      "label.notification2_description": "Call the call center for additional information.",
+      "label.pest_identification": "Pest Identification",
+      "label.identification": "Identification",
+      "label.choose_your_crop": "Choose your crop"
     }
   }
 }

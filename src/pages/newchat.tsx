@@ -4,8 +4,9 @@ import { CookiesProvider } from 'react-cookie';
 import { useLocalization } from '../hooks/useLocalization';
 import ChatPage from '../pageComponents/new-chat-page';
 import { useConfig } from '../hooks/useConfig';
+import LanguagePopup from '../components/language-popup';
 
-const Chat: NextPage = () => {
+const NewChat: NextPage = () => {
   const t = useLocalization();
   const config = useConfig('component', 'botDetails');
   const homeConfig = useConfig('component', 'homePage');
@@ -28,10 +29,11 @@ const Chat: NextPage = () => {
             top: homeConfig?.topGap || '75px',
           }}
         >
+          <LanguagePopup />
           <ChatPage />
         </div>
       </CookiesProvider>
     </>
   );
 };
-export default Chat;
+export default NewChat;
