@@ -331,7 +331,7 @@ export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
                   width: '100%',
                 }}
               >
-                <Image
+                <img
                   src={config?.footerLogo}
                   alt="footer-logo"
                   width={config?.footerLogoWidth || 180}
