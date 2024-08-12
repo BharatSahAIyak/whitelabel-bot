@@ -415,7 +415,15 @@ const Home: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <div onClick={() => sendGuidedMsg('scheme')}>
+                <div
+                  onClick={() => {
+                    if (config.disableSchemes) {
+                      toast(t('message.coming_soon'));
+                    } else {
+                      sendGuidedMsg('scheme');
+                    }
+                  }}
+                >
                   <img src={config.schemesImg} alt="Schemes" className={styles.gridImage} />
                   <p className={styles.gridText}>{t('label.scheme')}</p>
                 </div>
@@ -441,7 +449,15 @@ const Home: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <div onClick={() => sendGuidedMsg('pest')}>
+                <div
+                  onClick={() => {
+                    if (config.disablePlantProtection) {
+                      toast(t('message.coming_soon'));
+                    } else {
+                      sendGuidedMsg('pest');
+                    }
+                  }}
+                >
                   <img src={config.plantProtectionImg} alt="Pest" className={styles.gridImage} />
                   <p className={styles.gridText}>{t('label.plant_protection')}</p>
                 </div>
