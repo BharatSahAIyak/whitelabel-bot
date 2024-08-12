@@ -20,8 +20,6 @@ import router from 'next/router';
 import { useCookies } from 'react-cookie';
 import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
-import BhashiniImg from '../../assets/images/bhashinilogo.png';
-import darshanLogo from '../../assets/images/darshan-logo.png';
 import styles from './style.module.css';
 import Image from 'next/image';
 import { Button } from '@mui/material';
@@ -308,7 +306,7 @@ export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
               )}
             </List>
           )}
-          {(config?.showBhashiniLogo || config?.showDarshanLogo) && (
+          {config?.showFooterLogo && (
             <div
               className={styles.user}
               style={{
@@ -333,12 +331,12 @@ export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
                   width: '100%',
                 }}
               >
-                {config?.showBhashiniLogo && (
-                  <Image src={BhashiniImg} alt="" width={180} height={45} />
-                )}
-                {config?.showDarshanLogo && (
-                  <Image src={darshanLogo} alt="" width={55} height={45} />
-                )}
+                <Image
+                  src={config?.footerLogo}
+                  alt="footer-logo"
+                  width={config?.footerLogoWidth || 180}
+                  height={config?.footerLogoHeight || 45}
+                />
               </div>
             </div>
           )}
