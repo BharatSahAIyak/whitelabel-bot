@@ -43,24 +43,25 @@ const fetchOverrideConfig = async () => {
   }
   return {};
 };
-// const fetchFeatureFlags = async () => {
-//   try {
-//     let config = {
-//       method: 'get',
-//       maxBodyLength: Infinity,
-//       url: `/api/flags?userType=${router.query.userType}`,
-//       headers: {
-//         accept: 'application/json',
-//       },
-//     };
-//     const flags = await axios.request(config);
-//     console.log('featureFlags:', flags?.data?.flags, router.query.userType);
-//     return flags?.data?.flags;
-//   } catch (err) {
-//     console.error(err);
-//   }
-//   return {};
-// };
+
+const fetchFeatureFlags = async () => {
+  try {
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `/api/flags?userType=${router.query.userType}`,
+      headers: {
+        accept: 'application/json',
+      },
+    };
+    const flags = await axios.request(config);
+    console.log('featureFlags:', flags?.data?.flags, router.query.userType);
+    return flags?.data?.flags;
+  } catch (err) {
+    console.error(err);
+  }
+  return {};
+};
 
 const mergeConfiguration = async () => {
   let overrideConfig: any = {};
@@ -69,7 +70,8 @@ const mergeConfiguration = async () => {
     // const response = await axios.get('URL_TO_FETCH_OVERRIDE_CONFIG');
     overrideConfig = await fetchOverrideConfig();
     console.log('overrideConfig:', overrideConfig);
-    // featureFlags = await fetchFeatureFlags();
+
+    featureFlags = await fetchFeatureFlags();
 
     //overrideConfig = response.data;
   } catch (error) {
