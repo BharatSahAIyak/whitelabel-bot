@@ -29,7 +29,9 @@
       "showWeather": false,
       "showWeatherPage": false,
       "showPlantProtection": false,
+      "disablePlantProtection": false,
       "showSchemes": false,
+      "disableSchemes": false,
       "showOtherInformation": true,
       "showWeatherButton": false,
       "showPestIdentification": true,
@@ -122,8 +124,10 @@
       "showProfileIcon": true,
       "showPhoneNumber": true,
       "showLogoutButton": true,
-      "showBhashiniLogo": false,
-      "showDarshanLogo": false
+      "showFooterLogo": false,
+      "footerLogo": "",
+      "footerLogoWidth": 180,
+      "footerLogoHeight": 45
     },
     "otpPage": {
       "otpLength": 4,
