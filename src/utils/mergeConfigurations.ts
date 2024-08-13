@@ -43,6 +43,7 @@ const fetchOverrideConfig = async () => {
   }
   return {};
 };
+
 const fetchFeatureFlags = async () => {
   try {
     let config = {
@@ -69,6 +70,7 @@ const mergeConfiguration = async () => {
     // const response = await axios.get('URL_TO_FETCH_OVERRIDE_CONFIG');
     overrideConfig = await fetchOverrideConfig();
     console.log('overrideConfig:', overrideConfig);
+
     featureFlags = await fetchFeatureFlags();
 
     //overrideConfig = response.data;
