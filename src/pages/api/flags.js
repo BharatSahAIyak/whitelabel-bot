@@ -23,6 +23,20 @@ const getFlags = (userType) => {
             disablePlantProtection: true,
           },
         },
+        translation: {
+          en: {
+            'label.faq_question1': 'Seed dealers near me',
+            'label.faq_question2': 'Fertilizer dealer near me',
+            'label.faq_question3': 'Machinery dealer near me',
+            'label.other_information': 'Dealer information',
+          },
+          hi: {
+            'label.faq_question1': 'मेरे पास बीज विक्रेता कहा मिलेंगे',
+            'label.faq_question2': 'खेत तलाई योजना के आवेदन की स्थिति',
+            'label.faq_question3': 'बाजरे की उन्नत बीज प्रजातियाँ कौनसी हैं',
+            'label.other_information': 'विक्रेताओं की जानकारी',
+          },
+        },
       };
     default:
       return {};

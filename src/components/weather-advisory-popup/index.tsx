@@ -6,13 +6,12 @@ import Fade from '@mui/material/Fade';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import { Button, List, Typography } from '@mui/material';
+import { Button, CircularProgress, List, Typography } from '@mui/material';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useLocalization } from '../../hooks';
 import axios from 'axios';
 import { useConfig } from '../../hooks/useConfig';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
 
 const WeatherAdvisoryPopup = (props: any) => {
   const t = useLocalization();
@@ -20,6 +19,7 @@ const WeatherAdvisoryPopup = (props: any) => {
   const [open, setOpen] = React.useState(true);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [btnDisabled, setBtnDisabled] = useState(false);
 
   const playPauseAudio = async () => {
     if (audioElement) {
@@ -31,6 +31,7 @@ const WeatherAdvisoryPopup = (props: any) => {
         setIsPlaying(true);
       }
     } else {
+      setBtnDisabled(true);
       const url = await fetchAudio(props?.advisory?.descriptor?.long_desc);
       if (url) {
         const audio = new Audio(url);
@@ -51,21 +52,21 @@ const WeatherAdvisoryPopup = (props: any) => {
           .catch((error) => {
             setAudioElement(null);
             setIsPlaying(false);
-            toast.error(t('message.no_link'));
             console.error('Error playing audio:', error);
           });
       }
+      setBtnDisabled(false);
     }
   };
 
   const handleClose = () => {
+    if (btnDisabled) return;
     setOpen(false);
     props?.setShowWeatherAdvisoryPopup(false);
     audioElement && audioElement.pause();
   };
 
   const fetchAudio = async (text: string) => {
-    const toastId = toast.loading(`${t('message.download_audio')}`);
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/text-to-speech`,
@@ -82,11 +83,8 @@ const WeatherAdvisoryPopup = (props: any) => {
           },
         }
       );
-      toast.dismiss(toastId);
       return response?.data?.url;
     } catch (error: any) {
-      toast.dismiss(toastId);
-      toast.error(t('message.no_link'));
       console.error('Error fetching audio:', error);
       return null;
     }
@@ -97,6 +95,7 @@ const WeatherAdvisoryPopup = (props: any) => {
   return (
     <div>
       <Modal
+        data-testid="weather-advisory-modal"
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
@@ -114,6 +113,7 @@ const WeatherAdvisoryPopup = (props: any) => {
           <div className={styles.container}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <p
+                data-testid="weather-advisory-modal-title"
                 style={{
                   display: 'inline-block',
                   color: '#023035',
@@ -123,7 +123,10 @@ const WeatherAdvisoryPopup = (props: any) => {
               >
                 {t('label.crop_advisory')} - {props?.advisory?.descriptor?.name}
               </p>
-              <CloseRoundedIcon onClick={handleClose} />
+              <CloseRoundedIcon
+                onClick={handleClose}
+                data-testid="weather-advisory-modal-close-icon"
+              />
             </div>
             <div
               style={{
@@ -151,6 +154,7 @@ const WeatherAdvisoryPopup = (props: any) => {
                   }}
                 >
                   <div
+                    data-testid="weather-advisory-modal-advisory-text"
                     dangerouslySetInnerHTML={{
                       __html: `&#x2022; ${props?.advisory?.descriptor?.long_desc?.replaceAll('\n', '<br/><br/>&#x2022; ')}`,
                     }}
@@ -192,6 +196,7 @@ const WeatherAdvisoryPopup = (props: any) => {
                 }}
               >
                 <span
+                  data-testid="weather-advisory-modal-verified-text"
                   className="rounded-circle"
                   style={{
                     width: '20px',
@@ -204,17 +209,24 @@ const WeatherAdvisoryPopup = (props: any) => {
                 {t('label.verified_advisory')}
               </p>
               <Button
+                disabled={btnDisabled}
+                data-testid="weather-advisory-modal-button"
                 onClick={playPauseAudio}
                 fullWidth
                 variant="contained"
                 style={{
                   marginTop: '30px',
-                  backgroundColor: `${theme.primary.main}`,
                   color: theme.primary.contrastText,
                   padding: '8px 0',
                   textTransform: 'none',
                 }}
+                sx={{
+                  ':hover': {
+                    backgroundColor: theme.primary.main,
+                  },
+                }}
                 startIcon={<VolumeUpIcon />}
+                endIcon={btnDisabled && <CircularProgress size={16} />}
               >
                 {t('label.play_advisory')}
               </Button>
