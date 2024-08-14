@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styles from './index.module.css';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import { Chip, Grid } from '@mui/material';
@@ -10,9 +10,11 @@ import WeatherAdvisoryPopup from '../../components/weather-advisory-popup';
 import saveTelemetryEvent from '../../utils/telemetry';
 import { v4 as uuidv4 } from 'uuid';
 import Menu from '../../components/menu';
+import { AppContext } from '../../context';
 
 const WeatherPage: React.FC = () => {
   const t = useLocalization();
+  const context = useContext(AppContext);
   const config = useConfig('component', 'weatherPage');
   const [weather, setWeather] = useState<any>(null);
   const [crop, setCrop] = useState<any>(null);
@@ -212,6 +214,12 @@ const WeatherPage: React.FC = () => {
     return days[futureDayIndex];
   }
 
+  const getLocationName = (locations: Array<string>) => {
+    if (context?.locale === 'en') return locations?.[0];
+    if (context?.locale === 'hi') return locations?.[1];
+    if (context?.locale === 'or') return locations?.[2];
+  };
+
   if (!weather || !crop) {
     return <FullPageLoader loading={!weather || !crop} />;
   }
@@ -264,7 +272,7 @@ const WeatherPage: React.FC = () => {
               height: '100%',
             }}
           >
-            {localStorage.getItem('city') && (
+            {weather?.current?.locations_ids && (
               <div
                 style={{
                   display: 'flex',
@@ -274,7 +282,7 @@ const WeatherPage: React.FC = () => {
               >
                 <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
                 <span style={{ fontSize: '1.5rem' }} data-testid="weather-page-location">
-                  {localStorage.getItem('city')}
+                  {getLocationName(weather?.current?.locations_ids)}
                 </span>
               </div>
             )}
