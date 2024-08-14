@@ -135,6 +135,12 @@ const Home: React.FC = () => {
     return <FullPageLoader loading={!weather} />;
   }
 
+  const getLocationName = (locations: Array<string>) => {
+    if (context?.locale === 'en') return locations?.[0];
+    if (context?.locale === 'hi') return locations?.[1];
+    if (context?.locale === 'or') return locations?.[2];
+  };
+
   return (
     <div className={styles.main}>
       <meta
@@ -176,7 +182,7 @@ const Home: React.FC = () => {
                 height: '100%',
               }}
             >
-              {localStorage.getItem('city') && (
+              {weather?.current?.locations_ids && (
                 <div
                   style={{
                     display: 'flex',
@@ -186,7 +192,7 @@ const Home: React.FC = () => {
                 >
                   <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
                   <span style={{ fontSize: '1.5rem' }} data-testid="weather-page-location">
-                    {localStorage.getItem('city')}
+                    {getLocationName(weather?.current?.locations_ids)}
                   </span>
                 </div>
               )}
