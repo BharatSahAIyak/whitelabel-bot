@@ -21,6 +21,8 @@ const getFlags = (userType) => {
         component: {
           homePage: {
             disablePlantProtection: true,
+            otherInformationImg:
+              'http://cdn-api.prod.bhasai.samagra.io:443/deployer/salesma.svg1723629548517',
           },
         },
         translation: {
