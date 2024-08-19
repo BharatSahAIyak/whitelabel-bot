@@ -15,6 +15,7 @@ import { FullPageLoader } from '../components/fullpage-loader';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import OnBoardingPage from '../pageComponents/onboarding-page';
+import { requestForToken, initializeFirebase } from '../config/firebase';
 
 const NavBar = dynamic(() => import('../components/navbar'), {
   ssr: false,
@@ -30,10 +31,29 @@ const App = ({ Component, pageProps }: AppProps) => {
   const [cookie, setCookie, removeCookie] = useCookies();
   const [user, setUser] = useState<any>(null);
 
+  const [token, setToken] = useState('');
+
+  const getToken = async () => {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      const token = await requestForToken();
+      if (token) {
+        console.log('your token is here ankit', token);
+        setToken(token);
+      } else {
+        console.log('token is not found ankit', token);
+      }
+    } else {
+      console.log('permission not granted');
+    }
+  };
+
   useEffect(() => {
     if (!sessionStorage.getItem('sessionId')) {
       sessionStorage.setItem('sessionId', uuidv4());
     }
+    initializeFirebase();
+    getToken();
   }, []);
 
   const handleLoginRedirect = useCallback(() => {
@@ -138,7 +158,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   if (process.env.NODE_ENV === 'production') {
     globalThis.console.log = () => {};
   }
-
+  // return <p>{token}</p>;
   if (typeof window === 'undefined') return <FullPageLoader loading />;
   if (isAuthenticated && user && !user?.data?.profile) {
     return (
