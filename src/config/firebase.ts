@@ -9,8 +9,8 @@ const firebaseConfig = {
   projectId: 'test-account-827a9',
   storageBucket: 'test-account-827a9.appspot.com',
   messagingSenderId: '960328825304',
-  appId: '1:960328825304:web:b8d9bb807f0942b6d39aad',
-  measurementId: 'G-24400FF6J6',
+  appId: '1:960328825304:web:3614ec0389ddd04ed39aad',
+  measurementId: 'G-R4PVYNTJFK',
 };
 
 let app;

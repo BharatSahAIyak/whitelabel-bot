@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import OnBoardingPage from '../pageComponents/onboarding-page';
 import { requestForToken, initializeFirebase } from '../config/firebase';
+import NotificationModal from '../components/notification-modal';
 
 const NavBar = dynamic(() => import('../components/navbar'), {
   ssr: false,
@@ -179,6 +180,8 @@ const App = ({ Component, pageProps }: AppProps) => {
           <FeaturePopup />
           {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}
           {sessionStorage.getItem('navbar') !== 'hidden' && <NavBar />}
+          <NotificationModal />
+
           <SafeHydrate>
             <Component {...pageProps} />
           </SafeHydrate>

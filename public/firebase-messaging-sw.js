@@ -9,8 +9,8 @@ firebase.initializeApp({
   projectId: 'test-account-827a9',
   storageBucket: 'test-account-827a9.appspot.com',
   messagingSenderId: '960328825304',
-  appId: '1:960328825304:web:b8d9bb807f0942b6d39aad',
-  measurementId: 'G-24400FF6J6',
+  appId: '1:960328825304:web:3614ec0389ddd04ed39aad',
+  measurementId: 'G-R4PVYNTJFK',
 });
 
 const messaging = firebase.messaging();
@@ -37,23 +37,81 @@ self.addEventListener('notificationclick', function (event) {
   console.log('[firebase-messaging-sw.js] Notification click received.');
 
   event.notification.close();
+  const notificationData = {
+    title: event.notification.title,
+    body: event.notification.body,
+    image: event.notification.image,
+    url: event.notification.data.url,
+    timestamp: new Date().getTime(),
+  };
+  console.log('[firebase-messaging-sw.js] Notification click received 1 .', notificationData);
 
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {
-      const url = event.notification.data.url;
+    (async () => {
+      try {
+        // Store notification data in IndexedDB
+        const dbPromise = self.indexedDB.open('notificationDB', 1);
 
-      if (!url) return;
+        dbPromise.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          db.createObjectStore('notifications', { keyPath: 'timestamp' });
+        };
 
-      for (const client of clientList) {
-        if (client.url === url && 'focus' in client) {
-          return client.focus();
+        dbPromise.onsuccess = async (event) => {
+          const db = event.target.result;
+          const transaction = db.transaction('notifications', 'readwrite');
+          const store = transaction.objectStore('notifications');
+          await store.put(notificationData);
+          console.log('Notification data stored:', notificationData);
+        };
+
+        const clientList = await clients.matchAll({ type: 'window', includeUncontrolled: true });
+        if (notificationData.url) {
+          for (const client of clientList) {
+            if (client.url === notificationData.url && 'focus' in client) {
+              return client.focus();
+            }
+          }
+          if (clients.openWindow) {
+            return clients.openWindow(notificationData.url);
+          }
         }
+      } catch (error) {
+        console.error('Error handling notification click:', error);
       }
-
-      if (clients.openWindow) {
-        console.log('Opening new window for URL:', url);
-        return clients.openWindow(url);
-      }
-    })
+    })()
   );
+
+  // event.waitUntil(
+  //   Promise.all([
+
+  //     // Open or focus the window
+  //     console.log('[firebase-messaging-sw.js] Notification click received 2.'),
+
+  //     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {
+  //       const url = event.notification.data.url;
+  //       console.log('[firebase-messaging-sw.js] Notification click received 3.', url);
+
+  //       if (!url) return;
+  //       console.log('[firebase-messaging-sw.js] Notification click received 4.', url);
+
+  //       for (const client of clientList) {
+  //         console.log(
+  //           '[firebase-messaging-sw.js] Notification click received 5.',
+  //           client,
+  //           clientList
+  //         );
+
+  //         if (client.url === url && 'focus' in client) {
+  //           return client.focus();
+  //         }
+  //       }
+
+  //       if (clients.openWindow) {
+  //         console.log('Opening new window for URL:', url);
+  //         return clients.openWindow(url);
+  //       }
+  //     }),
+  //   ])
+  // );
 });
