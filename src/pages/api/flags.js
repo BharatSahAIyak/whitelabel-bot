@@ -30,7 +30,7 @@ const getFlags = (userType) => {
             'label.faq_question1': 'Seed dealers near me',
             'label.faq_question2': 'Fertilizer dealer near me',
             'label.faq_question3': 'Machinery dealer near me',
-            'label.other_information': 'Dealer information',
+            'label.other_information': 'Dealer Information',
           },
           hi: {
             'label.faq_question1': 'मेरे पास बीज विक्रेता कहा मिलेंगे',
