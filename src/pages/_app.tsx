@@ -15,6 +15,8 @@ import { FullPageLoader } from '../components/fullpage-loader';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import OnBoardingPage from '../pageComponents/onboarding-page';
+import { requestForToken, initializeFirebase } from '../config/firebase';
+import NotificationModal from '../components/notification-modal';
 
 const NavBar = dynamic(() => import('../components/navbar'), {
   ssr: false,
@@ -30,10 +32,49 @@ const App = ({ Component, pageProps }: AppProps) => {
   const [cookie, setCookie, removeCookie] = useCookies();
   const [user, setUser] = useState<any>(null);
 
+  const [token, setToken] = useState('');
+
+  const getToken = async () => {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      const token = await requestForToken();
+      if (token) {
+        console.log('your token is here', token);
+        setToken(token);
+      }
+    } else {
+      console.log('permission not granted');
+    }
+  };
+
   useEffect(() => {
     if (!sessionStorage.getItem('sessionId')) {
       sessionStorage.setItem('sessionId', uuidv4());
     }
+    const firebaseConfig = encodeURIComponent(
+      JSON.stringify({
+        apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+        appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+        measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+      })
+    );
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register(`/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}`)
+        .then((registration) => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch((err) => {
+          console.error('Service Worker registration failed:', err);
+        });
+    }
+    initializeFirebase();
+    getToken();
   }, []);
 
   const handleLoginRedirect = useCallback(() => {
@@ -159,6 +200,8 @@ const App = ({ Component, pageProps }: AppProps) => {
           <FeaturePopup />
           {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}
           {sessionStorage.getItem('navbar') !== 'hidden' && <NavBar />}
+          <NotificationModal />
+
           <SafeHydrate>
             <Component {...pageProps} />
           </SafeHydrate>
