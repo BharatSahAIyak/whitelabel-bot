@@ -34,6 +34,7 @@ import { v4 as uuidv4 } from 'uuid';
 import router from 'next/router';
 import TransliterationInput from '../transliteration-input';
 import { compressImage } from '../../utils/imageCompression';
+import { FullPageLoader } from '../fullpage-loader';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
@@ -46,6 +47,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const [popupActive, setPopupActive] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredChoices, setFilteredChoices] = useState([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const t = useLocalization();
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -381,6 +383,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   const uploadToCdn = async (file: any) => {
     try {
+      setUploadingImage(true);
       const compressedFile = await compressImage(file);
       const data = new FormData();
       if (compressedFile) data.append('file', compressedFile);
@@ -390,12 +393,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         data: data,
       };
       const res = await axios.request(config);
+      setUploadingImage(false);
       if (res?.data?.file?.url) return convertToHttps(res?.data?.file?.url);
       else {
         toast.error('Could not upload image!');
       }
     } catch (err: any) {
       console.error(err);
+      setUploadingImage(false);
       toast.error(err?.message);
     }
   };
@@ -412,6 +417,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
             fontFamily: 'NotoSans-Medium',
           }}
         >
+          <FullPageLoader
+            loading={uploadingImage}
+            background="rgba(0, 0, 0, 0.2)"
+            color={theme.primary.main}
+          />
           <Bubble
             id={content?.data?.messageId || uuidv4()}
             type="text"
