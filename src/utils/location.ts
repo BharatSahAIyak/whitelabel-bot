@@ -60,8 +60,6 @@ export async function recordUserLocation() {
         },
         {
           enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0,
         }
       );
     }

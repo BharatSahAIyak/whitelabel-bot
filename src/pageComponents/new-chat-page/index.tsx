@@ -175,9 +175,11 @@ const ChatPage: NextPage = () => {
           </Box>
         </Modal>
 
-        <div className="faq-section">
-          <FAQ onQuestionClick={handleQuestionClick} />
-        </div>
+        {config?.showFAQ && (
+          <div className="faq-section">
+            <FAQ onQuestionClick={handleQuestionClick} />
+          </div>
+        )}
 
         <form onSubmit={(event) => event?.preventDefault()}>
           <div className={`${`${styles.inputBox} ${styles.inputBoxOpen}`}`}>
