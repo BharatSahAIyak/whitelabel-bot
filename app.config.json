@@ -45,7 +45,8 @@
       "plantProtectionImg": "",
       "schemesImg": "",
       "showFooter": false,
-      "askYourQuestionBgColor": "#DFF6D1"
+      "askYourQuestionBgColor": "#DFF6D1",
+      "showFAQ": true
     },
     "chatUI": {
       "allowFeedback": true,
