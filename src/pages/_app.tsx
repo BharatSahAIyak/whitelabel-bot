@@ -39,10 +39,8 @@ const App = ({ Component, pageProps }: AppProps) => {
     if (permission === 'granted') {
       const token = await requestForToken();
       if (token) {
-        console.log('your token is here ankit', token);
+        console.log('your token is here', token);
         setToken(token);
-      } else {
-        console.log('token is not found ankit', token);
       }
     } else {
       console.log('permission not granted');
@@ -52,6 +50,28 @@ const App = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     if (!sessionStorage.getItem('sessionId')) {
       sessionStorage.setItem('sessionId', uuidv4());
+    }
+    const firebaseConfig = encodeURIComponent(
+      JSON.stringify({
+        apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+        appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+        measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+      })
+    );
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register(`/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}`)
+        .then((registration) => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch((err) => {
+          console.error('Service Worker registration failed:', err);
+        });
     }
     initializeFirebase();
     getToken();

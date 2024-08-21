@@ -4,13 +4,13 @@ import { initializeApp, getApps } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBfIRl85DzIo2ESE9nePkQh49VmdbnQd7k',
-  authDomain: 'test-account-827a9.firebaseapp.com',
-  projectId: 'test-account-827a9',
-  storageBucket: 'test-account-827a9.appspot.com',
-  messagingSenderId: '960328825304',
-  appId: '1:960328825304:web:3614ec0389ddd04ed39aad',
-  measurementId: 'G-R4PVYNTJFK',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 let app;
