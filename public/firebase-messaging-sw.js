@@ -15,6 +15,11 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   console.log('Received background message:', payload);
+  const notification = payload.data;
+  if (!notification) {
+    console.warn('[firebase-messaging-sw.js] Unknown notification on message ', payload);
+    return;
+  }
   // Customize notification here
   const notificationTitle = payload.notification.title;
   const link = payload.fcmOptions?.link || payload.data?.url;
