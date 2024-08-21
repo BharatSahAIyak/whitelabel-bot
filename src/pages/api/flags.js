@@ -34,8 +34,8 @@ const getFlags = (userType) => {
           },
           hi: {
             'label.faq_question1': 'मेरे पास बीज विक्रेता कहा मिलेंगे',
-            'label.faq_question2': 'खेत तलाई योजना के आवेदन की स्थिति',
-            'label.faq_question3': 'बाजरे की उन्नत बीज प्रजातियाँ कौनसी हैं',
+            'label.faq_question2': 'मेरे पास उर्वरक विक्रेता कहाँ मिलेंगे',
+            'label.faq_question3': 'मेरे पास मशीनरी विक्रेता कहाँ मिलेंगे',
             'label.other_information': 'विक्रेताओं की जानकारी',
           },
         },
