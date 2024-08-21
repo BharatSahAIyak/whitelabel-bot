@@ -14,28 +14,23 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  console.log('Received background message:', payload);
-  const notification = payload.data;
-  if (!notification) {
-    console.warn('[firebase-messaging-sw.js] Unknown notification on message ', payload);
-    return;
-  }
+  console.log('Received background message:', JSON.stringify(payload));
+  const { title, body, image } = payload.notification;
+
   // Customize notification here
-  const notificationTitle = payload.notification.title;
-  const link = payload.fcmOptions?.link || payload.data?.url;
-  const buttonText = payload.data?.buttonText;
-  const sideLogo = payload.data?.sideLogo;
-  const buttonUrl = payload.data?.buttonUrl;
+  const sideLogo = payload.data.sideLogo;
 
   const notificationOptions = {
-    body: payload.notification.body,
+    body,
     icon: sideLogo,
-    image: payload.notification?.image,
-    data: { url: link, buttonText: buttonText, buttonUrl: buttonUrl },
+    image: image,
+    tag: 'notification',
+    renotify: true,
+    data: { ...payload.data },
   };
-  console.log('Notification Content:', notificationOptions);
+  console.log('Notification Content:', JSON.stringify(notificationOptions));
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(title, notificationOptions);
 });
 
 // Handle notification clicks

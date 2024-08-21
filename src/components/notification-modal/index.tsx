@@ -4,6 +4,7 @@ import { openDB } from 'idb';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 import { useRouter } from 'next/router';
+import { useColorPalates } from '../../providers/theme-provider/hooks';
 
 const style = {
   position: 'absolute',
@@ -20,6 +21,7 @@ const NotificationModal = () => {
   const [open, setOpen] = useState(false);
   const [notificationData, setNotificationData] = useState<any>(null);
   const router = useRouter();
+  const theme = useColorPalates();
 
   useEffect(() => {
     const checkNotification = async () => {
@@ -136,11 +138,11 @@ const NotificationModal = () => {
           <Button
             fullWidth
             variant="outlined"
+            color="primary"
             style={{
-              backgroundColor: '#f5952f',
               color: '#fff',
               marginTop: '20px',
-              // height: '40px',
+              background: theme.primary.main,
               border: '1px solid var(--Mid-Gray-50, #F6F7F9)',
               fontSize: '14px',
               fontWeight: 600,
