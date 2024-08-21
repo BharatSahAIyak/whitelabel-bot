@@ -179,7 +179,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   if (process.env.NODE_ENV === 'production') {
     globalThis.console.log = () => {};
   }
-  // return <p>{token}</p>;
+
   if (typeof window === 'undefined') return <FullPageLoader loading />;
   if (isAuthenticated && user && !user?.data?.profile) {
     return (
