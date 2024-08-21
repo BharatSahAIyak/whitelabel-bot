@@ -20,12 +20,15 @@ messaging.onBackgroundMessage((payload) => {
   // Customize notification here
   const notificationTitle = payload.notification.title;
   const link = payload.fcmOptions?.link || payload.data?.url;
+  const buttonText = payload.data?.buttonText;
+  const sideLogo = payload.data?.sideLogo;
+  const buttonUrl = payload.data?.buttonUrl;
 
   const notificationOptions = {
     body: payload.notification.body,
-    icon: './vercel.svg',
+    icon: sideLogo,
     image: payload.notification?.image,
-    data: { url: link },
+    data: { url: link, buttonText: buttonText, buttonUrl: buttonUrl },
   };
   console.log('Notification Content:', notificationOptions);
 
@@ -41,7 +44,9 @@ self.addEventListener('notificationclick', function (event) {
     title: event.notification.title,
     body: event.notification.body,
     image: event.notification.image,
-    url: event.notification.data.url,
+    url: event.notification.data?.url,
+    buttonText: event.notification.data?.buttonText,
+    buttonUrl: event.notification.data?.buttonUrl,
     timestamp: new Date().getTime(),
   };
   console.log('[firebase-messaging-sw.js] Notification click received 1 .', notificationData);
@@ -81,37 +86,4 @@ self.addEventListener('notificationclick', function (event) {
       }
     })()
   );
-
-  // event.waitUntil(
-  //   Promise.all([
-
-  //     // Open or focus the window
-  //     console.log('[firebase-messaging-sw.js] Notification click received 2.'),
-
-  //     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {
-  //       const url = event.notification.data.url;
-  //       console.log('[firebase-messaging-sw.js] Notification click received 3.', url);
-
-  //       if (!url) return;
-  //       console.log('[firebase-messaging-sw.js] Notification click received 4.', url);
-
-  //       for (const client of clientList) {
-  //         console.log(
-  //           '[firebase-messaging-sw.js] Notification click received 5.',
-  //           client,
-  //           clientList
-  //         );
-
-  //         if (client.url === url && 'focus' in client) {
-  //           return client.focus();
-  //         }
-  //       }
-
-  //       if (clients.openWindow) {
-  //         console.log('Opening new window for URL:', url);
-  //         return clients.openWindow(url);
-  //       }
-  //     }),
-  //   ])
-  // );
 });
