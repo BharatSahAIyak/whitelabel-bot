@@ -784,11 +784,12 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                         textAlign: 'center',
                       }}
                       onClick={() => {
-                        setPopupActive(false);
                         if (item?.showTextInput) {
+                          setPopupActive(false);
                           context?.setShowInputBox(true);
                           context?.sendMessage(item?.key, item?.text);
                         } else if (item?.action === 'home') {
+                          setPopupActive(false);
                           const newConversationId = uuidv4();
                           sessionStorage.setItem('conversationId', newConversationId);
                           sessionStorage.removeItem('tags');
@@ -807,6 +808,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           input.onchange = async (event: any) => {
                             const file = event?.target?.files?.[0];
                             if (file) {
+                              setPopupActive(false);
                               console.log(file);
                               const url = await uploadToCdn(file);
                               context?.sendMessage(null, null, {
@@ -826,6 +828,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           input.onchange = async (event: any) => {
                             const file = event?.target?.files?.[0];
                             if (file) {
+                              setPopupActive(false);
                               console.log(file);
                               const url = await uploadToCdn(file);
                               context?.sendMessage(null, null, {
@@ -838,6 +841,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
                           input.click();
                         } else {
+                          setPopupActive(false);
                           context?.sendMessage(item?.key, item?.text);
                         }
                       }}
