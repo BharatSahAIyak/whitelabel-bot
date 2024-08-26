@@ -50,8 +50,6 @@ const LocationPermissionModal = (props: any) => {
       },
       {
         enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
       }
     );
   };
