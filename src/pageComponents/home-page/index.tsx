@@ -128,7 +128,7 @@ const Home: React.FC = () => {
     context?.setShowInputBox(false);
     const tags = [type];
     sessionStorage.setItem('tags', JSON.stringify(tags));
-    sendMessage(`Guided: ${t('label.' + type)}`);
+    sendMessage(`Guided: ${t('message.' + type)}`);
   };
 
   if (!weather && config?.showWeather) {

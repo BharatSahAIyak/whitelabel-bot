@@ -180,7 +180,7 @@
       "label.dial": "Dial",
       "label.faqs": "FAQs",
       "label.more": "More",
-      "label.pest": "Pest",
+      "message.pest": "Pest",
       "label.send": "Send",
       "label.type": "Type",
       "label.chats": "Chats",
@@ -275,6 +275,7 @@
       "label.extension_worker": "Extension Worker",
       "label.plant_protection": "Plant Protection",
       "label.scheme": "Scheme",
+      "message.scheme": "Scheme",
       "label.weather_advisory": "Weather Advisory",
       "message.allow_location": "Please allow Maps to access this device’s precise location",
       "message.download_audio": "Loading Audio",
@@ -346,7 +347,7 @@
       "label.notification2_label": "Need More Help?",
       "label.notification2_description": "Call the call center for additional information.",
       "label.pest_identification": "Pest Identification",
-      "label.identification": "Identification",
+      "message.identification": "Identification",
       "label.choose_your_crop": "Choose your crop"
     }
   }
