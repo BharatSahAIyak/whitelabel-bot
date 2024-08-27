@@ -535,7 +535,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   color: content?.data?.position === 'right' ? 'var(--font)' : contrastText,
                 }}
               >
-                {content?.text}{' '}
+                <div dangerouslySetInnerHTML={{ __html: content?.text }}></div>{' '}
                 {content?.data?.position === 'right'
                   ? null
                   : !content?.data?.isEnd && <BlinkingSpinner />}
