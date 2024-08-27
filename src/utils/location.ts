@@ -13,9 +13,7 @@ export async function recordUserLocation() {
           if (locationRes?.district) localStorage.setItem('city', locationRes.district);
           if (locationRes?.state) localStorage.setItem('state', locationRes.state);
           let apiRes: any = await fetch('https://ip-retriever-production.up.railway.app/');
-
           apiRes = await apiRes.text();
-
           if (apiRes) {
             let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes}`);
             locationRes = await locationRes.json();
@@ -25,9 +23,7 @@ export async function recordUserLocation() {
         async (error) => {
           if (error.code === error.PERMISSION_DENIED) {
             let apiRes: any = await fetch('https://ip-retriever-production.up.railway.app/');
-
             apiRes = await apiRes.text();
-
             if (apiRes) {
               let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes}`);
               locationRes = await locationRes.json();
@@ -39,14 +35,12 @@ export async function recordUserLocation() {
                 localStorage.setItem('block', locationRes.regionName);
               if (!localStorage.getItem('state'))
                 localStorage.setItem('state', locationRes.regionName);
-              localStorage.setItem('latitude', locationRes.lat);
-              localStorage.setItem('longitude', locationRes.lon);
+              //   localStorage.setItem('latitude', locationRes.lat);
+              //   localStorage.setItem('longitude', locationRes.lon);
             }
           } else {
             let apiRes: any = await fetch('https://ip-retriever-production.up.railway.app/');
-
             apiRes = await apiRes.text();
-
             if (apiRes) {
               let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes}`);
               locationRes = await locationRes.json();
@@ -58,8 +52,8 @@ export async function recordUserLocation() {
                 localStorage.setItem('block', locationRes.regionName);
               if (!localStorage.getItem('state'))
                 localStorage.setItem('state', locationRes.regionName);
-              localStorage.setItem('latitude', locationRes.lat);
-              localStorage.setItem('longitude', locationRes.lon);
+              //   localStorage.setItem('latitude', locationRes.lat);
+              //   localStorage.setItem('longitude', locationRes.lon);
             }
             console.error('Error occurred while getting location:', error);
           }
