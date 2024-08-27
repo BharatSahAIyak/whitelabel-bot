@@ -345,8 +345,12 @@
       "label.notification2_label": "Need More Help?",
       "label.notification2_description": "Call the call center for additional information.",
       "label.pest_identification": "Pest Identification",
-      "label.identification": "Identification",
-      "label.choose_your_crop": "Choose your crop"
+      "message.identification": "Identification",
+      "label.choose_your_crop": "Choose your crop",
+      "label.allow_location_permission": "To get all weather details, please allow your location",
+      "label.loading_weather_details": "Please wait, we are fetching the weather details",
+      "label.allow_location_button": "Allow Location",
+      "label.allow_location_from_setting": ""
     }
   }
 }

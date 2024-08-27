@@ -1,17 +1,20 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
 import styles from './index.module.css';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
-import { Chip, Grid, Button } from '@mui/material';
+import { Chip, Grid, Button, Typography } from '@mui/material';
 import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
 import axios from 'axios';
+import CircularProgress from '@mui/material/CircularProgress';
+
 import { FullPageLoader } from '../../components/fullpage-loader';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter } from 'next/router';
 import Menu from '../../components/menu';
 import toast from 'react-hot-toast';
+import { recordUserLocation } from '../../utils/location';
 
 const Home: React.FC = () => {
   const t = useLocalization();
@@ -130,10 +133,9 @@ const Home: React.FC = () => {
     sessionStorage.setItem('tags', JSON.stringify(tags));
     sendMessage(`Guided: ${t('label.' + type)}`);
   };
-
-  if (!weather && config?.showWeather) {
-    return <FullPageLoader loading={!weather} />;
-  }
+  // if (!weather && config?.showWeather) {
+  //   return <FullPageLoader loading={!weather} />;
+  // }
 
   const getLocationName = (locations: Array<string>) => {
     if (context?.locale === 'en') return locations?.[0];
@@ -148,203 +150,232 @@ const Home: React.FC = () => {
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
       ></meta>
 
-      {config?.showWeather && (
-        <div
-          data-testid="home-page-bg-image"
-          className={styles.container}
-          style={{
-            background: `url(${weather?.current?.descriptor?.images
-              ?.find((image: any) => image.type === (isNight ? 'image_night' : 'image_day'))
-              ?.url?.replace(/ /g, '%20')
-              ?.replace(/\(/g, '%28')
-              ?.replace(/\)/g, '%29')}) 0% 0% / cover no-repeat`,
-          }}
-        >
-          <div className={styles.weatherText}>
-            <div>
-              <h1
-                data-testid="home-page-temperature"
-                style={{
-                  color: 'white',
-                  margin: 0,
-                  fontSize: '2.75rem',
-                }}
-              >
-                {weather?.current?.tags?.temp}°C
-              </h1>
-            </div>
-            <div
-              style={{
-                textAlign: 'right',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                height: '100%',
-              }}
-            >
-              {weather?.current?.locations_ids && (
-                <div
+      {config?.showWeather &&
+        (weather ? (
+          <div
+            data-testid="home-page-bg-image"
+            className={styles.container}
+            style={{
+              background: `url(${weather?.current?.descriptor?.images
+                ?.find((image: any) => image.type === (isNight ? 'image_night' : 'image_day'))
+                ?.url?.replace(/ /g, '%20')
+                ?.replace(/\(/g, '%28')
+                ?.replace(/\)/g, '%29')}) 0% 0% / cover no-repeat`,
+            }}
+          >
+            <div className={styles.weatherText}>
+              <div>
+                <h1
+                  data-testid="home-page-temperature"
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'end',
-                  }}
-                >
-                  <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
-                  <span style={{ fontSize: '1.5rem' }} data-testid="weather-page-location">
-                    {getLocationName(weather?.current?.locations_ids)}
-                  </span>
-                </div>
-              )}
-              <h2
-                data-testid="weather-page-condition"
-                style={{
-                  color: 'white',
-                  margin: 0,
-                  fontSize: '1.5rem',
-                  wordBreak: 'break-word',
-                }}
-              >
-                {localStorage.getItem('locale') === 'en'
-                  ? weather?.current?.tags?.conditions
-                  : weather?.current?.tags?.[
-                      `conditions${'_' + localStorage.getItem('locale') || ''}`
-                    ]}
-              </h2>
-            </div>
-          </div>
-
-          <div className={styles.weatherBottom}>
-            <Grid
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '5px 10px',
-              }}
-              spacing={{ xs: 2, md: 3 }}
-              columns={3}
-            >
-              <Grid item xs={1} sm={1} md={1} data-testid="home-page-wind-direction">
-                <Chip
-                  label={
-                    localStorage.getItem('locale') === 'en'
-                      ? weather?.current?.tags?.winddir
-                      : weather?.current?.tags?.[
-                          `winddir${'_' + localStorage.getItem('locale') || ''}`
-                        ]
-                  }
-                  size="medium"
-                  sx={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    minWidth: '70px',
-                    background: null,
-                  }}
-                />
-                <p
-                  style={{
-                    minWidth: '70px',
-                    background: 'white',
-                    color: 'black',
-                    fontWeight: '600',
-                    margin: '5px 0 0 0',
-                  }}
-                >
-                  {t('label.wind_direction')}
-                </p>
-              </Grid>
-              <Grid item xs={1} sm={1} md={1} data-testid="home-page-wind-speed">
-                <Chip
-                  label={(weather?.current?.tags?.windspeed || 0) + ' km/h'}
-                  size="medium"
-                  sx={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    minWidth: '70px',
-                    background: '#101860',
                     color: 'white',
-                  }}
-                />
-                <p
-                  style={{
-                    minWidth: '70px',
-                    background: 'white',
-                    color: 'black',
-                    fontWeight: '600',
-                    margin: '5px 0 0 0',
+                    margin: 0,
+                    fontSize: '2.75rem',
                   }}
                 >
-                  {t('label.wind_speed')}
-                </p>
-              </Grid>
-              <Grid item xs={1} sm={1} md={1} data-testid="home-page-humidity">
-                <Chip
-                  label={(weather?.current?.tags?.humidity || 0) + ' %'}
-                  size="medium"
-                  sx={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    minWidth: '70px',
-                    background: '#4CC3CB',
-                    color: 'white',
-                  }}
-                />
-                <p
-                  style={{
-                    minWidth: '70px',
-                    background: 'white',
-                    color: 'black',
-                    fontWeight: '600',
-                    margin: '5px 0 0 0',
-                  }}
-                >
-                  {t('label.humidity')}
-                </p>
-              </Grid>
-            </Grid>
-
-            {config.showWeatherButton && (
+                  {weather?.current?.tags?.temp}°C
+                </h1>
+              </div>
               <div
                 style={{
-                  marginTop: '5px',
-                  textAlign: 'center',
-                  paddingBottom: '10px',
+                  textAlign: 'right',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  height: '100%',
                 }}
               >
-                <Button
-                  data-testid="home-page-crop-advisory-button"
-                  variant="contained"
-                  endIcon={<ArrowForwardIcon />}
-                  sx={{
-                    backgroundColor: '#EDEDF1',
-                    '&:hover': {
-                      backgroundColor: '#EDEDF1',
-                    },
-                    color: theme?.primary?.light,
-                    fontSize: '18px',
-                    width: '308px',
-                    height: '40px',
-                    padding: '18px 24px',
-                    fontWeight: '500',
-                    borderRadius: '6px',
-                    textTransform: 'none',
-                    boxShadow: 'none',
-                  }}
-                  onClick={() => {
-                    if (config?.showWeatherPage) {
-                      router.push('/weather');
-                    } else {
-                      router.push('/chat?message=Guided:%20weather');
-                    }
+                {weather?.current?.locations_ids && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'end',
+                    }}
+                  >
+                    <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
+                    <span style={{ fontSize: '1.5rem' }} data-testid="weather-page-location">
+                      {getLocationName(weather?.current?.locations_ids)}
+                    </span>
+                  </div>
+                )}
+                <h2
+                  data-testid="weather-page-condition"
+                  style={{
+                    color: 'white',
+                    margin: 0,
+                    fontSize: '1.5rem',
+                    wordBreak: 'break-word',
                   }}
                 >
-                  {t('label.weather_button_text')}
-                </Button>
+                  {localStorage.getItem('locale') === 'en'
+                    ? weather?.current?.tags?.conditions
+                    : weather?.current?.tags?.[
+                        `conditions${'_' + localStorage.getItem('locale') || ''}`
+                      ]}
+                </h2>
               </div>
-            )}
+            </div>
+
+            <div className={styles.weatherBottom}>
+              <Grid
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '5px 10px',
+                }}
+                spacing={{ xs: 2, md: 3 }}
+                columns={3}
+              >
+                <Grid item xs={1} sm={1} md={1} data-testid="home-page-wind-direction">
+                  <Chip
+                    label={
+                      localStorage.getItem('locale') === 'en'
+                        ? weather?.current?.tags?.winddir
+                        : weather?.current?.tags?.[
+                            `winddir${'_' + localStorage.getItem('locale') || ''}`
+                          ]
+                    }
+                    size="medium"
+                    sx={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      minWidth: '70px',
+                      background: null,
+                    }}
+                  />
+                  <p
+                    style={{
+                      minWidth: '70px',
+                      background: 'white',
+                      color: 'black',
+                      fontWeight: '600',
+                      margin: '5px 0 0 0',
+                    }}
+                  >
+                    {t('label.wind_direction')}
+                  </p>
+                </Grid>
+                <Grid item xs={1} sm={1} md={1} data-testid="home-page-wind-speed">
+                  <Chip
+                    label={(weather?.current?.tags?.windspeed || 0) + ' km/h'}
+                    size="medium"
+                    sx={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      minWidth: '70px',
+                      background: '#101860',
+                      color: 'white',
+                    }}
+                  />
+                  <p
+                    style={{
+                      minWidth: '70px',
+                      background: 'white',
+                      color: 'black',
+                      fontWeight: '600',
+                      margin: '5px 0 0 0',
+                    }}
+                  >
+                    {t('label.wind_speed')}
+                  </p>
+                </Grid>
+                <Grid item xs={1} sm={1} md={1} data-testid="home-page-humidity">
+                  <Chip
+                    label={(weather?.current?.tags?.humidity || 0) + ' %'}
+                    size="medium"
+                    sx={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      minWidth: '70px',
+                      background: '#4CC3CB',
+                      color: 'white',
+                    }}
+                  />
+                  <p
+                    style={{
+                      minWidth: '70px',
+                      background: 'white',
+                      color: 'black',
+                      fontWeight: '600',
+                      margin: '5px 0 0 0',
+                    }}
+                  >
+                    {t('label.humidity')}
+                  </p>
+                </Grid>
+              </Grid>
+
+              {config.showWeatherButton && (
+                <div
+                  style={{
+                    marginTop: '5px',
+                    textAlign: 'center',
+                    paddingBottom: '10px',
+                  }}
+                >
+                  <Button
+                    data-testid="home-page-crop-advisory-button"
+                    variant="contained"
+                    endIcon={<ArrowForwardIcon />}
+                    sx={{
+                      backgroundColor: '#EDEDF1',
+                      '&:hover': {
+                        backgroundColor: '#EDEDF1',
+                      },
+                      color: theme?.primary?.light,
+                      fontSize: '18px',
+                      width: '308px',
+                      height: '40px',
+                      padding: '18px 24px',
+                      fontWeight: '500',
+                      borderRadius: '6px',
+                      textTransform: 'none',
+                      boxShadow: 'none',
+                    }}
+                    onClick={() => {
+                      if (config?.showWeatherPage) {
+                        router.push('/weather');
+                      } else {
+                        router.push('/chat?message=Guided:%20weather');
+                      }
+                    }}
+                  >
+                    {t('label.weather_button_text')}
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        ) : !localStorage.getItem('latitude') || !localStorage.getItem('longitude') ? (
+          <div className={styles.locationContainer}>
+            <Typography className={styles.locationText}>
+              {t('label.allow_location_permission')}
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={recordUserLocation}
+              sx={{ fontSize: '16px', fontWeight: 500 }}
+            >
+              {t('label.allow_location_button')}
+            </Button>
+          </div>
+        ) : (
+          <div
+            className={styles.locationContainer}
+            style={{
+              color: 'black',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <CircularProgress />
+            <Typography className={styles.locationText}>
+              {t('label.loading_weather_details')}
+            </Typography>
+          </div>
+        ))}
       {config?.showHomeBgImg && (
         <div
           data-testid="home-page-bg-image"
