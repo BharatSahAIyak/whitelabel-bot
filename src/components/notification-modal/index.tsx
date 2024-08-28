@@ -132,7 +132,12 @@ const NotificationModal = () => {
             fontWeight: 500,
           }}
         >
-          {notificationData?.body}
+          {notificationData?.modalBody.split('\n').map((line: string, index: number) => (
+            <React.Fragment key={index}>
+              {line}
+              <br />
+            </React.Fragment>
+          ))}
         </Typography>
         {notificationData?.buttonUrl && notificationData?.buttonText && (
           <Button
