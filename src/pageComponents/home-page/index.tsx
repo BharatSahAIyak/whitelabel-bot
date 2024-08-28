@@ -352,13 +352,9 @@ const Home: React.FC = () => {
             <Typography className={styles.locationText}>
               {t('label.allow_location_permission')}
             </Typography>
-            <Button
-              variant="contained"
-              onClick={recordUserLocation}
-              sx={{ fontSize: '16px', fontWeight: 500 }}
-            >
-              {t('label.allow_location_button')}
-            </Button>
+            <Typography className={styles.locationText} style={{ width: '100%' }}>
+              {t('label.allow_location_from_setting')}
+            </Typography>
           </div>
         ) : (
           <div

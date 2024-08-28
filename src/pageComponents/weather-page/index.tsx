@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styles from './index.module.css';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
-import { Chip, Grid } from '@mui/material';
+import { Chip, Grid, Typography } from '@mui/material';
 import { useConfig } from '../../hooks/useConfig';
 import { useLocalization } from '../../hooks';
 import axios from 'axios';
@@ -219,6 +219,18 @@ const WeatherPage: React.FC = () => {
     if (context?.locale === 'hi') return locations?.[1];
     if (context?.locale === 'or') return locations?.[2];
   };
+
+  if (!localStorage.getItem('latitude') || !localStorage.getItem('longitude'))
+    return (
+      <div className={styles.locationContainer}>
+        <Typography className={styles.locationText}>
+          {t('label.allow_location_permission')}
+        </Typography>
+        <Typography className={styles.locationText} style={{ width: '100%' }}>
+          {t('label.allow_location_from_setting')}
+        </Typography>
+      </div>
+    );
 
   if (!weather || !crop) {
     return <FullPageLoader loading={!weather || !crop} />;
