@@ -141,6 +141,7 @@ const Home: React.FC = () => {
     if (context?.locale === 'en') return locations?.[0];
     if (context?.locale === 'hi') return locations?.[1];
     if (context?.locale === 'or') return locations?.[2];
+    return '';
   };
 
   return (
@@ -194,7 +195,15 @@ const Home: React.FC = () => {
                     }}
                   >
                     <LocationOnRoundedIcon style={{ fontSize: '1.5rem' }} />
-                    <span style={{ fontSize: '1.5rem' }} data-testid="weather-page-location">
+                    <span
+                      style={{
+                        fontSize:
+                          getLocationName(weather?.current?.locations_ids)?.length > 14
+                            ? '1rem'
+                            : '1.5rem',
+                      }}
+                      data-testid="weather-page-location"
+                    >
                       {getLocationName(weather?.current?.locations_ids)}
                     </span>
                   </div>
