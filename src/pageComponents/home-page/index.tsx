@@ -34,14 +34,15 @@ const Home: React.FC = () => {
   }, []);
 
   const fetchWeatherData = async () => {
-    const latitude = localStorage.getItem('latitude');
-    const longitude = localStorage.getItem('longitude');
+    const latitude = sessionStorage.getItem('latitude');
+    const longitude = sessionStorage.getItem('longitude');
+    const city = sessionStorage.getItem('city');
     if (!latitude || !longitude) return;
 
     try {
       setIsFetching(true);
       const response = await axios.get(process.env.NEXT_PUBLIC_WEATHER_API || '', {
-        params: { latitude, longitude },
+        params: { latitude, longitude, city },
       });
 
       console.log(response.data);
@@ -356,7 +357,7 @@ const Home: React.FC = () => {
               )}
             </div>
           </div>
-        ) : !localStorage.getItem('latitude') || !localStorage.getItem('longitude') ? (
+        ) : sessionStorage.getItem('location_error') ? (
           <div className={styles.locationContainer}>
             <Typography className={styles.locationText}>
               {t('label.allow_location_permission')}

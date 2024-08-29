@@ -35,14 +35,16 @@ const WeatherPage: React.FC = () => {
 
   const fetchWeatherData = async () => {
     const startTime = performance.now();
-    const latitude = localStorage.getItem('latitude');
-    const longitude = localStorage.getItem('longitude');
+    const latitude = sessionStorage.getItem('latitude');
+    const longitude = sessionStorage.getItem('longitude');
+    const city = sessionStorage.getItem('city');
     if (!latitude || !longitude) return;
     try {
       const response = await axios.get(process.env.NEXT_PUBLIC_WEATHER_API || '', {
         params: {
           latitude,
           longitude,
+          city,
           provider: config?.provider || 'upcar',
         },
       });
@@ -151,8 +153,8 @@ const WeatherPage: React.FC = () => {
           messageId: msgId || messageId || '',
           text: cropData?.descriptor?.name || t('label.weather'),
           createdAt: Math.floor(new Date().getTime() / 1000),
-          block: localStorage.getItem('block') || '',
-          district: localStorage.getItem('city') || '',
+          block: sessionStorage.getItem('block') || '',
+          district: sessionStorage.getItem('city') || '',
           transformerId: uuidv4(),
         });
         saveTelemetryEvent('0.1', 'E017', 'userQuery', 'responseAt', {
@@ -220,7 +222,7 @@ const WeatherPage: React.FC = () => {
     if (context?.locale === 'or') return locations?.[2];
   };
 
-  if (!localStorage.getItem('latitude') || !localStorage.getItem('longitude'))
+  if (!sessionStorage.getItem('latitude') || !sessionStorage.getItem('longitude'))
     return (
       <div className={styles.locationContainer}>
         <Typography className={styles.locationText}>

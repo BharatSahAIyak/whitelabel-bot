@@ -29,7 +29,7 @@ const saveTelemetryEvent = async (
         // @ts-ignore
         window.navigator?.userAgentData?.platform || window.navigator.platform,
       browser: window.navigator.userAgent,
-      ip: localStorage.getItem('ip') || '',
+      ip: sessionStorage.getItem('ip') || '',
       // @ts-ignore
       deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
       sessionId: sessionStorage.getItem('sessionId') || '',

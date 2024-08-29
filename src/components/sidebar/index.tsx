@@ -55,10 +55,10 @@ export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
 
   function logout() {
     removeCookie('access_token', { path: '/' });
-    const userType = sessionStorage.getItem('userType') || '';
+    const userType = sessionStorage.getItem('userType');
     localStorage.clear();
     sessionStorage.clear();
-    sessionStorage.setItem('userType', userType);
+    userType && sessionStorage.setItem('userType', userType);
     context?.setMessages([]);
     router.push('/login');
     if (typeof window !== 'undefined') window.location.reload();

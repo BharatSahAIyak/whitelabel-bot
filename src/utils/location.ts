@@ -3,40 +3,42 @@ export async function recordUserLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
-          localStorage.setItem('latitude', String(position.coords.latitude));
-          localStorage.setItem('longitude', String(position.coords.longitude));
+          sessionStorage.removeItem('location_error');
+          sessionStorage.setItem('latitude', String(position.coords.latitude));
+          sessionStorage.setItem('longitude', String(position.coords.longitude));
           let locationRes: any = await fetch(
             `https://geoip.samagra.io/georev?lat=${position.coords.latitude}&lon=${position.coords.longitude}`
           );
           locationRes = await locationRes.json();
-          if (locationRes?.subDistrict) localStorage.setItem('block', locationRes.subDistrict);
-          if (locationRes?.district) localStorage.setItem('city', locationRes.district);
-          if (locationRes?.state) localStorage.setItem('state', locationRes.state);
+          if (locationRes?.subDistrict) sessionStorage.setItem('block', locationRes.subDistrict);
+          if (locationRes?.district) sessionStorage.setItem('city', locationRes.district);
+          if (locationRes?.state) sessionStorage.setItem('state', locationRes.state);
           let apiRes: any = await fetch('https://ip-retriever-production.up.railway.app/');
           apiRes = await apiRes.text();
           if (apiRes) {
             let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes}`);
             locationRes = await locationRes.json();
-            localStorage.setItem('ip', apiRes);
+            sessionStorage.setItem('ip', apiRes);
           }
         },
         async (error) => {
+          sessionStorage.setItem('location_error', 'true');
           if (error.code === error.PERMISSION_DENIED) {
             let apiRes: any = await fetch('https://ip-retriever-production.up.railway.app/');
             apiRes = await apiRes.text();
             if (apiRes) {
               let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes}`);
               locationRes = await locationRes.json();
-              localStorage.setItem('ip', apiRes);
-              if (!localStorage.getItem('city')) localStorage.setItem('city', locationRes.city);
-              if (!localStorage.getItem('district'))
-                localStorage.setItem('district', locationRes.city);
-              if (!localStorage.getItem('block'))
-                localStorage.setItem('block', locationRes.regionName);
-              if (!localStorage.getItem('state'))
-                localStorage.setItem('state', locationRes.regionName);
-              //   localStorage.setItem('latitude', locationRes.lat);
-              //   localStorage.setItem('longitude', locationRes.lon);
+              sessionStorage.setItem('ip', apiRes);
+              if (!sessionStorage.getItem('city')) sessionStorage.setItem('city', locationRes.city);
+              if (!sessionStorage.getItem('district'))
+                sessionStorage.setItem('district', locationRes.city);
+              if (!sessionStorage.getItem('block'))
+                sessionStorage.setItem('block', locationRes.regionName);
+              if (!sessionStorage.getItem('state'))
+                sessionStorage.setItem('state', locationRes.regionName);
+              //   sessionStorage.setItem('latitude', locationRes.lat);
+              //   sessionStorage.setItem('longitude', locationRes.lon);
             }
           } else {
             let apiRes: any = await fetch('https://ip-retriever-production.up.railway.app/');
@@ -44,16 +46,16 @@ export async function recordUserLocation() {
             if (apiRes) {
               let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes}`);
               locationRes = await locationRes.json();
-              localStorage.setItem('ip', apiRes);
-              if (!localStorage.getItem('city')) localStorage.setItem('city', locationRes.city);
-              if (!localStorage.getItem('district'))
-                localStorage.setItem('district', locationRes.city);
-              if (!localStorage.getItem('block'))
-                localStorage.setItem('block', locationRes.regionName);
-              if (!localStorage.getItem('state'))
-                localStorage.setItem('state', locationRes.regionName);
-              //   localStorage.setItem('latitude', locationRes.lat);
-              //   localStorage.setItem('longitude', locationRes.lon);
+              sessionStorage.setItem('ip', apiRes);
+              if (!sessionStorage.getItem('city')) sessionStorage.setItem('city', locationRes.city);
+              if (!sessionStorage.getItem('district'))
+                sessionStorage.setItem('district', locationRes.city);
+              if (!sessionStorage.getItem('block'))
+                sessionStorage.setItem('block', locationRes.regionName);
+              if (!sessionStorage.getItem('state'))
+                sessionStorage.setItem('state', locationRes.regionName);
+              //   sessionStorage.setItem('latitude', locationRes.lat);
+              //   sessionStorage.setItem('longitude', locationRes.lon);
             }
             console.error('Error occurred while getting location:', error);
           }
@@ -65,5 +67,6 @@ export async function recordUserLocation() {
     }
   } catch (err) {
     console.log(err);
+    sessionStorage.setItem('location_error', 'true');
   }
 }
