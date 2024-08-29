@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import { useConfig } from '../../hooks/useConfig';
 import LanguagePicker from '../../components/language-picker';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import DOMPurify from 'dompurify';
 
 const LoginPage: React.FC = () => {
   const config = useConfig('component', 'loginPage');
@@ -120,7 +121,7 @@ const LoginPage: React.FC = () => {
             width="100%"
             color={theme?.primary?.main || 'black'}
             dangerouslySetInnerHTML={{
-              __html: t('label.subtitle'),
+              __html: DOMPurify.sanitize(t('label.subtitle')),
             }}
           ></Typography>
           <Box

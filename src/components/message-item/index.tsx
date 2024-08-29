@@ -35,6 +35,7 @@ import router from 'next/router';
 import TransliterationInput from '../transliteration-input';
 import { compressImage } from '../../utils/imageCompression';
 import { FullPageLoader } from '../fullpage-loader';
+import DOMPurify from 'dompurify';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
@@ -545,7 +546,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   color: content?.data?.position === 'right' ? 'var(--font)' : contrastText,
                 }}
               >
-                <span dangerouslySetInnerHTML={{ __html: content?.text }}></span>{' '}
+                <span
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content?.text) }}
+                ></span>{' '}
                 {content?.data?.position === 'right'
                   ? null
                   : !content?.data?.isEnd && <BlinkingSpinner />}
