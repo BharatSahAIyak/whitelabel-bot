@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
 import saveTelemetryEvent from '../../utils/telemetry';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
+import DOMPurify from 'dompurify';
 
 const RenderVoiceRecorder = ({ setInputMsg, tapToSpeak }) => {
   const t = useLocalization();
@@ -328,7 +329,7 @@ const RecorderControl = ({ status, onClick, tapToSpeak = false }) => {
       {tapToSpeak && (
         <p
           style={{ color: 'black', fontSize: '13px', marginTop: '4px' }}
-          dangerouslySetInnerHTML={{ __html: t('label.tap_to_speak') }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(t('label.tap_to_speak')) }}
         ></p>
       )}
     </>

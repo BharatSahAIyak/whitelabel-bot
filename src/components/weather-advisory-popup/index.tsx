@@ -12,6 +12,7 @@ import { useLocalization } from '../../hooks';
 import axios from 'axios';
 import { useConfig } from '../../hooks/useConfig';
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 
 const WeatherAdvisoryPopup = (props: any) => {
   const t = useLocalization();
@@ -156,7 +157,9 @@ const WeatherAdvisoryPopup = (props: any) => {
                   <div
                     data-testid="weather-advisory-modal-advisory-text"
                     dangerouslySetInnerHTML={{
-                      __html: `&#x2022; ${props?.advisory?.descriptor?.long_desc?.replaceAll('\n', '<br/><br/>&#x2022; ')}`,
+                      __html: DOMPurify.sanitize(
+                        `&#x2022; ${props?.advisory?.descriptor?.long_desc?.replaceAll('\n', '<br/><br/>&#x2022; ')}`
+                      ),
                     }}
                   />
                 </Typography>
