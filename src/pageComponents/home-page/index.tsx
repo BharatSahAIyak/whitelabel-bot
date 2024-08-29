@@ -131,7 +131,7 @@ const Home: React.FC = () => {
     context?.setShowInputBox(false);
     const tags = [type];
     sessionStorage.setItem('tags', JSON.stringify(tags));
-    sendMessage(`Guided: ${t('label.' + type)}`);
+    sendMessage(`Guided: ${t('message.' + type)}`);
   };
   // if (!weather && config?.showWeather) {
   //   return <FullPageLoader loading={!weather} />;
@@ -408,7 +408,7 @@ const Home: React.FC = () => {
             justifyContent="center"
             data-testid="home-page-action-buttons"
           >
-            {config.showWeatherAdvisory && (
+            {config.showPestIdentification && (
               <Grid
                 item
                 xs={5}
@@ -429,11 +429,15 @@ const Home: React.FC = () => {
               >
                 <div
                   onClick={() => {
-                    router.push('/weather');
+                    sendGuidedMsg('identification');
                   }}
                 >
-                  <img src={config.weatherAdvisoryImg} alt="Weather" className={styles.gridImage} />
-                  <p className={styles.gridText}>{t('label.weather_advisory')} </p>
+                  <img
+                    src={config.pestIdentificationImg}
+                    alt="pestIdentification"
+                    className={styles.gridImage}
+                  />
+                  <p className={styles.gridText}>{t('label.pest_identification')} </p>
                 </div>
               </Grid>
             )}

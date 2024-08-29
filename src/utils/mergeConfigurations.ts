@@ -49,13 +49,13 @@ const fetchFeatureFlags = async () => {
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `/api/flags?userType=${router.query.userType}`,
+      url: `/api/flags?userType=${sessionStorage.getItem('userType')}`,
       headers: {
         accept: 'application/json',
       },
     };
     const flags = await axios.request(config);
-    console.log('featureFlags:', flags?.data?.flags, router.query.userType);
+    console.log('featureFlags:', flags?.data?.flags, sessionStorage.getItem('userType'));
     return flags?.data?.flags;
   } catch (err) {
     console.error(err);
