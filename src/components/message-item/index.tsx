@@ -9,7 +9,16 @@ import {
   Popup,
   RichText,
 } from '@samagra-x/chatui';
-import { FC, ReactElement, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  FC,
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { toast } from 'react-hot-toast';
 import styles from './index.module.css';
 import RightIcon from './assets/right';
@@ -58,6 +67,9 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const contrastText = useMemo(() => {
     return theme?.primary?.contrastText;
   }, [theme?.primary?.contrastText]);
+
+  const [isCamera, setIsCamera] = useState(false);
+  const cameraInput = useRef<any>(null);
 
   // const getToastMessage = (t: any, reaction: number): string => {
   //   if (reaction === 1) return t('toast.reaction_like');
@@ -805,45 +817,10 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           context?.setIsMsgReceiving(false);
                           context?.setLoading(false);
                           router.push('/');
-                        } else if (item?.action === 'gallery') {
-                          const input = document.createElement('input');
-                          input.type = 'file';
-                          input.accept = 'image/*';
-                          input.onchange = async (event: any) => {
-                            const file = event?.target?.files?.[0];
-                            if (file) {
-                              setPopupActive(false);
-                              console.log(file);
-                              const url = await uploadToCdn(file);
-                              context?.sendMessage(null, null, {
-                                mimeType: file.type,
-                                category: 'IMAGE',
-                                url,
-                              });
-                            }
-                          };
-                          input.click();
-                        } else if (item?.action === 'camera') {
-                          const input = document.createElement('input');
-                          input.type = 'file';
-                          input.accept = 'image/*';
-                          input.capture = 'environment';
-
-                          input.onchange = async (event: any) => {
-                            const file = event?.target?.files?.[0];
-                            if (file) {
-                              setPopupActive(false);
-                              console.log(file);
-                              const url = await uploadToCdn(file);
-                              context?.sendMessage(null, null, {
-                                mimeType: file.type,
-                                category: 'IMAGE',
-                                url,
-                              });
-                            }
-                          };
-
-                          input.click();
+                        } else if (item?.action === 'gallery' || item?.action === 'camera') {
+                          const isCamera = item?.action === 'camera';
+                          setIsCamera(isCamera);
+                          cameraInput?.current?.click();
                         } else {
                           setPopupActive(false);
                           context?.sendMessage(item?.key, item?.text);
@@ -851,6 +828,30 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                       }}
                     >
                       {item.text}
+
+                      {item?.action === 'camera' || item?.action === 'gallery' ? (
+                        <input
+                          type="file"
+                          ref={cameraInput}
+                          accept="image/*"
+                          capture={item?.action === 'camera' ? 'environment' : undefined}
+                          onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
+                            const file = event?.target?.files?.[0];
+                            if (file) {
+                              setPopupActive(false);
+                              console.log(file);
+                              const url = await uploadToCdn(file);
+                              context?.sendMessage(null, null, {
+                                mimeType: file.type,
+                                category: 'IMAGE',
+                                url,
+                              });
+                            }
+                          }}
+                          style={{ display: 'none' }}
+                          data-testid={`camera-input-${content?.data?.messageId}`}
+                        />
+                      ) : null}
                     </div>
                   );
                 })}
