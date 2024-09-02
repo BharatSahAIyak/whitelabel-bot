@@ -773,6 +773,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   return (
                     <div
                       key={index}
+                      data-testid={`popup-btn-${index}`}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
