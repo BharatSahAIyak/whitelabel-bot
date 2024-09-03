@@ -100,7 +100,8 @@ const Navbar: React.FC = () => {
             {router.pathname !== '/chat' &&
               router.pathname !== '/weather' &&
               router.pathname !== '/newchat' &&
-              showHamburgerMenu && (
+              showHamburgerMenu &&
+              !(sessionStorage.getItem('navigation') === 'hidden') && (
                 <IconButton
                   data-testid="navbar-hamburger-menu"
                   size="large"
@@ -117,71 +118,73 @@ const Navbar: React.FC = () => {
                   <MenuIcon sx={{ fontSize: '50px' }} />
                 </IconButton>
               )}
-            {router.pathname === '/weather' && (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                }}
-              >
-                <IconButton
-                  color="primary"
-                  size="large"
-                  edge="start"
-                  aria-label="home"
+            {router.pathname === '/weather' &&
+              !(sessionStorage.getItem('navigation') === 'hidden') && (
+                <div
                   style={{
-                    fontSize: '2rem',
-                    width: '28px',
-                    height: '28px',
-                    margin: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
                   }}
-                  onClick={() => router.push('/')}
                 >
-                  <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
-                </IconButton>
-              </div>
-            )}
-            {(router.pathname === '/chat' || router.pathname === '/newchat') && (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                }}
-              >
-                <IconButton
-                  color="primary"
-                  size="large"
-                  edge="start"
-                  aria-label="home"
+                  <IconButton
+                    color="primary"
+                    size="large"
+                    edge="start"
+                    aria-label="home"
+                    style={{
+                      fontSize: '2rem',
+                      width: '28px',
+                      height: '28px',
+                      margin: 0,
+                    }}
+                    onClick={() => router.push('/')}
+                  >
+                    <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
+                  </IconButton>
+                </div>
+              )}
+            {(router.pathname === '/chat' || router.pathname === '/newchat') &&
+              !(sessionStorage.getItem('navigation') === 'hidden') && (
+                <div
                   style={{
-                    fontSize: '2rem',
-                    width: '28px',
-                    height: '28px',
-                    margin: 0,
-                  }}
-                  onClick={newChatHandler}
-                >
-                  <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
-                </IconButton>
-                <Typography
-                  data-testid="navbar-new-chat"
-                  variant="body1"
-                  color={newChatButtonColor ?? 'black'}
-                  sx={{
-                    fontSize: '26px',
-                    marginLeft: '5px',
-                    fontFamily: 'NotoSans-Medium',
-                    fontWeight: '500',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
                   }}
                 >
-                  {t('label.new_chat')}
-                </Typography>
-              </div>
-            )}
+                  <IconButton
+                    color="primary"
+                    size="large"
+                    edge="start"
+                    aria-label="home"
+                    style={{
+                      fontSize: '2rem',
+                      width: '28px',
+                      height: '28px',
+                      margin: 0,
+                    }}
+                    onClick={newChatHandler}
+                  >
+                    <KeyboardBackspaceIcon sx={{ fontSize: '30px' }} />
+                  </IconButton>
+                  <Typography
+                    data-testid="navbar-new-chat"
+                    variant="body1"
+                    color={newChatButtonColor ?? 'black'}
+                    sx={{
+                      fontSize: '26px',
+                      marginLeft: '5px',
+                      fontFamily: 'NotoSans-Medium',
+                      fontWeight: '500',
+                    }}
+                  >
+                    {t('label.new_chat')}
+                  </Typography>
+                </div>
+              )}
           </div>
 
           <div
