@@ -8,7 +8,6 @@ import { useCookies } from 'react-cookie';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { useLogin } from '../hooks';
-import FeaturePopup from '../components/feature-popup';
 import Provider from '../providers';
 // import { InstallModal } from '../components/install-modal';
 import { FullPageLoader } from '../components/fullpage-loader';
@@ -202,7 +201,6 @@ const App = ({ Component, pageProps }: AppProps) => {
         ></meta>
         <div style={{ height: '100dvh', width: '100dvw', position: 'fixed' }}>
           <Toaster position="top-center" reverseOrder={false} />
-          <FeaturePopup />
           {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}
           {sessionStorage.getItem('navbar') !== 'hidden' && <NavBar />}
           <NotificationModal />
