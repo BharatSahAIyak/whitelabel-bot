@@ -75,7 +75,7 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-RUN grep -rlE '[0-9]+(\.[0-9]+)+' /app/.next/static/chunks | xargs sed -i 's/[0-9]\+(\.[0-9]\+)\+/xx.xx.xx/g'
+RUN grep -rlE '12\.1\.6|17\.0\.2' /app/.next/static/chunks | xargs sed -i 's/12\.1\.6/xx.xx.xx/g; s/17\.0\.2/xx.xx.xx/g'
 
 EXPOSE 3000
 CMD ["yarn", "start"]
