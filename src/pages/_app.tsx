@@ -88,6 +88,9 @@ const App = ({ Component, pageProps }: AppProps) => {
       if (router.query.navbar) {
         sessionStorage.setItem('navbar', router.query.navbar as string);
       }
+      if (router.query.navigation) {
+        sessionStorage.setItem('navigation', router.query.navigation as string);
+      }
       if (router.query.userType) {
         sessionStorage.setItem('userType', router.query.userType as string);
       }
