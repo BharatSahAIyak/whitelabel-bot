@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "dotenv -- next dev",
-    "build": "next build && ls -a && pwd && sh ./build.sh",
+    "build": "next build && sh ./build.sh",
     "start": "next start",
     "lint": "next lint",
     "analyze": "cross-env ANALYZE=true next build",
