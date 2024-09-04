@@ -177,7 +177,7 @@ export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
                         secondary={
                           config?.showPhoneNumber &&
                           localStorage.getItem('phoneNumber') &&
-                          `+91 ${localStorage.getItem('phoneNumber')}`
+                          `${localStorage.getItem('phoneNumber')}`
                         }
                         secondaryTypographyProps={{ color: 'white' }}
                         sx={{ color: theme.primary.contrastText }}
