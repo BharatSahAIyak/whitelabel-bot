@@ -193,6 +193,7 @@ const ContextProvider: FC<{
           text: t('message.no_signal'),
           choices: [],
           position: 'left',
+          isEnd: true,
           reaction: 0,
           messageId: uuidv4(),
           conversationId: conversationId,
@@ -757,6 +758,7 @@ const ContextProvider: FC<{
       setLanguagePopupFlag,
       transliterate,
       setTransliterate,
+      isOnline,
     }),
     [
       locale,
@@ -764,6 +766,7 @@ const ContextProvider: FC<{
       localeMsgs,
       sendMessage,
       messages,
+      setMessages,
       loading,
       setLoading,
       isMsgReceiving,
@@ -798,6 +801,7 @@ const ContextProvider: FC<{
       setLanguagePopupFlag,
       transliterate,
       setTransliterate,
+      isOnline,
     ]
   );
 
