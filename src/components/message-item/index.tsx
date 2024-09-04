@@ -864,12 +864,22 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             if (file) {
                               console.log(file);
                               const url = await uploadToCdn(file);
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              const res = await fetch('/api/imageSize', {
+                                method: 'POST',
+                                body: formData,
+                              });
+
+                              const { width, height } = await res.json();
+
                               if (url) {
                                 setPopupActive(false);
                                 context?.sendMessage(null, null, {
                                   mimeType: file.type,
                                   category: 'IMAGE',
                                   url,
+                                  resolution: `${width}x${height}`,
                                 });
                               }
                             }

@@ -541,6 +541,7 @@ const ContextProvider: FC<{
           conversationId: conversationId || '',
           messageId: messageId,
           text: textToSend,
+          media: media,
           createdAt: Math.floor(new Date().getTime() / 1000),
         });
       } catch (err) {
