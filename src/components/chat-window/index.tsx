@@ -102,6 +102,11 @@ const ChatUiWindow: React.FC = () => {
         (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
       );
 
+    // Hides history chat input box if flow was guided
+    if (history?.[0]?.isGuided) {
+      context?.setShowInputBox(false);
+    }
+
     console.log('historyyy', history);
     console.log('history length:', history.length);
 

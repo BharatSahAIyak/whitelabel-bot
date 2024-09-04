@@ -71,6 +71,11 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const [isCamera, setIsCamera] = useState(false);
   const cameraInput = useRef<any>(null);
 
+  // Hide popup buttons on network disconnection
+  useEffect(() => {
+    if (!context?.isOnline) setPopupActive(false);
+  }, [context?.isOnline]);
+
   // const getToastMessage = (t: any, reaction: number): string => {
   //   if (reaction === 1) return t('toast.reaction_like');
   //   return t('toast.reaction_reset');
@@ -407,14 +412,33 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
       };
       const res = await axios.request(config);
       setUploadingImage(false);
-      if (res?.data?.file?.url) return convertToHttps(res?.data?.file?.url);
-      else {
-        toast.error('Could not upload image!');
+      if (res?.data?.file?.url) {
+        toast.success(t('message.image_upload'));
+        return convertToHttps(res?.data?.file?.url);
+      } else {
+        toast.error(t('error.image_upload'));
       }
     } catch (err: any) {
       console.error(err);
+      setPopupActive(false);
       setUploadingImage(false);
-      toast.error(err?.message);
+      toast.error(t('error.image_upload'));
+      context?.setMessages((prev: any) => [
+        ...prev,
+        {
+          text: t('error.image_upload'),
+          choices: [],
+          position: 'left',
+          isEnd: true,
+          reaction: 0,
+          isGuided: true,
+          messageId: uuidv4(),
+          conversationId: context?.conversationId,
+          sentTimestamp: Date.now(),
+          btns: false,
+          audio_url: '',
+        },
+      ]);
     }
   };
 
@@ -838,14 +862,16 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                           onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
                             const file = event?.target?.files?.[0];
                             if (file) {
-                              setPopupActive(false);
                               console.log(file);
                               const url = await uploadToCdn(file);
-                              context?.sendMessage(null, null, {
-                                mimeType: file.type,
-                                category: 'IMAGE',
-                                url,
-                              });
+                              if (url) {
+                                setPopupActive(false);
+                                context?.sendMessage(null, null, {
+                                  mimeType: file.type,
+                                  category: 'IMAGE',
+                                  url,
+                                });
+                              }
                             }
                           }}
                           style={{ display: 'none' }}
