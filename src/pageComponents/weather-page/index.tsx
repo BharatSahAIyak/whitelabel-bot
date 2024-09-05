@@ -35,15 +35,18 @@ const WeatherPage: React.FC = () => {
 
   const fetchWeatherData = async () => {
     const startTime = performance.now();
-    const latitude = localStorage.getItem('latitude');
-    const longitude = localStorage.getItem('longitude');
+    const latitude = sessionStorage.getItem('latitude');
+    const longitude = sessionStorage.getItem('longitude');
+    const city = sessionStorage.getItem('city');
     if (!latitude || !longitude) return;
     try {
       const response = await axios.get(process.env.NEXT_PUBLIC_WEATHER_API || '', {
         params: {
           latitude,
           longitude,
+          city,
           provider: config?.provider || 'upcar',
+          weather: config?.weather || 'imd',
         },
       });
 
@@ -53,42 +56,23 @@ const WeatherPage: React.FC = () => {
       const providers = response.data.message.catalog.providers;
       // setData(providers);
 
-      // providers.forEach((provider: any) => {
-      //   if(provider?.id === 'upcar') {
-      //     setCrop(provider);
-      //   }else{
-      //     setWeather(provider);
-      //   }
-      // });
-
       providers.forEach((provider: any) => {
-        if (provider.id.toLowerCase() === 'ouat') {
-          if (provider.category_id === 'crop_advisory_provider') {
-            setCrop(provider?.items);
-          } else if (provider.category_id === 'weather_provider' && provider.items?.length >= 5) {
-            setWeather((prev: any) => ({
-              ...prev,
-              future: provider?.items?.slice(1),
-            }));
-          }
-        } else {
-          if (provider.category_id === 'weather_provider' && provider.id === 'imd') {
-            if (!weather) {
-              setWeather((prev: any) => ({
-                future: provider?.items?.slice(1),
-                current: provider?.items?.[0],
-              }));
-            } else {
-              setWeather((prev: any) => ({
-                ...prev,
-                current: provider?.items?.[0],
-              }));
-            }
-          } else if (provider.category_id === 'crop_advisory_provider' && provider.id === 'upcar') {
-            if (!crop) {
-              setCrop(provider?.items);
-            }
-          }
+        if (
+          provider.id.toLowerCase() === (config?.weather || 'imd') &&
+          provider.category_id === 'weather_provider' &&
+          provider.items?.length >= 5
+        ) {
+          setWeather((prev: any) => ({
+            ...prev,
+            current: provider?.items?.[0],
+            future: provider?.items?.slice(1),
+          }));
+        }
+        if (
+          provider.category_id === 'crop_advisory_provider' &&
+          provider.id.toLowerCase() === (config?.provider || 'upcar')
+        ) {
+          setCrop(provider?.items);
         }
       });
       return providers;
@@ -151,8 +135,8 @@ const WeatherPage: React.FC = () => {
           messageId: msgId || messageId || '',
           text: cropData?.descriptor?.name || t('label.weather'),
           createdAt: Math.floor(new Date().getTime() / 1000),
-          block: localStorage.getItem('block') || '',
-          district: localStorage.getItem('city') || '',
+          block: sessionStorage.getItem('block') || '',
+          district: sessionStorage.getItem('city') || '',
           transformerId: uuidv4(),
         });
         saveTelemetryEvent('0.1', 'E017', 'userQuery', 'responseAt', {
@@ -220,7 +204,7 @@ const WeatherPage: React.FC = () => {
     if (context?.locale === 'or') return locations?.[2];
   };
 
-  if (!localStorage.getItem('latitude') || !localStorage.getItem('longitude'))
+  if (!sessionStorage.getItem('latitude') || !sessionStorage.getItem('longitude'))
     return (
       <div className={styles.locationContainer}>
         <Typography className={styles.locationText}>

@@ -103,8 +103,10 @@ const App = ({ Component, pageProps }: AppProps) => {
         localStorage.setItem('userID', router.query.userId as string);
         sessionStorage.removeItem('conversationId');
       } else if (!localStorage.getItem('auth') || !localStorage.getItem('userID')) {
+        const userType = sessionStorage.getItem('userType');
         localStorage.clear();
         sessionStorage.clear();
+        userType && sessionStorage.setItem('userType', userType);
         removeCookie('access_token', { path: '/' });
         router.push('/login');
       }

@@ -22,6 +22,7 @@ const Home: React.FC = () => {
   const router = useRouter();
   const theme = useColorPalates();
   const config = useConfig('component', 'homePage');
+  const weatherConfig = useConfig('component', 'weatherPage');
   const [weather, setWeather] = useState<any>(context?.weather);
   const [isFetching, setIsFetching] = useState(false);
   const [isNight, setIsNight] = useState(false);
@@ -34,14 +35,15 @@ const Home: React.FC = () => {
   }, []);
 
   const fetchWeatherData = async () => {
-    const latitude = localStorage.getItem('latitude');
-    const longitude = localStorage.getItem('longitude');
+    const latitude = sessionStorage.getItem('latitude');
+    const longitude = sessionStorage.getItem('longitude');
+    const city = sessionStorage.getItem('city');
     if (!latitude || !longitude) return;
 
     try {
       setIsFetching(true);
       const response = await axios.get(process.env.NEXT_PUBLIC_WEATHER_API || '', {
-        params: { latitude, longitude },
+        params: { latitude, longitude, city, weather: weatherConfig?.weather || 'imd' },
       });
 
       console.log(response.data);
@@ -49,36 +51,20 @@ const Home: React.FC = () => {
 
       const weatherProvider = providers.find(
         (provider: any) =>
-          provider.id.toLowerCase() === 'ouat' && provider.category_id === 'weather_provider'
+          provider.id.toLowerCase() === (weatherConfig?.weather || 'imd') &&
+          provider.category_id === 'weather_provider'
       );
 
-      const imdWeatherProvider = providers.find(
-        (provider: any) => provider.id === 'imd' && provider.category_id === 'weather_provider'
-      );
-
-      if (weatherProvider) {
-        setWeather((prev: any) => ({
-          ...prev,
-          future: weatherProvider.items,
-        }));
-        context?.setWeather((prev: any) => ({
-          ...prev,
-          future: weatherProvider.items,
-        }));
-      }
-
-      if (imdWeatherProvider) {
-        setWeather((prev: any) => ({
-          ...prev,
-          future: imdWeatherProvider.items?.slice(1),
-          current: imdWeatherProvider.items?.[0],
-        }));
-        context?.setWeather((prev: any) => ({
-          ...prev,
-          future: imdWeatherProvider.items?.slice(1),
-          current: imdWeatherProvider.items?.[0],
-        }));
-      }
+      setWeather((prev: any) => ({
+        ...prev,
+        future: weatherProvider.items?.slice(1),
+        current: weatherProvider.items?.[0],
+      }));
+      context?.setWeather((prev: any) => ({
+        ...prev,
+        future: weatherProvider.items?.slice(1),
+        current: weatherProvider.items?.[0],
+      }));
       setIsFetching(false);
     } catch (error) {
       console.error('Error fetching advisory data:', error);
@@ -356,7 +342,7 @@ const Home: React.FC = () => {
               )}
             </div>
           </div>
-        ) : !localStorage.getItem('latitude') || !localStorage.getItem('longitude') ? (
+        ) : sessionStorage.getItem('location_error') ? (
           <div className={styles.locationContainer}>
             <Typography className={styles.locationText}>
               {t('label.allow_location_permission')}

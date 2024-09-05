@@ -21,7 +21,7 @@ const saveTelemetryEvent = async (
       timestamp: Math.floor(new Date().getTime() / 1000),
       actorId: localStorage.getItem('userID') || '',
       actorType: 'user',
-      env: process.env.NEXT_PUBLIC_ENV === 'production' ? 'prod' : 'dev',
+      env: process.env.NODE_ENV === 'development' ? 'dev' : 'prod',
       eventId,
       event,
       subEvent,
@@ -29,7 +29,7 @@ const saveTelemetryEvent = async (
         // @ts-ignore
         window.navigator?.userAgentData?.platform || window.navigator.platform,
       browser: window.navigator.userAgent,
-      ip: localStorage.getItem('ip') || '',
+      ip: sessionStorage.getItem('ip') || '',
       // @ts-ignore
       deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
       sessionId: sessionStorage.getItem('sessionId') || '',
