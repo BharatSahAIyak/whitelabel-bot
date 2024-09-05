@@ -540,7 +540,7 @@ const ContextProvider: FC<{
           phoneNumber: localStorage.getItem('phoneNumber') || '',
           conversationId: conversationId || '',
           messageId: messageId,
-          text: textToSend,
+          text: textToSend || 'NA',
           media: media,
           createdAt: Math.floor(new Date().getTime() / 1000),
         });
