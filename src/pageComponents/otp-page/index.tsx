@@ -168,7 +168,7 @@ const OtpPage: React.FC = () => {
           >
             <FormattedMessage
               id="message.otp_message"
-              defaultMessage="We will send you a 4 digit one time password on this mobile number <br><b>{mobile}</b>"
+              defaultMessage=""
               values={{
                 mobile: mobile,
                 br: (chunks) => <br />,
@@ -177,7 +177,12 @@ const OtpPage: React.FC = () => {
             />
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <OTPInput separator={<></>} value={otp} onChange={setOtp} length={otpLength} />
+            <OTPInput
+              separator={<></>}
+              value={otp}
+              onChange={setOtp}
+              length={parseInt(otpLength)}
+            />
           </Box>
           <div style={{ margin: '10px', textAlign: 'center' }} data-testid="resend-otp">
             {countdown > 0 ? (
