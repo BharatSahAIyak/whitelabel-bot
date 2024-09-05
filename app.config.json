@@ -21,7 +21,8 @@
     },
     "weatherPage": {
       "provider": "upcar",
-      "showCropAdvisory": true
+      "showCropAdvisory": true,
+      "weather": "imd"
     },
     "homePage": {
       "showHomeBgImg": false,

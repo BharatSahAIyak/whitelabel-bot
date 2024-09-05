@@ -22,6 +22,7 @@ const Home: React.FC = () => {
   const router = useRouter();
   const theme = useColorPalates();
   const config = useConfig('component', 'homePage');
+  const weatherConfig = useConfig('component', 'weatherPage');
   const [weather, setWeather] = useState<any>(context?.weather);
   const [isFetching, setIsFetching] = useState(false);
   const [isNight, setIsNight] = useState(false);
@@ -42,7 +43,7 @@ const Home: React.FC = () => {
     try {
       setIsFetching(true);
       const response = await axios.get(process.env.NEXT_PUBLIC_WEATHER_API || '', {
-        params: { latitude, longitude, city },
+        params: { latitude, longitude, city, weather: weatherConfig?.weather || 'imd' },
       });
 
       console.log(response.data);
@@ -50,36 +51,20 @@ const Home: React.FC = () => {
 
       const weatherProvider = providers.find(
         (provider: any) =>
-          provider.id.toLowerCase() === 'ouat' && provider.category_id === 'weather_provider'
+          provider.id.toLowerCase() === (weatherConfig?.weather || 'imd') &&
+          provider.category_id === 'weather_provider'
       );
 
-      const imdWeatherProvider = providers.find(
-        (provider: any) => provider.id === 'imd' && provider.category_id === 'weather_provider'
-      );
-
-      if (weatherProvider) {
-        setWeather((prev: any) => ({
-          ...prev,
-          future: weatherProvider.items,
-        }));
-        context?.setWeather((prev: any) => ({
-          ...prev,
-          future: weatherProvider.items,
-        }));
-      }
-
-      if (imdWeatherProvider) {
-        setWeather((prev: any) => ({
-          ...prev,
-          future: imdWeatherProvider.items?.slice(1),
-          current: imdWeatherProvider.items?.[0],
-        }));
-        context?.setWeather((prev: any) => ({
-          ...prev,
-          future: imdWeatherProvider.items?.slice(1),
-          current: imdWeatherProvider.items?.[0],
-        }));
-      }
+      setWeather((prev: any) => ({
+        ...prev,
+        future: weatherProvider.items?.slice(1),
+        current: weatherProvider.items?.[0],
+      }));
+      context?.setWeather((prev: any) => ({
+        ...prev,
+        future: weatherProvider.items?.slice(1),
+        current: weatherProvider.items?.[0],
+      }));
       setIsFetching(false);
     } catch (error) {
       console.error('Error fetching advisory data:', error);
