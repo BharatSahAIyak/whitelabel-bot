@@ -14,6 +14,8 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
   const langPopupConfig = useConfig('component', 'langPopup');
 
   useEffect(() => {
+    const controller = new AbortController();
+
     if (
       value.length > 0 &&
       config?.allowTransliteration &&
@@ -51,18 +53,29 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
           'Content-Type': 'application/json',
         },
         data: data,
+        signal: controller.signal,
       };
 
       axios
         .request(axiosConfig)
         .then((res) => {
+          if (controller.signal.aborted) {
+            return;
+          }
+
           setSuggestions(res?.data?.suggestions);
           console.log('api suggestions', res?.data?.suggestions);
         })
-        .catch(() => toast.error('Transliteration failed'));
+        .catch((error) => {
+          if (error?.code === 'ERR_CANCELED') {
+            return;
+          } else toast.error('Transliteration failed');
+        });
     } else {
       setSuggestions([]);
     }
+
+    return () => controller.abort();
   }, [value, cursorPosition]);
 
   const suggestionHandler = (index: number) => {
