@@ -25,7 +25,7 @@ const ShareButtons = () => {
 
   const downloadChat = async () => {
     const url = `${
-      process.env.NEXT_PUBLIC_BFF_API_URL
+      process.env.NEXT_PUBLIC_PDF_GENERATOR_URL
     }/history/generate-pdf/${sessionStorage.getItem('conversationId')}`;
 
     return axios.get(url, {
