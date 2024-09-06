@@ -72,7 +72,7 @@ const WeatherAdvisoryPopup = (props: any) => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/text-to-speech`,
         {
-          text: text,
+          text: DOMPurify.sanitize(text)?.replace(/<[^>]*>/g, ''),
           language: localStorage.getItem('locale'),
           disableTelemetry: true,
         },

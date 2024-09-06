@@ -278,7 +278,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/text-to-speech`,
           {
-            text: text,
+            text: DOMPurify.sanitize(text)?.replace(/<[^>]*>/g, ''),
             language: context?.locale,
             messageId: content?.data?.replyId,
             conversationId: sessionStorage.getItem('conversationId') || '',
