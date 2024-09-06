@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Input as BaseInput } from '@mui/base/Input';
 import { Box, styled } from '@mui/system';
+import { useMediaQuery } from '@material-ui/core';
 
 export function OTPInput({
   separator,
@@ -132,7 +133,14 @@ export function OTPInput({
   };
 
   return (
-    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }} data-testid="otp-input-field">
+    <Box
+      sx={{
+        display: 'flex',
+        gap: (window?.innerWidth < 600 && length > 4 ? '44px' : '56px') === '44px' ? 1 : 2,
+        alignItems: 'center',
+      }}
+      data-testid="otp-input-field"
+    >
       {new Array(length).fill(null).map((_, index) => (
         <React.Fragment key={index}>
           <BaseInput
@@ -143,15 +151,16 @@ export function OTPInput({
             aria-label={`Digit ${index + 1} of OTP`}
             slotProps={{
               input: {
-                ref: (ele) => {
+                ref: (ele: any) => {
                   inputRefs.current[index] = ele!;
                 },
-                onKeyDown: (event) => handleKeyDown(event, index),
-                onChange: (event) => handleChange(event, index),
-                onClick: (event) => handleClick(event, index),
-                onPaste: (event) => handlePaste(event, index),
+                length: length,
+                onKeyDown: (event: any) => handleKeyDown(event, index),
+                onChange: (event: any) => handleChange(event, index),
+                onClick: (event: any) => handleClick(event, index),
+                onPaste: (event: any) => handlePaste(event, index),
                 value: value[index] ?? '',
-              },
+              } as any,
             }}
           />
           {index === length - 1 ? null : separator}
@@ -183,10 +192,11 @@ const grey = {
   900: '#1C2025',
 };
 
-const InputElement = styled('input')(
-  ({ theme }) => `
-  width: 56px;
-  height: 52px;
+const InputElement = styled('input')(({ theme, length }: any) => {
+  const isMobile = useMediaQuery('(max-width: 600px)');
+  return `
+  width: ${isMobile && length > 4 ? '44px' : '56px'};
+  height: ${isMobile && length > 4 ? '44px' : '56px'};
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 1rem;
   font-weight: 400;
@@ -214,5 +224,5 @@ const InputElement = styled('input')(
   &:focus-visible {
     outline: 0;
   }
-`
-);
+`;
+});
