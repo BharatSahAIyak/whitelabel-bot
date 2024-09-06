@@ -14,6 +14,10 @@ import { useConfig } from '../../hooks/useConfig';
 import LanguagePicker from '../../components/language-picker';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DOMPurify from 'dompurify';
+import InputComponent, {
+  ButtonProps,
+  InputProps,
+} from '@samagra-x/stencil-molecules/lib/input-component';
 
 const LoginPage: React.FC = () => {
   const config = useConfig('component', 'loginPage');
@@ -112,7 +116,7 @@ const LoginPage: React.FC = () => {
         )}
         <div className={styles.form}>
           {/* Form */}
-          <Typography
+          {/*<Typography
             data-testid="login-page-title"
             component="h1"
             variant="h4"
@@ -151,7 +155,7 @@ const LoginPage: React.FC = () => {
               autoComplete={'phone'}
               autoFocus
             />
-            {/* @ts-ignore */}
+            {/* @ts-ignore 
             <Button
               data-testid="login-button"
               fullWidth
@@ -171,7 +175,31 @@ const LoginPage: React.FC = () => {
             >
               {loading ? <CircularProgress size={24} color="inherit" /> : `${t('label.continue')}`}
             </Button>
-          </Box>
+          </Box> */}
+          <InputComponent
+            title={t('label.subtitle')}
+            type="mobile"
+            titleStyle={{
+              color: theme?.primary?.main || 'black',
+              fontWeight: 'bold',
+              fontSize: '28px',
+            }}
+            mainContainerStyle={{ width: '100%', height: '100%' }}
+            buttonProps={
+              {
+                handleNextTask: handleLogin,
+                buttonText: 'Continue',
+              } as ButtonProps
+            }
+            inputProps={
+              {
+                errorMessage: 'Mobile Number is required',
+                value: input,
+                onChange: setInput,
+                placeholder: t('message.enter_mobile'),
+              } as InputProps
+            }
+          />
         </div>
       </div>
     </>
