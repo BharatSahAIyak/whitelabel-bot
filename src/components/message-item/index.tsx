@@ -401,7 +401,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   const uploadToCdn = async (file: any) => {
     try {
-      setUploadingImage(true);
       const compressedFile = await compressImage(file);
       const data = new FormData();
       if (compressedFile) data.append('file', compressedFile);
@@ -863,13 +862,14 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             const file = event?.target?.files?.[0];
                             if (file) {
                               console.log(file);
-                              const url = await uploadToCdn(file);
+                              setUploadingImage(true);
                               const formData = new FormData();
                               formData.append('file', file);
                               const res = await fetch('/api/imageSize', {
                                 method: 'POST',
                                 body: formData,
                               });
+                              const url = await uploadToCdn(file);
 
                               const { width, height } = await res.json();
 
