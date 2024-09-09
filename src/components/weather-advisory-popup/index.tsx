@@ -36,7 +36,7 @@ const WeatherAdvisoryPopup = (props: any) => {
       const url = await fetchAudio(props?.advisory?.descriptor?.long_desc);
       if (url) {
         const audio = new Audio(url);
-        audio.playbackRate = config?.component?.botDetails?.audioPlayback || 1.5;
+        audio.playbackRate = config?.audioPlayback || 1.5;
 
         audio.addEventListener('ended', () => {
           setAudioElement(null);
