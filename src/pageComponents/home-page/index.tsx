@@ -344,10 +344,17 @@ const Home: React.FC = () => {
           </div>
         ) : sessionStorage.getItem('location_error') ? (
           <div className={styles.locationContainer}>
-            <Typography className={styles.locationText}>
+            <Typography
+              className={styles.locationText}
+              data-testid="home-page-allow-location-text-1"
+            >
               {t('label.allow_location_permission')}
             </Typography>
-            <Typography className={styles.locationText} style={{ width: '100%' }}>
+            <Typography
+              className={styles.locationText}
+              style={{ width: '100%' }}
+              data-testid="home-page-allow-location-text-2"
+            >
               {t('label.allow_location_from_setting')}
             </Typography>
           </div>
@@ -362,7 +369,7 @@ const Home: React.FC = () => {
             }}
           >
             <CircularProgress />
-            <Typography className={styles.locationText}>
+            <Typography className={styles.locationText} data-testid="home-page-loading-weather">
               {t('label.loading_weather_details')}
             </Typography>
           </div>
