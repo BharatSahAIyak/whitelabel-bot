@@ -401,6 +401,43 @@ const Home: React.FC = () => {
             justifyContent="center"
             data-testid="home-page-action-buttons"
           >
+            {config.showWeatherActionButton && (
+              <Grid
+                item
+                xs={5}
+                sm={3}
+                md={4}
+                sx={{
+                  textAlign: 'center',
+                  padding: '6px',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                  borderRadius: '12px',
+                  margin: '6px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                }}
+              >
+                <div
+                  onClick={() => {
+                    if (config?.showWeatherPage) {
+                      router.push('/weather');
+                    } else {
+                      router.push('/chat?message=Guided:%20weather');
+                    }
+                  }}
+                >
+                  <img
+                    src={config.weatherButtonLogo}
+                    alt="weatherImg"
+                    className={styles.gridImage}
+                  />
+                  <p className={styles.gridText}>{t('label.weather')} </p>
+                </div>
+              </Grid>
+            )}
             {config.showPestIdentification && (
               <Grid
                 item
