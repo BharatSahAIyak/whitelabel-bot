@@ -19,7 +19,7 @@ const defaultConfig = {
 firebase.initializeApp(self.firebaseConfig || defaultConfig);
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
+messaging.onBackgroundMessage(async (payload) => {
   console.log('Received background message:', JSON.stringify(payload));
   const { title, body, image } = payload.notification;
   const notificationData = {
@@ -66,6 +66,13 @@ messaging.onBackgroundMessage((payload) => {
     .then(() => console.log('Notification data stored successfully'))
     .catch((error) => console.error('Failed to store notification:', error));
 
+  await saveTelemetryEvent('0.1', 'E046', 'aiToolProxyToolLatency', 's2tLatency', {
+    botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+    orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+    userId: localStorage.getItem('userID') || '',
+    phoneNumber: localStorage.getItem('phoneNumber') || '',
+    conversationId: sessionStorage.getItem('conversationId') || '',
+  });
   // Uncomment the following line if you want to show the notification
   // return self.registration.showNotification(title, notificationData);
 });

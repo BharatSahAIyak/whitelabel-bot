@@ -6,6 +6,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useRouter } from 'next/router';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { onMessageListener } from '../../config/firebase';
+import saveTelemetryEvent from '../../utils/telemetry';
 
 const style = {
   position: 'absolute',
@@ -26,6 +27,7 @@ const NotificationModal = () => {
 
   useEffect(() => {
     const checkNotification = async () => {
+      setNotificationData;
       const db = await openDB('notificationDB', 1, {
         upgrade(db) {
           if (!db.objectStoreNames.contains('notifications')) {
@@ -41,6 +43,13 @@ const NotificationModal = () => {
       if (notifications.length > 0) {
         setNotificationData(notifications[0]);
         setOpen(true);
+        await saveTelemetryEvent('0.1', 'E046', 'aiToolProxyToolLatency', 's2tLatency', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+        });
       } else {
         setOpen(false);
         setNotificationData(null);
@@ -49,7 +58,7 @@ const NotificationModal = () => {
 
     checkNotification();
 
-    onMessageListener().then((payload: any) => {
+    onMessageListener().then(async (payload: any) => {
       if (payload) {
         const newNotification = {
           timestamp: new Date().getTime().toString(),
@@ -62,6 +71,13 @@ const NotificationModal = () => {
 
         setNotificationData(newNotification);
         setOpen(true);
+        await saveTelemetryEvent('0.1', 'E046', 'aiToolProxyToolLatency', 's2tLatency', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+        });
       }
     });
 
