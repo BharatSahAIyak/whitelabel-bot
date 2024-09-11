@@ -76,6 +76,11 @@ const App = ({ Component, pageProps }: AppProps) => {
     getToken();
   }, []);
 
+  function updateFCMToken(token: string) {
+    console.log('Received FCM Token:', token);
+    // TODO: save this token for this user
+  }
+
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
       // already logged in then send to home
@@ -163,6 +168,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         });
     };
     fetchConfig();
+    updateFCMToken('called by web');
   }, []);
 
   const fetchUser = async () => {
