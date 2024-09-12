@@ -14,6 +14,7 @@ import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { getMsgType } from '../../utils/getMsgType';
 import { recordUserLocation } from '../../utils/location';
 import { detectLanguage } from '../../utils/detectLang';
+import { debounce } from 'lodash';
 
 const ChatUiWindow: React.FC = () => {
   const config = useConfig('component', 'chatUI');
@@ -141,6 +142,9 @@ const ChatUiWindow: React.FC = () => {
     },
     [context, t]
   );
+
+  const debouncedSendMessage = useCallback(debounce(handleSend, 500), [handleSend]);
+
   const normalizeMsgs = useMemo(
     () =>
       context?.messages?.map((msg: any) => ({
@@ -201,7 +205,7 @@ const ChatUiWindow: React.FC = () => {
           voiceToText={RenderVoiceRecorder}
           //@ts-ignore
           renderMessageContent={(props): ReactElement => <MessageItem message={props} />}
-          onSend={handleSend}
+          onSend={debouncedSendMessage}
           locale="en-US"
           placeholder={t('message.ask_ur_question')}
         />
