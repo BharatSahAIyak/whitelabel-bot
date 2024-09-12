@@ -22,7 +22,7 @@ const getFlags = (userType) => {
           homePage: {
             disablePlantProtection: true,
             otherInformationImg:
-              'http://cdn-api.prod.bhasai.samagra.io:443/deployer/salesma.svg1723629548517',
+              'https://cdn-api.bharatsahaiyak.ai/deployer/salesma.svg1723629548517',
           },
         },
         translation: {
