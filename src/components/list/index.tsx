@@ -13,6 +13,7 @@ import { map } from 'lodash';
 import { Avatar, Divider, ListItem, ListItemAvatar, Typography } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { useConfig } from '../../hooks/useConfig';
+import NewList from '@samagra-x/stencil-molecules/lib/list/index';
 
 export const List: React.FC<ListType> = ({ items, label, noItem }) => {
   const [openItem, setOpenItem] = React.useState<string | null>(null);
