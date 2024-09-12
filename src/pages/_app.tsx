@@ -76,8 +76,8 @@ const App = ({ Component, pageProps }: AppProps) => {
     getToken();
   }, []);
 
-  function updateFCMToken(token: string) {
-    console.log('Received FCM Token:', token);
+  function updateFCMToken() {
+    console.log('updateFCMToken called');
     // TODO: save this token for this user
   }
 
@@ -168,7 +168,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         });
     };
     fetchConfig();
-    updateFCMToken('called by web');
+    updateFCMToken();
   }, []);
 
   const fetchUser = async () => {
