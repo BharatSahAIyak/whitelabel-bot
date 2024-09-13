@@ -38,7 +38,7 @@ const Home: React.FC = () => {
     const latitude = sessionStorage.getItem('latitude');
     const longitude = sessionStorage.getItem('longitude');
     const city = sessionStorage.getItem('city');
-    if (!latitude || !longitude) return;
+    if (!latitude || !longitude || sessionStorage.getItem('location_error')) return;
 
     try {
       setIsFetching(true);
@@ -358,6 +358,26 @@ const Home: React.FC = () => {
             >
               {t('label.allow_location_from_setting')}
             </Typography>
+            <Button
+              fullWidth
+              variant="outlined"
+              color="primary"
+              style={{
+                color: '#fff',
+                marginTop: '20px',
+                background: theme.primary.main,
+                border: '1px solid var(--Mid-Gray-50, #F6F7F9)',
+                fontSize: '14px',
+                width: 300,
+                fontWeight: 600,
+              }}
+              // onClick={() => {
+              //   handleOpenSettings();
+              //   handleClose();
+              // }}
+            >
+              {'Allow Permission'}
+            </Button>
           </div>
         ) : (
           <div

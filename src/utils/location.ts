@@ -23,6 +23,10 @@ export async function recordUserLocation() {
         },
         async (error) => {
           sessionStorage.setItem('location_error', 'true');
+          sessionStorage.setItem('latitude', String(process.env.NEXT_PUBLIC_USER_LATITUDE));
+          sessionStorage.setItem('longitude', String(process.env.NEXT_PUBLIC_USER_LONGITUDE));
+          sessionStorage.setItem('city', String(process.env.NEXT_PUBLIC_USER_LOCATION));
+
           if (error.code === error.PERMISSION_DENIED) {
             let apiRes: any = await fetch('https://ip-retriever-production.up.railway.app/');
             apiRes = await apiRes.text();
