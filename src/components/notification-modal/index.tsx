@@ -65,8 +65,6 @@ const NotificationModal = () => {
       }
     });
 
-    updateNotificationPayload('temp');
-
     return () => {
       handleClose();
     };
@@ -84,15 +82,17 @@ const NotificationModal = () => {
     });
   };
 
-  async function updateNotificationPayload(stringifiedPayload: string) {
-    try {
-      const payload = JSON.parse(stringifiedPayload);
-      console.log('Received payload:', payload);
-      const db = await openDB('notificationDB', 1);
-      await addData(db, payload);
-    } catch (error) {
-      console.error('Error parsing JSON:', error);
-    }
+  if (typeof window !== 'undefined') {
+    window.updateNotificationPayload = async (stringifiedPayload: string) => {
+      try {
+        const payload = JSON.parse(stringifiedPayload);
+        console.log('Received payload:', payload);
+        const db = await openDB('notificationDB', 1);
+        await addData(db, payload);
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+      }
+    };
   }
 
   const handleClose = async () => {

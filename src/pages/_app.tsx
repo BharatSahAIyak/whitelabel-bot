@@ -76,9 +76,11 @@ const App = ({ Component, pageProps }: AppProps) => {
     getToken();
   }, []);
 
-  function updateFCMToken() {
-    console.log('updateFCMToken called');
-    // TODO: save this token for this user
+  if (typeof window !== 'undefined') {
+    window.updateFCMToken = () => {
+      console.log('updateFCMToken called');
+      // TODO: save this token for this user
+    };
   }
 
   const handleLoginRedirect = useCallback(() => {
@@ -168,7 +170,6 @@ const App = ({ Component, pageProps }: AppProps) => {
         });
     };
     fetchConfig();
-    updateFCMToken();
   }, []);
 
   const fetchUser = async () => {
