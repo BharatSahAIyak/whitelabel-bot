@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "dotenv -- next dev",
+    "dev": "dotenv -- node server.js",
     "build": "next build && sh ./build.sh",
     "start": "next start",
     "lint": "next lint",

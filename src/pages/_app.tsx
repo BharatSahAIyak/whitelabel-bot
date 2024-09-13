@@ -3,7 +3,7 @@ import type { AppProps } from 'next/app';
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import '@samagra-x/chatui/dist/index.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { useCookies } from 'react-cookie';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
@@ -40,6 +40,24 @@ const App = ({ Component, pageProps }: AppProps) => {
       if (token) {
         console.log('your token is here', token);
         setToken(token);
+        try {
+          await axios.post(
+            `${process.env.NEXT_PUBLIC_USER_MANAGEMENT_URL}/user/${process.env.NEXT_PUBLIC_USER_MANAGEMENT_ID}/register`,
+            {
+              device_id: localStorage.getItem('userID') || '',
+              user_data: {
+                token: token,
+              },
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+        } catch (error) {
+          console.error('user is not register with the segment because :', error);
+        }
       }
     } else {
       console.log('permission not granted');
@@ -61,12 +79,40 @@ const App = ({ Component, pageProps }: AppProps) => {
         measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
       })
     );
+    const appConfig = encodeURIComponent(
+      JSON.stringify({
+        telemetryApiEndpoint: process.env.NEXT_PUBLIC_TELEMETRY_API_ENDPOINT,
+        NEXT_PUBLIC_BOT_NAME: process.env.NEXT_PUBLIC_BOT_NAME,
+        NEXT_PUBLIC_BOT_ID: process.env.NEXT_PUBLIC_BOT_ID,
+        NEXT_PUBLIC_ORG_ID: process.env.NEXT_PUBLIC_ORG_ID,
+        conversationId: sessionStorage.getItem('conversationId'),
+        phoneNumber: localStorage.getItem('phoneNumber'),
+        userId: localStorage.getItem('userID'),
+        NODE_ENV: process.env.NODE_ENV === 'development' ? 'dev' : 'prod',
+        os:
+          // @ts-ignore
+          window.navigator?.userAgentData?.platform || window.navigator.platform,
+        browser: navigator.userAgent,
+        ip: sessionStorage.getItem('ip'),
+        // @ts-ignore
+        deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
+        sessionId: sessionStorage.getItem('sessionId'),
+      })
+    );
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
-        .register(`/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}`)
+        .register(
+          `/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}`
+          // `/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}&appConfig=${appConfig}`
+        )
         .then((registration) => {
           console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .then(() => {
+          console.log('Service Worker is active and ready');
+          initializeFirebase();
+          getToken();
         })
         .catch((err) => {
           console.error('Service Worker registration failed:', err);

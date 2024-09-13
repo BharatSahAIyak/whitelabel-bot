@@ -2,9 +2,14 @@ importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js');
 
 // Set Firebase configuration, once available
+let appConfig = {};
+
 self.addEventListener('fetch', () => {
   const urlParams = new URLSearchParams(location.search);
   self.firebaseConfig = Object.fromEntries(urlParams);
+  if (urlParams.has('appConfig')) {
+    appConfig = JSON.parse(decodeURIComponent(urlParams.get('appConfig')));
+  }
 });
 
 // "Default" Firebase configuration (prevents errors)
@@ -20,12 +25,12 @@ firebase.initializeApp(self.firebaseConfig || defaultConfig);
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(async (payload) => {
-  console.log('Received background message:', JSON.stringify(payload));
+  console.log('Received background message:-', JSON.stringify(payload));
   const { title, body, image } = payload.notification;
   const notificationData = {
     title,
     body,
-    icon: payload.data.sideLogo,
+    icon: payload?.data?.icon || image,
     image: image,
     timestamp: Date.now(), // Add a timestamp
     ...payload.data,
@@ -66,13 +71,46 @@ messaging.onBackgroundMessage(async (payload) => {
     .then(() => console.log('Notification data stored successfully'))
     .catch((error) => console.error('Failed to store notification:', error));
 
-  await saveTelemetryEvent('0.1', 'E046', 'aiToolProxyToolLatency', 's2tLatency', {
-    botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-    orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-    userId: localStorage.getItem('userID') || '',
-    phoneNumber: localStorage.getItem('phoneNumber') || '',
-    conversationId: sessionStorage.getItem('conversationId') || '',
-  });
+  console.log('app config value received', appConfig);
+  const eventData = {
+    botId: appConfig.NEXT_PUBLIC_BOT_ID || '',
+    orgId: appConfig.NEXT_PUBLIC_ORG_ID || '',
+    userId: appConfig.userId || '',
+    phoneNumber: appConfig.phoneNumber || '',
+    conversationId: appConfig.conversationId || '',
+  };
+
+  try {
+    const telemetryData = {
+      generator: appConfig.NEXT_PUBLIC_BOT_NAME,
+      version: '0.1',
+      timestamp: Math.floor(new Date().getTime() / 1000),
+      actorId: appConfig.userId || '',
+      actorType: 'user',
+      env: appConfig.NODE_ENV,
+      eventId: 'E046',
+      event: 'aiToolProxyToolLatency',
+      subEvent: 's2tLatency',
+      os: appConfig.os || 'unknown',
+      browser: appConfig.browser || 'unknown',
+      ip: appConfig.ip || '',
+      deviceType: appConfig.deviceType || 'unknown',
+      sessionId: appConfig.sessionId || '',
+      eventData,
+    };
+
+    await fetch(telemetryApi, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        orgId: appConfig.NEXT_PUBLIC_ORG_ID || '',
+      },
+      body: JSON.stringify([telemetryData]),
+    });
+  } catch (error) {
+    console.error('Error saving telemetry event:', error);
+  }
+
   // Uncomment the following line if you want to show the notification
-  // return self.registration.showNotification(title, notificationData);
+  return self.registration.showNotification(title, notificationData);
 });
