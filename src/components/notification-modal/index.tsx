@@ -82,19 +82,6 @@ const NotificationModal = () => {
     });
   };
 
-  if (typeof window !== 'undefined') {
-    window.updateNotificationPayload = async (stringifiedPayload: string) => {
-      try {
-        const payload = JSON.parse(stringifiedPayload);
-        console.log('Received payload:', payload);
-        const db = await openDB('notificationDB', 1);
-        await addData(db, payload);
-      } catch (error) {
-        console.error('Error parsing JSON:', error);
-      }
-    };
-  }
-
   const handleClose = async () => {
     if (notificationData) {
       const db = await openDB('notificationDB', 1);
