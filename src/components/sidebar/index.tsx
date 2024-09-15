@@ -53,6 +53,22 @@ export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
     onToggle();
   };
 
+  const unregisterServiceWorkers = async () => {
+    if ('serviceWorker' in navigator) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        if (registrations.length > 0) {
+          await Promise.all(registrations.map((registration) => registration.unregister()));
+          console.log('All service workers unregistered');
+        } else {
+          console.log('No service workers registered');
+        }
+      } catch (error) {
+        console.error('Failed to unregister service workers:', error);
+      }
+    }
+  };
+
   function logout() {
     removeCookie('access_token', { path: '/' });
     const userType = sessionStorage.getItem('userType');
@@ -60,8 +76,11 @@ export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
     sessionStorage.clear();
     userType && sessionStorage.setItem('userType', userType);
     context?.setMessages([]);
-    router.push('/login');
-    if (typeof window !== 'undefined') window.location.reload();
+
+    unregisterServiceWorkers().then(() => {
+      router.push('/login');
+      if (typeof window !== 'undefined') window.location.reload();
+    });
   }
 
   console.log('debug', { config });

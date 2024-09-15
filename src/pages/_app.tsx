@@ -25,6 +25,30 @@ function SafeHydrate({ children }: { children: ReactElement }) {
   return <div suppressHydrationWarning>{typeof window === 'undefined' ? null : children}</div>;
 }
 
+// Client-side check for the service-workers if they are expired or not
+
+// const unregisterServiceWorkerIfExpired = () => {
+//   const SW_EXPIRATION_KEY = 'serviceWorkerExpiration';
+//   const EXPIRY_TIME = 30 * 24 * 60 * 60 * 1000;
+
+//   const expiration = localStorage.getItem(SW_EXPIRATION_KEY);
+//   const currentTime = Date.now();
+
+//   if (expiration && currentTime > parseInt(expiration)) {
+//     if ('serviceWorker' in navigator) {
+//       navigator.serviceWorker.ready.then((registration) => {
+//         registration.unregister().then(() => {
+//           console.log('Service worker unregistered after 30 days');
+//           localStorage.removeItem(SW_EXPIRATION_KEY);
+//         });
+//       });
+//     }
+//   } else {
+//     localStorage.setItem(SW_EXPIRATION_KEY, (currentTime + EXPIRY_TIME).toString());
+//     console.log('Service worker expiration extended by 30 days');
+//   }
+// };
+
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const { isAuthenticated, login } = useLogin();
@@ -47,34 +71,50 @@ const App = ({ Component, pageProps }: AppProps) => {
   };
 
   useEffect(() => {
-    if (!sessionStorage.getItem('sessionId')) {
-      sessionStorage.setItem('sessionId', uuidv4());
-    }
-    const firebaseConfig = encodeURIComponent(
-      JSON.stringify({
-        apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-        messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-        appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-        measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-      })
-    );
+    if (isAuthenticated) {
+      initializeFirebase();
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register(`/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}`)
-        .then((registration) => {
-          console.log('Service Worker registered with scope:', registration.scope);
+      const getToken = async () => {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          const token = await requestForToken();
+          if (token) {
+            console.log('your token is here', token);
+            setToken(token);
+          }
+        } else {
+          console.log('permission not granted');
+        }
+      };
+
+      getToken();
+
+      const firebaseConfig = encodeURIComponent(
+        JSON.stringify({
+          apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+          authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+          storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+          messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+          appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+          measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
         })
-        .catch((err) => {
-          console.error('Service Worker registration failed:', err);
-        });
+      );
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register(`/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}`)
+          .then((registration) => {
+            console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .catch((err) => {
+            console.error('Service Worker registration failed:', err);
+          });
+      }
+
+      // unregisterServiceWorkerIfExpired();
     }
-    initializeFirebase();
-    getToken();
-  }, []);
+  }, [isAuthenticated]);
 
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {

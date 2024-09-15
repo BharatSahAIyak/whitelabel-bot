@@ -11,17 +11,25 @@ const firebaseConfig = {
   measurementId: String(process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID),
 };
 
-let app;
+let app: any;
 let messaging: any;
 
 export const initializeFirebase = () => {
   if (typeof window !== 'undefined' && !getApps().length) {
     app = initializeApp(firebaseConfig);
-    messaging = typeof window !== 'undefined' ? getMessaging(app) : null;
+    messaging = getMessaging(app);
+    console.log('Firebase initialized');
+  } else {
+    console.log('Firebase already initialized or running on the server');
   }
 };
 
 export const requestForToken = async () => {
+  if (!messaging) {
+    console.error('Firebase is not initialized. Please initialize Firebase first.');
+    return null;
+  }
+
   if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     try {
       const currentToken = await getToken(messaging, {
@@ -31,21 +39,31 @@ export const requestForToken = async () => {
         return currentToken;
       } else {
         console.log('No registration token available. Request permission to generate one.');
+        return null;
       }
     } catch (err) {
-      console.log('An error occurred while retrieving token:', err);
+      console.error('An error occurred while retrieving token:', err);
+      return null;
     }
+  } else {
+    console.error('Service Worker is not supported in this browser.');
+    return null;
   }
-  return null;
 };
 
 export const onMessageListener = () => {
-  if (typeof window !== 'undefined') {
-    return new Promise((resolve) => {
+  if (!messaging) {
+    console.error('Firebase is not initialized. Please initialize Firebase first.');
+    return Promise.reject('Firebase not initialized');
+  }
+
+  return new Promise((resolve) => {
+    if (typeof window !== 'undefined') {
       onMessage(messaging, (payload) => {
         resolve(payload);
       });
-    });
-  }
-  return Promise.resolve(null);
+    } else {
+      resolve(null);
+    }
+  });
 };
