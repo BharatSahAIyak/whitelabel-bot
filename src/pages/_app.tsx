@@ -38,7 +38,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       console.log('your token is here', token);
       if (token && localStorage.getItem('phoneNumber') && !sessionStorage.getItem('fcmToken')) {
         try {
-          await axios.post(
+          const response = await axios.post(
             `${process.env.NEXT_PUBLIC_USER_MANAGEMENT_URL}/user/${process.env.NEXT_PUBLIC_USER_MANAGEMENT_ID}/register`,
             {
               device_id: localStorage.getItem('phoneNumber'),
@@ -53,6 +53,26 @@ const App = ({ Component, pageProps }: AppProps) => {
             }
           );
           sessionStorage.setItem('fcmToken', token);
+          console.log('response', response?.data?.data);
+          if (
+            response?.data?.data?.status == 'ALREADY_REGISTERED' &&
+            response?.data?.data?.user_id
+          ) {
+            await axios.put(
+              `${process.env.NEXT_PUBLIC_USER_MANAGEMENT_URL}/user/${process.env.NEXT_PUBLIC_SEGMENT_ID}/update`,
+              {
+                user_id: response?.data?.data?.user_id,
+                profile_data: {
+                  token: token,
+                },
+              },
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+          }
         } catch (error) {
           console.error('user is not register with the segment because :', error);
         }
@@ -103,13 +123,9 @@ const App = ({ Component, pageProps }: AppProps) => {
     );
 
     if ('serviceWorker' in navigator) {
-      console.log('1 is ccalled');
       navigator.serviceWorker
         .register(`/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}`)
         .then((registration) => {
-          console.log('1 is ccalled');
-
-          console.log('service worker is active here', registration.active);
           if (registration.active) {
             const telemetryConfig = {
               telemetryApiEndpoint:
@@ -132,18 +148,10 @@ const App = ({ Component, pageProps }: AppProps) => {
             };
 
             storeAppConfigInIndexedDB(telemetryConfig);
-
-            // registration.active.postMessage({
-            //   type: 'APP_CONFIG_READY',
-            //   config: telemetryConfig,
-            // });
-
-            console.log('App config sent to Service Worker');
           }
           console.log('Service Worker registered with scope:', registration.scope);
         })
         .then(() => {
-          console.log('Service Worker is active and ready');
           initializeFirebase();
           getToken();
         })
