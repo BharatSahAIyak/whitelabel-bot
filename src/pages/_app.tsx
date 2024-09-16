@@ -31,20 +31,17 @@ const App = ({ Component, pageProps }: AppProps) => {
   const [cookie, setCookie, removeCookie] = useCookies();
   const [user, setUser] = useState<any>(null);
 
-  const [token, setToken] = useState('');
-
   const getToken = async () => {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
       const token = await requestForToken();
-      if (token) {
-        console.log('your token is here', token);
-        setToken(token);
+      console.log('your token is here', token);
+      if (token && localStorage.getItem('phoneNumber') && !sessionStorage.getItem('fcmToken')) {
         try {
           await axios.post(
             `${process.env.NEXT_PUBLIC_USER_MANAGEMENT_URL}/user/${process.env.NEXT_PUBLIC_USER_MANAGEMENT_ID}/register`,
             {
-              device_id: localStorage.getItem('userID') || '',
+              device_id: localStorage.getItem('phoneNumber'),
               user_data: {
                 token: token,
               },
@@ -55,6 +52,7 @@ const App = ({ Component, pageProps }: AppProps) => {
               },
             }
           );
+          sessionStorage.setItem('fcmToken', token);
         } catch (error) {
           console.error('user is not register with the segment because :', error);
         }
@@ -62,6 +60,30 @@ const App = ({ Component, pageProps }: AppProps) => {
     } else {
       console.log('permission not granted');
     }
+  };
+
+  const storeAppConfigInIndexedDB = (config: any) => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('AppConfigDB', 1);
+
+      request.onerror = (event: any) => reject('IndexedDB error: ' + event.target.error);
+
+      request.onsuccess = (event: any) => {
+        const db = event.target.result;
+        const transaction = db.transaction(['appConfig'], 'readwrite');
+        const store = transaction.objectStore('appConfig');
+        const storeRequest = store.put({ id: 'currentConfig', ...config });
+
+        storeRequest.onerror = (event: any) =>
+          reject('Error storing app config: ' + event.target.error);
+        storeRequest.onsuccess = () => resolve('');
+      };
+
+      request.onupgradeneeded = (event: any) => {
+        const db = event.target.result;
+        db.createObjectStore('appConfig', { keyPath: 'id' });
+      };
+    });
   };
 
   useEffect(() => {
@@ -79,34 +101,45 @@ const App = ({ Component, pageProps }: AppProps) => {
         measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
       })
     );
-    const appConfig = encodeURIComponent(
-      JSON.stringify({
-        telemetryApiEndpoint: process.env.NEXT_PUBLIC_TELEMETRY_API_ENDPOINT,
-        NEXT_PUBLIC_BOT_NAME: process.env.NEXT_PUBLIC_BOT_NAME,
-        NEXT_PUBLIC_BOT_ID: process.env.NEXT_PUBLIC_BOT_ID,
-        NEXT_PUBLIC_ORG_ID: process.env.NEXT_PUBLIC_ORG_ID,
-        conversationId: sessionStorage.getItem('conversationId'),
-        phoneNumber: localStorage.getItem('phoneNumber'),
-        userId: localStorage.getItem('userID'),
-        NODE_ENV: process.env.NODE_ENV === 'development' ? 'dev' : 'prod',
-        os:
-          // @ts-ignore
-          window.navigator?.userAgentData?.platform || window.navigator.platform,
-        browser: navigator.userAgent,
-        ip: sessionStorage.getItem('ip'),
-        // @ts-ignore
-        deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
-        sessionId: sessionStorage.getItem('sessionId'),
-      })
-    );
 
     if ('serviceWorker' in navigator) {
+      console.log('1 is ccalled');
       navigator.serviceWorker
-        .register(
-          `/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}`
-          // `/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}&appConfig=${appConfig}`
-        )
+        .register(`/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}`)
         .then((registration) => {
+          console.log('1 is ccalled');
+
+          console.log('service worker is active here', registration.active);
+          if (registration.active) {
+            const telemetryConfig = {
+              telemetryApiEndpoint:
+                process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '',
+              NEXT_PUBLIC_BOT_NAME: process.env.NEXT_PUBLIC_BOT_NAME,
+              NEXT_PUBLIC_BOT_ID: process.env.NEXT_PUBLIC_BOT_ID,
+              NEXT_PUBLIC_ORG_ID: process.env.NEXT_PUBLIC_ORG_ID,
+              conversationId: sessionStorage.getItem('conversationId'),
+              phoneNumber: localStorage.getItem('phoneNumber'),
+              userId: localStorage.getItem('userID'),
+              NODE_ENV: process.env.NODE_ENV === 'development' ? 'dev' : 'prod',
+              os:
+                // @ts-ignore
+                window.navigator?.userAgentData?.platform || window.navigator.platform,
+              browser: navigator.userAgent,
+              ip: sessionStorage.getItem('ip'),
+              // @ts-ignore
+              deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
+              sessionId: sessionStorage.getItem('sessionId'),
+            };
+
+            storeAppConfigInIndexedDB(telemetryConfig);
+
+            // registration.active.postMessage({
+            //   type: 'APP_CONFIG_READY',
+            //   config: telemetryConfig,
+            // });
+
+            console.log('App config sent to Service Worker');
+          }
           console.log('Service Worker registered with scope:', registration.scope);
         })
         .then(() => {
@@ -118,8 +151,6 @@ const App = ({ Component, pageProps }: AppProps) => {
           console.error('Service Worker registration failed:', err);
         });
     }
-    initializeFirebase();
-    getToken();
   }, []);
 
   const handleLoginRedirect = useCallback(() => {
