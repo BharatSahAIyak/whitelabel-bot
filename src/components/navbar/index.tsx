@@ -201,7 +201,7 @@ const Navbar: React.FC = () => {
                   data-testid="navbar-center-img"
                   src={centerLogoSrc}
                   alt="Center Logo"
-                  style={{ maxHeight: centerLogoSize }}
+                  style={{ maxHeight: '60px' }}
                 />
               </div>
             )}

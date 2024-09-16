@@ -5,7 +5,6 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 import { useRouter } from 'next/router';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
-import { onMessageListener } from '../../config/firebase';
 
 const style = {
   position: 'absolute',
@@ -48,22 +47,6 @@ const NotificationModal = () => {
     };
 
     checkNotification();
-
-    onMessageListener().then((payload: any) => {
-      if (payload) {
-        const newNotification = {
-          timestamp: new Date().getTime().toString(),
-          title: payload.notification.title,
-          modalBody: payload.notification.body,
-          image: payload.notification.image,
-          buttonUrl: payload.data?.buttonUrl,
-          buttonText: payload.data?.buttonText,
-        };
-
-        setNotificationData(newNotification);
-        setOpen(true);
-      }
-    });
 
     return () => {
       handleClose();
