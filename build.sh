@@ -16,7 +16,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     grep_output=$(grep -rlE '12\.1\.6|17\.0\.2' . 2>&1) || handle_error "Grep failed: $grep_output"
     if [ -n "$grep_output" ]; then
         while IFS= read -r file; do
-            sed_output=$(sed -i '' 's/12\.1\.6/xx.xx.xx/g; s/17\.0\.2/xx.xx.xx/g' "$file" 2>&1) || handle_error "Sed failed on $file: $sed_output"
+            sed -i '' 's/12\.1\.6/xx.xx.xx/g; s/17\.0\.2/xx.xx.xx/g' "$file" || handle_error "Sed failed on $file: $?"
         done <<< "$grep_output"
     else
         echo "No matching files found."
@@ -25,7 +25,7 @@ else
     grep_output=$(grep -rlE '12\.1\.6|17\.0\.2' . 2>&1) || handle_error "Grep failed: $grep_output"
     if [ -n "$grep_output" ]; then
         while IFS= read -r file; do
-            sed_output=$(sed -i 's/12\.1\.6/xx.xx.xx/g; s/17\.0\.2/xx.xx.xx/g' "$file" 2>&1) || handle_error "Sed failed on $file: $sed_output"
+            sed -i 's/12\.1\.6/xx.xx.xx/g; s/17\.0\.2/xx.xx.xx/g' "$file" || handle_error "Sed failed on $file: $?"
         done <<< "$grep_output"
     else
         echo "No matching files found."
