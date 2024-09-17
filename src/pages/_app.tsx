@@ -25,36 +25,12 @@ function SafeHydrate({ children }: { children: ReactElement }) {
   return <div suppressHydrationWarning>{typeof window === 'undefined' ? null : children}</div>;
 }
 
-// Client-side check for the service-workers if they are expired or not
-
-// const unregisterServiceWorkerIfExpired = () => {
-//   const SW_EXPIRATION_KEY = 'serviceWorkerExpiration';
-//   const EXPIRY_TIME = 30 * 24 * 60 * 60 * 1000;
-
-//   const expiration = localStorage.getItem(SW_EXPIRATION_KEY);
-//   const currentTime = Date.now();
-
-//   if (expiration && currentTime > parseInt(expiration)) {
-//     if ('serviceWorker' in navigator) {
-//       navigator.serviceWorker.ready.then((registration) => {
-//         registration.unregister().then(() => {
-//           console.log('Service worker unregistered after 30 days');
-//           localStorage.removeItem(SW_EXPIRATION_KEY);
-//         });
-//       });
-//     }
-//   } else {
-//     localStorage.setItem(SW_EXPIRATION_KEY, (currentTime + EXPIRY_TIME).toString());
-//     console.log('Service worker expiration extended by 30 days');
-//   }
-// };
-
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const { isAuthenticated, login } = useLogin();
   const [cookie, setCookie, removeCookie] = useCookies();
   const [user, setUser] = useState<any>(null);
-
+  const [key, setKey] = useState<any>(0); 
   const [token, setToken] = useState('');
 
   const getToken = async () => {
@@ -72,21 +48,12 @@ const App = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     if (isAuthenticated) {
+
+      if (!sessionStorage.getItem('sessionId')) {
+        sessionStorage.setItem('sessionId', uuidv4());
+      }
+
       initializeFirebase();
-
-      const getToken = async () => {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-          const token = await requestForToken();
-          if (token) {
-            console.log('your token is here', token);
-            setToken(token);
-          }
-        } else {
-          console.log('permission not granted');
-        }
-      };
-
       getToken();
 
       const firebaseConfig = encodeURIComponent(
@@ -111,10 +78,45 @@ const App = ({ Component, pageProps }: AppProps) => {
             console.error('Service Worker registration failed:', err);
           });
       }
-
-      // unregisterServiceWorkerIfExpired();
     }
   }, [isAuthenticated]);
+
+ if (typeof window !== 'undefined') {
+    window.updateFCMToken = (param: string) => {
+      console.log('updateFCMToken called');
+      return 'updateFCMToken called' + param;
+      // TODO: save this token for this user
+    };
+
+    window.updateNotificationPayload = (stringifiedPayload: string) => {
+      console.log('updateNotificationPayload called with param', stringifiedPayload);
+      const payload = JSON.parse(stringifiedPayload);
+      const request = indexedDB.open('notificationDB', 1);
+      request.onerror = (event: any) => {
+        console.error('IndexedDB error:', event?.target?.error);
+      };
+      request.onsuccess = (event: any) => {
+        const db = event?.target?.result;
+        const transaction = db.transaction(['notifications'], 'readwrite');
+        const store = transaction.objectStore('notifications');
+
+        // Add the payload to IndexedDB
+        const addRequest = store.add({ ...payload, timestamp: Date.now() });
+
+        addRequest.onerror = (event: any) => {
+          console.error('Error adding payload to IndexedDB:', event.target.error);
+        };
+
+        addRequest.onsuccess = () => {
+          setKey((prevKey: any) => prevKey + 1);
+          console.log('Payload added to IndexedDB successfully');
+        };
+      };
+
+      return 'updateNotificationPayload processed';
+    };
+  }
+
 
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
