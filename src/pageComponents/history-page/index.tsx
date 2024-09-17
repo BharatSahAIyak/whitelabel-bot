@@ -91,96 +91,100 @@ const HistoryPage: FC = () => {
   }, [currentPage]);
 
   const fetchHistory = (page: number) => {
-    setIsFetching(true);
-    axios
-      .post(
-        `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/conversations`,
-        {
-          userId: localStorage.getItem('userID'),
-          page: page,
-          perPage: 10,
+  setIsFetching(true);
+  axios
+    .post(
+      `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/conversations`,
+      {
+        userId: localStorage.getItem('userID'),
+        page: page,
+        perPage: 10,
+      },
+      {
+        headers: {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
         },
-        {
-          headers: {
-            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-          },
-        }
-      )
-      .then((res) => {
-        console.log('All chat history:', { res });
-        const sortedConversations = _.filter(
-          res?.data?.data,
-          (conv) => conv?.channelMessageId !== null
-        ).sort(
-          //@ts-ignore
-          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-        );
-        console.log({ sortedConversations });
+      }
+    )
+    .then((res) => {
+      console.log('All chat history:', { res });
+      const sortedConversations = _.filter(
+        res?.data?.data,
+        (conv) => conv?.channelMessageId !== null
+      ).sort(
+        //@ts-ignore
+        (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+      );
+      console.log({ sortedConversations });
 
-        const historyList = map(sortedConversations, (chatItem: any) => {
-          let text = String(chatItem?.payload?.text || '');
+      const historyList = map(sortedConversations, (chatItem: any) => {
+        let text = String(chatItem?.payload?.text || '');
 
-          text = text.replace(/<end\/>/g, '');
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = text;
-          text = tempDiv.textContent || tempDiv.innerText || '';
+   
+        text = text.replace(/<end\/>/g, '');
 
-          text = he.decode(text);
+     
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = text;
+        text = tempDiv.textContent || tempDiv.innerText || '';  
 
-          let label;
-          if (text.startsWith('{') && text.endsWith('}')) {
-            try {
-              const parsedText = JSON.parse(text);
-              const generalAdvice = parsedText?.generalAdvice;
-              if (generalAdvice) {
-                label =
-                  generalAdvice.split(' ').slice(0, 12).join(' ') +
-                  (generalAdvice.split(' ').length > 12 ? '...' : '');
-              } else {
-                label =
-                  text.split(' ').slice(0, 12).join(' ') +
-                  (text.split(' ').length > 12 ? '...' : '');
-              }
-            } catch (error) {
+        // Step 3: Decode HTML entities
+        text = he.decode(text);  
+
+       
+        let label;
+        if (text.startsWith('{') && text.endsWith('}')) {
+          try {
+            const parsedText = JSON.parse(text);
+            const generalAdvice = parsedText?.generalAdvice;
+            if (generalAdvice) {
+              label =
+                generalAdvice.split(' ').slice(0, 12).join(' ') +
+                (generalAdvice.split(' ').length > 12 ? '...' : '');
+            } else {
               label =
                 text.split(' ').slice(0, 12).join(' ') + (text.split(' ').length > 12 ? '...' : '');
             }
-          } else {
+          } catch (error) {
             label =
               text.split(' ').slice(0, 12).join(' ') + (text.split(' ').length > 12 ? '...' : '');
           }
+        } else {
+          label =
+            text.split(' ').slice(0, 12).join(' ') + (text.split(' ').length > 12 ? '...' : '');
+        }
 
-          return {
-            id: chatItem?.messageId,
-            label: label,
-            conversationId: chatItem?.channelMessageId,
-            userId: chatItem?.from,
-            tags: chatItem?.tags,
-            secondaryLabel: moment(chatItem?.timestamp).format('hh:mm A DD/MM/YYYY'),
-            icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
-            secondaryAction: (
-              <IconButton edge="end" aria-label="comments">
-                {config?.allowDelete && (
-                  <DeleteOutlineIcon
-                    onClick={() => deleteConversation(chatItem?.channelMessageId)}
-                  />
-                )}
-              </IconButton>
-            ),
-            onClick: handleClick,
-            isDivider: true,
-          };
-        });
-        //@ts-ignore
-        setConversations(historyList);
-        setTotalPages(res?.data?.pagination?.totalPages || 1);
-        setIsFetching(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setIsFetching(false);
+        return {
+          id: chatItem?.messageId,
+          label: label,
+          conversationId: chatItem?.channelMessageId,
+          userId: chatItem?.from,
+          tags: chatItem?.tags,
+          secondaryLabel: moment(chatItem?.timestamp).format('hh:mm A DD/MM/YYYY'),
+          icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
+          secondaryAction: (
+            <IconButton edge="end" aria-label="comments">
+              {config?.allowDelete && (
+                <DeleteOutlineIcon
+                  onClick={() => deleteConversation(chatItem?.channelMessageId)}
+                />
+              )}
+            </IconButton>
+          ),
+          onClick: handleClick,
+          isDivider: true,
+        };
       });
-  };
+    //@ts-ignore
+      setConversations(historyList);
+      setTotalPages(res?.data?.pagination?.totalPages || 1);
+      setIsFetching(false);
+    })
+    .catch((error) => {
+      console.error(error);
+      setIsFetching(false);
+    });
+};
 
   if (!config?.historyShowHistoryPage) {
     return <ComingSoonPage />;
