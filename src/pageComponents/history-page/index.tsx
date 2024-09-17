@@ -23,6 +23,7 @@ import { recordUserLocation } from '../../utils/location';
 import { v4 as uuidv4 } from 'uuid';
 import { useCookies } from 'react-cookie';
 import Menu from '../../components/menu';
+import he from 'he';
 
 const HistoryPage: FC = () => {
   const [isFetching, setIsFetching] = useState(true);
@@ -115,8 +116,17 @@ const HistoryPage: FC = () => {
           (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
         );
         console.log({ sortedConversations });
+
         const historyList = map(sortedConversations, (chatItem: any) => {
-          const text = String(chatItem?.payload?.text || '').replace(/<end\/>/g, '');
+          let text = String(chatItem?.payload?.text || '');
+
+          text = text.replace(/<end\/>/g, '');
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = text;
+          text = tempDiv.textContent || tempDiv.innerText || '';
+
+          text = he.decode(text);
+
           let label;
           if (text.startsWith('{') && text.endsWith('}')) {
             try {
