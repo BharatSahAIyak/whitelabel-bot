@@ -134,8 +134,8 @@ const HistoryPage: FC = () => {
               const generalAdvice = parsedText?.generalAdvice;
               if (generalAdvice) {
                 label =
-                  generalAdvice?.split(' ').slice(0, 12).join(' ') +
-                  (generalAdvice?.split(' ').length > 12 ? '...' : '');
+                  generalAdvice.split(' ').slice(0, 12).join(' ') +
+                  (generalAdvice.split(' ').length > 12 ? '...' : '');
               } else {
                 label =
                   text.split(' ').slice(0, 12).join(' ') +
