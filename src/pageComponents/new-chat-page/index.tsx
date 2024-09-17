@@ -19,7 +19,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import TransliterationInput from '../../components/transliteration-input';
 import { detectLanguage } from '../../utils/detectLang';
 import { debounce } from 'lodash';
-import PermissionModal from '../../components/permission-modal';
+import MicroPhonePermissionModal from '../../components/permission-modal/microphone-permission-modal';
 
 const ChatPage: NextPage = () => {
   const context = useContext(AppContext);
@@ -36,15 +36,36 @@ const ChatPage: NextPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showMicrophonePermissionModal, setShowMicrophonePermissionModal] = useState(false);
+  const [micPermissionStatus, setMicPermissionStatus] = useState<PermissionState>('prompt');
 
   const checkMicPermission = async () => {
-    const permissionStatus = await navigator.permissions.query({ name: 'microphone' as any });
-    if (permissionStatus.state === 'granted') {
-      setShowMicrophonePermissionModal(false);
-      router.push('/newchat?voice=true');
-      return true;
-    } else {
+    try {
+      const permissionStatus = await navigator.permissions.query({
+        name: 'microphone' as PermissionName,
+      });
+      setMicPermissionStatus(() => permissionStatus?.state);
+
+      return permissionStatus?.state === 'granted';
+    } catch (error) {
+      console.error('Error checking microphone permission:', error);
       return false;
+    }
+  };
+
+  const handlePermissionModalClose = () => {
+    setShowMicrophonePermissionModal(false);
+  };
+
+  const handlePermissionRequest = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((track) => track.stop());
+      setMicPermissionStatus('granted');
+      setShowMicrophonePermissionModal(false);
+      setOpenModal(true);
+    } catch (error) {
+      console.error('Error requesting microphone permission:', error);
+      setMicPermissionStatus('denied');
     }
   };
 
@@ -53,7 +74,6 @@ const ChatPage: NextPage = () => {
   const handleOpenModal = async () => {
     setShowMicrophonePermissionModal(false);
     const hasMicPermission = await checkMicPermission();
-    console.log('notification permission', hasMicPermission);
     if (hasMicPermission) {
       setOpenModal(true);
     } else {
@@ -63,7 +83,6 @@ const ChatPage: NextPage = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    // Stop recording when modal is closed
     if (voiceRecorderRef.current && voiceRecorderRef.current.stopRecording) {
       voiceRecorderRef.current.stopRecording();
     }
@@ -74,7 +93,7 @@ const ChatPage: NextPage = () => {
   };
 
   useEffect(() => {
-    context?.fetchIsDown(); // check if server is down
+    context?.fetchIsDown();
 
     if (!sessionStorage.getItem('conversationId')) {
       const newConversationId = uuidv4();
@@ -82,21 +101,18 @@ const ChatPage: NextPage = () => {
       context?.setConversationId(newConversationId);
     }
     recordUserLocation();
-
+    checkMicPermission();
     const searchParams = new URLSearchParams(window.location.search);
     const voice = searchParams.get('voice');
 
     if (voice === 'true') {
       handleOpenModal();
-      // Remove the 'voice' query parameter from the URL
       searchParams.delete('voice');
       router.replace({
         pathname: '/newchat',
         search: searchParams.toString(),
       });
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const sendMessage = useCallback(
@@ -138,9 +154,12 @@ const ChatPage: NextPage = () => {
   } else {
     return (
       <>
-        {showMicrophonePermissionModal && (
-          <PermissionModal state={showMicrophonePermissionModal} audio={true} />
-        )}
+        <MicroPhonePermissionModal
+          open={showMicrophonePermissionModal}
+          setOpen={setShowMicrophonePermissionModal}
+          onClose={handlePermissionModalClose}
+          onRequestPermission={handlePermissionRequest}
+        />
         <div className={styles.main} style={{ color: secondaryColor }}>
           {config?.showMic && (
             <div className={styles.voiceRecorder} style={{ height: micHeight, width: micWidth }}>
@@ -152,7 +171,7 @@ const ChatPage: NextPage = () => {
                     alignItems: 'center',
                     width: micWidth,
                     height: micHeight,
-                    bgcolor: theme?.primary?.light,
+                    bgcolor: micPermissionStatus === 'granted' ? theme?.primary?.light : 'grey',
                     borderRadius: '50%',
                   }}
                 >
