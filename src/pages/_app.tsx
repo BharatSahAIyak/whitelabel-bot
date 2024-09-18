@@ -30,7 +30,10 @@ const App = ({ Component, pageProps }: AppProps) => {
   const { isAuthenticated, login } = useLogin();
   const [cookie, setCookie, removeCookie] = useCookies();
   const [user, setUser] = useState<any>(null);
-  const [key, setKey] = useState<any>(0); 
+ 
+ 
+  const [key, setKey] = useState<any>(0);
+ 
   const [token, setToken] = useState('');
 
   const getToken = async () => {
@@ -116,7 +119,6 @@ const App = ({ Component, pageProps }: AppProps) => {
       return 'updateNotificationPayload processed';
     };
   }
-
 
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
@@ -248,7 +250,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           <Toaster position="top-center" reverseOrder={false} />
           {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}
           {sessionStorage.getItem('navbar') !== 'hidden' && <NavBar />}
-          <NotificationModal />
+          <NotificationModal key={key} />
 
           <SafeHydrate>
             <Component {...pageProps} />

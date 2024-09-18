@@ -322,6 +322,7 @@ export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
                   color: 'var(--secondarygreen)',
                   textAlign: 'left',
                   width: '100%',
+                  marginBottom: '10px',
                 }}
               >
                 Powered by:
@@ -329,7 +330,8 @@ export const Sidebar = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
               <div
                 style={{
                   display: 'flex',
-                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   width: '100%',
                 }}
               >

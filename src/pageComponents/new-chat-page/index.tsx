@@ -18,6 +18,7 @@ import styles from './index.module.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import TransliterationInput from '../../components/transliteration-input';
 import { detectLanguage } from '../../utils/detectLang';
+import { debounce } from 'lodash';
 
 const ChatPage: NextPage = () => {
   const context = useContext(AppContext);
@@ -106,6 +107,8 @@ const ChatPage: NextPage = () => {
     [context, t, router]
   );
 
+  const debouncedSendMessage = useCallback(debounce(sendMessage, 500), [sendMessage]);
+
   if (context?.isDown) {
     return <DowntimePage />;
   } else {
@@ -193,7 +196,7 @@ const ChatPage: NextPage = () => {
               onKeyDown={(e: any) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
-                  sendMessage(inputMsg);
+                  debouncedSendMessage(inputMsg);
                 }
               }}
               multiline={false}
@@ -203,7 +206,7 @@ const ChatPage: NextPage = () => {
               data-testid="homepage-send-button"
               type="submit"
               className={styles.sendButton}
-              onClick={() => sendMessage(inputMsg)}
+              onClick={() => debouncedSendMessage(inputMsg)}
               title="Send Message"
             >
               <SendButton width={40} height={40} color={theme?.primary?.light} />

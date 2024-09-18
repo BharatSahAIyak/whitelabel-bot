@@ -49,7 +49,7 @@ const fetchFeatureFlags = async () => {
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `/api/flags?userType=${sessionStorage.getItem('userType')}`,
+      url: `/api/flags?userType=${sessionStorage.getItem('userType')?.toLowerCase()}`,
       headers: {
         accept: 'application/json',
       },
