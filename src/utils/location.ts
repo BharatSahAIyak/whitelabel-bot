@@ -15,16 +15,8 @@ export async function recordUserLocation(t: any) {
             if (locationRes?.subDistrict) sessionStorage.setItem('block', locationRes.subDistrict);
             if (locationRes?.district) sessionStorage.setItem('city', locationRes.district);
             if (locationRes?.state) sessionStorage.setItem('state', locationRes.state);
-            let apiRes: any = await fetch('https://ip-retriever-production.up.railway.app/');
-            apiRes = await apiRes.text();
-            if (apiRes) {
-              let locationRes: any = await fetch(`https://geoip.samagra.io/city/${apiRes}`);
-              locationRes = await locationRes.json();
-            }
-
             resolve('');
           },
-
           async (error) => {
             sessionStorage.setItem('latitude', t('label.latitude'));
             sessionStorage.setItem('longitude', t('label.longitude'));
