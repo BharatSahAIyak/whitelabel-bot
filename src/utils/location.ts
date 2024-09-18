@@ -18,7 +18,6 @@ export async function recordUserLocation(config: any) {
             resolve('');
           },
           async (error) => {
-            console.log('ankit config is here', config);
             sessionStorage.setItem('latitude', config?.latitude);
             sessionStorage.setItem('longitude', config?.longitude);
             sessionStorage.setItem('city', config?.location);
