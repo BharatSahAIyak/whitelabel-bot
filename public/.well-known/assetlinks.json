@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "org.kmai.kisanmitraup",
+      "sha256_cert_fingerprints": [
+        "83:DD:92:3D:F6:B3:BC:45:2E:EC:35:97:B3:F6:AE:D8:A3:46:16:24:EF:60:91:FE:7B:55:DF:6F:4F:89:33:4E"
+      ]
+    }
+  }
+]
