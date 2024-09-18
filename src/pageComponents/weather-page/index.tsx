@@ -199,6 +199,7 @@ const WeatherPage: React.FC = () => {
   }
 
   const getLocationName = (locations: Array<string>) => {
+    return locations?.[0];
     if (context?.locale === 'en') return locations?.[0];
     if (context?.locale === 'hi') return locations?.[1];
     if (context?.locale === 'or') return locations?.[2];

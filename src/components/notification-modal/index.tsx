@@ -70,6 +70,18 @@ const NotificationModal = () => {
     };
   }, []);
 
+  // Function to add data to IndexedDB
+  const addData = (db: any, data: any) => {
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(['notifications'], 'readwrite');
+      const store = transaction.objectStore('notifications');
+      const request = store.add(data);
+
+      request.onerror = (event: any) => reject('Error adding data: ' + event.target.error);
+      request.onsuccess = (event: any) => resolve(event.target.result);
+    });
+  };
+
   const handleClose = async () => {
     if (notificationData) {
       const db = await openDB('notificationDB', 1);

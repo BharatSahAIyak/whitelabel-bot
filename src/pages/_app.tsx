@@ -31,6 +31,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   const [cookie, setCookie, removeCookie] = useCookies();
   const [user, setUser] = useState<any>(null);
   const [key, setKey] = useState<any>(0); 
+ 
   const [token, setToken] = useState('');
 
   const getToken = async () => {
@@ -81,13 +82,13 @@ const App = ({ Component, pageProps }: AppProps) => {
     }
   }, [isAuthenticated]);
 
- if (typeof window !== 'undefined') {
+ 
+  if (typeof window !== 'undefined') {
     window.updateFCMToken = (param: string) => {
       console.log('updateFCMToken called');
       return 'updateFCMToken called' + param;
       // TODO: save this token for this user
     };
-
     window.updateNotificationPayload = (stringifiedPayload: string) => {
       console.log('updateNotificationPayload called with param', stringifiedPayload);
       const payload = JSON.parse(stringifiedPayload);
@@ -116,7 +117,6 @@ const App = ({ Component, pageProps }: AppProps) => {
       return 'updateNotificationPayload processed';
     };
   }
-
 
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
@@ -248,7 +248,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           <Toaster position="top-center" reverseOrder={false} />
           {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}
           {sessionStorage.getItem('navbar') !== 'hidden' && <NavBar />}
-          <NotificationModal />
+          <NotificationModal key={key} />
 
           <SafeHydrate>
             <Component {...pageProps} />
