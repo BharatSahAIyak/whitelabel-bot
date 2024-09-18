@@ -36,6 +36,8 @@ const HistoryPage: FC = () => {
   const chatListRef = useRef<HTMLDivElement>(null);
 
   const config = useConfig('component', 'historyPage');
+  const homeConfig = useConfig('component', 'homePage');
+
   const handleClick = useCallback((activeItem: ChatItem) => {
     sessionStorage.setItem('tags', JSON.stringify(activeItem?.tags || '[]'));
     sessionStorage.setItem('conversationId', activeItem?.conversationId || 'null');
@@ -58,7 +60,7 @@ const HistoryPage: FC = () => {
           )
           .then((res) => {
             if (conversationId === sessionStorage.getItem('conversationId')) {
-              recordUserLocation(t);
+              recordUserLocation(homeConfig);
               const newConversationId = uuidv4();
               sessionStorage.setItem('conversationId', newConversationId);
               context?.setConversationId(newConversationId);

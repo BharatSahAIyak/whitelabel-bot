@@ -16,6 +16,7 @@ import axios from 'axios';
 import OnBoardingPage from '../pageComponents/onboarding-page';
 import { requestForToken, initializeFirebase } from '../config/firebase';
 import NotificationModal from '../components/notification-modal';
+import { useConfig } from '../hooks/useConfig';
 
 const NavBar = dynamic(() => import('../components/navbar'), {
   ssr: false,

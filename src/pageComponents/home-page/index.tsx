@@ -75,7 +75,7 @@ const Home: React.FC = () => {
   };
   const checkLocationPermission = async () => {
     try {
-      await recordUserLocation(t);
+      await recordUserLocation(config);
 
       const status = await navigator.permissions.query({ name: 'geolocation' });
       if (status.state) {

@@ -25,6 +25,8 @@ const ChatPage: NextPage = () => {
   const context = useContext(AppContext);
   const botConfig = useConfig('component', 'chatUI');
   const config = useConfig('component', 'homePage');
+  const homeConfig = useConfig('component', 'homePage');
+
   const { micWidth, micHeight } = config;
   const langPopupConfig = useConfig('component', 'langPopup');
   const t = useLocalization();
@@ -99,7 +101,7 @@ const ChatPage: NextPage = () => {
       sessionStorage.setItem('conversationId', newConversationId);
       context?.setConversationId(newConversationId);
     }
-    recordUserLocation(t);
+    recordUserLocation(homeConfig);
     checkMicPermission();
     const searchParams = new URLSearchParams(window.location.search);
     const voice = searchParams.get('voice');

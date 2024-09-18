@@ -1,4 +1,4 @@
-export async function recordUserLocation(t: any) {
+export async function recordUserLocation(config: any) {
   return new Promise((resolve, reject) => {
     try {
       if (navigator.geolocation) {
@@ -18,9 +18,10 @@ export async function recordUserLocation(t: any) {
             resolve('');
           },
           async (error) => {
-            sessionStorage.setItem('latitude', t('label.latitude'));
-            sessionStorage.setItem('longitude', t('label.longitude'));
-            sessionStorage.setItem('city', t('label.location'));
+            console.log('ankit config is here', config);
+            sessionStorage.setItem('latitude', config?.latitude);
+            sessionStorage.setItem('longitude', config?.longitude);
+            sessionStorage.setItem('city', config?.location);
             sessionStorage.setItem('location_error', 'true');
             resolve('');
           },

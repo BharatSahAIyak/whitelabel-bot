@@ -18,6 +18,8 @@ import { debounce } from 'lodash';
 
 const ChatUiWindow: React.FC = () => {
   const config = useConfig('component', 'chatUI');
+  const homeConfig = useConfig('component', 'homePage');
+
   const langPopupConfig = useConfig('component', 'langPopup');
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -56,7 +58,7 @@ const ChatUiWindow: React.FC = () => {
         console.error(error);
       }
     };
-    recordUserLocation(t);
+    recordUserLocation(homeConfig);
     !context?.loading && fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context?.setMessages, context?.fetchIsDown, context?.isDown]);

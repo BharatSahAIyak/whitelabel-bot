@@ -49,7 +49,10 @@
       "schemesImg": "",
       "showFooter": false,
       "askYourQuestionBgColor": "#DFF6D1",
-      "showFAQ": true
+      "showFAQ": true,
+      "latitude": "20.296059",
+      "longitude": "85.824539",
+      "location": "Bhubaneswar"
     },
     "chatUI": {
       "allowFeedback": true,
@@ -360,10 +363,7 @@
       "label.access_location_permission": "Allow Permission",
       "lable.access_microphone_permission": "Allow Permission",
       "label.allow_microphone_permission": "Allow Microphone access to use voice features",
-      "label.allow_microphone_permission_in_setting": "Please Allow Microphone  from the device setting",
-      "label.latitude": "20.296059",
-      "label.longitude": "85.824539",
-      "label.location": "Bhubaneswar"
+      "label.allow_microphone_permission_in_setting": "Please Allow Microphone  from the device setting"
     }
   }
 }

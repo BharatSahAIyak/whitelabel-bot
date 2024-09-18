@@ -12,6 +12,7 @@ import { useLocalization } from '../../hooks';
 import { formatDate } from '../../utils/formatDate';
 import { recordUserLocation } from '../../utils/location';
 import { useCookies } from 'react-cookie';
+import { useConfig } from '../../hooks/useConfig';
 
 const ChatItem: React.FC<ChatItemPropsType> = ({
   name,
@@ -21,9 +22,12 @@ const ChatItem: React.FC<ChatItemPropsType> = ({
   downloadShareHandler,
 }) => {
   const context = useContext(AppContext);
+  const homeConfig = useConfig('component', 'homePage');
+
   const t = useLocalization();
   const [isConversationDeleted, setIsConversationDeleted] = useState(false);
   const [cookie] = useCookies();
+
   const handleChatPage = useCallback(() => {
     sessionStorage.setItem('conversationId', conversationId || 'null');
     context?.setConversationId(conversationId);
@@ -42,7 +46,7 @@ const ChatItem: React.FC<ChatItemPropsType> = ({
         .then((res) => {
           console.log('deleting conversation');
           if (conversationId === sessionStorage.getItem('conversationId')) {
-            recordUserLocation(t);
+            recordUserLocation(homeConfig);
             const newConversationId = uuidv4();
             sessionStorage.setItem('conversationId', newConversationId);
             context?.setConversationId(newConversationId);

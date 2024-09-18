@@ -9,8 +9,10 @@ import { recordUserLocation } from '../utils/location';
 const Weather: NextPage = () => {
   const t = useLocalization();
   const config = useConfig('component', 'botDetails');
+  const homeConfig = useConfig('component', 'homePage');
+
   useEffect(() => {
-    recordUserLocation(t);
+    recordUserLocation(homeConfig);
   }, []);
 
   return (
