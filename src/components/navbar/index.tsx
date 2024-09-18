@@ -58,7 +58,7 @@ const Navbar: React.FC = () => {
       return;
     }
 
-    recordUserLocation();
+    recordUserLocation(t);
 
     const newConversationId = uuidv4();
     sessionStorage.setItem('conversationId', newConversationId);

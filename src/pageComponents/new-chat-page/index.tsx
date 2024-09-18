@@ -99,7 +99,7 @@ const ChatPage: NextPage = () => {
       sessionStorage.setItem('conversationId', newConversationId);
       context?.setConversationId(newConversationId);
     }
-    recordUserLocation();
+    recordUserLocation(t);
     checkMicPermission();
     const searchParams = new URLSearchParams(window.location.search);
     const voice = searchParams.get('voice');

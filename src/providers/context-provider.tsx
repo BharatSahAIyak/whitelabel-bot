@@ -462,7 +462,6 @@ const ContextProvider: FC<{
               longitude: sessionStorage.getItem('longitude'),
               city: sessionStorage.getItem('city') || '',
               state: sessionStorage.getItem('state') || '',
-              ip: sessionStorage.getItem('ip') || '',
               block: sessionStorage.getItem('block') || '',
               district: sessionStorage.getItem('city') || '',
               hideMessage: textToShow?.startsWith('Guided:') || false,

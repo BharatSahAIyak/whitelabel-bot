@@ -24,7 +24,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { useCookies } from 'react-cookie';
 import Menu from '../../components/menu';
 
-
 const HistoryPage: FC = () => {
   const [isFetching, setIsFetching] = useState(true);
   const [cookie] = useCookies();
@@ -59,7 +58,7 @@ const HistoryPage: FC = () => {
           )
           .then((res) => {
             if (conversationId === sessionStorage.getItem('conversationId')) {
-              recordUserLocation();
+              recordUserLocation(t);
               const newConversationId = uuidv4();
               sessionStorage.setItem('conversationId', newConversationId);
               context?.setConversationId(newConversationId);
@@ -91,92 +90,92 @@ const HistoryPage: FC = () => {
   }, [currentPage]);
 
   const fetchHistory = (page: number) => {
-  setIsFetching(true);
-  axios
-    .post(
-      `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/conversations`,
-      {
-        userId: localStorage.getItem('userID'),
-        page: page,
-        perPage: 10,
-      },
-      {
-        headers: {
-          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+    setIsFetching(true);
+    axios
+      .post(
+        `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/conversations`,
+        {
+          userId: localStorage.getItem('userID'),
+          page: page,
+          perPage: 10,
         },
-      }
-    )
-    .then((res) => {
-      console.log('All chat history:', { res });
-      const sortedConversations = _.filter(
-        res?.data?.data,
-        (conv) => conv?.channelMessageId !== null
-      ).sort(
-        //@ts-ignore
-        (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-      );
-      console.log({ sortedConversations });
-      const historyList = map(sortedConversations, (chatItem: any) => {
-        let text = String(chatItem?.payload?.text || '').replace(/<end\/>/g, '');
+        {
+          headers: {
+            botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          },
+        }
+      )
+      .then((res) => {
+        console.log('All chat history:', { res });
+        const sortedConversations = _.filter(
+          res?.data?.data,
+          (conv) => conv?.channelMessageId !== null
+        ).sort(
+          //@ts-ignore
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        );
+        console.log({ sortedConversations });
+        const historyList = map(sortedConversations, (chatItem: any) => {
+          let text = String(chatItem?.payload?.text || '').replace(/<end\/>/g, '');
 
- 
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, 'text/html');
-        text = doc.body.textContent || '';   
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(text, 'text/html');
+          text = doc.body.textContent || '';
 
-        let label;
-        if (text.startsWith('{') && text.endsWith('}')) {
-          try {
-            const parsedText = JSON.parse(text);
-            const generalAdvice = parsedText?.generalAdvice;
-            if (generalAdvice) {
-              label =
-                generalAdvice.split(' ').slice(0, 12).join(' ') +
-                (generalAdvice.split(' ').length > 12 ? '...' : '');
-            } else {
+          let label;
+          if (text.startsWith('{') && text.endsWith('}')) {
+            try {
+              const parsedText = JSON.parse(text);
+              const generalAdvice = parsedText?.generalAdvice;
+              if (generalAdvice) {
+                label =
+                  generalAdvice.split(' ').slice(0, 12).join(' ') +
+                  (generalAdvice.split(' ').length > 12 ? '...' : '');
+              } else {
+                label =
+                  text.split(' ').slice(0, 12).join(' ') +
+                  (text.split(' ').length > 12 ? '...' : '');
+              }
+            } catch (error) {
               label =
                 text.split(' ').slice(0, 12).join(' ') + (text.split(' ').length > 12 ? '...' : '');
             }
-          } catch (error) {
+          } else {
             label =
               text.split(' ').slice(0, 12).join(' ') + (text.split(' ').length > 12 ? '...' : '');
           }
-        } else {
-          label =
-            text.split(' ').slice(0, 12).join(' ') + (text.split(' ').length > 12 ? '...' : '');
-        }
 
-        return {
-          id: chatItem?.messageId,
-          label: label,
-          conversationId: chatItem?.channelMessageId,
-          userId: chatItem?.from,
-          tags: chatItem?.tags,
-          secondaryLabel: moment(chatItem?.timestamp).format('hh:mm A DD/MM/YYYY'),
-          icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
-          secondaryAction: (
-            <IconButton edge="end" aria-label="comments">
-              {config?.allowDelete && (
-                <DeleteOutlineIcon
-                  onClick={() => deleteConversation(chatItem?.channelMessageId)}
-                />
-              )}
-            </IconButton>
-          ),
-          onClick: handleClick,
-          isDivider: true,
-        };
+          return {
+            id: chatItem?.messageId,
+            label: label,
+            conversationId: chatItem?.channelMessageId,
+            userId: chatItem?.from,
+            tags: chatItem?.tags,
+            secondaryLabel: moment(chatItem?.timestamp).format('hh:mm A DD/MM/YYYY'),
+            icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
+            secondaryAction: (
+              <IconButton edge="end" aria-label="comments">
+                {config?.allowDelete && (
+                  <DeleteOutlineIcon
+                    onClick={() => deleteConversation(chatItem?.channelMessageId)}
+                  />
+                )}
+              </IconButton>
+            ),
+            onClick: handleClick,
+            isDivider: true,
+          };
+        });
+        //@ts-ignore
+        setConversations(historyList);
+        setTotalPages(res?.data?.pagination?.totalPages || 1);
+        setIsFetching(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsFetching(false);
       });
-    //@ts-ignore
-      setConversations(historyList);
-      setTotalPages(res?.data?.pagination?.totalPages || 1);
-      setIsFetching(false);
-    })
-    .catch((error) => {
-      console.error(error);
-      setIsFetching(false);
-    });
-};
+  };
 
   if (!config?.historyShowHistoryPage) {
     return <ComingSoonPage />;

@@ -56,7 +56,7 @@ const ChatUiWindow: React.FC = () => {
         console.error(error);
       }
     };
-    recordUserLocation();
+    recordUserLocation(t);
     !context?.loading && fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context?.setMessages, context?.fetchIsDown, context?.isDown]);

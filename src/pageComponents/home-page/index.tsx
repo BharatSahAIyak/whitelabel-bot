@@ -40,7 +40,7 @@ const Home: React.FC = () => {
     const latitude = sessionStorage.getItem('latitude');
     const longitude = sessionStorage.getItem('longitude');
     const city = sessionStorage.getItem('city');
-    if (!latitude || !longitude || locationStatus != 'granted') return;
+    if (locationStatus != 'granted') return;
 
     try {
       setIsFetching(true);
@@ -75,7 +75,7 @@ const Home: React.FC = () => {
   };
   const checkLocationPermission = async () => {
     try {
-      await recordUserLocation();
+      await recordUserLocation(t);
 
       const status = await navigator.permissions.query({ name: 'geolocation' });
       if (status.state) {

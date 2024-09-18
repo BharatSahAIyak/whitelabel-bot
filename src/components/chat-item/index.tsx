@@ -42,7 +42,7 @@ const ChatItem: React.FC<ChatItemPropsType> = ({
         .then((res) => {
           console.log('deleting conversation');
           if (conversationId === sessionStorage.getItem('conversationId')) {
-            recordUserLocation();
+            recordUserLocation(t);
             const newConversationId = uuidv4();
             sessionStorage.setItem('conversationId', newConversationId);
             context?.setConversationId(newConversationId);

@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   const t = useLocalization();
   const config = useConfig('component', 'botDetails');
   useEffect(() => {
-    recordUserLocation();
+    recordUserLocation(t);
   }, []);
 
   return (
