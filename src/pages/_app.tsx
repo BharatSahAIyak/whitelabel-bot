@@ -30,7 +30,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   const { isAuthenticated, login } = useLogin();
   const [cookie, setCookie, removeCookie] = useCookies();
   const [user, setUser] = useState<any>(null);
-  const [key, setKey] = useState<any>(0); 
+ 
  
   const [token, setToken] = useState('');
 
