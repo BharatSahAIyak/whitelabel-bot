@@ -31,6 +31,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   const [cookie, setCookie, removeCookie] = useCookies();
   const [user, setUser] = useState<any>(null);
   const [key, setKey] = useState<any>(0); 
+ 
   const [token, setToken] = useState('');
 
   const getToken = async () => {
@@ -117,6 +118,41 @@ const App = ({ Component, pageProps }: AppProps) => {
     };
   }
 
+
+  if (typeof window !== 'undefined') {
+    window.updateFCMToken = (param: string) => {
+      console.log('updateFCMToken called');
+      return 'updateFCMToken called' + param;
+      // TODO: save this token for this user
+    };
+    window.updateNotificationPayload = (stringifiedPayload: string) => {
+      console.log('updateNotificationPayload called with param', stringifiedPayload);
+      const payload = JSON.parse(stringifiedPayload);
+      const request = indexedDB.open('notificationDB', 1);
+      request.onerror = (event: any) => {
+        console.error('IndexedDB error:', event?.target?.error);
+      };
+      request.onsuccess = (event: any) => {
+        const db = event?.target?.result;
+        const transaction = db.transaction(['notifications'], 'readwrite');
+        const store = transaction.objectStore('notifications');
+
+        // Add the payload to IndexedDB
+        const addRequest = store.add({ ...payload, timestamp: Date.now() });
+
+        addRequest.onerror = (event: any) => {
+          console.error('Error adding payload to IndexedDB:', event.target.error);
+        };
+
+        addRequest.onsuccess = () => {
+          setKey((prevKey: any) => prevKey + 1);
+          console.log('Payload added to IndexedDB successfully');
+        };
+      };
+
+      return 'updateNotificationPayload processed';
+    };
+  }
 
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
@@ -248,7 +284,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           <Toaster position="top-center" reverseOrder={false} />
           {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}
           {sessionStorage.getItem('navbar') !== 'hidden' && <NavBar />}
-          <NotificationModal />
+          <NotificationModal key={key} />
 
           <SafeHydrate>
             <Component {...pageProps} />

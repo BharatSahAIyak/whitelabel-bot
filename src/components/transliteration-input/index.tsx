@@ -13,13 +13,14 @@ const TransliterationInput = ({
   setValue,
   ...props
 }: any) => {
+  const inputRef = useRef(null);
   const {
     suggestions,
     activeSuggestion,
     handleInputChange,
     suggestionClickHandler,
     suggestionHandler,
-  } = useTransliteration(config, value, setValue);
+  } = useTransliteration(config, value, setValue, inputRef);
 
   return (
     <div className={styles.container}>
@@ -43,6 +44,7 @@ const TransliterationInput = ({
         }}
         id="inputBox"
         value={value}
+        ref={inputRef}
         onChange={handleInputChange}
         placeholder={placeholder}
         variant="outlined"
