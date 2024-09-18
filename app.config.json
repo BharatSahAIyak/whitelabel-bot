@@ -50,9 +50,9 @@
       "showFooter": false,
       "askYourQuestionBgColor": "#DFF6D1",
       "showFAQ": true,
-      "latitude": "20.296059",
-      "longitude": "85.824539",
-      "location": "Bhubaneswar"
+      "latitude": "",
+      "longitude": "",
+      "location": ""
     },
     "chatUI": {
       "allowFeedback": true,
