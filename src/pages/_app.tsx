@@ -16,7 +16,6 @@ import axios from 'axios';
 import OnBoardingPage from '../pageComponents/onboarding-page';
 import { requestForToken, initializeFirebase } from '../config/firebase';
 import NotificationModal from '../components/notification-modal';
-import PermissionModal from '../components/permission-modal';
 
 const NavBar = dynamic(() => import('../components/navbar'), {
   ssr: false,
@@ -214,7 +213,6 @@ const App = ({ Component, pageProps }: AppProps) => {
           <Toaster position="top-center" reverseOrder={false} />
           {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}
           {sessionStorage.getItem('navbar') !== 'hidden' && <NavBar />}
-          <PermissionModal />
           <NotificationModal />
 
           <SafeHydrate>

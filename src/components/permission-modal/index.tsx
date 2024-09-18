@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Box, Typography, Button } from '@mui/material';
-import { openDB } from 'idb';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-
 import { useRouter } from 'next/router';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
-import { onMessageListener } from '../../config/firebase';
-import { width } from '@mui/system';
+import { borderRadius } from '@mui/system';
+import { useLocalization } from '../../hooks';
 
 const style = {
   position: 'absolute',
@@ -16,44 +13,39 @@ const style = {
   width: '300px',
   bgcolor: 'background.paper',
   boxShadow: 24,
+  borderRadius: '8px',
   p: 2,
 };
+interface MicroPhonePermissionModalProps {
+  permissionStatus: string;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
+  onRequestPermission: () => void;
+}
 
-const PermissionModal = ({ state = false, audio = false }) => {
-  const [open, setOpen] = useState(state);
-  const router = useRouter();
+const MicroPhonePermissionModal: React.FC<MicroPhonePermissionModalProps> = ({
+  permissionStatus,
+  open,
+  setOpen,
+  onClose,
+  onRequestPermission,
+}: any) => {
   const theme = useColorPalates();
-
-  useEffect(() => {
-    checkLocationPermission();
-  }, []);
-
-  const checkLocationPermission = () => {
-    if ('geolocation' in navigator) {
-      navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-        if (result.state === 'denied' || result.state === 'prompt') {
-          setOpen(true);
-        }
-      });
-    } else {
-      setOpen(true);
-    }
-  };
+  const t = useLocalization();
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleOpenSettings = () => {
-    handleClose();
+    onClose();
+    onRequestPermission();
   };
 
   return (
     <Modal
       open={open}
       onClose={handleClose}
-      aria-labelledby="notification-modal-title"
-      aria-describedby="notification-modal-description"
+      aria-labelledby="permission-modal-title"
+      aria-describedby="permission-modal-description"
     >
       <Box sx={style}>
         <Typography
@@ -66,11 +58,11 @@ const PermissionModal = ({ state = false, audio = false }) => {
             textAlign: 'center',
           }}
         >
-          {audio
-            ? 'Allow Microphone in order to access the Mice Features'
-            : 'Allow permission in order to access the weather Details'}
+          {permissionStatus == ' prompt'
+            ? t('label.allow_microphone_permission')
+            : t('label.allow_microphone_permission_in_setting')}
         </Typography>
-        {
+        {permissionStatus == 'prompt' && (
           <Button
             fullWidth
             variant="outlined"
@@ -83,17 +75,14 @@ const PermissionModal = ({ state = false, audio = false }) => {
               fontSize: '14px',
               fontWeight: 600,
             }}
-            onClick={() => {
-              handleOpenSettings();
-              handleClose();
-            }}
+            onClick={handleClose}
           >
-            {'Allow Permission'}
+            {t('label.access_location_permission')}
           </Button>
-        }
+        )}
       </Box>
     </Modal>
   );
 };
 
-export default PermissionModal;
+export default MicroPhonePermissionModal;

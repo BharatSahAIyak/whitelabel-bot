@@ -356,7 +356,11 @@
       "label.loading_weather_details": "Please wait, we are fetching the weather details",
       "label.allow_location_from_setting": "Please enable location from your device settings",
       "error.image_upload": "Image upload failed. Please try again",
-      "message.image_upload": "Image uploaded successfully"
+      "message.image_upload": "Image uploaded successfully",
+      "label.access_location_permission": "Allow Permission",
+      "lable.access_microphone_permission": "Allow Permission",
+      "label.allow_microphone_permission": "Allow Microphone access to use voice features",
+      "label.allow_microphone_permission_in_setting": "Please Allow Microphone  from the device setting"
     }
   }
 }

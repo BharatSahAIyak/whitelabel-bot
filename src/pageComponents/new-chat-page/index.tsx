@@ -19,7 +19,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import TransliterationInput from '../../components/transliteration-input';
 import { detectLanguage } from '../../utils/detectLang';
 import { debounce } from 'lodash';
-import MicroPhonePermissionModal from '../../components/permission-modal/microphone-permission-modal';
+import MicroPhonePermissionModal from '../../components/permission-modal';
 
 const ChatPage: NextPage = () => {
   const context = useContext(AppContext);
@@ -44,7 +44,6 @@ const ChatPage: NextPage = () => {
         name: 'microphone' as PermissionName,
       });
       setMicPermissionStatus(() => permissionStatus?.state);
-
       return permissionStatus?.state === 'granted';
     } catch (error) {
       console.error('Error checking microphone permission:', error);
@@ -155,6 +154,7 @@ const ChatPage: NextPage = () => {
     return (
       <>
         <MicroPhonePermissionModal
+          permissionStatus={micPermissionStatus}
           open={showMicrophonePermissionModal}
           setOpen={setShowMicrophonePermissionModal}
           onClose={handlePermissionModalClose}
