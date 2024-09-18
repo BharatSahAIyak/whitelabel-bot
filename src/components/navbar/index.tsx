@@ -20,6 +20,8 @@ const Navbar: React.FC = () => {
   const router = useRouter();
   const config = useConfig('component', 'navbar');
   const botConfig = useConfig('component', 'botDetails');
+  const homeConfig = useConfig('component', 'homePage');
+
   const context = useContext(AppContext);
   const t = useLocalization();
   const theme = useColorPalates();
@@ -58,7 +60,7 @@ const Navbar: React.FC = () => {
       return;
     }
 
-    recordUserLocation();
+    recordUserLocation(homeConfig);
 
     const newConversationId = uuidv4();
     sessionStorage.setItem('conversationId', newConversationId);
