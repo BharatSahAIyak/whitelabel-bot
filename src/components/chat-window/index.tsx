@@ -198,7 +198,9 @@ const ChatUiWindow: React.FC = () => {
             languagePopupFlag: context?.languagePopupFlag,
             setShowLanguagePopup: context?.setShowLanguagePopup,
             match: langPopupConfig?.match,
+            lang: langPopupConfig?.lang,
             langCheck: langPopupConfig?.langCheck,
+            locale: context?.locale,
             transliterate: context?.transliterate,
             setTransliterate: context?.setTransliterate,
           }}
