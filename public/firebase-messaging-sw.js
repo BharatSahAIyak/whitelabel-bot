@@ -43,7 +43,7 @@ messaging.onBackgroundMessage(async (payload) => {
   try {
     appConfig = await getAppConfigFromIndexedDB();
     console.log('Retrieved app config from IndexedDB:', appConfig);
-    console.log('Received background message:-', JSON.stringify(payload));
+    console.log('Received background message:-', JSON.stringify(payload, payload?.data));
     const { title, body, image } = payload.notification;
     const notificationData = {
       title,
@@ -89,6 +89,8 @@ messaging.onBackgroundMessage(async (payload) => {
       botId: appConfig.NEXT_PUBLIC_BOT_ID || '',
       orgId: appConfig.NEXT_PUBLIC_ORG_ID || '',
       userId: appConfig.userId || '',
+      AdapterType: 'FCM',
+      messageState: 'DELIVERED',
       phoneNumber: appConfig.phoneNumber || '',
       conversationId: appConfig.conversationId || '',
     };
@@ -100,9 +102,9 @@ messaging.onBackgroundMessage(async (payload) => {
       actorId: appConfig.userId || '',
       actorType: 'user',
       env: appConfig.NODE_ENV,
-      eventId: 'E046',
-      event: 'aiToolProxyToolLatency',
-      subEvent: 's2tLatency',
+      eventId: 'E033',
+      event: 'messageQuery',
+      subEvent: 'messageReceived',
       os: appConfig.os || 'unknown',
       browser: appConfig.browser || 'unknown',
       ip: appConfig.ip || '',

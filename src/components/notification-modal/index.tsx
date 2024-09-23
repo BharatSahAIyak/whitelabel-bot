@@ -43,11 +43,14 @@ const NotificationModal = () => {
       if (notifications.length > 0) {
         setNotificationData(notifications[0]);
         setOpen(true);
-        await saveTelemetryEvent('0.1', 'E046', 'aiToolProxyToolLatency', 's2tLatency', {
+
+        await saveTelemetryEvent('0.1', 'E051', 'messageLifecycle', 'messageRead', {
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
           orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          AdapterType: 'FCM',
           userId: localStorage.getItem('userID') || '',
           phoneNumber: localStorage.getItem('phoneNumber') || '',
+          messageState: 'READ',
           conversationId: sessionStorage.getItem('conversationId') || '',
         });
       } else {
