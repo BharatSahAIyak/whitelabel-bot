@@ -48,6 +48,8 @@ const ShareButtons = () => {
 
       if (!pdfUrl) {
         toast.error(`${t('message.no_link')}`);
+        setDownloadLoader(false);
+        setShareLoader(false);
         return;
       }
 

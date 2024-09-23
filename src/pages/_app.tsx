@@ -16,6 +16,7 @@ import axios from 'axios';
 import OnBoardingPage from '../pageComponents/onboarding-page';
 import { requestForToken, initializeFirebase } from '../config/firebase';
 import NotificationModal from '../components/notification-modal';
+import { useConfig } from '../hooks/useConfig';
 
 const NavBar = dynamic(() => import('../components/navbar'), {
   ssr: false,
@@ -30,19 +31,37 @@ const App = ({ Component, pageProps }: AppProps) => {
   const { isAuthenticated, login } = useLogin();
   const [cookie, setCookie, removeCookie] = useCookies();
   const [user, setUser] = useState<any>(null);
+  const [key, setKey] = useState<any>(0);
+  const [token, setToken] = useState('');
 
-  const getToken = async () => {
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-      const token = await requestForToken();
-      console.log('your token is here', token);
-      if (token && localStorage.getItem('phoneNumber') && !sessionStorage.getItem('fcmToken')) {
-        try {
-          const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_USER_MANAGEMENT_URL}/user/${process.env.NEXT_PUBLIC_USER_MANAGEMENT_ID}/register`,
+  const updateToken = async (token: string, source: 'web' | 'android') => {
+    if (
+      localStorage.getItem('phoneNumber') &&
+      (!sessionStorage.getItem('fcmToken') || source === 'android')
+    ) {
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_USER_MANAGEMENT_URL}/user/${process.env.NEXT_PUBLIC_USER_MANAGEMENT_ID}/register`,
+          {
+            device_id: localStorage.getItem('phoneNumber'),
+            user_data: {
+              token: token,
+            },
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        sessionStorage.setItem('fcmToken', token);
+        console.log('response', response?.data?.data);
+        if (response?.data?.data?.status == 'ALREADY_REGISTERED' && response?.data?.data?.user_id) {
+          await axios.put(
+            `${process.env.NEXT_PUBLIC_USER_MANAGEMENT_URL}/user/${process.env.NEXT_PUBLIC_SEGMENT_ID}/update`,
             {
-              device_id: localStorage.getItem('phoneNumber'),
-              user_data: {
+              user_id: response?.data?.data?.user_id,
+              profile_data: {
                 token: token,
               },
             },
@@ -52,31 +71,19 @@ const App = ({ Component, pageProps }: AppProps) => {
               },
             }
           );
-          sessionStorage.setItem('fcmToken', token);
-          console.log('response', response?.data?.data);
-          if (
-            response?.data?.data?.status == 'ALREADY_REGISTERED' &&
-            response?.data?.data?.user_id
-          ) {
-            await axios.put(
-              `${process.env.NEXT_PUBLIC_USER_MANAGEMENT_URL}/user/${process.env.NEXT_PUBLIC_SEGMENT_ID}/update`,
-              {
-                user_id: response?.data?.data?.user_id,
-                profile_data: {
-                  token: token,
-                },
-              },
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              }
-            );
-          }
-        } catch (error) {
-          console.error('user is not register with the segment because :', error);
         }
+      } catch (error) {
+        console.error('user is not register with the segment because :', error);
       }
+    }
+  };
+
+  const getToken = async () => {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      const token = await requestForToken();
+      console.log('your token is here', token);
+      if (token) updateToken(token, 'web');
     } else {
       console.log('permission not granted');
     }
@@ -110,56 +117,96 @@ const App = ({ Component, pageProps }: AppProps) => {
     if (!sessionStorage.getItem('sessionId')) {
       sessionStorage.setItem('sessionId', uuidv4());
     }
-    const firebaseConfig = encodeURIComponent(
-      JSON.stringify({
-        apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-        messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-        appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-        measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-      })
-    );
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register(`/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}`)
-        .then((registration) => {
-          if (registration.active) {
-            const telemetryConfig = {
-              telemetryApiEndpoint:
-                process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '',
-              NEXT_PUBLIC_BOT_NAME: process.env.NEXT_PUBLIC_BOT_NAME,
-              NEXT_PUBLIC_BOT_ID: process.env.NEXT_PUBLIC_BOT_ID,
-              NEXT_PUBLIC_ORG_ID: process.env.NEXT_PUBLIC_ORG_ID,
-              conversationId: sessionStorage.getItem('conversationId'),
-              phoneNumber: localStorage.getItem('phoneNumber'),
-              userId: localStorage.getItem('userID'),
-              NODE_ENV: process.env.NODE_ENV === 'development' ? 'dev' : 'prod',
-              os:
+    if (isAuthenticated) {
+      const firebaseConfig = encodeURIComponent(
+        JSON.stringify({
+          apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+          authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+          storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+          messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+          appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+          measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+        })
+      );
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register(`/firebase-messaging-sw.js?firebaseConfig=${firebaseConfig}`)
+          .then((registration) => {
+            if (registration.active) {
+              const telemetryConfig = {
+                telemetryApiEndpoint:
+                  process.env.NEXT_PUBLIC_TELEMETRY_API + '/metrics/v1/save' || '',
+                NEXT_PUBLIC_BOT_NAME: process.env.NEXT_PUBLIC_BOT_NAME,
+                NEXT_PUBLIC_BOT_ID: process.env.NEXT_PUBLIC_BOT_ID,
+                NEXT_PUBLIC_ORG_ID: process.env.NEXT_PUBLIC_ORG_ID,
+                conversationId: sessionStorage.getItem('conversationId'),
+                phoneNumber: localStorage.getItem('phoneNumber'),
+                userId: localStorage.getItem('userID'),
+                NODE_ENV: process.env.NODE_ENV === 'development' ? 'dev' : 'prod',
+                os:
+                  // @ts-ignore
+                  window.navigator?.userAgentData?.platform || window.navigator.platform,
+                browser: navigator.userAgent,
+                ip: sessionStorage.getItem('ip'),
                 // @ts-ignore
-                window.navigator?.userAgentData?.platform || window.navigator.platform,
-              browser: navigator.userAgent,
-              ip: sessionStorage.getItem('ip'),
-              // @ts-ignore
-              deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
-              sessionId: sessionStorage.getItem('sessionId'),
-            };
+                deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
+                sessionId: sessionStorage.getItem('sessionId'),
+              };
 
-            storeAppConfigInIndexedDB(telemetryConfig);
-          }
-          console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .then(() => {
-          initializeFirebase();
-          getToken();
-        })
-        .catch((err) => {
-          console.error('Service Worker registration failed:', err);
-        });
+              storeAppConfigInIndexedDB(telemetryConfig);
+            }
+            console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .then(() => {
+            initializeFirebase();
+            getToken();
+          })
+          .catch((err) => {
+            console.error('Service Worker registration failed:', err);
+          });
+      }
     }
-  }, []);
+  }, [isAuthenticated]);
+
+  if (typeof window !== 'undefined') {
+    window.updateFCMToken = (param: string) => {
+      console.log('updateFCMToken called');
+      if (param) updateToken(param, 'android');
+
+      return 'updateFCMToken called' + param;
+      // TODO: save this token for this user
+    };
+
+    window.updateNotificationPayload = (stringifiedPayload: string) => {
+      console.log('updateNotificationPayload called with param', stringifiedPayload);
+      const payload = JSON.parse(stringifiedPayload);
+      const request = indexedDB.open('notificationDB', 1);
+      request.onerror = (event: any) => {
+        console.error('IndexedDB error:', event?.target?.error);
+      };
+      request.onsuccess = (event: any) => {
+        const db = event?.target?.result;
+        const transaction = db.transaction(['notifications'], 'readwrite');
+        const store = transaction.objectStore('notifications');
+
+        // Add the payload to IndexedDB
+        const addRequest = store.add({ ...payload, timestamp: Date.now() });
+
+        addRequest.onerror = (event: any) => {
+          console.error('Error adding payload to IndexedDB:', event.target.error);
+        };
+
+        addRequest.onsuccess = () => {
+          setKey((prevKey: any) => prevKey + 1);
+          console.log('Payload added to IndexedDB successfully');
+        };
+      };
+
+      return 'updateNotificationPayload processed';
+    };
+  }
 
   const handleLoginRedirect = useCallback(() => {
     if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
@@ -291,7 +338,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           <Toaster position="top-center" reverseOrder={false} />
           {/* {localStorage.getItem("navbar") !== "hidden" &&<InstallModal />} */}
           {sessionStorage.getItem('navbar') !== 'hidden' && <NavBar />}
-          <NotificationModal />
+          <NotificationModal key={key} />
 
           <SafeHydrate>
             <Component {...pageProps} />

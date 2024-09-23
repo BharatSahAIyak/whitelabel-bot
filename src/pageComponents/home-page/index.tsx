@@ -26,19 +26,21 @@ const Home: React.FC = () => {
   const [weather, setWeather] = useState<any>(context?.weather);
   const [isFetching, setIsFetching] = useState(false);
   const [isNight, setIsNight] = useState(false);
+  const [locationStatus, setLocationStatus] = useState<PermissionState>('prompt');
 
   useEffect(() => {
     const currentHour = new Date().getHours();
     if (currentHour >= 18 || currentHour < 6) {
       setIsNight(true);
     }
+    checkLocationPermission();
   }, []);
 
   const fetchWeatherData = async () => {
     const latitude = sessionStorage.getItem('latitude');
     const longitude = sessionStorage.getItem('longitude');
     const city = sessionStorage.getItem('city');
-    if (!latitude || !longitude) return;
+    if (locationStatus != 'granted') return;
 
     try {
       setIsFetching(true);
@@ -46,7 +48,6 @@ const Home: React.FC = () => {
         params: { latitude, longitude, city, weather: weatherConfig?.weather || 'imd' },
       });
 
-      console.log(response.data);
       const providers = response.data.message.catalog.providers;
 
       const weatherProvider = providers.find(
@@ -70,6 +71,19 @@ const Home: React.FC = () => {
       console.error('Error fetching advisory data:', error);
       setIsFetching(false);
       throw error;
+    }
+  };
+  const checkLocationPermission = async () => {
+    try {
+      await recordUserLocation(config);
+
+      const status = await navigator.permissions.query({ name: 'geolocation' });
+      if (status.state) {
+        setLocationStatus(() => status?.state);
+      }
+    } catch (error) {
+      console.error('Error checking location permission:', error);
+      return 'error';
     }
   };
 
@@ -124,12 +138,12 @@ const Home: React.FC = () => {
   // }
 
   const getLocationName = (locations: Array<string>) => {
+    return locations?.[0];
     if (context?.locale === 'en') return locations?.[0];
     if (context?.locale === 'hi') return locations?.[1];
     if (context?.locale === 'or') return locations?.[2];
     return '';
   };
-
   return (
     <div className={styles.main}>
       <meta
@@ -342,7 +356,7 @@ const Home: React.FC = () => {
               )}
             </div>
           </div>
-        ) : sessionStorage.getItem('location_error') ? (
+        ) : locationStatus != 'granted' ? (
           <div className={styles.locationContainer}>
             <Typography
               className={styles.locationText}
@@ -357,6 +371,25 @@ const Home: React.FC = () => {
             >
               {t('label.allow_location_from_setting')}
             </Typography>
+            {locationStatus != 'denied' && (
+              <Button
+                fullWidth
+                variant="outlined"
+                color="primary"
+                style={{
+                  color: '#fff',
+                  marginTop: '20px',
+                  background: theme.primary.main,
+                  border: '1px solid var(--Mid-Gray-50, #F6F7F9)',
+                  fontSize: '14px',
+                  width: 300,
+                  fontWeight: 600,
+                }}
+                onClick={checkLocationPermission}
+              >
+                {t('label.access_location_permission')}
+              </Button>
+            )}
           </div>
         ) : (
           <div

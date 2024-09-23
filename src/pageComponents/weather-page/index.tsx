@@ -38,7 +38,7 @@ const WeatherPage: React.FC = () => {
     const latitude = sessionStorage.getItem('latitude');
     const longitude = sessionStorage.getItem('longitude');
     const city = sessionStorage.getItem('city');
-    if (!latitude || !longitude) return;
+    if (sessionStorage.getItem('location_error')) return;
     try {
       const response = await axios.get(process.env.NEXT_PUBLIC_WEATHER_API || '', {
         params: {
@@ -199,12 +199,13 @@ const WeatherPage: React.FC = () => {
   }
 
   const getLocationName = (locations: Array<string>) => {
+    return locations?.[0];
     if (context?.locale === 'en') return locations?.[0];
     if (context?.locale === 'hi') return locations?.[1];
     if (context?.locale === 'or') return locations?.[2];
   };
 
-  if (!sessionStorage.getItem('latitude') || !sessionStorage.getItem('longitude'))
+  if (sessionStorage.getItem('location_error'))
     return (
       <div className={styles.locationContainer}>
         <Typography className={styles.locationText}>

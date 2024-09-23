@@ -14,9 +14,12 @@ import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { getMsgType } from '../../utils/getMsgType';
 import { recordUserLocation } from '../../utils/location';
 import { detectLanguage } from '../../utils/detectLang';
+import { debounce } from 'lodash';
 
 const ChatUiWindow: React.FC = () => {
   const config = useConfig('component', 'chatUI');
+  const homeConfig = useConfig('component', 'homePage');
+
   const langPopupConfig = useConfig('component', 'langPopup');
   const theme = useColorPalates();
   const secondaryColor = useMemo(() => {
@@ -55,7 +58,7 @@ const ChatUiWindow: React.FC = () => {
         console.error(error);
       }
     };
-    recordUserLocation();
+    recordUserLocation(homeConfig);
     !context?.loading && fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context?.setMessages, context?.fetchIsDown, context?.isDown]);
@@ -141,6 +144,9 @@ const ChatUiWindow: React.FC = () => {
     },
     [context, t]
   );
+
+  const debouncedSendMessage = useCallback(debounce(handleSend, 500), [handleSend]);
+
   const normalizeMsgs = useMemo(
     () =>
       context?.messages?.map((msg: any) => ({
@@ -192,7 +198,9 @@ const ChatUiWindow: React.FC = () => {
             languagePopupFlag: context?.languagePopupFlag,
             setShowLanguagePopup: context?.setShowLanguagePopup,
             match: langPopupConfig?.match,
+            lang: langPopupConfig?.lang,
             langCheck: langPopupConfig?.langCheck,
+            locale: context?.locale,
             transliterate: context?.transliterate,
             setTransliterate: context?.setTransliterate,
           }}
@@ -201,7 +209,7 @@ const ChatUiWindow: React.FC = () => {
           voiceToText={RenderVoiceRecorder}
           //@ts-ignore
           renderMessageContent={(props): ReactElement => <MessageItem message={props} />}
-          onSend={handleSend}
+          onSend={debouncedSendMessage}
           locale="en-US"
           placeholder={t('message.ask_ur_question')}
         />
