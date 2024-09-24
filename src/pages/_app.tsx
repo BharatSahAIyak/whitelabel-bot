@@ -41,7 +41,7 @@ const App = ({ Component, pageProps }: AppProps) => {
     ) {
       try {
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_USER_MANAGEMENT_URL}/user/${process.env.NEXT_PUBLIC_USER_MANAGEMENT_ID}/register`,
+          `${process.env.NEXT_PUBLIC_USER_MANAGEMENT_URL}/user/${process.env.NEXT_PUBLIC_SEGMENT_ID}/register`,
           {
             device_id: localStorage.getItem('phoneNumber'),
             user_data: {

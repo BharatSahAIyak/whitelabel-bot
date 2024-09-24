@@ -120,7 +120,7 @@ const NotificationsPage: FC = () => {
       },
     ];
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/notifications/29c74b95-4fd8-4167-ae7a-1e25489bf667`
+      `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/notifications/${localStorage.getItem('phoneNumber')}`
     );
 
     const notificationList2 = res.data.map((item: any) => {

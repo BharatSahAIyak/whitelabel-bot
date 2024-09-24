@@ -43,17 +43,12 @@ messaging.onBackgroundMessage(async (payload) => {
   try {
     appConfig = await getAppConfigFromIndexedDB();
     console.log('Retrieved app config from IndexedDB:', appConfig);
-    console.log('Received background message:-', JSON.stringify(payload, payload?.data));
-    const { title, body, image } = payload.notification;
+    console.log('Received background message:-', JSON.stringify(payload));
     const notificationData = {
-      title,
-      body,
-      icon: payload?.data?.icon || image,
-      image: image,
-      timestamp: Date.now(), // Add a timestamp
+      timestamp: Date.now(),
       ...payload.data,
     };
-    console.log('Notification Content:', JSON.stringify(notificationData));
+    console.log('Notification Content:', JSON.stringify({ ...payload?.data }));
 
     const openDB = () => {
       return new Promise((resolve, reject) => {
@@ -94,8 +89,8 @@ messaging.onBackgroundMessage(async (payload) => {
       messageState: 'DELIVERED',
       phoneNumber: appConfig.phoneNumber || '',
       conversationId: appConfig.conversationId || '',
-      NotificationData: payload,
-      withImage: payload?.data?.icon || image ? true : false,
+      NotificationData: payload?.data,
+      withImage: payload?.data?.icon || payload?.data?.imageUrl ? true : false,
     };
 
     const telemetryData = {
@@ -136,7 +131,7 @@ messaging.onBackgroundMessage(async (payload) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            payload: notificationData,
+            payload: payload?.data,
             from: {
               userID: appConfig.userId || '',
             },
@@ -154,8 +149,8 @@ messaging.onBackgroundMessage(async (payload) => {
     } catch (error) {
       console.error('user history api error', error);
     }
-
-    return self.registration.showNotification(title, notificationData);
+    // Uncomment the following line if you want to show the notification
+    return self.registration.showNotification(payload?.data?.title, payload?.data);
   } catch (error) {
     console.error('Error saving telemetry event:', error);
   }
