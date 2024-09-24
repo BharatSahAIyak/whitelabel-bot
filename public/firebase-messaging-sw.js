@@ -136,7 +136,7 @@ messaging.onBackgroundMessage(async (payload) => {
               userID: appConfig.userId || '',
             },
             messageId: {
-              Id: '',
+              Id: payload?.data?.notificationId,
               channelMessageId: '',
             },
             messageType: 'REPORT',
@@ -149,7 +149,6 @@ messaging.onBackgroundMessage(async (payload) => {
     } catch (error) {
       console.error('user history api error', error);
     }
-    // Uncomment the following line if you want to show the notification
     return self.registration.showNotification(payload?.data?.title, payload?.data);
   } catch (error) {
     console.error('Error saving telemetry event:', error);

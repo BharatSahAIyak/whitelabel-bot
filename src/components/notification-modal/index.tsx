@@ -70,7 +70,7 @@ const NotificationModal = () => {
                 userID: localStorage.getItem('userID') || '',
               },
               messageId: {
-                Id: '',
+                Id: notificationData?.notificationId,
                 channelMessageId: '',
               },
               messageType: 'REPORT',
@@ -111,7 +111,7 @@ const NotificationModal = () => {
               userID: localStorage.getItem('userID') || '',
             },
             messageId: {
-              Id: '',
+              Id: payload?.data?.notificationId,
               channelMessageId: '',
             },
             messageType: 'REPORT',
@@ -157,7 +157,7 @@ const NotificationModal = () => {
                 userID: localStorage.getItem('userID') || '',
               },
               messageId: {
-                Id: '',
+                Id: payload?.data?.notificationId,
                 channelMessageId: '',
               },
               messageType: 'REPORT',

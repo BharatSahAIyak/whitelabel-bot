@@ -149,7 +149,6 @@ const App = ({ Component, pageProps }: AppProps) => {
                   // @ts-ignore
                   window.navigator?.userAgentData?.platform || window.navigator.platform,
                 browser: navigator.userAgent,
-                ip: sessionStorage.getItem('ip'),
                 // @ts-ignore
                 deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
                 sessionId: sessionStorage.getItem('sessionId'),
@@ -177,7 +176,6 @@ const App = ({ Component, pageProps }: AppProps) => {
       if (param) updateToken(param, 'android');
 
       return 'updateFCMToken called' + param;
-      // TODO: save this token for this user
     };
 
     window.updateNotificationPayload = (stringifiedPayload: string) => {

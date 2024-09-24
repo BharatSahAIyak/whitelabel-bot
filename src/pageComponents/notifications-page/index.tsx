@@ -69,7 +69,7 @@ const NotificationsPage: FC = () => {
 
   useEffect(() => {
     fetchHistory();
-    fetchHistory2();
+    fetchNotificationHistory();
   }, []);
 
   const fetchHistory = useCallback(() => {
@@ -98,7 +98,7 @@ const NotificationsPage: FC = () => {
     setIsFetching(false);
   }, [t, theme, handleClick]);
 
-  const fetchHistory2 = useCallback(async () => {
+  const fetchNotificationHistory = useCallback(async () => {
     setIsFetching(true);
 
     const notificationList = [
