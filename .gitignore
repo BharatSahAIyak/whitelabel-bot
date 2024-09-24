@@ -51,3 +51,4 @@ settings.gradle
 store_icon.png
 twa-manifest.json
 manifest-checksum.txt
+server.js
