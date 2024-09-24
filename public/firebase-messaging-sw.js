@@ -82,14 +82,14 @@ messaging.onBackgroundMessage(async (payload) => {
 
     const eventData = {
       botId: appConfig.NEXT_PUBLIC_BOT_ID || '',
-      MessageID: payload?.data?.notificationId || '',
+      messageID: payload?.data?.notificationId || '',
       orgId: appConfig.NEXT_PUBLIC_ORG_ID || '',
       userId: appConfig.userId || '',
-      AdapterType: 'FCM',
+      adapterType: 'FCM',
       messageState: 'DELIVERED',
       phoneNumber: appConfig.phoneNumber || '',
       conversationId: appConfig.conversationId || '',
-      NotificationData: payload?.data,
+      notificationData: payload?.data,
       withImage: payload?.data?.icon || payload?.data?.imageUrl ? true : false,
     };
 
@@ -105,7 +105,6 @@ messaging.onBackgroundMessage(async (payload) => {
       subEvent: 'messageReceived',
       os: appConfig.os || 'unknown',
       browser: appConfig.browser || 'unknown',
-      ip: appConfig.ip || '',
       deviceType: appConfig.deviceType || 'unknown',
       sessionId: appConfig.sessionId || '',
       eventData,

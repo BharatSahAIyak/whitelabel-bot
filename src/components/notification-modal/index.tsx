@@ -52,12 +52,12 @@ const NotificationModal = () => {
         await saveTelemetryEvent('0.1', 'E051', 'messageLifecycle', 'messageRead', {
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
           orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
-          AdapterType: 'FCM',
+          adapterType: 'FCM',
           userId: localStorage.getItem('userID') || '',
           phoneNumber: localStorage.getItem('phoneNumber') || '',
-          MessageID: notificationData?.notificationId || '',
+          messageID: notificationData?.notificationId || '',
           withImage: notificationData?.imageUrl ? true : false,
-          NotificationData: notificationData,
+          notificationData: notificationData,
           messageState: 'READ',
           conversationId: sessionStorage.getItem('conversationId') || '',
         });
@@ -91,11 +91,11 @@ const NotificationModal = () => {
     onMessageListener().then(async (payload: any) => {
       await saveTelemetryEvent('0.1', 'E033', 'messageQuery', 'messageReceived', {
         botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-        MessageID: payload?.data?.notificationId || '',
-        AdapterType: 'FCM',
+        messageID: payload?.data?.notificationId || '',
+        adapterType: 'FCM',
         orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
         userId: localStorage.getItem('userID') || '',
-        NotificationData: payload?.data,
+        notificationData: payload?.data,
         withImage: payload?.data?.icon || payload?.data?.imageUrl ? true : false,
         phoneNumber: localStorage.getItem('phoneNumber') || '',
         conversationId: sessionStorage.getItem('conversationId') || '',
@@ -137,11 +137,11 @@ const NotificationModal = () => {
         setOpen(true);
         await saveTelemetryEvent('0.1', 'E051', 'messageLifecycle', 'messageRead', {
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
-          MessageID: payload?.data?.notificationId || '',
-          AdapterType: 'FCM',
+          messageID: payload?.data?.notificationId || '',
+          adapterType: 'FCM',
           orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
           userId: localStorage.getItem('userID') || '',
-          NotificationData: payload?.data,
+          notificationData: payload?.data,
           withImage: payload?.data?.imageUrl ? true : false,
           phoneNumber: localStorage.getItem('phoneNumber') || '',
           conversationId: sessionStorage.getItem('conversationId') || '',
