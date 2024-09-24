@@ -7,13 +7,14 @@ import { useRouter } from 'next/router';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { onMessageListener } from '../../config/firebase';
 import saveTelemetryEvent from '../../utils/telemetry';
+import axios from 'axios';
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  minWidth: 360,
+  width: 340,
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 2,
@@ -27,7 +28,6 @@ const NotificationModal = () => {
 
   useEffect(() => {
     const checkNotification = async () => {
-      setNotificationData;
       const db = await openDB('notificationDB', 1, {
         upgrade(db) {
           if (!db.objectStoreNames.contains('notifications')) {
@@ -42,6 +42,7 @@ const NotificationModal = () => {
 
       if (notifications.length > 0) {
         setNotificationData(notifications[0]);
+
         setOpen(true);
 
         await saveTelemetryEvent('0.1', 'E051', 'messageLifecycle', 'messageRead', {
@@ -76,11 +77,34 @@ const NotificationModal = () => {
         setOpen(true);
         await saveTelemetryEvent('0.1', 'E046', 'aiToolProxyToolLatency', 's2tLatency', {
           botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          MessageID: notificationData?.notificationId || '',
           orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
           userId: localStorage.getItem('userID') || '',
+          NotificationData: notificationData,
+          withImage: notificationData?.image ? true : false,
           phoneNumber: localStorage.getItem('phoneNumber') || '',
           conversationId: sessionStorage.getItem('conversationId') || '',
         });
+
+        try {
+          await axios.post(
+            `${process.env.NEXT_PUBLIC_INBOUND_API}/inbound/bot/${notificationData?.notificationId}`,
+            {
+              payload: notificationData,
+              from: {
+                userID: localStorage.getItem('userID') || '',
+              },
+              messageId: {
+                Id: '',
+                channelMessageId: '',
+              },
+              messageType: 'REPORT',
+              messageState: 'READ',
+            }
+          );
+        } catch (error: any) {
+          console.error('user history api error', error);
+        }
       }
     });
 
@@ -127,7 +151,7 @@ const NotificationModal = () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [notificationData]);
-
+  console.log('notification content is here', notificationData);
   if (!notificationData) return null;
 
   return (

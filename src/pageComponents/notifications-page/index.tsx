@@ -55,7 +55,6 @@ const NotificationsPage: FC = () => {
   }, [faqConfig?.faqPhoneNumber]);
 
   const handleClick = useCallback((activeItem: any) => {
-    console.log(activeItem);
     switch (activeItem?.action) {
       case 'downloadManual':
         downloadPDFHandler();
@@ -121,7 +120,7 @@ const NotificationsPage: FC = () => {
       },
     ];
     const res = await axios.get(
-      'https://bff.bhasai-dev.k8s.bhasai.samagra.io/history/notifications/29c74b95-4fd8-4167-ae7a-1e25489bf667?limit=20'
+      `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/notifications/29c74b95-4fd8-4167-ae7a-1e25489bf667`
     );
 
     const notificationList2 = res.data.map((item: any) => {

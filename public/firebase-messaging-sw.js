@@ -87,12 +87,15 @@ messaging.onBackgroundMessage(async (payload) => {
 
     const eventData = {
       botId: appConfig.NEXT_PUBLIC_BOT_ID || '',
+      MessageID: payload?.data?.notificationId || '',
       orgId: appConfig.NEXT_PUBLIC_ORG_ID || '',
       userId: appConfig.userId || '',
       AdapterType: 'FCM',
       messageState: 'DELIVERED',
       phoneNumber: appConfig.phoneNumber || '',
       conversationId: appConfig.conversationId || '',
+      NotificationData: payload,
+      withImage: payload?.data?.icon || image ? true : false,
     };
 
     const telemetryData = {
@@ -123,6 +126,34 @@ messaging.onBackgroundMessage(async (payload) => {
       body: JSON.stringify([telemetryData]),
     });
     console.log('Telemetry api called successfully');
+
+    try {
+      await fetch(
+        `${appConfig.NEXT_PUBLIC_INBOUND_API}/inbound/bot/${payload?.data?.notificationId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            payload: notificationData,
+            from: {
+              userID: appConfig.userId || '',
+            },
+            messageId: {
+              Id: '',
+              channelMessageId: '',
+            },
+            messageType: 'REPORT',
+            messageState: 'DELIVERED',
+          }),
+        }
+      );
+
+      console.log('user history api called successfully');
+    } catch (error) {
+      console.error('user history api error', error);
+    }
 
     return self.registration.showNotification(title, notificationData);
   } catch (error) {

@@ -153,6 +153,7 @@ const App = ({ Component, pageProps }: AppProps) => {
                 // @ts-ignore
                 deviceType: window.navigator?.userAgentData?.mobile ? 'mobile' : 'desktop',
                 sessionId: sessionStorage.getItem('sessionId'),
+                NEXT_PUBLIC_INBOUND_API: process.env.NEXT_PUBLIC_INBOUND_API,
               };
 
               storeAppConfigInIndexedDB(telemetryConfig);
