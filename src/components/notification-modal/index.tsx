@@ -6,13 +6,15 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useRouter } from 'next/router';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { onMessageListener } from '../../config/firebase';
+import saveTelemetryEvent from '../../utils/telemetry';
+import axios from 'axios';
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  minWidth: 360,
+  width: 340,
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 2,
@@ -24,8 +26,12 @@ const NotificationModal = () => {
   const router = useRouter();
   const theme = useColorPalates();
 
+  const updateReadTelemetry = async () => {};
+
   useEffect(() => {
     const checkNotification = async () => {
+      console.log('receivered notification on background');
+
       const db = await openDB('notificationDB', 1, {
         upgrade(db) {
           if (!db.objectStoreNames.contains('notifications')) {
@@ -40,7 +46,40 @@ const NotificationModal = () => {
 
       if (notifications.length > 0) {
         setNotificationData(notifications[0]);
+
         setOpen(true);
+
+        await saveTelemetryEvent('0.1', 'E051', 'messageLifecycle', 'messageRead', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          adapterType: 'FCM',
+          userId: localStorage.getItem('userID') || '',
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          messageID: notificationData?.notificationId || '',
+          withImage: notificationData?.imageUrl ? true : false,
+          notificationData: notificationData,
+          messageState: 'READ',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+        });
+        try {
+          await axios.post(
+            `${process.env.NEXT_PUBLIC_INBOUND_API}/inbound/bot/${notificationData?.notificationId}`,
+            {
+              payload: notificationData,
+              from: {
+                userID: localStorage.getItem('userID') || '',
+              },
+              messageId: {
+                Id: notificationData?.notificationId,
+                channelMessageId: '',
+              },
+              messageType: 'REPORT',
+              messageState: 'READ',
+            }
+          );
+        } catch (error: any) {
+          console.error('user history api error', error);
+        }
       } else {
         setOpen(false);
         setNotificationData(null);
@@ -49,19 +88,85 @@ const NotificationModal = () => {
 
     checkNotification();
 
-    onMessageListener().then((payload: any) => {
+    onMessageListener().then(async (payload: any) => {
+      await saveTelemetryEvent('0.1', 'E033', 'messageQuery', 'messageReceived', {
+        botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+        messageID: payload?.data?.notificationId || '',
+        adapterType: 'FCM',
+        orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+        userId: localStorage.getItem('userID') || '',
+        notificationData: payload?.data,
+        withImage: payload?.data?.icon || payload?.data?.imageUrl ? true : false,
+        phoneNumber: localStorage.getItem('phoneNumber') || '',
+        conversationId: sessionStorage.getItem('conversationId') || '',
+        messageState: 'DELIVERED',
+      });
+
+      try {
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_INBOUND_API}/inbound/bot/${payload?.data?.notificationId}`,
+          {
+            payload: payload?.data,
+            from: {
+              userID: localStorage.getItem('userID') || '',
+            },
+            messageId: {
+              Id: payload?.data?.notificationId,
+              channelMessageId: '',
+            },
+            messageType: 'REPORT',
+            messageState: 'READ',
+          }
+        );
+      } catch (error: any) {
+        console.error('user history api error', error);
+      }
+
+      console.log('receivered notification on foreground');
       if (payload) {
         const newNotification = {
-          timestamp: new Date().getTime().toString(),
-          title: payload.notification.title,
-          modalBody: payload.notification.body,
-          image: payload.notification.image,
-          buttonUrl: payload.data?.buttonUrl,
-          buttonText: payload.data?.buttonText,
+          timestamp: new Date().getTime()?.toString(),
+          title: payload?.data?.title || '',
+          modalBody: payload?.data?.body || '',
+          imageUrl: payload?.data?.imageUrl || '',
+          buttonUrl: payload.data?.buttonUrl || '',
+          buttonText: payload.data?.buttonText || '',
         };
 
         setNotificationData(newNotification);
         setOpen(true);
+        await saveTelemetryEvent('0.1', 'E051', 'messageLifecycle', 'messageRead', {
+          botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+          messageID: payload?.data?.notificationId || '',
+          adapterType: 'FCM',
+          orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
+          userId: localStorage.getItem('userID') || '',
+          notificationData: payload?.data,
+          withImage: payload?.data?.imageUrl ? true : false,
+          phoneNumber: localStorage.getItem('phoneNumber') || '',
+          conversationId: sessionStorage.getItem('conversationId') || '',
+          messageState: 'READ',
+        });
+
+        try {
+          await axios.post(
+            `${process.env.NEXT_PUBLIC_INBOUND_API}/inbound/bot/${payload?.data?.notificationId}`,
+            {
+              payload: payload?.data,
+              from: {
+                userID: localStorage.getItem('userID') || '',
+              },
+              messageId: {
+                Id: payload?.data?.notificationId,
+                channelMessageId: '',
+              },
+              messageType: 'REPORT',
+              messageState: 'READ',
+            }
+          );
+        } catch (error: any) {
+          console.error('user history api error', error);
+        }
       }
     });
 
@@ -108,7 +213,7 @@ const NotificationModal = () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [notificationData]);
-
+  console.log('notification content is here', notificationData);
   if (!notificationData) return null;
 
   return (
@@ -143,10 +248,10 @@ const NotificationModal = () => {
             backgroundColor: '#B4B9C5',
           }}
         ></div>{' '}
-        {notificationData?.image && (
+        {notificationData?.imageUrl && (
           <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <img
-              src={notificationData.image}
+              src={notificationData?.imageUrl}
               alt="Notification"
               style={{ maxWidth: '80%', height: '100px' }}
             />

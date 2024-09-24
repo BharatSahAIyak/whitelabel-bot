@@ -9,11 +9,13 @@ import { FullPageLoader } from '../../components/fullpage-loader';
 import { useLocalization } from '../../hooks';
 import { useConfig } from '../../hooks/useConfig';
 import Menu from '../../components/menu';
+import axios from 'axios';
 
 const NotificationsPage: FC = () => {
   const [isFetching, setIsFetching] = useState(true);
   const theme = useColorPalates();
   const [notifications, setNotifications] = useState<any>([]);
+  const [pushNotification, setPushNotification] = useState<any>([]);
   const t = useLocalization();
 
   const faqConfig = useConfig('component', 'faqPage');
@@ -53,7 +55,6 @@ const NotificationsPage: FC = () => {
   }, [faqConfig?.faqPhoneNumber]);
 
   const handleClick = useCallback((activeItem: any) => {
-    console.log(activeItem);
     switch (activeItem?.action) {
       case 'downloadManual':
         downloadPDFHandler();
@@ -68,6 +69,7 @@ const NotificationsPage: FC = () => {
 
   useEffect(() => {
     fetchHistory();
+    fetchNotificationHistory();
   }, []);
 
   const fetchHistory = useCallback(() => {
@@ -96,6 +98,52 @@ const NotificationsPage: FC = () => {
     setIsFetching(false);
   }, [t, theme, handleClick]);
 
+  const fetchNotificationHistory = useCallback(async () => {
+    setIsFetching(true);
+
+    const notificationList = [
+      {
+        label: t('label.notification1_label'),
+        secondaryLabel: t('label.notification1_description'),
+        icon: <InfoIcon style={{ color: theme?.primary?.main }} />,
+        action: 'downloadManual',
+        onClick: handleClick,
+        isDivider: true,
+      },
+      {
+        label: t('label.notification2_label'),
+        secondaryLabel: t('label.notification2_description'),
+        icon: <CallIcon style={{ color: theme?.primary?.main }} />,
+        action: 'callCenter',
+        onClick: handleClick,
+        isDivider: true,
+      },
+    ];
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/notifications/${localStorage.getItem('phoneNumber')}`
+    );
+
+    const notificationList2 = res.data.map((item: any) => {
+      const payload = item.payload;
+      const iconImage = payload.media.find((media: any) => media.caption === 'Icon_Image');
+
+      return {
+        label: payload.subject,
+        secondaryLabel: payload.text,
+        icon: iconImage ? (
+          <img src={iconImage.url} alt="Notification Icon" style={{ width: 24, height: 24 }} />
+        ) : (
+          <InfoIcon style={{ color: theme?.primary?.main }} />
+        ),
+        action: 'viewNotification',
+        onClick: () => {},
+        isDivider: true,
+      };
+    });
+
+    setPushNotification(notificationList2);
+  }, [t, theme, handleClick]);
+
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory]);
@@ -118,6 +166,13 @@ const NotificationsPage: FC = () => {
         <div className={styles.list} data-testid="notifications-list">
           <List
             items={notifications}
+            noItem={{
+              label: t('label.no_notifications'),
+              icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
+            }}
+          />
+          <List
+            items={pushNotification}
             noItem={{
               label: t('label.no_notifications'),
               icon: <ForumIcon style={{ color: theme?.primary?.light }} />,

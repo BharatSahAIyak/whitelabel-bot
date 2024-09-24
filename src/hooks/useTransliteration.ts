@@ -107,7 +107,11 @@ const useTransliteration = (config: any, value: any, setValue: any, inputRef: an
           }
         }
       } else if (e.key === ' ' || e.code === 'Space' || e.keyCode === 32 || e.data === ' ') {
-        if (context?.languagePopupFlag && langPopupConfig?.langCheck) {
+        if (
+          context?.languagePopupFlag &&
+          langPopupConfig?.langCheck &&
+          context?.locale !== langPopupConfig?.lang
+        ) {
           detectLanguage(value?.trim()?.split(' ')?.pop() || '').then((res) => {
             if (res?.language === langPopupConfig?.match) {
               context?.setShowLanguagePopup(true);
