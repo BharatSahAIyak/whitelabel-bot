@@ -64,6 +64,7 @@ const MicroPhonePermissionModal: React.FC<MicroPhonePermissionModalProps> = ({
         </Typography>
         {permissionStatus == 'prompt' && (
           <Button
+            data-testid="microphone-permission-button"
             fullWidth
             variant="outlined"
             color="primary"
