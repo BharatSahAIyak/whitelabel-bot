@@ -373,6 +373,7 @@ const Home: React.FC = () => {
             </Typography>
             {locationStatus != 'denied' && (
               <Button
+                data-testid="location-permission-button"
                 fullWidth
                 variant="outlined"
                 color="primary"
