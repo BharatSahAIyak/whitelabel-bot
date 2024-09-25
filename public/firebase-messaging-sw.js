@@ -153,3 +153,31 @@ messaging.onBackgroundMessage(async (payload) => {
     console.error('Error saving telemetry event:', error);
   }
 });
+
+self.addEventListener('notificationclick', function (event) {
+  console.log('Notification click received:', event);
+
+  event.notification.close();
+
+  event.waitUntil(
+    clients
+      .matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      })
+      .then(function (clientList) {
+        // Check if there's already a window/tab open with the target URL
+        for (var i = 0; i < clientList.length; i++) {
+          var client = clientList[i];
+          if (client.url.includes(self.location.origin) && 'focus' in client) {
+            client.postMessage({ type: 'SHOW_NOTIFICATION_MODAL' });
+            return client.focus();
+          }
+        }
+        // If no window/tab is already open, open a new one
+        if (clients.openWindow) {
+          return clients.openWindow('/');
+        }
+      })
+  );
+});
