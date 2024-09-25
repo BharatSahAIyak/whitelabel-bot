@@ -170,6 +170,7 @@ self.addEventListener('notificationclick', function (event) {
         for (var i = 0; i < clientList.length; i++) {
           var client = clientList[i];
           if (client.url.includes(self.location.origin) && 'focus' in client) {
+            client.postMessage({ type: 'SHOW_NOTIFICATION_MODAL' });
             return client.focus();
           }
         }

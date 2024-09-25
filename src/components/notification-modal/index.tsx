@@ -26,8 +26,6 @@ const NotificationModal = () => {
   const router = useRouter();
   const theme = useColorPalates();
 
-  const updateReadTelemetry = async () => {};
-
   useEffect(() => {
     const checkNotification = async () => {
       console.log('receivered notification on background');
@@ -87,6 +85,12 @@ const NotificationModal = () => {
     };
 
     checkNotification();
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'SHOW_NOTIFICATION_MODAL') {
+        console.log('notification trigger when tab is open but not in focus');
+        checkNotification();
+      }
+    });
 
     onMessageListener().then(async (payload: any) => {
       await saveTelemetryEvent('0.1', 'E033', 'messageQuery', 'messageReceived', {
