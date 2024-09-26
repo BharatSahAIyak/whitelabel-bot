@@ -363,7 +363,10 @@
       "label.access_location_permission": "Allow Permission",
       "label.access_microphone_permission": "Allow Permission",
       "label.allow_microphone_permission": "Allow Microphone access to use voice features",
-      "label.allow_microphone_permission_in_setting": "Please Allow Microphone  from the device setting"
+      "label.allow_microphone_permission_in_setting": "Please Allow Microphone  from the device setting",
+      "label.successful_feedback":"Feedback Submitted Successfully",
+      "label.unsuccessful_feedback":"Failed to submit the feedback. Please try again later",
+      "label.empty_feedback": "Please Provide a Review"      
     }
   }
 }

@@ -44,7 +44,7 @@ const FeedbackPage: React.FC = () => {
     }
 
     if (config?.reviewBox && review === '') {
-      toast.error('Please provide a review');
+      toast.error(t('label.empty_feedback'));
       return;
     }
 
@@ -62,13 +62,14 @@ const FeedbackPage: React.FC = () => {
           },
         }
       )
-      .then(() => {
-        toast.success('Feedback submitted successfully');
-      })
-      .catch((error) => {
-        console.error('Error submitting feedback:', error);
-        toast.error('Failed to submit feedback. Please try again later.');
-      });
+   .then(() => {
+  toast.success(t('label.successful_feedback'));  
+})
+.catch((error) => {
+  console.error('Error submitting feedback:', error);
+  toast.error(t('label.unsuccessful_feedback'));  
+});
+
   };
 
   return (
