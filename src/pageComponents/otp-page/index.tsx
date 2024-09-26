@@ -141,7 +141,7 @@ const OtpPage: React.FC = () => {
                 width: '40px',
                 borderRadius: '12px',
                 border: '1px solid #E8ECF4',
-                m: 1,
+                ml: 1,
               }}
               onClick={() => router.push('/login')}
             >
@@ -153,7 +153,7 @@ const OtpPage: React.FC = () => {
               textAlign="center"
               width="90%"
               color="#1E232C"
-              sx={{ m: 1 }}
+              sx={{ m: 1, mr: 6 }}
             >
               {t('message.otp_verification')}
             </Typography>
