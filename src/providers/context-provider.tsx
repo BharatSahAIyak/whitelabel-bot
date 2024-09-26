@@ -639,7 +639,7 @@ const ContextProvider: FC<{
             const chatHistory = await axios.get(
               `${process.env.NEXT_PUBLIC_BFF_API_URL}/history?userId=${localStorage.getItem(
                 'userID'
-              )}&conversationId=${sessionStorage.getItem('conversationId')}`,
+              )}&channelMessageId=${sessionStorage.getItem('conversationId')}`,
               {
                 headers: {
                   botId: process.env.NEXT_PUBLIC_BOT_ID || '',
