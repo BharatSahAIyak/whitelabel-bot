@@ -78,7 +78,7 @@ const MicroPhonePermissionModal: React.FC<MicroPhonePermissionModalProps> = ({
             }}
             onClick={handleClose}
           >
-            {t('lable.access_microphone_permission')}
+            {t('label.access_microphone_permission')}
           </Button>
         )}
       </Box>
