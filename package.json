@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "dotenv -- next dev",
-    "build": "next build && sh ./build.sh",
+    "dev2": "dotenv node server.js",
+    "build": "next build && bash ./build.sh",
     "start": "next start",
     "lint": "next lint",
     "analyze": "cross-env ANALYZE=true next build",
