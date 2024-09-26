@@ -43,7 +43,9 @@ const NotificationModal = () => {
       const notifications = await store.getAll();
 
       if (notifications.length > 0) {
-        setNotificationData(notifications[0]);
+        const currentNotification = notifications[0];
+
+        setNotificationData(currentNotification);
 
         setOpen(true);
 
@@ -53,22 +55,22 @@ const NotificationModal = () => {
           adapterType: 'FCM',
           userId: localStorage.getItem('userID') || '',
           phoneNumber: localStorage.getItem('phoneNumber') || '',
-          messageID: notificationData?.notificationId || '',
-          withImage: notificationData?.imageUrl ? true : false,
-          notificationData: notificationData,
+          messageID: currentNotification?.notificationId || '',
+          withImage: currentNotification?.imageUrl ? true : false,
+          notificationData: currentNotification,
           messageState: 'READ',
           conversationId: sessionStorage.getItem('conversationId') || '',
         });
         try {
           await axios.post(
-            `${process.env.NEXT_PUBLIC_INBOUND_API}/inbound/bot/${notificationData?.notificationId}`,
+            `${process.env.NEXT_PUBLIC_INBOUND_API}/inbound/bot/${currentNotification?.notificationId}`,
             {
-              payload: notificationData,
+              payload: currentNotification,
               from: {
                 userID: localStorage.getItem('userID') || '',
               },
               messageId: {
-                Id: notificationData?.notificationId,
+                Id: currentNotification?.notificationId,
                 channelMessageId: '',
               },
               messageType: 'REPORT',
@@ -119,7 +121,7 @@ const NotificationModal = () => {
               channelMessageId: '',
             },
             messageType: 'REPORT',
-            messageState: 'READ',
+            messageState: 'DELIVERED',
           }
         );
       } catch (error: any) {
