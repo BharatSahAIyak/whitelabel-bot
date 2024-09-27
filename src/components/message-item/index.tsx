@@ -905,7 +905,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   }}
                 >
                   <TransliterationInput
-                    placeholder={t('label.buttons_search_placeholder') || 'Search'}
+                    placeholder={content?.data?.choices?.searchButtonPlaceholder || 'Search'}
                     value={searchQuery}
                     setValue={setSearchQuery}
                     config={config}
@@ -1278,7 +1278,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   }}
                 >
                   <TransliterationInput
-                    placeholder={t('label.buttons_search_placeholder') || 'Search'}
+                    placeholder={content?.data?.choices?.searchButtonPlaceholder || 'Search'}
                     value={searchQuery}
                     setValue={setSearchQuery}
                     config={config}
