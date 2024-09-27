@@ -63,7 +63,7 @@ const Menu = () => {
         <Button
           onClick={handleNotificationClick}
           className={styles.btn}
-          disabled={!config?.showNotificationsPage}
+          style={{ color: config?.showNotificationsPage ? '' : 'grey' }}
         >
           {isNotification ? (
             <NotificationsIcon fontSize="large" />
