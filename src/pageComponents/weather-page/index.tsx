@@ -538,7 +538,7 @@ const WeatherPage: React.FC = () => {
         <div className={styles.cropContainer}>
          <div
       className={styles.heading}
-      style={{ background: '#DFF6D1', display: 'flex', alignItems: 'center' }}
+      style={{ background: '#DFF6D1'}}
       data-testid="weather-page-advisory-text"
     >
       {t('label.crop_advisory')}
