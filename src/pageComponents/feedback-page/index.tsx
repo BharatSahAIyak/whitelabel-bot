@@ -23,7 +23,7 @@ const FeedbackPage: React.FC = () => {
   if (!config) return;
  
   if (config?.ratingBox && star === 0) {
-    toast.error('Please provide a rating');
+    toast.error(t('label.empty_rating'));
     return;
   }
  

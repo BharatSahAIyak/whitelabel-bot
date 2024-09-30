@@ -366,7 +366,8 @@
       "label.allow_microphone_permission_in_setting": "Please Allow Microphone  from the device setting",
       "label.successful_feedback":"Feedback Submitted Successfully",
       "label.unsuccessful_feedback":"Failed to submit the feedback. Please try again later",
-      "label.empty_feedback": "Please Provide a Review"      
+      "label.empty_feedback": "Please provide a Review",
+      "label.empty_rating": "Please provide a Rating"     
     }
   }
 }
