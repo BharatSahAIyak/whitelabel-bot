@@ -45,6 +45,7 @@ import TransliterationInput from '../transliteration-input';
 import { compressImage } from '../../utils/imageCompression';
 import { FullPageLoader } from '../fullpage-loader';
 import DOMPurify from 'dompurify';
+import ReactMarkdown from 'react-markdown';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
@@ -581,9 +582,17 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   color: content?.data?.position === 'right' ? 'var(--font)' : contrastText,
                 }}
               >
-                <span
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content?.text) }}
-                ></span>{' '}
+               <ReactMarkdown
+  components={{
+    img: ({ node, ...props }) => (
+      <img style={{ maxWidth: '100%', borderRadius: '8px' }} {...props} />
+    ),
+    ul: ({ node, ...props }) => <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }} {...props} />,
+    ol: ({ node, ...props }) => <ol style={{ listStyleType: 'decimal', paddingLeft: '20px' }} {...props} />,
+  }}
+    >
+      {content?.text}
+    </ReactMarkdown>
                 {content?.data?.position === 'right'
                   ? null
                   : !content?.data?.isEnd && <BlinkingSpinner />}
