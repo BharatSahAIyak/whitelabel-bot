@@ -39,6 +39,7 @@ const ChatUiWindow: React.FC = () => {
             {
               headers: {
                 botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+                authorization: `Bearer ${localStorage.getItem('auth')}`,
               },
             }
           );
