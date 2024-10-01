@@ -77,6 +77,7 @@ const ShareButtons = () => {
         setShareLoader(false);
 
         if (!navigator.canShare) {
+          toast.success(`${t('message.sharing')}`);
           //@ts-ignore
           if (window?.AndroidHandler?.shareUrl) {
             //@ts-ignore
