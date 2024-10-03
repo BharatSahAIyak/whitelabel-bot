@@ -22,7 +22,7 @@ async function generateAssetlinks() {
       fs.mkdirSync(wellKnownDir, { recursive: true });
     }
 
-    fs.writeFileSync(`${wellKnownDir}/assetlinks.json`, JSON.stringify(assetlinksTemplate, null, 2)); // Fixed line
+    fs.writeFileSync(`${wellKnownDir}/assetlinks.json`, JSON.stringify(assetlinksTemplate, null, 2)); 
     console.log('assetlinks.json has been successfully created!');
   } catch (error) {
     console.error('Failed to generate assetlinks.json:', error.message);
