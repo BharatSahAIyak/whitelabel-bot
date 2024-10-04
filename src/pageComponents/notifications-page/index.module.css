@@ -3,7 +3,7 @@
 }
 
 .list {
-  height: 71dvh;
+  height: 75dvh;
   overflow-x: hidden;
   overflow-y: scroll !important;
 }

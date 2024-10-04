@@ -119,29 +119,34 @@ const NotificationsPage: FC = () => {
         isDivider: true,
       },
     ];
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/notifications/${localStorage.getItem('phoneNumber')}`
-    );
 
-    const notificationList2 = res.data.map((item: any) => {
-      const payload = item.payload;
-      const iconImage = payload.media.find((media: any) => media.caption === 'Icon_Image');
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_BFF_API_URL}/history/notifications/${localStorage.getItem('phoneNumber')}`
+      );
 
-      return {
-        label: payload.subject,
-        secondaryLabel: payload.text,
-        icon: iconImage ? (
-          <img src={iconImage.url} alt="Notification Icon" style={{ width: 24, height: 24 }} />
-        ) : (
-          <InfoIcon style={{ color: theme?.primary?.main }} />
-        ),
-        action: 'viewNotification',
-        onClick: () => {},
-        isDivider: true,
-      };
-    });
+      const notificationList2 = res.data.map((item: any) => {
+        const payload = item.payload;
+        const iconImage = payload.media.find((media: any) => media.caption === 'Icon_Image');
 
-    setPushNotification(notificationList2);
+        return {
+          label: payload.subject,
+          secondaryLabel: payload.text,
+          icon: iconImage ? (
+            <img src={iconImage.url} alt="Notification Icon" style={{ width: 24, height: 24 }} />
+          ) : (
+            <InfoIcon style={{ color: theme?.primary?.main }} />
+          ),
+          action: 'viewNotification',
+          onClick: () => {},
+          isDivider: true,
+        };
+      });
+
+      setPushNotification(notificationList2);
+    } catch (error) {
+      console.log('error in fetching the notification :', error);
+    }
   }, [t, theme, handleClick]);
 
   useEffect(() => {
@@ -164,13 +169,13 @@ const NotificationsPage: FC = () => {
           {t('label.notifications')}
         </div>
         <div className={styles.list} data-testid="notifications-list">
-          <List
+          {/* <List
             items={notifications}
             noItem={{
               label: t('label.no_notifications'),
               icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
             }}
-          />
+          /> */}
           <List
             items={pushNotification}
             noItem={{
