@@ -156,21 +156,21 @@ const NotificationsPage: FC = () => {
           color={theme?.primary?.main}
           label="Fetching Notifications"
         />
-        <div
+        {/* <div
           className={styles.title}
           style={{ color: theme?.primary?.main }}
           data-testid="notifications-title"
         >
           {t('label.notifications')}
-        </div>
+        </div> */}
         <div className={styles.list} data-testid="notifications-list">
-          <List
+          {/* <List
             items={notifications}
             noItem={{
               label: t('label.no_notifications'),
               icon: <ForumIcon style={{ color: theme?.primary?.light }} />,
             }}
-          />
+          /> */}
           <List
             items={pushNotification}
             noItem={{
