@@ -323,7 +323,7 @@ const WeatherPage: React.FC = () => {
                 }
                 size="medium"
                 sx={{
-                  fontSize: '14px',
+                  fontSize: { xs: '12px', sm: '12px', md: '14px' },
                   fontWeight: '600',
                   minWidth: '70px',
                   background: null,
@@ -346,7 +346,7 @@ const WeatherPage: React.FC = () => {
                 label={(weather?.current?.tags?.windspeed || 0) + ' km/h'}
                 size="medium"
                 sx={{
-                  fontSize: '14px',
+                  fontSize: { xs: '12px', sm: '12px', md: '14px' },
                   fontWeight: '600',
                   minWidth: '70px',
                   background: '#101860',
@@ -370,7 +370,7 @@ const WeatherPage: React.FC = () => {
                 label={(weather?.current?.tags?.humidity || 0) + ' %'}
                 size="medium"
                 sx={{
-                  fontSize: '14px',
+                  fontSize: { xs: '13x', sm: '13px', md: '16px' },
                   fontWeight: '600',
                   minWidth: '70px',
                   background: '#4CC3CB',
