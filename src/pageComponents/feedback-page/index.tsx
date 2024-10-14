@@ -8,7 +8,7 @@ import { useLocalization } from '../../hooks';
 import Menu from '../../components/menu';
 
 const FeedbackPage: React.FC = () => {
-  const [star, setStar] = useState<number | null>(1);  
+  const [star, setStar] = useState<number | null>(0);  
   const [review, setReview] = useState<string>('');
   const theme = useColorPalates();
   const config = useConfig('component', 'feedbackPage');
