@@ -76,13 +76,11 @@ const ContextProvider: FC<{
   const fetchMessagesWithRetry = useCallback(async () => {
     const retryIntervals = [0, 5000, 3000, 2000, 1000];
 
-    console.log('ankit response for you last message', messages);
     let count = 1;
     const fetchAndProcessMessages = async () => {
-      console.log('ankit time of api calling', getFormattedTime(Date.now()));
       try {
         console.log(
-          `ankit this is number : ${count++} api call and time is ${getFormattedTime(Date.now())}  `
+          ` number : ${count++} api call to fetch scoket message through api, and time is ${getFormattedTime(Date.now())}  `
         );
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_SOCKET_URL}/botMsg/user/${sessionStorage.getItem('conversationId')}/${localStorage.getItem('userID')}`
@@ -94,17 +92,6 @@ const ContextProvider: FC<{
         const isPresentInFetchedMessage = fetchedMessageId?.some(
           (id) => id === response?.data?.messageId
         );
-        // console.log(
-        //   'ankit response receive from my api call',
-        //   response.data,
-        //   'message id from response: ',
-        //   response?.data?.messageId,
-        //   'message id from the last element of the message array',
-        //   messages?.[messages.length - 1]?.messageId,
-        //   JSON.parse(response?.data?.xmessage)?.payload?.text,
-        //   'printing message formate to compare',
-        //   JSON.parse(response?.data?.xmessage)
-        // );
 
         if (!isPresentInFetchedMessage && isMessagePresent) {
           console.log('meesage id allready present');
@@ -117,20 +104,6 @@ const ContextProvider: FC<{
 
           const hasEndTag = msg?.payload?.text?.includes('<end/>');
 
-          // const newMessage = {
-          //   text: JSON.parse(response?.data?.xmessage)?.payload?.text,
-          //   position: 'left',
-          //   payload: {
-          //     textToShow: JSON.parse(response?.data?.xmessage)?.payload?.text,
-          //   },
-          //   time: Date.now(),
-          //   messageId: response?.data?.messageId,
-          //   conversationId: sessionStorage.getItem('conversationId'),
-          //   repliedTimestamp: Date.now(),
-          // };
-          // setMessages((prev) => [...prev, newMessage]);
-          // setLoading(false);
-          // setIsMsgReceiving(false);
           if (msg.messageType.toUpperCase() === 'IMAGE') {
             if (
               // msg.content.timeTaken + 1000 < timer2 &&
@@ -182,16 +155,7 @@ const ContextProvider: FC<{
           }
         }
 
-        return true; // console.log(
-        //   'ankit response receive from my api call',
-        //   response.data,
-        //   'message id from response: ',
-        //   response?.data?.messageId,
-        //   'message id from the last element of the message array',
-        //   messages?.[messages.length - 1]?.messageId,
-        //   JSON.parse(response?.data?.xmessage)?.payload?.text,
-        //   'printing message formate to compare',
-        //   JSON.parse(response?.data?.xmessage)
+        return true;
       } catch (error) {
         console.error('Error fetching messages:', error);
         return false;
@@ -546,12 +510,11 @@ const ContextProvider: FC<{
         console.log('id is allready detected so returning from onMessageReceived');
         return;
       }
-      // return;
       if (messageTimeoutRef.current) {
         clearTimeout(messageTimeoutRef.current);
         messageTimeoutRef.current = null;
       }
-      console.log('ankit message recieved call 1', getFormattedTime(Date.now()));
+      console.log('message recieved through socket at', getFormattedTime(Date.now()));
 
       const ackMessage = JSON.parse(JSON.stringify(msg));
       ackMessage.messageType = 'ACKNOWLEDGEMENT';
@@ -604,8 +567,6 @@ const ContextProvider: FC<{
           });
         }
       }
-
-      console.log('ankit message recieved call 2', getFormattedTime(Date.now()));
     },
     [isOnline, newSocket, updateMsgState]
   );
@@ -614,7 +575,7 @@ const ContextProvider: FC<{
   //@ts-ignore
   const sendMessage = useCallback(
     async (textToSend: string, textToShow: string, media: any) => {
-      console.log(' ankit send message called 1', getFormattedTime(Date.now()));
+      console.log('send message called at', getFormattedTime(Date.now()));
       if (!textToShow) textToShow = textToSend;
 
       setLanguagePopupFlag(true);
@@ -735,7 +696,6 @@ const ContextProvider: FC<{
       messageTimeoutRef.current = setTimeout(() => {
         fetchMessagesWithRetry();
       }, 10000);
-      console.log('ankit send message called 2', getFormattedTime(Date.now()));
     },
 
     [conversationId, newSocket, removeCookie, s2tMsgId, languagePopupFlag]
