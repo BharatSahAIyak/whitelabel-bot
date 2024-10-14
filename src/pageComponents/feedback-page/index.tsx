@@ -14,7 +14,7 @@ import Menu from '../../components/menu';
 import Sidebar from '../../components/sidebar';
 
 const FeedbackPage: React.FC = () => {
-  const [star, setStar] = useState<number>(1);
+  const [star, setStar] = useState<number>(0);
   const [review, setReview] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
