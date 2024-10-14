@@ -4,7 +4,6 @@ title: "[Bug]: "
 labels: ["bug"]
 projects:
   - KISAI Pod 🚀
-assignees:
 body:
   - type: textarea
     id: bug-description
