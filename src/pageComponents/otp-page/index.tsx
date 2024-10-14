@@ -17,6 +17,10 @@ import { FormattedMessage } from 'react-intl';
 import { IconButton } from '@mui/material';
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import InputComponent, {
+  ButtonProps,
+  OtpProps,
+} from '@samagra-x/stencil-molecules/lib/input-component2';
 
 const OtpPage: React.FC = () => {
   const [otp, setOtp] = useState('');
@@ -159,7 +163,39 @@ const OtpPage: React.FC = () => {
             </Typography>
           </div>
           {/* Form */}
-          <Typography
+          <div className={styles.form}>
+            <InputComponent
+              type="otp"
+              buttonProps={
+                {
+                  buttonText: t('label.submit'),
+                  handleNextTask: handleLogin,
+                } as ButtonProps
+              }
+              otpProps={
+                {
+                  otpDidntReceiveText: t('message.didnt_receive'),
+                  resendOtpText: t('message.resend_again'),
+                  // otpDidntReceiveText={t('message.didnt_receive')},
+                  // resendOtpText={t('message.resend_again')},
+                  waitMessage: 'message.wait_minutes',
+                  value: otp,
+                  onChange: setOtp,
+                  optBoxSeparator: <></>,
+                  ResetOtpForgotPlaceHolder: 'Resent Again',
+                  handleResendOtpButton: resendOtp,
+
+                  mobileNumberForOtpScreen: '9907799970',
+                  countDownTime: 30,
+                  textBeforeOtpBox: 'message.otp_message',
+                  styles: {
+                    resendTextStyle: { color: theme?.primary?.main },
+                  },
+                } as OtpProps
+              }
+            />
+          </div>
+          {/* <Typography
             data-testid="otp-verification-line2"
             variant="subtitle1"
             textAlign="center"
@@ -183,8 +219,8 @@ const OtpPage: React.FC = () => {
               onChange={setOtp}
               length={parseInt(otpLength)}
             />
-          </Box>
-          <div style={{ margin: '10px', textAlign: 'center' }} data-testid="resend-otp">
+          </Box> */}
+          {/* <div style={{ margin: '10px', textAlign: 'center' }} data-testid="resend-otp">
             {countdown > 0 ? (
               <span>
                 <FormattedMessage
@@ -210,9 +246,9 @@ const OtpPage: React.FC = () => {
                 </Typography>
               </>
             )}
-          </div>
+          </div> */}
         </div>
-        <Button
+        {/* <Button
           data-testid="otp-submit-button"
           fullWidth
           variant="contained"
@@ -231,7 +267,7 @@ const OtpPage: React.FC = () => {
           endIcon={<ArrowForwardIcon />}
         >
           {loading ? <CircularProgress size={24} color="inherit" /> : `${t('label.submit')}`}
-        </Button>
+        </Button> */}
       </div>
     </>
   );

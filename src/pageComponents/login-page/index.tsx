@@ -17,7 +17,7 @@ import DOMPurify from 'dompurify';
 import InputComponent, {
   ButtonProps,
   InputProps,
-} from '@samagra-x/stencil-molecules/lib/input-component';
+} from '@samagra-x/stencil-molecules/lib/input-component2';
 
 const LoginPage: React.FC = () => {
   const config = useConfig('component', 'loginPage');
@@ -52,9 +52,8 @@ const LoginPage: React.FC = () => {
     }
   }, []);
 
-  const handleLogin = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
+  const handleLogin = useCallback((): Promise<string> => {
+    return new Promise((resolve, reject) => {
       if (input.length === 10) {
         console.log('hello');
         setLoading(true);
@@ -65,24 +64,28 @@ const LoginPage: React.FC = () => {
             .then((response) => {
               setLoading(false);
               if (response.status === 200) {
-                // localStorage.setItem('phoneNumber',input)
                 router.push({ pathname: '/otp', query: { state: input } });
+                resolve('SUCCESS');
               } else {
                 setLoading(false);
                 toast.error(`${t('message.otp_not_sent')}`);
+                reject('FAILURE');
               }
             })
             .catch((err) => {
               setLoading(false);
               toast.error(err.message);
+              reject('FAILURE');
             });
         } else {
           toast.error(`${t('label.no_internet')}`);
+          reject('FAILURE');
         }
+      } else {
+        reject('FAILURE');
       }
-    },
-    [input]
-  );
+    });
+  }, [input]);
   console.log('debug login:', { config });
   return (
     <>
@@ -115,6 +118,23 @@ const LoginPage: React.FC = () => {
           </div>
         )}
         <div className={styles.form}>
+          <InputComponent
+            title={t('label.subtitle')}
+            type="mobile"
+            titleStyle={{
+              color: theme?.primary?.main || 'black',
+            }}
+            buttonProps={{
+              handleNextTask: handleLogin,
+              buttonText: 'Continue',
+            }}
+            inputProps={{
+              errorMessage: 'Mobile Number is required',
+              value: input,
+              onChange: setInput,
+              placeholder: t('message.enter_mobile'),
+            }}
+          />
           {/* Form */}
           {/*<Typography
             data-testid="login-page-title"
@@ -176,7 +196,7 @@ const LoginPage: React.FC = () => {
               {loading ? <CircularProgress size={24} color="inherit" /> : `${t('label.continue')}`}
             </Button>
           </Box> */}
-          <InputComponent
+          {/* <InputComponent
             title={t('label.subtitle')}
             type="mobile"
             titleStyle={{
@@ -199,7 +219,7 @@ const LoginPage: React.FC = () => {
                 placeholder: t('message.enter_mobile'),
               } as InputProps
             }
-          />
+          /> */}
         </div>
       </div>
     </>
