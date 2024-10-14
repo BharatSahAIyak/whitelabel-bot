@@ -81,7 +81,7 @@ const OtpPage: React.FC = () => {
       e.preventDefault();
          if (otp.length === 0) {  
         setOtpError(true);
-        toast.error(`${t('message.invalid_otp')}`);
+        toast.error(`${t('message.enter_otp')}`);
         return;
       }
 
