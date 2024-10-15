@@ -123,10 +123,11 @@ const LoginPage: React.FC = () => {
             type="mobile"
             titleStyle={{
               color: theme?.primary?.main || 'black',
+              fontSize: '34px',
             }}
             buttonProps={{
               handleNextTask: handleLogin,
-              buttonText: 'Continue',
+              buttonText: t('label.continue'),
             }}
             inputProps={{
               errorMessage: 'Mobile Number is required',

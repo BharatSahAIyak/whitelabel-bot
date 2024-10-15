@@ -170,21 +170,19 @@ const OtpPage: React.FC = () => {
                 {
                   buttonText: t('label.submit'),
                   handleNextTask: handleLogin,
+                  buttonStyle: { width: '90%', alignSelf: 'center' },
                 } as ButtonProps
               }
               otpProps={
                 {
                   otpDidntReceiveText: t('message.didnt_receive'),
                   resendOtpText: t('message.resend_again'),
-                  // otpDidntReceiveText={t('message.didnt_receive')},
-                  // resendOtpText={t('message.resend_again')},
                   waitMessage: 'message.wait_minutes',
                   value: otp,
                   onChange: setOtp,
                   optBoxSeparator: <></>,
                   ResetOtpForgotPlaceHolder: 'Resent Again',
                   handleResendOtpButton: resendOtp,
-
                   mobileNumberForOtpScreen: '9907799970',
                   countDownTime: 30,
                   textBeforeOtpBox: 'message.otp_message',
