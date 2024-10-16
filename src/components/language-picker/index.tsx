@@ -7,7 +7,7 @@ import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
 import { AppContext } from '../../context';
 import router from 'next/router';
-import NewLanguagePicker from '@samagra-x/stencil-molecules/lib/language-picker/languagePicker';
+import { LanguagePicker as ImportedLanguagePicker } from '@samagra-x/stencil-molecules';
 
 const LanguagePicker = () => {
   const config = useConfig('component', 'sidebar');
@@ -36,7 +36,7 @@ const LanguagePicker = () => {
     { name: config?.languageName2, value: config?.languageCode2 },
   ];
   return (
-    <NewLanguagePicker
+    <ImportedLanguagePicker
       activeLanguage={activeLanguage}
       handleLanguageClick={handleChange}
       languages={languages}
