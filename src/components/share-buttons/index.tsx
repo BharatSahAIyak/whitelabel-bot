@@ -4,7 +4,7 @@ import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
-import NewShareButtons from '@samagra-x/stencil-molecules/lib/share-buttons/shareButtons';
+import { ShareButtons as NewShareButtons } from '@samagra-x/stencil-molecules';
 import axios from 'axios';
 
 const ShareButtons = () => {
