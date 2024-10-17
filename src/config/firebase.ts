@@ -16,13 +16,21 @@ let messaging: any;
 
 export const initializeFirebase = () => {
   if (typeof window !== 'undefined' && !getApps().length) {
-    app = initializeApp(firebaseConfig);
-    messaging = typeof window !== 'undefined' ? getMessaging(app) : null;
+    if (process.env.NEXT_PUBLIC_FIREBASE_APP_ID) {
+      app = initializeApp(firebaseConfig);
+      messaging = typeof window !== 'undefined' ? getMessaging(app) : null;
+    } else {
+      console.log('Firebase configuration not found. Skipping Firebase initialization.');
+    }
   }
 };
 
 export const requestForToken = async () => {
-  if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+  if (
+    typeof window !== 'undefined' &&
+    'serviceWorker' in navigator &&
+    process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+  ) {
     try {
       const currentToken = await getToken(messaging, {
         vapidKey: process.env.NEXT_PUBLIC_FIREBASE_FCM_VAPID_KEY,
@@ -36,16 +44,11 @@ export const requestForToken = async () => {
       console.log('An error occurred while retrieving token:', err);
     }
   }
-  return null;
 };
 
 export const onMessageListener = () => {
-  if (typeof window !== 'undefined') {
-    return new Promise((resolve) => {
-      onMessage(messaging, (payload) => {
-        resolve(payload);
-      });
-    });
+  if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_FIREBASE_APP_ID) {
+    return new Promise((resolve) => {});
   }
   return Promise.resolve(null);
 };

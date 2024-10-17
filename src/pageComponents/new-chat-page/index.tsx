@@ -18,11 +18,15 @@ import styles from './index.module.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import TransliterationInput from '../../components/transliteration-input';
 import { detectLanguage } from '../../utils/detectLang';
+import { debounce } from 'lodash';
+import MicroPhonePermissionModal from '../../components/permission-modal';
 
 const ChatPage: NextPage = () => {
   const context = useContext(AppContext);
   const botConfig = useConfig('component', 'chatUI');
   const config = useConfig('component', 'homePage');
+  const homeConfig = useConfig('component', 'homePage');
+
   const { micWidth, micHeight } = config;
   const langPopupConfig = useConfig('component', 'langPopup');
   const t = useLocalization();
@@ -33,12 +37,53 @@ const ChatPage: NextPage = () => {
   const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showMicrophonePermissionModal, setShowMicrophonePermissionModal] = useState(false);
+  const [micPermissionStatus, setMicPermissionStatus] = useState<PermissionState>('prompt');
+
+  const checkMicPermission = async () => {
+    try {
+      const permissionStatus = await navigator.permissions.query({
+        name: 'microphone' as PermissionName,
+      });
+      setMicPermissionStatus(() => permissionStatus?.state);
+      return permissionStatus?.state === 'granted';
+    } catch (error) {
+      console.error('Error checking microphone permission:', error);
+      return false;
+    }
+  };
+
+  const handlePermissionModalClose = () => {
+    setShowMicrophonePermissionModal(false);
+  };
+
+  const handlePermissionRequest = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((track) => track.stop());
+      setMicPermissionStatus('granted');
+      setShowMicrophonePermissionModal(false);
+      setOpenModal(true);
+    } catch (error) {
+      console.error('Error requesting microphone permission:', error);
+      setMicPermissionStatus('denied');
+    }
+  };
+
   const voiceRecorderRef = useRef<{ stopRecording: () => void } | null>(null);
 
-  const handleOpenModal = () => setOpenModal(true);
+  const handleOpenModal = async () => {
+    setShowMicrophonePermissionModal(false);
+    const hasMicPermission = await checkMicPermission();
+    if (hasMicPermission) {
+      setOpenModal(true);
+    } else {
+      setShowMicrophonePermissionModal(true);
+    }
+  };
+
   const handleCloseModal = () => {
     setOpenModal(false);
-    // Stop recording when modal is closed
     if (voiceRecorderRef.current && voiceRecorderRef.current.stopRecording) {
       voiceRecorderRef.current.stopRecording();
     }
@@ -49,29 +94,26 @@ const ChatPage: NextPage = () => {
   };
 
   useEffect(() => {
-    context?.fetchIsDown(); // check if server is down
+    context?.fetchIsDown();
 
     if (!sessionStorage.getItem('conversationId')) {
       const newConversationId = uuidv4();
       sessionStorage.setItem('conversationId', newConversationId);
       context?.setConversationId(newConversationId);
     }
-    recordUserLocation();
-
+    recordUserLocation(homeConfig);
+    checkMicPermission();
     const searchParams = new URLSearchParams(window.location.search);
     const voice = searchParams.get('voice');
 
     if (voice === 'true') {
       handleOpenModal();
-      // Remove the 'voice' query parameter from the URL
       searchParams.delete('voice');
       router.replace({
         pathname: '/newchat',
         search: searchParams.toString(),
       });
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const sendMessage = useCallback(
@@ -106,111 +148,122 @@ const ChatPage: NextPage = () => {
     [context, t, router]
   );
 
+  const debouncedSendMessage = useCallback(debounce(sendMessage, 500), [sendMessage]);
+
   if (context?.isDown) {
     return <DowntimePage />;
   } else {
     return (
-      <div className={styles.main} style={{ color: secondaryColor }}>
-        {config?.showMic && (
-          <div className={styles.voiceRecorder} style={{ height: micHeight, width: micWidth }}>
-            <IconButton onClick={handleOpenModal}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: micWidth,
-                  height: micHeight,
-                  bgcolor: theme?.primary?.light,
-                  borderRadius: '50%',
-                }}
-              >
-                <MicIcon style={{ color: 'white', fontSize: 100 }} />
-              </Box>
-            </IconButton>
-          </div>
-        )}
-        <Modal
-          open={openModal}
-          onClose={handleCloseModal}
-          aria-labelledby="voice-recorder-modal"
-          aria-describedby="voice-recorder"
-        >
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              bgcolor: theme?.primary?.light,
-              boxShadow: 24,
-              p: 4,
-              outline: 'none',
-              color: 'white',
-              width: '80%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
+      <>
+        <MicroPhonePermissionModal
+          permissionStatus={micPermissionStatus}
+          open={showMicrophonePermissionModal}
+          setOpen={setShowMicrophonePermissionModal}
+          onClose={handlePermissionModalClose}
+          onRequestPermission={handlePermissionRequest}
+        />
+        <div className={styles.main} style={{ color: secondaryColor }}>
+          {config?.showMic && (
+            <div className={styles.voiceRecorder} style={{ height: micHeight, width: micWidth }}>
+              <IconButton onClick={handleOpenModal}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: micWidth,
+                    height: micHeight,
+                    bgcolor: micPermissionStatus === 'granted' ? theme?.primary?.light : 'grey',
+                    borderRadius: '50%',
+                  }}
+                >
+                  <MicIcon style={{ color: 'white', fontSize: 100 }} />
+                </Box>
+              </IconButton>
+            </div>
+          )}
+          <Modal
+            open={openModal}
+            onClose={handleCloseModal}
+            aria-labelledby="voice-recorder-modal"
+            aria-describedby="voice-recorder"
           >
-            <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-              {t(`label.help_text`)}
-            </Typography>
-            {isLoading ? (
-              <CircularProgress style={{ color: 'white' }} />
-            ) : (
-              <RenderVoiceRecorder
-                ref={voiceRecorderRef}
-                setInputMsg={(msg: string) => {
-                  setInputMsg(msg);
-                  handleCloseModal();
-                }}
-                tapToSpeak={config?.showTapToSpeakText}
-                onCloseModal={handleCloseModal}
-                onProcessingStart={() => setIsLoading(true)}
-                onProcessingEnd={() => setIsLoading(false)}
-              />
-            )}
-          </Box>
-        </Modal>
-
-        {config?.showFAQ && (
-          <div className="faq-section">
-            <FAQ onQuestionClick={handleQuestionClick} />
-          </div>
-        )}
-
-        <form onSubmit={(event) => event?.preventDefault()}>
-          <div className={`${`${styles.inputBox} ${styles.inputBoxOpen}`}`}>
-            <TransliterationInput
-              data-testid="homepage-input-field"
-              config={botConfig}
-              style={{ fontFamily: 'NotoSans-Regular' }}
-              rows={1}
-              value={inputMsg}
-              setValue={setInputMsg}
-              onKeyDown={(e: any) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  sendMessage(inputMsg);
-                }
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: theme?.primary?.light,
+                boxShadow: 24,
+                p: 4,
+                outline: 'none',
+                color: 'white',
+                width: '80%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
-              multiline={false}
-              placeholder={!context?.kaliaClicked ? placeholder : t('label.enter_aadhaar_number')}
-            />
-            <button
-              data-testid="homepage-send-button"
-              type="submit"
-              className={styles.sendButton}
-              onClick={() => sendMessage(inputMsg)}
-              title="Send Message"
             >
-              <SendButton width={40} height={40} color={theme?.primary?.light} />
-            </button>
-          </div>
-        </form>
-      </div>
+              <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+                {t(`label.help_text`)}
+              </Typography>
+              {isLoading ? (
+                <CircularProgress style={{ color: 'white' }} />
+              ) : (
+                <RenderVoiceRecorder
+                  ref={voiceRecorderRef}
+                  setInputMsg={(msg: string) => {
+                    setInputMsg(msg);
+                    handleCloseModal();
+                  }}
+                  tapToSpeak={config?.showTapToSpeakText}
+                  onCloseModal={handleCloseModal}
+                  onProcessingStart={() => setIsLoading(true)}
+                  onProcessingEnd={() => setIsLoading(false)}
+                />
+              )}
+            </Box>
+          </Modal>
+
+          {config?.showFAQ && (
+            <div className="faq-section">
+              <FAQ onQuestionClick={handleQuestionClick} />
+            </div>
+          )}
+
+          <form onSubmit={(event) => event?.preventDefault()}>
+            <div className={`${`${styles.inputBox} ${styles.inputBoxOpen}`}`}>
+              <TransliterationInput
+                data-testid="homepage-input-field"
+                config={botConfig}
+                style={{ fontFamily: 'NotoSans-Regular' }}
+                rows={1}
+                value={inputMsg}
+                setValue={setInputMsg}
+                onKeyDown={(e: any) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    debouncedSendMessage(inputMsg);
+                  }
+                }}
+                multiline={false}
+                placeholder={!context?.kaliaClicked ? placeholder : t('label.enter_aadhaar_number')}
+              />
+              <button
+                data-testid="homepage-send-button"
+                type="submit"
+                className={styles.sendButton}
+                onClick={() => debouncedSendMessage(inputMsg)}
+                title="Send Message"
+              >
+                <SendButton width={40} height={40} color={theme?.primary?.light} />
+              </button>
+            </div>
+          </form>
+        </div>
+      </>
     );
   }
 };

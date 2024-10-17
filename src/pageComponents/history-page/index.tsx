@@ -36,6 +36,8 @@ const HistoryPage: FC = () => {
   const chatListRef = useRef<HTMLDivElement>(null);
 
   const config = useConfig('component', 'historyPage');
+  const homeConfig = useConfig('component', 'homePage');
+
   const handleClick = useCallback((activeItem: ChatItem) => {
     sessionStorage.setItem('tags', JSON.stringify(activeItem?.tags || '[]'));
     sessionStorage.setItem('conversationId', activeItem?.conversationId || 'null');
@@ -58,7 +60,7 @@ const HistoryPage: FC = () => {
           )
           .then((res) => {
             if (conversationId === sessionStorage.getItem('conversationId')) {
-              recordUserLocation();
+              recordUserLocation(homeConfig);
               const newConversationId = uuidv4();
               sessionStorage.setItem('conversationId', newConversationId);
               context?.setConversationId(newConversationId);
@@ -102,6 +104,7 @@ const HistoryPage: FC = () => {
         {
           headers: {
             botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+            authorization: `Bearer ${localStorage.getItem('auth')}`,
           },
         }
       )
@@ -116,7 +119,12 @@ const HistoryPage: FC = () => {
         );
         console.log({ sortedConversations });
         const historyList = map(sortedConversations, (chatItem: any) => {
-          const text = String(chatItem?.payload?.text || '').replace(/<end\/>/g, '');
+          let text = String(chatItem?.payload?.text || '').replace(/<end\/>/g, '');
+
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(text, 'text/html');
+          text = doc.body.textContent || '';
+
           let label;
           if (text.startsWith('{') && text.endsWith('}')) {
             try {
@@ -124,8 +132,8 @@ const HistoryPage: FC = () => {
               const generalAdvice = parsedText?.generalAdvice;
               if (generalAdvice) {
                 label =
-                  generalAdvice?.split(' ').slice(0, 12).join(' ') +
-                  (generalAdvice?.split(' ').length > 12 ? '...' : '');
+                  generalAdvice.split(' ').slice(0, 12).join(' ') +
+                  (generalAdvice.split(' ').length > 12 ? '...' : '');
               } else {
                 label =
                   text.split(' ').slice(0, 12).join(' ') +

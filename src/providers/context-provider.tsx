@@ -61,6 +61,132 @@ const ContextProvider: FC<{
   const [showLanguagePopup, setShowLanguagePopup] = useState(false);
   const [languagePopupFlag, setLanguagePopupFlag] = useState(true); // To not show the popup again until message is sent
   const [transliterate, setTransliterate] = useState(false); // To know whether to transliterate or not
+  const messageTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [fetchedMessageId, setFetchedMessageId] = useState<string[]>([]);
+
+  const getFormattedTime = (timestamp: any) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+  };
+  const fetchMessagesWithRetry = useCallback(async () => {
+    const retryIntervals = [0, 5000, 3000, 2000, 1000];
+
+    let count = 1;
+    const fetchAndProcessMessages = async () => {
+      try {
+        console.log(
+          ` number : ${count++} api call to fetch scoket message through api, and time is ${getFormattedTime(Date.now())}  `
+        );
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_SOCKET_URL}/botMsg/user/${sessionStorage.getItem('conversationId')}/${localStorage.getItem('userID')}`
+        );
+
+        const isMessagePresent = messages.some(
+          (msg) => msg?.messageId === response?.data?.messageId
+        );
+        const isPresentInFetchedMessage = fetchedMessageId?.some(
+          (id) => id === response?.data?.messageId
+        );
+
+        if (!isPresentInFetchedMessage && isMessagePresent) {
+          console.log('meesage id allready present');
+        } else {
+          if (!isPresentInFetchedMessage) {
+            fetchedMessageId.push(response?.data?.messageId);
+            console.log('message id is inserted in the fetched message id array', fetchedMessageId);
+          }
+          const msg = JSON.parse(response?.data?.xmessage);
+
+          const hasEndTag = msg?.payload?.text?.includes('<end/>');
+
+          if (msg.messageType.toUpperCase() === 'IMAGE') {
+            if (
+              // msg.content.timeTaken + 1000 < timer2 &&
+              isOnline
+            ) {
+              await updateMsgState({
+                msg: msg,
+                media: { imageUrls: msg?.content?.media_url },
+              });
+            }
+          } else if (msg.messageType.toUpperCase() === 'AUDIO') {
+            updateMsgState({
+              msg,
+              media: { audioUrl: msg?.content?.media_url },
+            });
+          } else if (msg.messageType.toUpperCase() === 'HSM') {
+            updateMsgState({
+              msg,
+              media: { audioUrl: msg?.content?.media_url },
+            });
+          } else if (msg.messageType.toUpperCase() === 'VIDEO') {
+            updateMsgState({
+              msg,
+              media: { videoUrl: msg?.content?.media_url },
+            });
+          } else if (
+            msg.messageType.toUpperCase() === 'DOCUMENT' ||
+            msg.messageType.toUpperCase() === 'FILE'
+          ) {
+            updateMsgState({
+              msg,
+              media: { fileUrl: msg?.content?.media_url },
+            });
+          } else if (msg.messageType.toUpperCase() === 'TEXT') {
+            if (
+              // msg.content.timeTaken + 1000 < timer2 &&
+              isOnline
+            ) {
+              await updateMsgState({
+                msg: msg,
+                media: null,
+              });
+            }
+          }
+          if (!hasEndTag) {
+            setTimeout(async () => {
+              await fetchAndProcessMessages();
+            }, 1000);
+          }
+        }
+
+        return true;
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+        return false;
+      }
+    };
+
+    for (const interval of retryIntervals) {
+      await new Promise((resolve) => setTimeout(resolve, interval));
+      const newMessagesAdded = await fetchAndProcessMessages();
+      if (newMessagesAdded) return;
+    }
+
+    // If no new messages after all retries, add a resend message
+    console.log('No response received after all retries. Adding resend message.');
+    const resendMessage = {
+      text: 'Please resend the above message again <end/>',
+      position: 'left',
+      payload: {
+        textToShow: 'Please resend the above message again <end/>',
+      },
+      time: Date.now(),
+      messageId: uuidv4(),
+      conversationId: sessionStorage.getItem('conversationId'),
+      repliedTimestamp: Date.now(),
+      isEnd: true,
+    };
+    setMessages((prevMessages) => [...prevMessages, resendMessage]);
+    setLoading(false);
+    setIsMsgReceiving(false);
+    return true;
+  }, [messages, setMessages, setLoading, setIsMsgReceiving]);
 
   useEffect(() => {
     if (
@@ -374,6 +500,22 @@ const ContextProvider: FC<{
 
   const onMessageReceived = useCallback(
     async (msg: any) => {
+      const parsedMessage = JSON.parse(JSON.stringify(msg));
+      console.log(
+        'fetchedMesage id arraya and the message id on incomming message',
+        fetchedMessageId,
+        parsedMessage?.messageId?.Id
+      );
+      if (fetchedMessageId.some((id: any) => id === parsedMessage?.messageId?.Id)) {
+        console.log('id is allready detected so returning from onMessageReceived');
+        return;
+      }
+      if (messageTimeoutRef.current) {
+        clearTimeout(messageTimeoutRef.current);
+        messageTimeoutRef.current = null;
+      }
+      console.log('message recieved through socket at', getFormattedTime(Date.now()));
+
       const ackMessage = JSON.parse(JSON.stringify(msg));
       ackMessage.messageType = 'ACKNOWLEDGEMENT';
       console.log(msg);
@@ -433,6 +575,7 @@ const ContextProvider: FC<{
   //@ts-ignore
   const sendMessage = useCallback(
     async (textToSend: string, textToShow: string, media: any) => {
+      console.log('send message called at', getFormattedTime(Date.now()));
       if (!textToShow) textToShow = textToSend;
 
       setLanguagePopupFlag(true);
@@ -462,7 +605,6 @@ const ContextProvider: FC<{
               longitude: sessionStorage.getItem('longitude'),
               city: sessionStorage.getItem('city') || '',
               state: sessionStorage.getItem('state') || '',
-              ip: sessionStorage.getItem('ip') || '',
               block: sessionStorage.getItem('block') || '',
               district: sessionStorage.getItem('city') || '',
               hideMessage: textToShow?.startsWith('Guided:') || false,
@@ -540,14 +682,22 @@ const ContextProvider: FC<{
           phoneNumber: localStorage.getItem('phoneNumber') || '',
           conversationId: conversationId || '',
           messageId: messageId,
-          text: textToSend,
+          text: textToSend || 'NA',
+          media: media,
           createdAt: Math.floor(new Date().getTime() / 1000),
         });
       } catch (err) {
         console.error(err);
       }
       sets2tMsgId('');
+      if (messageTimeoutRef.current) {
+        clearTimeout(messageTimeoutRef.current);
+      }
+      messageTimeoutRef.current = setTimeout(() => {
+        fetchMessagesWithRetry();
+      }, 10000);
     },
+
     [conversationId, newSocket, removeCookie, s2tMsgId, languagePopupFlag]
   );
 
@@ -639,10 +789,11 @@ const ContextProvider: FC<{
             const chatHistory = await axios.get(
               `${process.env.NEXT_PUBLIC_BFF_API_URL}/history?userId=${localStorage.getItem(
                 'userID'
-              )}&conversationId=${sessionStorage.getItem('conversationId')}`,
+              )}&channelMessageId=${sessionStorage.getItem('conversationId')}`,
               {
                 headers: {
                   botId: process.env.NEXT_PUBLIC_BOT_ID || '',
+                  authorization: `Bearer ${localStorage.getItem('auth')}`,
                 },
               }
             );

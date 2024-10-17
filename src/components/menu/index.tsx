@@ -10,6 +10,7 @@ import styles from './style.module.css';
 import { useLocalization } from '../../hooks';
 import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useConfig } from '../../hooks/useConfig';
+import toast from 'react-hot-toast';
 
 const Menu = () => {
   const router = useRouter();
@@ -24,9 +25,12 @@ const Menu = () => {
   };
 
   const handleNotificationClick = () => {
-    router.push('/notifications');
+    if (config?.showNotificationsPage) {
+      router.push('/notifications');
+    } else {
+      toast(t('message.coming_soon'));
+    }
   };
-
   const handleTouchToSpeakClick = () => {
     router.push('/newchat?voice=true');
   };
@@ -59,7 +63,7 @@ const Menu = () => {
         <Button
           onClick={handleNotificationClick}
           className={styles.btn}
-          disabled={!config?.showNotificationsPage}
+          style={{ color: config?.showNotificationsPage ? '' : 'grey' }}
         >
           {isNotification ? (
             <NotificationsIcon fontSize="large" />

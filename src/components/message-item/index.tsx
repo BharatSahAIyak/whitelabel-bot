@@ -45,6 +45,8 @@ import TransliterationInput from '../transliteration-input';
 import { compressImage } from '../../utils/imageCompression';
 import { FullPageLoader } from '../fullpage-loader';
 import DOMPurify from 'dompurify';
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 
 const MessageItem: FC<MessageItemPropType> = ({ message }) => {
   const { content, type } = message;
@@ -278,7 +280,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/text-to-speech`,
           {
-            text: text,
+            text: DOMPurify.sanitize(text)?.replace(/<[^>]*>/g, ''),
             language: context?.locale,
             messageId: content?.data?.replyId,
             conversationId: sessionStorage.getItem('conversationId') || '',
@@ -401,7 +403,6 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
 
   const uploadToCdn = async (file: any) => {
     try {
-      setUploadingImage(true);
       const compressedFile = await compressImage(file);
       const data = new FormData();
       if (compressedFile) data.append('file', compressedFile);
@@ -582,9 +583,24 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   color: content?.data?.position === 'right' ? 'var(--font)' : contrastText,
                 }}
               >
-                <span
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content?.text) }}
-                ></span>{' '}
+                {content?.text ? (
+                  <ReactMarkdown
+                    rehypePlugins={[rehypeRaw]}
+                    components={{
+                      img: ({ node, ...props }) => (
+                        <img style={{ maxWidth: '100%', borderRadius: '8px' }} {...props} />
+                      ),
+                      ul: ({ node, ...props }) => (
+                        <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }} {...props} />
+                      ),
+                      ol: ({ node, ...props }) => (
+                        <ol style={{ listStyleType: 'decimal', paddingLeft: '20px' }} {...props} />
+                      ),
+                    }}
+                  >
+                    {DOMPurify.sanitize(content.text)}
+                  </ReactMarkdown>
+                ) : null}
                 {content?.data?.position === 'right'
                   ? null
                   : !content?.data?.isEnd && <BlinkingSpinner />}
@@ -863,13 +879,24 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                             const file = event?.target?.files?.[0];
                             if (file) {
                               console.log(file);
+                              setUploadingImage(true);
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              const res = await fetch('/api/imageSize', {
+                                method: 'POST',
+                                body: formData,
+                              });
                               const url = await uploadToCdn(file);
+
+                              const { width, height } = await res.json();
+
                               if (url) {
                                 setPopupActive(false);
                                 context?.sendMessage(null, null, {
                                   mimeType: file.type,
                                   category: 'IMAGE',
                                   url,
+                                  resolution: `${width}x${height}`,
                                 });
                               }
                             }
@@ -895,7 +922,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   }}
                 >
                   <TransliterationInput
-                    placeholder={t('label.buttons_search_placeholder') || 'Search'}
+                    placeholder={content?.data?.choices?.searchButtonPlaceholder || 'Search'}
                     value={searchQuery}
                     setValue={setSearchQuery}
                     config={config}
@@ -1268,7 +1295,7 @@ const MessageItem: FC<MessageItemPropType> = ({ message }) => {
                   }}
                 >
                   <TransliterationInput
-                    placeholder={t('label.buttons_search_placeholder') || 'Search'}
+                    placeholder={content?.data?.choices?.searchButtonPlaceholder || 'Search'}
                     value={searchQuery}
                     setValue={setSearchQuery}
                     config={config}

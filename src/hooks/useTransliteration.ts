@@ -5,7 +5,7 @@ import { AppContext } from '../context';
 import { detectLanguage } from '../utils/detectLang';
 import { useConfig } from './useConfig';
 
-const useTransliteration = (config: any, value: any, setValue: any) => {
+const useTransliteration = (config: any, value: any, setValue: any, inputRef: any) => {
   const [suggestions, setSuggestions] = useState([]);
   const [suggestionClicked, setSuggestionClicked] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(0);
@@ -14,6 +14,8 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
   const langPopupConfig = useConfig('component', 'langPopup');
 
   useEffect(() => {
+    const controller = new AbortController();
+
     if (
       value.length > 0 &&
       config?.allowTransliteration &&
@@ -51,18 +53,29 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
           'Content-Type': 'application/json',
         },
         data: data,
+        signal: controller.signal,
       };
 
       axios
         .request(axiosConfig)
         .then((res) => {
+          if (controller.signal.aborted) {
+            return;
+          }
+
           setSuggestions(res?.data?.suggestions);
           console.log('api suggestions', res?.data?.suggestions);
         })
-        .catch(() => toast.error('Transliteration failed'));
+        .catch((error) => {
+          if (error?.code === 'ERR_CANCELED') {
+            return;
+          } else toast.error('Transliteration failed');
+        });
     } else {
       setSuggestions([]);
     }
+
+    return () => controller.abort();
   }, [value, cursorPosition]);
 
   const suggestionHandler = (index: number) => {
@@ -77,6 +90,7 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
 
   const handleKeyDown = useCallback(
     (e: any) => {
+      if (e.keyCode === 229) return;
       if (suggestions.length > 0) {
         if (e.code === 'ArrowUp') {
           e.preventDefault();
@@ -84,7 +98,7 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
         } else if (e.code === 'ArrowDown') {
           e.preventDefault();
           setActiveSuggestion((prev) => Math.min(prev + 1, suggestions.length - 1));
-        } else if (e.key === ' ') {
+        } else if (e.key === ' ' || e.code === 'Space' || e.keyCode === 32 || e.data === ' ') {
           e.preventDefault();
           if (activeSuggestion >= 0 && activeSuggestion < suggestions.length) {
             suggestionClickHandler(suggestions[activeSuggestion]);
@@ -92,8 +106,12 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
             setValue((prev: any) => prev + ' ');
           }
         }
-      } else if (e.key === ' ') {
-        if (context?.languagePopupFlag && langPopupConfig?.langCheck) {
+      } else if (e.key === ' ' || e.code === 'Space' || e.keyCode === 32 || e.data === ' ') {
+        if (
+          context?.languagePopupFlag &&
+          langPopupConfig?.langCheck &&
+          context?.locale !== langPopupConfig?.lang
+        ) {
           detectLanguage(value?.trim()?.split(' ')?.pop() || '').then((res) => {
             if (res?.language === langPopupConfig?.match) {
               context?.setShowLanguagePopup(true);
@@ -102,7 +120,7 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
         }
       }
     },
-    [suggestions, activeSuggestion]
+    [suggestions, activeSuggestion, value, setValue, context, langPopupConfig]
   );
 
   useEffect(() => {
@@ -157,27 +175,39 @@ const useTransliteration = (config: any, value: any, setValue: any) => {
       const cursorPos = cursorPosition;
       let currentIndex = 0;
       let selectedWord = '';
+      let selectedWordStart = 0;
 
       for (let word of words) {
         if (currentIndex <= cursorPos && cursorPos <= currentIndex + word.length) {
           selectedWord = word;
+          selectedWordStart = currentIndex;
           break;
         }
         currentIndex += word.length + 1; // +1 for space
       }
 
       if (selectedWord !== '') {
-        const newValue = value.replace(
-          selectedWord,
-          cursorPos === value.length ? suggestion + ' ' : suggestion
-        );
+        const spaceAfter = selectedWordStart + selectedWord.length <= value.length ? ' ' : '';
+        const newValue =
+          value.substring(0, selectedWordStart) +
+          suggestion +
+          spaceAfter +
+          value.substring(selectedWordStart + selectedWord.length);
         setSuggestions([]);
         setSuggestionClicked(true);
         setActiveSuggestion(0);
         setValue(newValue);
+
+        const newCursorPosition = selectedWordStart + suggestion.length + spaceAfter.length;
+        setTimeout(() => {
+          if (inputRef.current) {
+            inputRef.current.setSelectionRange(newCursorPosition, newCursorPosition);
+            inputRef.current.focus();
+          }
+        }, 0);
       }
     },
-    [cursorPosition]
+    [cursorPosition, value, setValue]
   );
 
   return {

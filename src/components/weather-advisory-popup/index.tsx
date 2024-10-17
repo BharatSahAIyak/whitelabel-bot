@@ -11,7 +11,7 @@ import { useColorPalates } from '../../providers/theme-provider/hooks';
 import { useLocalization } from '../../hooks';
 import axios from 'axios';
 import { useConfig } from '../../hooks/useConfig';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import DOMPurify from 'dompurify';
 
 const WeatherAdvisoryPopup = (props: any) => {
@@ -21,8 +21,21 @@ const WeatherAdvisoryPopup = (props: any) => {
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      if (audioElement) {
+        audioElement.pause();
+      }
+    };
+  }, [audioElement]);
 
   const playPauseAudio = async () => {
+    if (!open) return;
     if (audioElement) {
       if (isPlaying) {
         audioElement.pause();
@@ -34,9 +47,14 @@ const WeatherAdvisoryPopup = (props: any) => {
     } else {
       setBtnDisabled(true);
       const url = await fetchAudio(props?.advisory?.descriptor?.long_desc);
+
+      if (!open) {
+        setBtnDisabled(false);
+        return;
+      }
       if (url) {
         const audio = new Audio(url);
-        audio.playbackRate = config?.component?.botDetails?.audioPlayback || 1.5;
+        audio.playbackRate = config?.audioPlayback || 1.5;
 
         audio.addEventListener('ended', () => {
           setAudioElement(null);
@@ -46,9 +64,13 @@ const WeatherAdvisoryPopup = (props: any) => {
         audio
           .play()
           .then(() => {
-            console.log('Audio played:', url);
-            setAudioElement(audio);
-            setIsPlaying(true);
+            if (!open) {
+              audio.pause();
+              setIsPlaying(false);
+            } else {
+              setAudioElement(audio);
+              setIsPlaying(true);
+            }
           })
           .catch((error) => {
             setAudioElement(null);
@@ -61,18 +83,26 @@ const WeatherAdvisoryPopup = (props: any) => {
   };
 
   const handleClose = () => {
-    if (btnDisabled) return;
     setOpen(false);
     props?.setShowWeatherAdvisoryPopup(false);
-    audioElement && audioElement.pause();
+
+    if (audioElement) {
+      audioElement.pause();
+      setIsPlaying(false);
+    }
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
   };
 
   const fetchAudio = async (text: string) => {
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/text-to-speech`,
         {
-          text: text,
+          text: DOMPurify.sanitize(text)?.replace(/<[^>]*>/g, ''),
           language: localStorage.getItem('locale'),
           disableTelemetry: true,
         },
@@ -82,11 +112,15 @@ const WeatherAdvisoryPopup = (props: any) => {
             orgId: process.env.NEXT_PUBLIC_ORG_ID || '',
             userId: localStorage.getItem('userID') || '',
           },
+          signal,
         }
       );
       return response?.data?.url;
     } catch (error: any) {
-      console.error('Error fetching audio:', error);
+      if (axios.isCancel(error)) {
+      } else {
+        console.error('Error fetching audio:', error);
+      }
       return null;
     }
   };
@@ -229,7 +263,11 @@ const WeatherAdvisoryPopup = (props: any) => {
                   },
                 }}
                 startIcon={<VolumeUpIcon />}
-                endIcon={btnDisabled && <CircularProgress size={16} />}
+                endIcon={
+                  <span style={{ display: 'inline-block', width: '16px' }}>
+                    {btnDisabled && <CircularProgress size={16} />}
+                  </span>
+                }
               >
                 {t('label.play_advisory')}
               </Button>

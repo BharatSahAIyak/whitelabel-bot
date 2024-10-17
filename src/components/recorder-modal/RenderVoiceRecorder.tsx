@@ -234,6 +234,7 @@ const RenderVoiceRecorder: React.ForwardRefRenderFunction<
       )}
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
         <Button
+          data-testid="question-permission-button"
           variant="contained"
           style={{ backgroundColor: 'white', color: '#115223' }}
           onClick={stopRecording}

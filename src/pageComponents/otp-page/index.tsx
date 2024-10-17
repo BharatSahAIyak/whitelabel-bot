@@ -23,6 +23,7 @@ const OtpPage: React.FC = () => {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [otpError, setOtpError] = useState(false);
   const config = useConfig('component', 'otpPage');
   const theme = useColorPalates();
   const { otpLength, resendOtpTimer } = config;
@@ -79,7 +80,14 @@ const OtpPage: React.FC = () => {
   const handleLogin = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
+      if (otp.length === 0) {
+        setOtpError(true);
+        toast.error(`${t('message.enter_otp')}`);
+        return;
+      }
+
       if (otp.length === Number(otpLength)) {
+        setOtpError(false);
         if (navigator.onLine) {
           setLoading(true);
           verifyOtp({
@@ -142,7 +150,7 @@ const OtpPage: React.FC = () => {
                 width: '40px',
                 borderRadius: '12px',
                 border: '1px solid #E8ECF4',
-                m: 1,
+                ml: 1,
               }}
               onClick={() => router.push('/login')}
             >
@@ -154,7 +162,7 @@ const OtpPage: React.FC = () => {
               textAlign="center"
               width="90%"
               color="#1E232C"
-              sx={{ m: 1 }}
+              sx={{ m: 1, mr: 6 }}
             >
               {t('message.otp_verification')}
             </Typography>

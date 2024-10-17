@@ -38,7 +38,7 @@ const WeatherPage: React.FC = () => {
     const latitude = sessionStorage.getItem('latitude');
     const longitude = sessionStorage.getItem('longitude');
     const city = sessionStorage.getItem('city');
-    if (!latitude || !longitude) return;
+    if (sessionStorage.getItem('location_error')) return;
     try {
       const response = await axios.get(process.env.NEXT_PUBLIC_WEATHER_API || '', {
         params: {
@@ -46,6 +46,7 @@ const WeatherPage: React.FC = () => {
           longitude,
           city,
           provider: config?.provider || 'upcar',
+          weather: config?.weather || 'imd',
         },
       });
 
@@ -55,42 +56,23 @@ const WeatherPage: React.FC = () => {
       const providers = response.data.message.catalog.providers;
       // setData(providers);
 
-      // providers.forEach((provider: any) => {
-      //   if(provider?.id === 'upcar') {
-      //     setCrop(provider);
-      //   }else{
-      //     setWeather(provider);
-      //   }
-      // });
-
       providers.forEach((provider: any) => {
-        if (provider.id.toLowerCase() === 'ouat') {
-          if (provider.category_id === 'crop_advisory_provider') {
-            setCrop(provider?.items);
-          } else if (provider.category_id === 'weather_provider' && provider.items?.length >= 5) {
-            setWeather((prev: any) => ({
-              ...prev,
-              future: provider?.items?.slice(1),
-            }));
-          }
-        } else {
-          if (provider.category_id === 'weather_provider' && provider.id === 'imd') {
-            if (!weather) {
-              setWeather((prev: any) => ({
-                future: provider?.items?.slice(1),
-                current: provider?.items?.[0],
-              }));
-            } else {
-              setWeather((prev: any) => ({
-                ...prev,
-                current: provider?.items?.[0],
-              }));
-            }
-          } else if (provider.category_id === 'crop_advisory_provider' && provider.id === 'upcar') {
-            if (!crop) {
-              setCrop(provider?.items);
-            }
-          }
+        if (
+          provider.id.toLowerCase() === (config?.weather || 'imd') &&
+          provider.category_id === 'weather_provider' &&
+          provider.items?.length >= 5
+        ) {
+          setWeather((prev: any) => ({
+            ...prev,
+            current: provider?.items?.[0],
+            future: provider?.items?.slice(1),
+          }));
+        }
+        if (
+          provider.category_id === 'crop_advisory_provider' &&
+          provider.id.toLowerCase() === (config?.provider || 'upcar')
+        ) {
+          setCrop(provider?.items);
         }
       });
       return providers;
@@ -217,12 +199,13 @@ const WeatherPage: React.FC = () => {
   }
 
   const getLocationName = (locations: Array<string>) => {
+    return locations?.[0];
     if (context?.locale === 'en') return locations?.[0];
     if (context?.locale === 'hi') return locations?.[1];
     if (context?.locale === 'or') return locations?.[2];
   };
 
-  if (!sessionStorage.getItem('latitude') || !sessionStorage.getItem('longitude'))
+  if (sessionStorage.getItem('location_error'))
     return (
       <div className={styles.locationContainer}>
         <Typography className={styles.locationText}>
@@ -340,7 +323,7 @@ const WeatherPage: React.FC = () => {
                 }
                 size="medium"
                 sx={{
-                  fontSize: '14px',
+                  fontSize: { xs: '13px', sm: '13px', md: '14px' },
                   fontWeight: '600',
                   minWidth: '70px',
                   background: null,
@@ -363,7 +346,7 @@ const WeatherPage: React.FC = () => {
                 label={(weather?.current?.tags?.windspeed || 0) + ' km/h'}
                 size="medium"
                 sx={{
-                  fontSize: '14px',
+                  fontSize: { xs: '13px', sm: '13px', md: '14px' },
                   fontWeight: '600',
                   minWidth: '70px',
                   background: '#101860',
@@ -387,7 +370,7 @@ const WeatherPage: React.FC = () => {
                 label={(weather?.current?.tags?.humidity || 0) + ' %'}
                 size="medium"
                 sx={{
-                  fontSize: '14px',
+                  fontSize: { xs: '13x', sm: '13px', md: '14px' },
                   fontWeight: '600',
                   minWidth: '70px',
                   background: '#4CC3CB',
