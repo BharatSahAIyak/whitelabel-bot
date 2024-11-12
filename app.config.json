@@ -67,6 +67,7 @@
     "langPopup": {
       "lang": "hi",
       "match": "hing",
+      "provider": null,
       "langCheck": false
     },
     "welcomePage": {

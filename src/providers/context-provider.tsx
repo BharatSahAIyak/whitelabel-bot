@@ -21,7 +21,6 @@ import { XMessage } from '@samagra-x/xmessage';
 import { FullPageLoader } from '../components/fullpage-loader';
 import WelcomePage from '../pageComponents/welcome-page';
 import saveTelemetryEvent from '../utils/telemetry';
-import { detectLanguage } from '../utils/detectLang';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
 

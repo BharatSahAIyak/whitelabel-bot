@@ -130,7 +130,9 @@ const ChatUiWindow: React.FC = () => {
           context?.locale !== langPopupConfig?.lang &&
           langPopupConfig?.langCheck
         ) {
-          const res = await detectLanguage(msg?.trim()?.split(' ')?.pop() || '');
+          const provider = langPopupConfig?.provider;
+          const match = langPopupConfig?.match;
+          const res = await detectLanguage(msg?.trim()?.split(' ')?.pop() || '', provider, match);
           if (res?.language === langPopupConfig?.match) {
             context?.setShowLanguagePopup(true);
           } else {
@@ -199,6 +201,7 @@ const ChatUiWindow: React.FC = () => {
             languagePopupFlag: context?.languagePopupFlag,
             setShowLanguagePopup: context?.setShowLanguagePopup,
             match: langPopupConfig?.match,
+            provider: langPopupConfig?.provider,
             lang: langPopupConfig?.lang,
             langCheck: langPopupConfig?.langCheck,
             locale: context?.locale,

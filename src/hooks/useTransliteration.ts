@@ -112,7 +112,11 @@ const useTransliteration = (config: any, value: any, setValue: any, inputRef: an
           langPopupConfig?.langCheck &&
           context?.locale !== langPopupConfig?.lang
         ) {
-          detectLanguage(value?.trim()?.split(' ')?.pop() || '').then((res) => {
+          detectLanguage(
+            value?.trim()?.split(' ')?.pop() || '',
+            langPopupConfig?.provider,
+            langPopupConfig?.match
+          ).then((res) => {
             if (res?.language === langPopupConfig?.match) {
               context?.setShowLanguagePopup(true);
             }
