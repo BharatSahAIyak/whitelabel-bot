@@ -128,7 +128,11 @@ const ChatPage: NextPage = () => {
           context?.locale !== langPopupConfig?.lang &&
           langPopupConfig?.langCheck
         ) {
-          const res = await detectLanguage(msg?.trim()?.split(' ')?.pop() || '');
+          const res = await detectLanguage(
+            msg?.trim()?.split(' ')?.pop() || '',
+            langPopupConfig?.provider,
+            langPopupConfig?.match
+          );
           if (res?.language === langPopupConfig?.match) {
             context?.setShowLanguagePopup(true);
           } else {

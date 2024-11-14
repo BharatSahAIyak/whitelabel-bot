@@ -1,12 +1,17 @@
 import axios from 'axios';
 
-export const detectLanguage = async (text: string | number) => {
+export const detectLanguage = async (
+  text: string | number,
+  provider: string | null,
+  match: string
+) => {
   try {
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_AI_TOOLS_API}/language-detect`,
       {
         text,
-        languageSubset: ['hing'],
+        provider: provider ?? null,
+        languageSubset: [match],
       },
       {
         headers: {

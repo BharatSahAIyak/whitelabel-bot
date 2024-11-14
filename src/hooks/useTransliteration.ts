@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useEffect, useCallback, useContext, useRef } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { AppContext } from '../context';
@@ -12,6 +12,7 @@ const useTransliteration = (config: any, value: any, setValue: any, inputRef: an
   const [cursorPosition, setCursorPosition] = useState(0);
   const context = useContext(AppContext);
   const langPopupConfig = useConfig('component', 'langPopup');
+  const isDetectingLanguage = useRef(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -88,6 +89,25 @@ const useTransliteration = (config: any, value: any, setValue: any, inputRef: an
     setCursorPosition(e.target.selectionStart);
   };
 
+  const handleLanguageDetection = useCallback(async () => {
+    if (isDetectingLanguage.current) return;
+
+    isDetectingLanguage.current = true;
+    try {
+      const result = await detectLanguage(
+        value?.trim()?.split(' ')?.pop() || '',
+        langPopupConfig?.provider,
+        langPopupConfig?.match
+      );
+
+      if (result?.language === langPopupConfig?.match) {
+        context?.setShowLanguagePopup(true);
+      }
+    } finally {
+      isDetectingLanguage.current = false;
+    }
+  }, [value, langPopupConfig, context]);
+
   const handleKeyDown = useCallback(
     (e: any) => {
       if (e.keyCode === 229) return;
@@ -112,15 +132,11 @@ const useTransliteration = (config: any, value: any, setValue: any, inputRef: an
           langPopupConfig?.langCheck &&
           context?.locale !== langPopupConfig?.lang
         ) {
-          detectLanguage(value?.trim()?.split(' ')?.pop() || '').then((res) => {
-            if (res?.language === langPopupConfig?.match) {
-              context?.setShowLanguagePopup(true);
-            }
-          });
+          handleLanguageDetection();
         }
       }
     },
-    [suggestions, activeSuggestion, value, setValue, context, langPopupConfig]
+    [suggestions, activeSuggestion, setValue, context, langPopupConfig, handleLanguageDetection]
   );
 
   useEffect(() => {

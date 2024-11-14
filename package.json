@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "dotenv -- next dev",
-    "build": "next build && sh ./build.sh",
+    "build": "node src/pages/api/generateAssetlinks.js && next build && sh ./build.sh",
     "start": "next start",
     "lint": "next lint",
     "analyze": "cross-env ANALYZE=true next build",
@@ -27,7 +27,7 @@
     "@mui/material": "^5.15.13",
     "@mui/system": "^5.15.13",
     "@next/bundle-analyzer": "^13.3.0",
-    "@samagra-x/chatui": "1.0.29",
+    "@samagra-x/chatui": "^1.0.30",
     "@samagra-x/xmessage": "1.1.8",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^10.4.9",

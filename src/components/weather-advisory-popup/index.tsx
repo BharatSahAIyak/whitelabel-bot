@@ -264,10 +264,15 @@ const WeatherAdvisoryPopup = (props: any) => {
                   },
                 }}
                 startIcon={<VolumeUpIcon />}
-                endIcon={btnDisabled && <CircularProgress size={16} />}
-              >
+                 endIcon={
+    <span style={{ display: 'inline-block', width: '16px' }}>
+      {btnDisabled && <CircularProgress size={16} />}
+    </span>
+  }
+>
                 {t('label.play_advisory')}
               </Button>
+
             </div>
           </div>
         </Fade>
