@@ -3,21 +3,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  height: 100%;
+  height: calc(100% - 61px);
   padding: 20px;
+  overflow: auto;
 }
 
 .voiceRecorder {
-  margin-top: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-}
-
-.faq-section {
-  width: 100%;
-  margin-bottom: 20px;
 }
 
 .inputBox {

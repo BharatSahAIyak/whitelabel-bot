@@ -42,7 +42,7 @@
       "showMic": true,
       "micHeight": "143px",
       "micWidth": "143px",
-      "topGap": "75px",
+      "topGap": "80px",
       "showTapToSpeakText": false,
       "otherInformationImg": "",
       "plantProtectionImg": "",
@@ -370,7 +370,8 @@
       "label.empty_feedback": "Please provide a Review",
       "label.empty_rating": "Please provide a Rating",
       "message.enter_otp": "Please enter the OTP",
-      "label.click_here": "Click here"
+      "label.click_here": "Click here",
+      "label.disclaimer": "Conversations on this platform may be reviewed for quality and security. Please keep discussions centered on agriculture and maintain respectful language. Thank you for your cooperation."
     }
   }
 }

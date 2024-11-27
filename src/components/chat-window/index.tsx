@@ -15,6 +15,7 @@ import { getMsgType } from '../../utils/getMsgType';
 import { recordUserLocation } from '../../utils/location';
 import { detectLanguage } from '../../utils/detectLang';
 import { debounce } from 'lodash';
+import Disclaimer from '../disclaimer';
 
 const ChatUiWindow: React.FC = () => {
   const config = useConfig('component', 'chatUI');
@@ -208,6 +209,7 @@ const ChatUiWindow: React.FC = () => {
             transliterate: context?.transliterate,
             setTransliterate: context?.setTransliterate,
           }}
+          disclaimer={<Disclaimer />}
           //@ts-ignore
           messages={msgToRender}
           voiceToText={RenderVoiceRecorder}
