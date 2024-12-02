@@ -20,6 +20,7 @@ import TransliterationInput from '../../components/transliteration-input';
 import { detectLanguage } from '../../utils/detectLang';
 import { debounce } from 'lodash';
 import MicroPhonePermissionModal from '../../components/permission-modal';
+import Disclaimer from '../../components/disclaimer';
 
 const ChatPage: NextPage = () => {
   const context = useContext(AppContext);
@@ -231,11 +232,9 @@ const ChatPage: NextPage = () => {
             </Box>
           </Modal>
 
-          {config?.showFAQ && (
-            <div className="faq-section">
-              <FAQ onQuestionClick={handleQuestionClick} />
-            </div>
-          )}
+          {config?.showFAQ && <FAQ onQuestionClick={handleQuestionClick} />}
+
+          <Disclaimer />
 
           <form onSubmit={(event) => event?.preventDefault()}>
             <div className={`${`${styles.inputBox} ${styles.inputBoxOpen}`}`}>

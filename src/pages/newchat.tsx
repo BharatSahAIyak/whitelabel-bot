@@ -26,7 +26,7 @@ const NewChat: NextPage = () => {
             position: 'fixed',
             width: '100%',
             bottom: '1vh',
-            top: homeConfig?.topGap || '75px',
+            top: homeConfig?.topGap || '80px',
           }}
         >
           <LanguagePopup />
