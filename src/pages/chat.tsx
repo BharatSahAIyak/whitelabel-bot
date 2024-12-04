@@ -64,7 +64,7 @@ const Chat: NextPage = () => {
           position: 'fixed',
           width: '100%',
           bottom: '1vh',
-          top: '100px',
+          top: '80px',
         }}
       >
         <LanguagePopup />
