@@ -27,7 +27,7 @@
     "@mui/material": "^5.15.13",
     "@mui/system": "^5.15.13",
     "@next/bundle-analyzer": "^13.3.0",
-    "@samagra-x/chatui": "1.0.31",
+    "@samagra-x/chatui": "1.0.32",
     "@samagra-x/xmessage": "1.1.8",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^10.4.9",
