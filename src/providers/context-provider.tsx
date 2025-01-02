@@ -365,7 +365,7 @@ const ContextProvider: FC<{
             transportOptions: {
               polling: {
                 extraHeaders: {
-                  // Authorization: `Bearer ${cookie.access_token}`,
+                  Authorization: `Bearer ${localStorage.getItem('auth')}`,
                   channel: 'akai',
                 },
               },
