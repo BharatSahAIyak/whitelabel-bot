@@ -7,6 +7,7 @@ Kisai Bot is an advanced chatbot designed to assist farmers with various tasks f
 - [Project Structure](#project-structure)
 - [Setup](#setup)
 - [Usage](#usage)
+- [Working](#working)
 - [Contribution Guidelines](#contribution-guidelines)
 - [License](#license)
 
@@ -75,6 +76,10 @@ cd kisai-bot
 
 After setting up and running the application, you can access it at http://localhost:3000 (or the port specified in your environment variables). Follow the on-screen instructions to interact with the Kisai Bot.
 ![image](https://github.com/user-attachments/assets/b2583cd2-5180-47fc-b2e2-2fedfb229dae)
+
+## Working
+
+This project uses [socket](https://socket.io/docs/v4/tutorial/introduction) connections to send and receive messages. The format used is [Xmessage](https://www.npmjs.com/package/@samagra-x/xmessage). Read more about how it's used in this project [here](https://github.com/BharatSahAIyak/kisai-bot/blob/dev/docs/sockets.md).
 
 ## Figma Link
 
