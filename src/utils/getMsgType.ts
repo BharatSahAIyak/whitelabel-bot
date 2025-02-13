@@ -32,9 +32,9 @@ export const getMsgType = (msg: any): string => {
 
 function isJsonString(str: string) {
   try {
-    JSON.parse(str);
+    const parsed = JSON.parse(str);
+    return typeof parsed === 'object' && parsed !== null;
   } catch (e) {
     return false;
   }
-  return true;
 }
